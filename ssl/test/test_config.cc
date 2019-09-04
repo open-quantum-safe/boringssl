@@ -1610,6 +1610,16 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
         case SSL_CURVE_CECPQ2b:
           nids.push_back(NID_CECPQ2b);
           break;
+
+///// OQS_TEMPLATE_FRAGMENT_ADD_PQ_CURVEIDS_START
+        case SSL_CURVE_OQS_KEMDEFAULT:
+          nids.push_back(NID_oqs_kemdefault);
+          break;
+        case SSL_CURVE_OQS_P256_KEMDEFAULT:
+          nids.push_back(NID_oqs_p256_kemdefault);
+          break;
+///// OQS_TEMPLATE_FRAGMENT_ADD_PQ_CURVEIDS_END
+
       }
       if (!SSL_set1_curves(ssl.get(), &nids[0], nids.size())) {
         return nullptr;
@@ -1620,6 +1630,9 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
     static const int kAllCurves[] = {
         NID_secp224r1, NID_X9_62_prime256v1, NID_secp384r1, NID_secp521r1,
         NID_X25519,    NID_CECPQ2,           NID_CECPQ2b,
+///// OQS_TEMPLATE_FRAGMENT_LIST_PQ_CURVEIDS_START
+        NID_oqs_kemdefault, NID_oqs_p256_kemdefault,
+///// OQS_TEMPLATE_FRAGMENT_LIST_PQ_CURVEIDS_END
     };
     if (!SSL_set1_curves(ssl.get(), kAllCurves,
                          OPENSSL_ARRAY_SIZE(kAllCurves))) {

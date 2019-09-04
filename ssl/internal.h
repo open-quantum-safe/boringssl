@@ -1006,7 +1006,7 @@ class SSLKeyShare {
 struct NamedGroup {
   int nid;
   uint16_t group_id;
-  const char name[8], alias[11];
+  const char name[30], alias[30];
 };
 
 // NamedGroups returns all supported groups.

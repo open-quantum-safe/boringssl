@@ -4240,6 +4240,12 @@ extern "C" {
 #define SN_CECPQ2b "CECPQ2b"
 #define NID_CECPQ2b 960
 
+#define SN_oqs_kemdefault "oqs_kemdefault"
+#define NID_oqs_kemdefault 963
+
+#define SN_oqs_p256_kemdefault "oqs_p256_kemdefault"
+#define NID_oqs_p256_kemdefault 964
+
 
 #if defined(__cplusplus)
 } /* extern C */

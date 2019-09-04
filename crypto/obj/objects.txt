@@ -1358,3 +1358,8 @@ secg-scheme 14 3 : dhSinglePass-cofactorDH-sha512kdf-scheme
 # TLS 1.3 cipher suites do not specify key exchange or authentication.
  : KxANY : kx-any
  : AuthANY : auth-any
+
+###### OQS_TEMPLATE_FRAGMENT_DEF_NIDS_START
+ : oqs_kemdefault
+ : oqs_p256_kemdefault
+###### OQS_TEMPLATE_FRAGMENT_DEF_NIDS_END

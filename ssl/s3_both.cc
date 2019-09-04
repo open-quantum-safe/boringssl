@@ -661,7 +661,12 @@ class CipherScorer {
   CipherScorer(uint16_t group_id)
       : aes_is_fine_(EVP_has_aes_hardware()),
         security_128_is_fine_(group_id != SSL_CURVE_CECPQ2 &&
-                              group_id != SSL_CURVE_CECPQ2b) {}
+                              group_id != SSL_CURVE_CECPQ2b &&
+///// OQS_TEMPLATE_FRAGMENT_LIST_CURVES_START
+                              group_id != SSL_CURVE_OQS_KEMDEFAULT &&
+                              group_id != SSL_CURVE_OQS_P256_KEMDEFAULT
+///// OQS_TEMPLATE_FRAGMENT_LIST_CURVES_END
+                              ) {}
 
   typedef std::tuple<bool, bool, bool> Score;
 

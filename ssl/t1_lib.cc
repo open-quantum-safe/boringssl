@@ -128,7 +128,6 @@
 #include "internal.h"
 #include "../crypto/internal.h"
 
-
 BSSL_NAMESPACE_BEGIN
 
 static bool ssl_check_clienthello_tlsext(SSL_HANDSHAKE *hs);
@@ -200,7 +199,12 @@ static bool tls1_check_duplicate_extensions(const CBS *cbs) {
 }
 
 static bool is_post_quantum_group(uint16_t id) {
-  return id == SSL_CURVE_CECPQ2 || id == SSL_CURVE_CECPQ2b;
+  return id == SSL_CURVE_CECPQ2 ||
+         id == SSL_CURVE_CECPQ2b ||
+///// OQS_TEMPLATE_FRAGMENT_ADD_PQ_GROUPS_START
+         id == SSL_CURVE_OQS_P256_KEMDEFAULT ||
+         id == SSL_CURVE_OQS_KEMDEFAULT;
+///// OQS_TEMPLATE_FRAGMENT_ADD_PQ_GROUPS_END
 }
 
 bool ssl_client_hello_init(const SSL *ssl, SSL_CLIENT_HELLO *out,
@@ -294,6 +298,10 @@ static const uint16_t kDefaultGroups[] = {
     SSL_CURVE_X25519,
     SSL_CURVE_SECP256R1,
     SSL_CURVE_SECP384R1,
+///// OQS_TEMPLATE_FRAGMENT_ADD_DEFAULT_GROUPS_START
+    SSL_CURVE_OQS_P256_KEMDEFAULT,
+    SSL_CURVE_OQS_KEMDEFAULT,
+///// OQS_TEMPLATE_FRAGMENT_ADD_DEFAULT_GROUPS_END
 };
 
 Span<const uint16_t> tls1_get_grouplist(const SSL_HANDSHAKE *hs) {

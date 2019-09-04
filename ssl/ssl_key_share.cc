@@ -33,6 +33,8 @@
 #include "../crypto/internal.h"
 #include "../third_party/sike/sike.h"
 
+#include <oqs/oqs.h>
+
 BSSL_NAMESPACE_BEGIN
 
 namespace {
@@ -381,6 +383,184 @@ class CECPQ2bKeyShare : public SSLKeyShare {
   uint8_t public_sike_[SIKE_PUB_BYTESZ];
 };
 
+// KeyShare class for OQS supplied hybrid and post-quantum crypto algs
+// Hybrid messages are encoded as follows: classical_len | classical_artifact | pq_len | pq_artifact
+// TODOs (FIXMEOQS):
+// * make sure the format is the same as in the OpenSSL fork, i.e., put length of key, etc.
+class OQSKeyShare : public SSLKeyShare {
+ public:
+  OQSKeyShare(uint16_t group_id) : group_id_(group_id) {
+    switch(group_id_) {
+///// OQS_TEMPLATE_FRAGMENT_MAP_SSL_CURVES_TO_OQS_METHS_START
+      case SSL_CURVE_OQS_P256_KEMDEFAULT:
+        is_hybrid_ = true;
+        pq_kex_= OQS_KEM_new(OQS_KEM_alg_default);
+        break;
+      case SSL_CURVE_OQS_KEMDEFAULT:
+        pq_kex_= OQS_KEM_new(OQS_KEM_alg_default);
+        break;
+///// OQS_TEMPLATE_FRAGMENT_MAP_SSL_CURVES_TO_OQS_METHS_END
+    }
+    if (is_hybrid_) {
+      classical_kex_ = SSLKeyShare::Create(SSL_CURVE_SECP256R1);
+    }
+  }
+
+  uint16_t GroupID() const override { return group_id_; }
+
+  bool Offer(CBB *out) override {
+    Array<uint8_t> classical_public_key;
+    Array<uint8_t> pq_public_key;
+
+    // For a hybrid KEX, generate the classical keys first
+    if (is_hybrid_) {
+      ScopedCBB classical_offer;
+      if (!CBB_init(classical_offer.get(), p256_public_key_size_) ||
+          !classical_kex_->Offer(classical_offer.get()) ||
+          !CBBFinishArray(classical_offer.get(), &classical_public_key)) {
+        // the classical code will set the appropriate error on failure
+        return false;
+      }
+    }
+    // Generate the PQ key pair.
+    if (!pq_public_key.Init(pq_kex_->length_public_key) ||
+        !pq_private_key_.Init(pq_kex_->length_secret_key)) {
+      OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
+      return false;
+    }
+    if (OQS_KEM_keypair(pq_kex_, pq_public_key.data(), pq_private_key_.data()) != OQS_SUCCESS) {
+      OPENSSL_PUT_ERROR(SSL, SSL_R_PRIVATE_KEY_OPERATION_FAILED);
+      return false;
+    }
+    // Serialize the PQ public key.
+    if (is_hybrid_) {
+      if (!CBB_add_u32(out, classical_public_key.size()) ||
+          !CBB_add_bytes(out, classical_public_key.data(), classical_public_key.size()) ||
+          !CBB_add_u32(out, pq_kex_->length_public_key)) {
+        return false;
+      }
+    }
+    if (!CBB_add_bytes(out, pq_public_key.data(), pq_kex_->length_public_key)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  bool Accept(CBB *out_public_key, Array<uint8_t> *out_secret,
+              uint8_t *out_alert, Span<const uint8_t> peer_key) override {
+    Array<uint8_t> classical_public_key;
+    Array<uint8_t> classical_secret;
+    Array<uint8_t> secret;
+    Array<uint8_t> ciphertext;
+
+    // Validate peer key size.
+    if (peer_key.size() != pq_kex_->length_public_key + (is_hybrid_ ? 8 + p256_public_key_size_ : 0)) {
+      *out_alert = SSL_AD_DECODE_ERROR;
+      OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_ECPOINT);
+      return false;
+    }
+
+    // OQS note: in hybrid case, we allocate space for both the classical and PQ secret. Since we
+    // currently only support P-256, we can hardcode the classical secret size of 32; more generally
+    // this might not work. We prefer this now because there are no concat Array method to make this simple.
+    size_t classical_secret_size = is_hybrid_ ? 32 : 0;
+    if (!secret.Init(classical_secret_size + pq_kex_->length_shared_secret) ||
+        !ciphertext.Init(pq_kex_->length_ciphertext)) {
+      OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
+      return false;
+    }
+
+    // In the hybrid case, first handle the classical Accept
+    if (is_hybrid_) {
+      ScopedCBB out_classical_public_key;
+      if (!CBB_init(out_classical_public_key.get(), p256_public_key_size_) ||
+          !classical_kex_->Accept(out_classical_public_key.get(), &classical_secret, out_alert, peer_key.subspan(4, p256_public_key_size_)) ||
+          !CBBFinishArray(out_classical_public_key.get(), &classical_public_key)) {
+        // the classical code will set the appropriate alert and error on failure
+        return false;
+      }
+      OPENSSL_memcpy(secret.data(), classical_secret.data(), classical_secret.size());
+    }
+
+    // compute the servers's shared secret and message (encoded in encoded_point)
+    const uint8_t *public_key = is_hybrid_ ? peer_key.subspan(8 + p256_public_key_size_, pq_kex_->length_ciphertext).data() : peer_key.data();
+    if (OQS_KEM_encaps(pq_kex_, ciphertext.data(), secret.data() + classical_secret_size, public_key) != OQS_SUCCESS) {
+      *out_alert = SSL_AD_DECODE_ERROR;
+      OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_ECPOINT);
+      return false;
+    }
+
+    if (is_hybrid_) {
+      if (!CBB_add_u32(out_public_key, classical_public_key.size()) ||
+          !CBB_add_bytes(out_public_key, classical_public_key.data(), classical_public_key.size()) ||
+          !CBB_add_u32(out_public_key, pq_kex_->length_ciphertext)) {
+        return false;
+      }
+    }
+    if (!CBB_add_bytes(out_public_key, ciphertext.data(), pq_kex_->length_ciphertext)) {
+      return false;
+    }
+
+    *out_secret = std::move(secret);
+
+    return true;
+  }
+
+  bool Finish(Array<uint8_t> *out_secret, uint8_t *out_alert,
+              Span<const uint8_t> peer_key) override {
+    Array<uint8_t> classical_secret;
+    Array<uint8_t> secret;
+    *out_alert = SSL_AD_INTERNAL_ERROR;
+
+    // Validate peer key size.
+    if (peer_key.size() != pq_kex_->length_ciphertext + (is_hybrid_ ? 8 + p256_public_key_size_ : 0)) {
+      *out_alert = SSL_AD_DECODE_ERROR;
+      OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_ECPOINT);
+      return false;
+    }
+
+    // OQS note: in hybrid case, we allocate space for both the classical and PQ secret. Since we
+    // currently only support P-256, we can hardcode the classical secret size of 32; more generally
+    // this might not work. We prefer this now because there are no concat Array method to make this simple.
+    int classical_secret_size = is_hybrid_ ? 32 : 0;
+    if (!secret.Init(classical_secret_size + pq_kex_->length_shared_secret)) {
+      OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
+      return false;
+    }
+
+    // In the hybrid case, first handle the classical Finish
+    if (is_hybrid_) {
+      if (!classical_kex_->Finish(&classical_secret, out_alert, peer_key.subspan(4, p256_public_key_size_))) {
+return false;
+     }
+      OPENSSL_memcpy(secret.data(), classical_secret.data(), classical_secret.size());
+    }
+
+    const uint8_t *public_key = is_hybrid_ ? peer_key.subspan(8 + p256_public_key_size_, pq_kex_->length_ciphertext).data() : peer_key.data();
+    if (OQS_KEM_decaps(pq_kex_, secret.data() + classical_secret_size, public_key, pq_private_key_.data()) != OQS_SUCCESS) {
+      *out_alert = SSL_AD_DECODE_ERROR;
+      OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_ECPOINT);
+      return false;
+    }
+
+    *out_secret = std::move(secret);
+
+    return true;
+  }
+
+ private:
+  uint16_t group_id_;
+
+  OQS_KEM* pq_kex_;
+  Array<uint8_t> pq_private_key_;
+
+  bool is_hybrid_ = false;
+  UniquePtr<SSLKeyShare> classical_kex_;
+
+  const int p256_public_key_size_ = 65;
+};
+
 CONSTEXPR_ARRAY NamedGroup kNamedGroups[] = {
     {NID_secp224r1, SSL_CURVE_SECP224R1, "P-224", "secp224r1"},
     {NID_X9_62_prime256v1, SSL_CURVE_SECP256R1, "P-256", "prime256v1"},
@@ -389,6 +569,10 @@ CONSTEXPR_ARRAY NamedGroup kNamedGroups[] = {
     {NID_X25519, SSL_CURVE_X25519, "X25519", "x25519"},
     {NID_CECPQ2, SSL_CURVE_CECPQ2, "CECPQ2", "CECPQ2"},
     {NID_CECPQ2b, SSL_CURVE_CECPQ2b, "CECPQ2b", "CECPQ2b"},
+///// OQS_TEMPLATE_FRAGMENT_DEF_NAMEDGROUPS_START
+    {NID_oqs_kemdefault, SSL_CURVE_OQS_KEMDEFAULT, "oqs_kemdefault", "oqs_kemdefault"},
+    {NID_oqs_p256_kemdefault, SSL_CURVE_OQS_P256_KEMDEFAULT, "oqs_p256_kemdefault", "oqs_p256_kemdefault"},
+///// OQS_TEMPLATE_FRAGMENT_DEF_NAMEDGROUPS_END
 };
 
 }  // namespace
@@ -417,6 +601,11 @@ UniquePtr<SSLKeyShare> SSLKeyShare::Create(uint16_t group_id) {
       return UniquePtr<SSLKeyShare>(New<CECPQ2KeyShare>());
     case SSL_CURVE_CECPQ2b:
       return UniquePtr<SSLKeyShare>(New<CECPQ2bKeyShare>());
+///// OQS_TEMPLATE_FRAGMENT_HANDLE_GROUP_IDS_START
+    case SSL_CURVE_OQS_KEMDEFAULT:
+    case SSL_CURVE_OQS_P256_KEMDEFAULT:
+      return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(group_id));
+///// OQS_TEMPLATE_FRAGMENT_HANDLE_GROUP_IDS_START
     default:
       return nullptr;
   }

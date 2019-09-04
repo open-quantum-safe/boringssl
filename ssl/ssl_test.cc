@@ -417,6 +417,15 @@ static const CurveTest kCurveTests[] = {
       SSL_CURVE_X25519,
     },
   },
+  {
+///// OQS_TEMPLATE_FRAGMENT_ADD_CURVETEST_START
+    "oqs_p256_kemdefault:oqs_kemdefault",
+    {
+      SSL_CURVE_OQS_P256_KEMDEFAULT,
+      SSL_CURVE_OQS_KEMDEFAULT,
+    },
+///// OQS_TEMPLATE_FRAGMENT_ADD_CURVETEST_END
+  },
 };
 
 static const char *kBadCurvesLists[] = {
