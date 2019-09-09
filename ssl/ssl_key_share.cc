@@ -389,18 +389,14 @@ class CECPQ2bKeyShare : public SSLKeyShare {
 // * make sure the format is the same as in the OpenSSL fork, i.e., put length of key, etc.
 class OQSKeyShare : public SSLKeyShare {
  public:
-  OQSKeyShare(uint16_t group_id) : group_id_(group_id) {
-    switch(group_id_) {
-///// OQS_TEMPLATE_FRAGMENT_MAP_SSL_CURVES_TO_OQS_METHS_START
-      case SSL_CURVE_OQS_P256_KEMDEFAULT:
-        is_hybrid_ = true;
-        pq_kex_= OQS_KEM_new(OQS_KEM_alg_default);
-        break;
-      case SSL_CURVE_OQS_KEMDEFAULT:
-        pq_kex_= OQS_KEM_new(OQS_KEM_alg_default);
-        break;
-///// OQS_TEMPLATE_FRAGMENT_MAP_SSL_CURVES_TO_OQS_METHS_END
-    }
+  // Although oqs_meth can be determined from the group_id,
+  // we pass both in as the translation from group_id to
+  // oqs_meth is already done by SLKeyShare::Create
+  // to determine whether oqs_meth is enabled in liboqs
+  // and return nullptr if not. It is easier to handle
+  // the error in there as opposed to in this constructor.
+  OQSKeyShare(uint16_t group_id, const char *oqs_meth, bool is_hybrid) : group_id_(group_id), is_hybrid_(is_hybrid) {
+    pq_kex_= OQS_KEM_new(oqs_meth);
     if (is_hybrid_) {
       classical_kex_ = SSLKeyShare::Create(SSL_CURVE_SECP256R1);
     }
@@ -432,7 +428,6 @@ class OQSKeyShare : public SSLKeyShare {
       OPENSSL_PUT_ERROR(SSL, SSL_R_PRIVATE_KEY_OPERATION_FAILED);
       return false;
     }
-    // Serialize the PQ public key.
     if (is_hybrid_) {
       if (!CBB_add_u32(out, classical_public_key.size()) ||
           !CBB_add_bytes(out, classical_public_key.data(), classical_public_key.size()) ||
@@ -440,6 +435,7 @@ class OQSKeyShare : public SSLKeyShare {
         return false;
       }
     }
+    // Serialize the PQ public key.
     if (!CBB_add_bytes(out, pq_public_key.data(), pq_kex_->length_public_key)) {
       return false;
     }
@@ -555,7 +551,7 @@ return false;
   OQS_KEM* pq_kex_;
   Array<uint8_t> pq_private_key_;
 
-  bool is_hybrid_ = false;
+  bool is_hybrid_;
   UniquePtr<SSLKeyShare> classical_kex_;
 
   const int p256_public_key_size_ = 65;
@@ -603,8 +599,15 @@ UniquePtr<SSLKeyShare> SSLKeyShare::Create(uint16_t group_id) {
       return UniquePtr<SSLKeyShare>(New<CECPQ2bKeyShare>());
 ///// OQS_TEMPLATE_FRAGMENT_HANDLE_GROUP_IDS_START
     case SSL_CURVE_OQS_KEMDEFAULT:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_default))
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_OQS_KEMDEFAULT, OQS_KEM_alg_default, false));
+      else
+          return nullptr;
     case SSL_CURVE_OQS_P256_KEMDEFAULT:
-      return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(group_id));
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_default))
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_OQS_P256_KEMDEFAULT, OQS_KEM_alg_default, true));
+      else
+          return nullptr;
 ///// OQS_TEMPLATE_FRAGMENT_HANDLE_GROUP_IDS_START
     default:
       return nullptr;
