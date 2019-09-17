@@ -20,7 +20,7 @@ OQS-BoringSSL is a fork of BoringSSL that adds quantum-safe key exchange and aut
 
 **liboqs** is an open source C library for quantum-resistant cryptographic algorithms. See [here](https://github.com/open-quantum-safe/liboqs/) for more information.
 
-**OQS-BoringSSL** is a fork that integrates liboqs into OpenSSL 1.1.1.  The goal of this integration is to provide easy prototyping of quantum-safe cryptography in the TLS 1.3 protocol. (For TLS 1.2, see the [OQS-OpenSSL\_1\_0\_2-stable](https://github.com/open-quantum-safe/openssl/tree/OQS-OpenSSL_1_0_2-stable) branch.)
+**OQS-BoringSSL** is a fork that integrates liboqs into BoringSSL.  The goal of this integration is to provide easy prototyping of quantum-safe cryptography in the TLS 1.3 protocol. (For TLS 1.2, see the [OQS-OpenSSL\_1\_0\_2-stable](https://github.com/open-quantum-safe/openssl/tree/OQS-OpenSSL_1_0_2-stable) branch.)
 
 Both liboqs and this fork are part of the **Open Quantum Safe (OQS) project**, which aims to develop and prototype quantum-safe cryptography. More information about the project can be found [here](https://openquantumsafe.org/).
 
@@ -104,7 +104,7 @@ on **Ubuntu**, run:
 
 The fork can also be built with shared libraries, to do so, run `cmake -DBUILD_SHARED_LIBRARIES=ON -GNinja ..`.
 
-To exectue the white-box and black-box tests, run `ninja run_tests` from the `build` directory.
+To execute the white-box and black-box tests, run `ninja run_tests` from the `build` directory.
 
 ### Running
 
