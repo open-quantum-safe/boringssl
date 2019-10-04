@@ -13,6 +13,7 @@ OQS-BoringSSL is a fork of BoringSSL that adds quantum-safe key exchange and aut
   * [Building](#building)
     * [Linux](#linux)
   * [Running](#running)
+- [API Stability](#api-stability)
 - [Team](#team)
 - [Acknowledgements](#acknowledgements)
 
@@ -119,6 +120,12 @@ To run a basic TLS server with all libOQS ciphersuites enabled, from the `build`
 In another terminal window, you can run a TLS client requesting one of the supported ciphersuites (`<KEX>` = one of the quantum-safe or hybrid key exchange algorithms listed in the [Supported Algorithms](#supported-algorithms) section above):
 
 	tool/bssl s_client -curves oqs_<KEX> -connect localhost:4433
+
+## API Stability
+
+As previously noted, the BoringSSL project does not guarantee API or ABI stability; this fork is maintained primarily to enable the use of quantum-safe cryptography in the [Chromium](https://www.chromium.org/) and [quiche](https://github.com/cloudflare/quiche) projects, both of which rely on BoringSSL's TLS implementation.
+
+This fork is currently based on commit hash `d041f11134951ea34c549032d20d041112697e4c`. If we do decide to update, we will do so to the most recent BoringSSL commit that is supported by the desired commits at which we would like Chromium and quiche to be. We consequently also cannot guarantee API or ABI stability for this fork.
 
 ## Team
 
