@@ -608,7 +608,7 @@ UniquePtr<SSLKeyShare> SSLKeyShare::Create(uint16_t group_id) {
           return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_OQS_P256_KEMDEFAULT, OQS_KEM_alg_default, true));
       else
           return nullptr;
-///// OQS_TEMPLATE_FRAGMENT_HANDLE_GROUP_IDS_START
+///// OQS_TEMPLATE_FRAGMENT_HANDLE_GROUP_IDS_END
     default:
       return nullptr;
   }

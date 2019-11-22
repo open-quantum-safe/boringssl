@@ -603,3 +603,13 @@ add_custom_target(
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     DEPENDS all_tests bssl_shim handshaker
     ${MAYBE_USES_TERMINAL})
+
+# OQS note: we don't check to see python3
+# and pytest are available since they're
+# already required to test liboqs.
+add_custom_target(
+    run_oqs_tests
+    COMMAND python3 -m pytest -v oqs_test/test_kems.py --bssl_shim=$<TARGET_FILE:bssl_shim> --bssl=$<TARGET_FILE:bssl>
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    DEPENDS all_tests bssl_shim
+    ${MAYBE_USES_TERMINAL})

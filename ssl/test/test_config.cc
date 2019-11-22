@@ -1619,7 +1619,6 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
           nids.push_back(NID_oqs_p256_kemdefault);
           break;
 ///// OQS_TEMPLATE_FRAGMENT_ADD_PQ_CURVEIDS_END
-
       }
       if (!SSL_set1_curves(ssl.get(), &nids[0], nids.size())) {
         return nullptr;
