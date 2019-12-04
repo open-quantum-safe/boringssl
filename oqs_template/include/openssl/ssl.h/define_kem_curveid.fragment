@@ -1,0 +1,7 @@
+{% for kem in config['kems'] %}
+#define SSL_CURVE_{{ kem['name']|upper }} {{ kem['nid'] }}
+    {%- for classical_alg in kem['mix_with'] %}
+#define SSL_CURVE_{{ classical_alg['name']|upper }}_{{ kem['name']|upper }} {{ classical_alg['nid'] }}
+    {%- endfor %}
+{%- endfor %}
+

@@ -1,0 +1,6 @@
+{% for kem in config['kems'] %}
+    {%- set last_kem = loop.last %}
+        NID_{{ kem['name'] }}, {%- for classical_alg in kem['mix_with'] %} NID_{{ classical_alg['name'] }}_{{ kem['name'] }}, {%- if not last_kem %}
+{%- endif -%}{%- endfor -%}
+{%- endfor %}
+

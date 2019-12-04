@@ -1,0 +1,7 @@
+{% for kem in config['kems'] %}
+        '{{ kem['name'] }}': '{{ kem['nid'] }}',
+    {%- for classical_alg in kem['mix_with'] %}
+        '{{ classical_alg['name'] }}_{{ kem['name'] }}': '{{ classical_alg['nid'] }}',
+    {%- endfor %}
+{%- endfor %}
+

@@ -11,7 +11,7 @@ def bssl_shim(request):
     return os.path.join(request.config.getoption("--bssl_shim"))
 
 @pytest.fixture(scope="session", autouse=True)
-def setup_teardown(request):
+def setup_run_teardown(request):
     # Setup: start bssl server
     bssl = os.path.join(request.config.getoption("--bssl"))
     bssl_server = subprocess.Popen([bssl, 'server',

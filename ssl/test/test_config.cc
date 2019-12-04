@@ -1611,14 +1611,14 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
           nids.push_back(NID_CECPQ2b);
           break;
 
-///// OQS_TEMPLATE_FRAGMENT_ADD_PQ_CURVEIDS_START
+///// OQS_TEMPLATE_FRAGMENT_ADD_NIDS_START
         case SSL_CURVE_OQS_KEMDEFAULT:
           nids.push_back(NID_oqs_kemdefault);
           break;
         case SSL_CURVE_OQS_P256_KEMDEFAULT:
           nids.push_back(NID_oqs_p256_kemdefault);
           break;
-///// OQS_TEMPLATE_FRAGMENT_ADD_PQ_CURVEIDS_END
+///// OQS_TEMPLATE_FRAGMENT_ADD_NIDS_END
       }
       if (!SSL_set1_curves(ssl.get(), &nids[0], nids.size())) {
         return nullptr;

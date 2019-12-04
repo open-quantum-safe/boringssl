@@ -4,10 +4,10 @@ import sys
 import subprocess
 
 kem_name_to_nid = {
-##### OQS_TEMPLATE_LIST_KEMS_START
+##### OQS_TEMPLATE_FRAGMENT_LIST_KEMS_AND_NIDS_START
         'oqs_kemdefault': '511',
         'oqs_p256_kemdefault': '767'
-##### OQS_TEMPLATE_LIST_KEMS_END
+##### OQS_TEMPLATE_FRAGMENT_LIST_KEMS_AND_NIDS_END
 }
 
 # We pass kem names instead of
