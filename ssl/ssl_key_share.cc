@@ -567,7 +567,7 @@ CONSTEXPR_ARRAY NamedGroup kNamedGroups[] = {
     {NID_CECPQ2b, SSL_CURVE_CECPQ2b, "CECPQ2b", "CECPQ2b"},
 ///// OQS_TEMPLATE_FRAGMENT_DEF_NAMEDGROUPS_START
     {NID_oqs_kemdefault, SSL_CURVE_OQS_KEMDEFAULT, "oqs_kemdefault", "oqs_kemdefault"},
-    {NID_oqs_p256_kemdefault, SSL_CURVE_OQS_P256_KEMDEFAULT, "oqs_p256_kemdefault", "oqs_p256_kemdefault"},
+    {NID_p256_oqs_kemdefault, SSL_CURVE_P256_OQS_KEMDEFAULT, "p256_oqs_kemdefault", "p256_oqs_kemdefault"},
 ///// OQS_TEMPLATE_FRAGMENT_DEF_NAMEDGROUPS_END
 };
 
@@ -603,9 +603,9 @@ UniquePtr<SSLKeyShare> SSLKeyShare::Create(uint16_t group_id) {
           return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_OQS_KEMDEFAULT, OQS_KEM_alg_default, false));
       else
           return nullptr;
-    case SSL_CURVE_OQS_P256_KEMDEFAULT:
+    case SSL_CURVE_P256_OQS_KEMDEFAULT:
       if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_default))
-          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_OQS_P256_KEMDEFAULT, OQS_KEM_alg_default, true));
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_P256_OQS_KEMDEFAULT, OQS_KEM_alg_default, true));
       else
           return nullptr;
 ///// OQS_TEMPLATE_FRAGMENT_HANDLE_GROUP_IDS_END

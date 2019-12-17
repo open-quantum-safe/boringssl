@@ -4243,8 +4243,8 @@ extern "C" {
 #define SN_oqs_kemdefault "oqs_kemdefault"
 #define NID_oqs_kemdefault 961
 
-#define SN_oqs_p256_kemdefault "oqs_p256_kemdefault"
-#define NID_oqs_p256_kemdefault 962
+#define SN_p256_oqs_kemdefault "p256_oqs_kemdefault"
+#define NID_p256_oqs_kemdefault 963
 
 
 #if defined(__cplusplus)

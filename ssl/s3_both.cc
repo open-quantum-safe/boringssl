@@ -664,7 +664,7 @@ class CipherScorer {
                               group_id != SSL_CURVE_CECPQ2b &&
 ///// OQS_TEMPLATE_FRAGMENT_LIST_CURVES_START
                               group_id != SSL_CURVE_OQS_KEMDEFAULT &&
-                              group_id != SSL_CURVE_OQS_P256_KEMDEFAULT
+                              group_id != SSL_CURVE_P256_OQS_KEMDEFAULT
 ///// OQS_TEMPLATE_FRAGMENT_LIST_CURVES_END
                               ) {}
 

@@ -58,7 +58,7 @@ If an algorithm is provided by liboqs but is not listed below, it can still be u
 
 The following quantum-safe algorithms from liboqs are supported (assuming they have been enabled in liboqs):
 
-- `kemdefault` (see [here](https://github.com/open-quantum-safe/openssl/wiki/Using-liboqs-algorithms-that-are-not-in-the-forks#oqsdefault) for what this denotes)
+- `oqs_kemdefault` (see [here](https://github.com/open-quantum-safe/openssl/wiki/Using-liboqs-algorithms-that-are-not-in-the-forks#oqsdefault) for what this denotes)
 
 The following hybrid algorithms are supported only for L1 schemes; they combine an L1 quantum-safe algorithm listed above with ECDH that uses NIST's P256 curve:
 - `p256_<KEX>`, where ``<KEX>`` is any one of the L1 algorithms listed above.
@@ -105,7 +105,7 @@ on **Ubuntu**, run:
 
 The fork can also be built with shared libraries, to do so, run `cmake -DBUILD_SHARED_LIBRARIES=ON -GNinja ..`.
 
-To execute the white-box and black-box tests, run `ninja run_tests` from the `build` directory.
+To execute the white-box and black-box tests, run `ninja run_tests` from the `build` directory. These largely exclude the OQS key-exchanges, which can be tested using `ninja run_oqs_tests`.
 
 ### Running
 
@@ -119,7 +119,7 @@ To run a basic TLS server with all libOQS ciphersuites enabled, from the `build`
 
 In another terminal window, you can run a TLS client requesting one of the supported ciphersuites (`<KEX>` = one of the quantum-safe or hybrid key exchange algorithms listed in the [Supported Algorithms](#supported-algorithms) section above):
 
-	tool/bssl client -curves oqs_<KEX> -connect localhost:4433
+	tool/bssl client -curves <KEX> -connect localhost:4433
 
 ## API Stability
 

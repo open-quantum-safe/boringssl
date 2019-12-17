@@ -1615,8 +1615,8 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
         case SSL_CURVE_OQS_KEMDEFAULT:
           nids.push_back(NID_oqs_kemdefault);
           break;
-        case SSL_CURVE_OQS_P256_KEMDEFAULT:
-          nids.push_back(NID_oqs_p256_kemdefault);
+        case SSL_CURVE_P256_OQS_KEMDEFAULT:
+          nids.push_back(NID_p256_oqs_kemdefault);
           break;
 ///// OQS_TEMPLATE_FRAGMENT_ADD_NIDS_END
       }
@@ -1630,7 +1630,7 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
         NID_secp224r1, NID_X9_62_prime256v1, NID_secp384r1, NID_secp521r1,
         NID_X25519,    NID_CECPQ2,           NID_CECPQ2b,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_PQ_CURVEIDS_START
-        NID_oqs_kemdefault, NID_oqs_p256_kemdefault,
+        NID_oqs_kemdefault, NID_p256_oqs_kemdefault,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_PQ_CURVEIDS_END
     };
     if (!SSL_set1_curves(ssl.get(), kAllCurves,

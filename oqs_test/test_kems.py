@@ -6,7 +6,7 @@ import subprocess
 kem_name_to_nid = {
 ##### OQS_TEMPLATE_FRAGMENT_LIST_KEMS_AND_NIDS_START
         'oqs_kemdefault': '511',
-        'oqs_p256_kemdefault': '767'
+        'p256_oqs_kemdefault': '767',
 ##### OQS_TEMPLATE_FRAGMENT_LIST_KEMS_AND_NIDS_END
 }
 
