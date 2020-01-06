@@ -2216,6 +2216,8 @@ OPENSSL_EXPORT int SSL_set1_curves_list(SSL *ssl, const char *curves);
 ///// OQS_TEMPLATE_FRAGMENT_DEFINE_KEM_CURVEID_START
 #define SSL_CURVE_OQS_KEMDEFAULT 511
 #define SSL_CURVE_P256_OQS_KEMDEFAULT 767
+#define SSL_CURVE_FRODO640AES 512
+#define SSL_CURVE_P256_FRODO640AES 768
 ///// OQS_TEMPLATE_FRAGMENT_DEFINE_KEM_CURVEID_END
 
 // SSL_get_curve_id returns the ID of the curve used by |ssl|'s most recently

@@ -4246,6 +4246,12 @@ extern "C" {
 #define SN_p256_oqs_kemdefault "p256_oqs_kemdefault"
 #define NID_p256_oqs_kemdefault 963
 
+#define SN_frodo640aes "frodo640aes"
+#define NID_frodo640aes 964
+
+#define SN_p256_frodo640aes "p256_frodo640aes"
+#define NID_p256_frodo640aes 965
+
 
 #if defined(__cplusplus)
 } /* extern C */

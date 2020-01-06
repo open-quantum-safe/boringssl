@@ -1,6 +1,7 @@
-{% for kem in config['kems'] %}
-    "{%- for classical_alg in kem['mix_with'] -%} {{ classical_alg['name'] }}_{{ kem['name'] }}:{%- endfor -%}{{ kem['name'] }}",
-{%- endfor %}
+
+    "{% for kem in config['kems'] %}
+    {%- for classical_alg in kem['mix_with'] -%}
+    {{ classical_alg['name'] }}_{{ kem['name'] }}:{%- endfor -%}{{ kem['name'] }}{%- if not loop.last -%}: {%- endif -%}{%- endfor %}",
     {
 {% for kem in config['kems'] %}
     {%- for classical_alg in kem['mix_with'] %}

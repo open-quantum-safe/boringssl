@@ -59,6 +59,7 @@ If an algorithm is provided by liboqs but is not listed below, it can still be u
 The following quantum-safe algorithms from liboqs are supported (assuming they have been enabled in liboqs):
 
 - `oqs_kemdefault` (see [here](https://github.com/open-quantum-safe/openssl/wiki/Using-liboqs-algorithms-that-are-not-in-the-forks#oqsdefault) for what this denotes)
+- `frodo640aes`
 
 The following hybrid algorithms are supported only for L1 schemes; they combine an L1 quantum-safe algorithm listed above with ECDH that uses NIST's P256 curve:
 - `p256_<KEX>`, where ``<KEX>`` is any one of the L1 algorithms listed above.
@@ -75,7 +76,7 @@ The steps below have been confirmed to work on Ubuntu 19.10 (gcc-8.3.0).
 
 On **Ubuntu**, you need to install the following packages:
 
-	sudo apt install autoconf automake cmake gcc golang-go libtool libssl-dev make ninja unzip xsltproc
+	sudo apt install autoconf automake cmake gcc golang-go libtool libssl-dev make ninja python3-pytest unzip xsltproc
 
 Then, get source code of this fork (`<BORINGSSL_DIR>` is a directory of your choosing):
 

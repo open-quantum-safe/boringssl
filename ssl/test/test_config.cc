@@ -1618,6 +1618,12 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
         case SSL_CURVE_P256_OQS_KEMDEFAULT:
           nids.push_back(NID_p256_oqs_kemdefault);
           break;
+        case SSL_CURVE_FRODO640AES:
+          nids.push_back(NID_frodo640aes);
+          break;
+        case SSL_CURVE_P256_FRODO640AES:
+          nids.push_back(NID_p256_frodo640aes);
+          break;
 ///// OQS_TEMPLATE_FRAGMENT_ADD_NIDS_END
       }
       if (!SSL_set1_curves(ssl.get(), &nids[0], nids.size())) {
@@ -1631,6 +1637,7 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
         NID_X25519,    NID_CECPQ2,           NID_CECPQ2b,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_PQ_CURVEIDS_START
         NID_oqs_kemdefault, NID_p256_oqs_kemdefault,
+        NID_frodo640aes, NID_p256_frodo640aes,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_PQ_CURVEIDS_END
     };
     if (!SSL_set1_curves(ssl.get(), kAllCurves,
