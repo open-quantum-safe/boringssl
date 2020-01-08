@@ -425,6 +425,7 @@ bool tls1_check_group_id(const SSL_HANDSHAKE *hs, uint16_t group_id) {
 // restore them.
 static const uint16_t kVerifySignatureAlgorithms[] = {
     // List our preferred algorithms first.
+    SSL_SIGN_OQS_SIGDEFAULT,
     SSL_SIGN_ED25519,
     SSL_SIGN_ECDSA_SECP256R1_SHA256,
     SSL_SIGN_RSA_PSS_RSAE_SHA256,
@@ -451,6 +452,7 @@ static const uint16_t kVerifySignatureAlgorithms[] = {
 // restore them.
 static const uint16_t kSignSignatureAlgorithms[] = {
     // List our preferred algorithms first.
+    SSL_SIGN_OQS_SIGDEFAULT,
     SSL_SIGN_ED25519,
     SSL_SIGN_ECDSA_SECP256R1_SHA256,
     SSL_SIGN_RSA_PSS_RSAE_SHA256,
@@ -3799,8 +3801,7 @@ Span<const uint16_t> tls1_get_peer_verify_algorithms(const SSL_HANDSHAKE *hs) {
     // If the client didn't specify any signature_algorithms extension then
     // we can assume that it supports SHA1. See
     // http://tools.ietf.org/html/rfc5246#section-7.4.1.4.1
-    static const uint16_t kDefaultPeerAlgorithms[] = {SSL_SIGN_RSA_PKCS1_SHA1,
-                                                      SSL_SIGN_ECDSA_SHA1};
+    static const uint16_t kDefaultPeerAlgorithms[] = {SSL_SIGN_RSA_PKCS1_SHA1, SSL_SIGN_ECDSA_SHA1, SSL_SIGN_OQS_SIGDEFAULT};
     peer_sigalgs = kDefaultPeerAlgorithms;
   }
   return peer_sigalgs;

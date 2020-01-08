@@ -36,7 +36,7 @@ static int oqs_sigdefault_set_priv_raw(EVP_PKEY *pkey, const uint8_t *in, size_t
     return 0;
   }
 
-  key->ctx = OQS_SIG_new("oqsdefault");
+  key->ctx = OQS_SIG_new(OQS_SIG_alg_default);
   if (!key->ctx) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_UNSUPPORTED_ALGORITHM);
     return 0;
@@ -47,6 +47,8 @@ static int oqs_sigdefault_set_priv_raw(EVP_PKEY *pkey, const uint8_t *in, size_t
     return 0;
   }
 
+  key->priv = malloc(key->ctx->length_secret_key);
+  key->pub = malloc(key->ctx->length_public_key);
   if (OQS_SIG_keypair(key->ctx, key->pub, key->priv) != OQS_SUCCESS) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_KEYS_NOT_SET);
     return 0;
@@ -65,7 +67,7 @@ static int oqs_sigdefault_set_pub_raw(EVP_PKEY *pkey, const uint8_t *in, size_t 
     return 0;
   }
 
-  key->ctx = OQS_SIG_new("oqsdefault");
+  key->ctx = OQS_SIG_new(OQS_SIG_alg_default);
   if (!key->ctx) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_UNSUPPORTED_ALGORITHM);
     return 0;
@@ -76,6 +78,7 @@ static int oqs_sigdefault_set_pub_raw(EVP_PKEY *pkey, const uint8_t *in, size_t 
     return 0;
   }
 
+  key->pub = malloc(key->ctx->length_public_key);
   OPENSSL_memcpy(key->pub, in, key->ctx->length_public_key);
   key->has_private = 0;
 

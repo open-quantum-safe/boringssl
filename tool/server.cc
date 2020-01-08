@@ -106,16 +106,13 @@ static bool LoadOCSPResponse(SSL_CTX *ctx, const char *filename) {
 }
 
 static bssl::UniquePtr<EVP_PKEY> MakeKeyPairForSelfSignedCert() {
-  bssl::UniquePtr<EC_KEY> ec_key(EC_KEY_new_by_curve_name(NID_X9_62_prime256v1));
-  if (!ec_key || !EC_KEY_generate_key(ec_key.get())) {
-    fprintf(stderr, "Failed to generate key pair.\n");
-    return nullptr;
-  }
+  EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_OQS_SIGDEFAULT, NULL);
   bssl::UniquePtr<EVP_PKEY> evp_pkey(EVP_PKEY_new());
-  if (!evp_pkey || !EVP_PKEY_assign_EC_KEY(evp_pkey.get(), ec_key.release())) {
-    fprintf(stderr, "Failed to assign key pair.\n");
-    return nullptr;
+  EVP_PKEY *pkey = evp_pkey.get();
+  if (!ctx || EVP_PKEY_keygen_init(ctx) != 1 || EVP_PKEY_keygen(ctx, &pkey) != 1) {
+      return nullptr;
   }
+
   return evp_pkey;
 }
 

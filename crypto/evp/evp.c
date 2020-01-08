@@ -202,6 +202,8 @@ static const EVP_PKEY_ASN1_METHOD *evp_pkey_asn1_find(int nid) {
       return &ed25519_asn1_meth;
     case EVP_PKEY_X25519:
       return &x25519_asn1_meth;
+    case EVP_PKEY_OQS_SIGDEFAULT:
+      return &oqs_sigdefault_asn1_meth;
     default:
       return NULL;
   }

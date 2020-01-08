@@ -73,7 +73,8 @@ BSSL_NAMESPACE_BEGIN
 
 bool ssl_is_key_type_supported(int key_type) {
   return key_type == EVP_PKEY_RSA || key_type == EVP_PKEY_EC ||
-         key_type == EVP_PKEY_ED25519;
+         key_type == EVP_PKEY_ED25519 ||
+         key_type == EVP_PKEY_OQS_SIGDEFAULT;
 }
 
 static bool ssl_set_pkey(CERT *cert, EVP_PKEY *pkey) {
@@ -122,6 +123,7 @@ static const SSL_SIGNATURE_ALGORITHM kSignatureAlgorithms[] = {
      false},
 
     {SSL_SIGN_ED25519, EVP_PKEY_ED25519, NID_undef, nullptr, false},
+    {SSL_SIGN_OQS_SIGDEFAULT, EVP_PKEY_OQS_SIGDEFAULT, NID_undef, nullptr, false},
 };
 
 static const SSL_SIGNATURE_ALGORITHM *get_signature_algorithm(uint16_t sigalg) {
@@ -450,6 +452,7 @@ static const struct {
     {SSL_SIGN_RSA_PSS_RSAE_SHA384, "rsa_pss_rsae_sha384"},
     {SSL_SIGN_RSA_PSS_RSAE_SHA512, "rsa_pss_rsae_sha512"},
     {SSL_SIGN_ED25519, "ed25519"},
+    {SSL_SIGN_OQS_SIGDEFAULT, "oqs_sigdefault"},
 };
 
 const char *SSL_get_signature_algorithm_name(uint16_t sigalg,

@@ -25,7 +25,7 @@ static int pkey_oqs_sigdefault_copy(EVP_PKEY_CTX *dst, EVP_PKEY_CTX *src) { retu
 
 static int pkey_oqs_sigdefault_keygen(EVP_PKEY_CTX *ctx, EVP_PKEY *pkey) {
   OQS_KEY *key = OPENSSL_malloc(sizeof(OQS_KEY));
-  if (key == NULL) {
+  if (!key) {
     OPENSSL_PUT_ERROR(EVP, ERR_R_MALLOC_FAILURE);
     return 0;
   }
@@ -35,9 +35,23 @@ static int pkey_oqs_sigdefault_keygen(EVP_PKEY_CTX *ctx, EVP_PKEY *pkey) {
     return 0;
   }
 
-  key->ctx = OQS_SIG_new("oqsdefault");
+  key->ctx = OQS_SIG_new(OQS_SIG_alg_default);
   if (!key->ctx) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_UNSUPPORTED_ALGORITHM);
+    return 0;
+  }
+
+  key->priv = malloc(key->ctx->length_secret_key);
+  if(!key->priv)
+  {
+    OPENSSL_PUT_ERROR(EVP, ERR_R_MALLOC_FAILURE);
+    return 0;
+  }
+
+  key->pub = malloc(key->ctx->length_public_key);
+  if(!key->pub)
+  {
+    OPENSSL_PUT_ERROR(EVP, ERR_R_MALLOC_FAILURE);
     return 0;
   }
 
@@ -91,6 +105,11 @@ static int pkey_oqs_sigdefault_verify_message(EVP_PKEY_CTX *ctx, const uint8_t *
   return 1;
 }
 
+static int pkey_oqs_sigdefault_ctrl(EVP_PKEY_CTX *ctx, int type, int p1, void *p2) {
+    return 1;
+}
+
+
 const EVP_PKEY_METHOD oqs_sigdefault_pkey_meth = {
     EVP_PKEY_OQS_SIGDEFAULT,
     NULL /* init */,
@@ -106,5 +125,5 @@ const EVP_PKEY_METHOD oqs_sigdefault_pkey_meth = {
     NULL /* decrypt */,
     NULL /* derive */,
     NULL /* paramgen */,
-    NULL /* ctrl */,
+    pkey_oqs_sigdefault_ctrl,
 };

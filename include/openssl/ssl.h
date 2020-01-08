@@ -1023,6 +1023,7 @@ OPENSSL_EXPORT int SSL_set_ocsp_response(SSL *ssl,
 #define SSL_SIGN_RSA_PSS_RSAE_SHA384 0x0805
 #define SSL_SIGN_RSA_PSS_RSAE_SHA512 0x0806
 #define SSL_SIGN_ED25519 0x0807
+#define SSL_SIGN_OQS_SIGDEFAULT 0x0808
 
 // SSL_SIGN_RSA_PKCS1_MD5_SHA1 is an internal signature algorithm used to
 // specify raw RSASSA-PKCS1-v1_5 with an MD5/SHA-1 concatenation, as used in TLS

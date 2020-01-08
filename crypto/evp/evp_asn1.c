@@ -74,6 +74,7 @@ static const EVP_PKEY_ASN1_METHOD *const kASN1Methods[] = {
     &dsa_asn1_meth,
     &ed25519_asn1_meth,
     &x25519_asn1_meth,
+    &oqs_sigdefault_asn1_meth
 };
 
 static int parse_key_type(CBS *cbs, int *out_type) {
