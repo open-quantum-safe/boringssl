@@ -61,6 +61,8 @@
 
 #include <openssl/rsa.h>
 
+#include <oqs/oqs.h>
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
@@ -68,7 +70,7 @@ extern "C" {
 
 struct evp_pkey_asn1_method_st {
   int pkey_id;
-  uint8_t oid[9];
+  uint8_t oid[11]; // OQS note: increased length (was 9) to accomodate larger PQ OIDs
   uint8_t oid_len;
 
   // pub_decode decodes |params| and |key| as a SubjectPublicKeyInfo
@@ -245,6 +247,13 @@ typedef struct {
 } ED25519_KEY;
 
 typedef struct {
+    OQS_SIG *ctx;
+    uint8_t *pub;
+    uint8_t *priv;
+    char has_private;
+} OQS_KEY;
+
+typedef struct {
   uint8_t pub[32];
   uint8_t priv[32];
   char has_private;
@@ -255,12 +264,29 @@ extern const EVP_PKEY_ASN1_METHOD ec_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD rsa_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD ed25519_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD x25519_asn1_meth;
+// FIXMEOQS: add template
+extern const EVP_PKEY_ASN1_METHOD oqs_sigdefault_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD dilithium2_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD dilithium3_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD dilithium4_asn1_meth;
+//extern const EVP_PKEY_ASN1_METHOD picnicl1fs_asn1_meth;
+//extern const EVP_PKEY_ASN1_METHOD picnic2l1fs_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD qteslapi_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD qteslapiii_asn1_meth;
 
 extern const EVP_PKEY_METHOD rsa_pkey_meth;
 extern const EVP_PKEY_METHOD ec_pkey_meth;
 extern const EVP_PKEY_METHOD ed25519_pkey_meth;
 extern const EVP_PKEY_METHOD x25519_pkey_meth;
-
+// FIXMEOQS: add template
+extern const EVP_PKEY_METHOD oqs_sigdefault_pkey_meth;
+extern const EVP_PKEY_METHOD dilithium2_pkey_meth;
+extern const EVP_PKEY_METHOD dilithium3_pkey_meth;
+extern const EVP_PKEY_METHOD dilithium4_pkey_meth;
+//extern const EVP_PKEY_METHOD picnicl1fs_pkey_meth;
+//extern const EVP_PKEY_METHOD picnic2l1fs_pkey_meth;
+extern const EVP_PKEY_METHOD qteslapi_pkey_meth;
+extern const EVP_PKEY_METHOD qteslapiii_pkey_meth;
 
 #if defined(__cplusplus)
 }  // extern C

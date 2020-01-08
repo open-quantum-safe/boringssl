@@ -67,13 +67,21 @@
 #include "internal.h"
 #include "../internal.h"
 
-
 static const EVP_PKEY_ASN1_METHOD *const kASN1Methods[] = {
     &rsa_asn1_meth,
     &ec_asn1_meth,
     &dsa_asn1_meth,
     &ed25519_asn1_meth,
     &x25519_asn1_meth,
+    &oqs_sigdefault_asn1_meth,
+    &dilithium2_asn1_meth,
+    &dilithium3_asn1_meth,
+    &dilithium4_asn1_meth,
+    //    &picnicl1fs_asn1_meth,
+    //    &picnic2l1fs_asn1_meth,
+    &qteslapi_asn1_meth,
+    &qteslapiii_asn1_meth,
+    // FIXMEOQS: add template
 };
 
 static int parse_key_type(CBS *cbs, int *out_type) {

@@ -1023,6 +1023,16 @@ OPENSSL_EXPORT int SSL_set_ocsp_response(SSL *ssl,
 #define SSL_SIGN_RSA_PSS_RSAE_SHA384 0x0805
 #define SSL_SIGN_RSA_PSS_RSAE_SHA512 0x0806
 #define SSL_SIGN_ED25519 0x0807
+// OQS note: make sure the code points match the ones in the OpenSSL fork
+#define SSL_SIGN_OQS_SIGDEFAULT 0xfe00
+#define SSL_SIGN_DILITHIUM2 0xfe03
+#define SSL_SIGN_DILITHIUM3 0xfe06
+#define SSL_SIGN_DILITHIUM4 0xfe07
+//#define SSL_SIGN_PICNICL1FS 0xfe09
+//#define SSL_SIGN_PICNIC2L1FS 0xfe0c
+#define SSL_SIGN_QTESLAPI 0xfe0f
+#define SSL_SIGN_QTESLAPIII 0xfe12
+// FIXMEOQS: add template
 
 // SSL_SIGN_RSA_PKCS1_MD5_SHA1 is an internal signature algorithm used to
 // specify raw RSASSA-PKCS1-v1_5 with an MD5/SHA-1 concatenation, as used in TLS

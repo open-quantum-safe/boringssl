@@ -554,16 +554,16 @@ add_custom_command(
 
 add_library(crypto_test_data OBJECT crypto_test_data.cc)
 
-add_subdirectory(crypto)
-
-# libssl depends on liboqs.
-# Windows, and liboqs' use of
+# liboqs' use of
 # autotools make ExternalProject_Add
 # painful to use.
 set(OQS_DIR ${CMAKE_SOURCE_DIR}/oqs)
 if(NOT EXISTS ${OQS_DIR}/include/oqs/oqsconfig.h)
   message(FATAL_ERROR "This fork requires liboqs to be built first.")
 endif()
+
+add_subdirectory(crypto)
+
 add_subdirectory(ssl)
 add_subdirectory(ssl/test)
 

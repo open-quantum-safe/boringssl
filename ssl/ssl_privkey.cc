@@ -73,7 +73,16 @@ BSSL_NAMESPACE_BEGIN
 
 bool ssl_is_key_type_supported(int key_type) {
   return key_type == EVP_PKEY_RSA || key_type == EVP_PKEY_EC ||
-         key_type == EVP_PKEY_ED25519;
+         key_type == EVP_PKEY_ED25519 ||
+         key_type == EVP_PKEY_OQS_SIGDEFAULT ||
+         key_type == EVP_PKEY_DILITHIUM2 ||
+         key_type == EVP_PKEY_DILITHIUM3 ||
+         key_type == EVP_PKEY_DILITHIUM4 ||
+    //         key_type == EVP_PKEY_PICNICL1FS ||
+    //         key_type == EVP_PKEY_PICNIC2L1FS ||
+         key_type == EVP_PKEY_QTESLAPI ||
+         key_type == EVP_PKEY_QTESLAPIII;
+         // FIXMEOQS: add template
 }
 
 static bool ssl_set_pkey(CERT *cert, EVP_PKEY *pkey) {
@@ -122,6 +131,15 @@ static const SSL_SIGNATURE_ALGORITHM kSignatureAlgorithms[] = {
      false},
 
     {SSL_SIGN_ED25519, EVP_PKEY_ED25519, NID_undef, nullptr, false},
+    {SSL_SIGN_OQS_SIGDEFAULT, EVP_PKEY_OQS_SIGDEFAULT, NID_undef, nullptr, false},
+    {SSL_SIGN_DILITHIUM2, EVP_PKEY_DILITHIUM2, NID_undef, nullptr, false},
+    {SSL_SIGN_DILITHIUM3, EVP_PKEY_DILITHIUM3, NID_undef, nullptr, false},
+    {SSL_SIGN_DILITHIUM4, EVP_PKEY_DILITHIUM4, NID_undef, nullptr, false},
+    //    {SSL_SIGN_PICNICL1FS, EVP_PKEY_PICNICL1FS, NID_undef, nullptr, false},
+    //    {SSL_SIGN_PICNIC2L1FS, EVP_PKEY_PICNIC2L1FS, NID_undef, nullptr, false},
+    {SSL_SIGN_QTESLAPI, EVP_PKEY_QTESLAPI, NID_undef, nullptr, false},
+    {SSL_SIGN_QTESLAPIII, EVP_PKEY_QTESLAPIII, NID_undef, nullptr, false},
+    // FIXMEOQS: add template
 };
 
 static const SSL_SIGNATURE_ALGORITHM *get_signature_algorithm(uint16_t sigalg) {
@@ -450,6 +468,15 @@ static const struct {
     {SSL_SIGN_RSA_PSS_RSAE_SHA384, "rsa_pss_rsae_sha384"},
     {SSL_SIGN_RSA_PSS_RSAE_SHA512, "rsa_pss_rsae_sha512"},
     {SSL_SIGN_ED25519, "ed25519"},
+    {SSL_SIGN_OQS_SIGDEFAULT, "oqs_sigdefault"},
+    {SSL_SIGN_DILITHIUM2, "dilithium2"},
+    {SSL_SIGN_DILITHIUM3, "dilithium3"},
+    {SSL_SIGN_DILITHIUM4, "dilithium4"},
+    //    {SSL_SIGN_PICNICL1FS, "picnicl1fs"},
+    //    {SSL_SIGN_PICNIC2L1FS, "picnic2l1fs"},
+    {SSL_SIGN_QTESLAPI, "qteslapi"},
+    {SSL_SIGN_QTESLAPIII, "qteslapiii"},
+    // FIXMEOQS: add template
 };
 
 const char *SSL_get_signature_algorithm_name(uint16_t sigalg,

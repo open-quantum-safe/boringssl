@@ -950,6 +950,14 @@ auth_any		958
 CECPQ2		959
 CECPQ2b		960
 oqs_kemdefault		961
-p256_oqs_kemdefault		963
-frodo640aes		964
-p256_frodo640aes		965
+p256_oqs_kemdefault		962
+frodo640aes		963
+p256_frodo640aes		964
+oqs_sigdefault		965
+dilithium2		966
+dilithium3		967
+dilithium4		968
+picnicl1fs		969
+picnic2l1fs		970
+qteslapi		971
+qteslapiii		972

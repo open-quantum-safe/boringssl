@@ -4244,13 +4244,53 @@ extern "C" {
 #define NID_oqs_kemdefault 961
 
 #define SN_p256_oqs_kemdefault "p256_oqs_kemdefault"
-#define NID_p256_oqs_kemdefault 963
+#define NID_p256_oqs_kemdefault 962
 
 #define SN_frodo640aes "frodo640aes"
-#define NID_frodo640aes 964
+#define NID_frodo640aes 963
 
 #define SN_p256_frodo640aes "p256_frodo640aes"
-#define NID_p256_frodo640aes 965
+#define NID_p256_frodo640aes 964
+
+#define SN_oqs_sigdefault "oqs_sigdefault"
+#define LN_oqs_sigdefault "oqs_sigdefault"
+#define NID_oqs_sigdefault 965
+#define OBJ_oqs_sigdefault 1L, 3L, 9999L, 1L, 1L
+
+#define SN_dilithium2 "dilithium2"
+#define LN_dilithium2 "dilithium2"
+#define NID_dilithium2 966
+#define OBJ_dilithium2 1L, 3L, 9999L, 2L, 1L
+
+#define SN_dilithium3 "dilithium3"
+#define LN_dilithium3 "dilithium3"
+#define NID_dilithium3 967
+#define OBJ_dilithium3 1L, 3L, 9999L, 2L, 4L
+
+#define SN_dilithium4 "dilithium4"
+#define LN_dilithium4 "dilithium4"
+#define NID_dilithium4 968
+#define OBJ_dilithium4 1L, 3L, 9999L, 2L, 5L
+
+#define SN_picnicl1fs "picnicl1fs"
+#define LN_picnicl1fs "picnicl1fs"
+#define NID_picnicl1fs 969
+#define OBJ_picnicl1fs 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 1L, 1L
+
+#define SN_picnic2l1fs "picnic2l1fs"
+#define LN_picnic2l1fs "picnic2l1fs"
+#define NID_picnic2l1fs 970
+#define OBJ_picnic2l1fs 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 1L, 11L
+
+#define SN_qteslapi "qteslapi"
+#define LN_qteslapi "qteslapi"
+#define NID_qteslapi 971
+#define OBJ_qteslapi 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 2L, 10L
+
+#define SN_qteslapiii "qteslapiii"
+#define LN_qteslapiii "qteslapiii"
+#define NID_qteslapiii 972
+#define OBJ_qteslapiii 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 2L, 20L
 
 
 #if defined(__cplusplus)

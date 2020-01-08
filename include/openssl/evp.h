@@ -177,6 +177,15 @@ OPENSSL_EXPORT EC_KEY *EVP_PKEY_get1_EC_KEY(const EVP_PKEY *pkey);
 #define EVP_PKEY_EC NID_X9_62_id_ecPublicKey
 #define EVP_PKEY_ED25519 NID_ED25519
 #define EVP_PKEY_X25519 NID_X25519
+#define EVP_PKEY_OQS_SIGDEFAULT NID_oqs_sigdefault
+#define EVP_PKEY_DILITHIUM2 NID_dilithium2
+#define EVP_PKEY_DILITHIUM3 NID_dilithium3
+#define EVP_PKEY_DILITHIUM4 NID_dilithium4
+//#define EVP_PKEY_PICNICL1FS NID_picnicl1fs
+//#define EVP_PKEY_PICNIC2L1FS NID_picnic2l1fs
+#define EVP_PKEY_QTESLAPI NID_qteslapi
+#define EVP_PKEY_QTESLAPIII NID_qteslapiii
+// FIXMEOQS: add template
 
 // EVP_PKEY_assign sets the underlying key of |pkey| to |key|, which must be of
 // the given type. It returns one if successful or zero if the |type| argument

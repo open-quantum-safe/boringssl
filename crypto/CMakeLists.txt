@@ -1,4 +1,5 @@
 include_directories(../include)
+include_directories(${OQS_DIR}/include)
 
 if(NOT OPENSSL_NO_ASM)
   if(UNIX)
@@ -284,6 +285,8 @@ add_library(
   evp/p_rsa_asn1.c
   evp/p_x25519.c
   evp/p_x25519_asn1.c
+  evp/p_oqs_sig.c
+  evp/p_oqs_sig_asn1.c
   evp/pbkdf.c
   evp/print.c
   evp/scrypt.c
@@ -456,6 +459,7 @@ endif()
 if(USE_CUSTOM_LIBCXX)
   target_link_libraries(crypto libcxx)
 endif()
+target_link_libraries(crypto ${OQS_DIR}/lib/liboqs.a)
 
 add_executable(
   crypto_test
