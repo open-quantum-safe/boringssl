@@ -1361,5 +1361,6 @@ secg-scheme 14 3 : dhSinglePass-cofactorDH-sha512kdf-scheme
 
 ###### OQS_TEMPLATE_FRAGMENT_DEF_NIDS_START
  : oqs_kemdefault
+ : oqs_sigdefault
  : oqs_p256_kemdefault
 ###### OQS_TEMPLATE_FRAGMENT_DEF_NIDS_END
