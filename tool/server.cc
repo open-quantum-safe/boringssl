@@ -85,6 +85,10 @@ static const struct argument kArguments[] = {
         "Enable the JDK 11 workaround",
     },
     {
+        "-sig-alg", kOptionalArgument,
+        "A supported signature algorithm to generate the self-signed test certificate.",
+    },
+    {
         "", kOptionalArgument, "",
     },
 };
@@ -105,14 +109,27 @@ static bool LoadOCSPResponse(SSL_CTX *ctx, const char *filename) {
   return true;
 }
 
-static bssl::UniquePtr<EVP_PKEY> MakeKeyPairForSelfSignedCert() {
-  EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_OQS_SIGDEFAULT, NULL);
+static bssl::UniquePtr<EVP_PKEY> MakeKeyPairForSelfSignedCert(int alg_id) {
   bssl::UniquePtr<EVP_PKEY> evp_pkey(EVP_PKEY_new());
-  EVP_PKEY *pkey = evp_pkey.get();
-  if (!ctx || EVP_PKEY_keygen_init(ctx) != 1 || EVP_PKEY_keygen(ctx, &pkey) != 1) {
+  if (alg_id < 0) {
+    // default alg
+    bssl::UniquePtr<EC_KEY> ec_key(EC_KEY_new_by_curve_name(NID_X9_62_prime256v1));
+    if (!ec_key || !EC_KEY_generate_key(ec_key.get())) {
+      fprintf(stderr, "Failed to generate key pair.\n");
       return nullptr;
+    }
+    if (!evp_pkey || !EVP_PKEY_assign_EC_KEY(evp_pkey.get(), ec_key.release())) {
+	fprintf(stderr, "Failed to assign key pair.\n");
+	return nullptr;
+    }
+  } else {
+    // OQS key (FIXMEOQS: can we further merge code for these two options? Use the evp api to generate the ec key?)
+    EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new_id(alg_id, NULL);
+    EVP_PKEY *pkey = evp_pkey.get();
+    if (!ctx || EVP_PKEY_keygen_init(ctx) != 1 || EVP_PKEY_keygen(ctx, &pkey) != 1) {
+      return nullptr;
+    }
   }
-
   return evp_pkey;
 }
 
@@ -239,8 +256,21 @@ bool Server(const std::vector<std::string> &args) {
       return false;
     }
   } else {
-    bssl::UniquePtr<EVP_PKEY> evp_pkey = MakeKeyPairForSelfSignedCert();
+    int sig_alg_nid = -1;
+    if (args_map.count("-sig-alg") != 0) {
+      sig_alg_nid = OBJ_sn2nid(args_map["-sig-alg"].c_str());
+      if (sig_alg_nid == NID_undef) {
+	// FIXMEOQS: can/should I check that this is a valid OQS signature algorithm?
+	//           on one hand, it might be good to generalize this to use any sig algorithm,
+	//           but on the other hand, we want to minimize changes to boringssl while
+	//           enabling PQ auth. So limiting valid algs to OQS ones might be best.
+	fprintf(stderr, "Unknown signature algorithm.\n");
+	return false;
+      }
+    }
+    bssl::UniquePtr<EVP_PKEY> evp_pkey = MakeKeyPairForSelfSignedCert(sig_alg_nid);
     if (!evp_pkey) {
+      fprintf(stderr, "Failed to generate a signature key pair.\n");
       return false;
     }
     bssl::UniquePtr<X509> cert =
