@@ -69,6 +69,10 @@ The following quantum-safe algorithms from liboqs are supported (assuming they h
 
 - `oqs_sigdefault` (see [here](https://github.com/open-quantum-safe/openssl/wiki/Using-liboqs-algorithms-that-are-not-in-the-forks#oqsdefault) for what this denotes)
 - `dilithium2`
+- `dilithium3`
+- `dilithium4`
+- `qteslapi`
+- `qteslapiii`
 
 ## Quickstart
 

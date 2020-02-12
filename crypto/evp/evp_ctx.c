@@ -72,6 +72,12 @@ static const EVP_PKEY_METHOD *const evp_methods[] = {
     &x25519_pkey_meth,
     &oqs_sigdefault_pkey_meth,
     &dilithium2_pkey_meth,
+    &dilithium3_pkey_meth,
+    &dilithium4_pkey_meth,
+    //&picnicl1fs_pkey_meth,
+    //&picnic2l1fs_pkey_meth,
+    &qteslapi_pkey_meth,
+    &qteslapiii_pkey_meth,
     // FIXMEOQS: add template
 };
 

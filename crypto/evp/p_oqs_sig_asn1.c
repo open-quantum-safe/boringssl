@@ -208,6 +208,8 @@ static int ALG##_priv_encode(CBB *out, const EVP_PKEY *pkey) { \
   return 1;								\
 }
 
+// FIXMEOQS: boringssl uses an in for this function, which is too small for some PQ schemes.
+//           We'll need to refactor the API to support them.
 static int oqs_sig_size(const EVP_PKEY *pkey) {
   const OQS_KEY *key = pkey->pkey.ptr;
   return key->ctx->length_secret_key + key->ctx->length_public_key;
@@ -219,7 +221,7 @@ static int oqs_sig_bits(const EVP_PKEY *pkey) { return 253; /*TODO: Update with 
 const EVP_PKEY_ASN1_METHOD ALG##_asn1_meth = {		  \
     ALG_PKEY_ID,					  \
     ALG##_OID,						  \
-    5, /* generalize */					  \
+    ALG##_OID_LEN, /* FIXMEOQS: make a macro for this */  \
     ALG##_pub_decode,					  \
     ALG##_pub_encode,					  \
     oqs_sig_pub_cmp,					  \
@@ -247,10 +249,31 @@ DEFINE_OQS_SIG_PRIV_ENCODE(ALG)				   \
 DEFINE_OQS_SIG_PRIV_DECODE(ALG)				   \
 DEFINE_OQS_SIG_PKEY_ASN1_METHOD(ALG, ALG_PKEY_ID)
 
-// FIXMEOQS: add template
+// OQS note: the ALG_OID values can be found in the kObjectData array in crypto/objects/obj_dat.h
+#define oqs_sigdefault_OID 	{0x2B,0xCE,0x0F,0x01,0x01}
+#define oqs_sigdefault_OID_LEN	5
+#define dilithium2_OID		{0x2B,0xCE,0x0F,0x02,0x01}
+#define dilithium2_OID_LEN	5
+#define dilithium3_OID		{0x2B,0xCE,0x0F,0x02,0x04}
+#define dilithium3_OID_LEN	5
+#define dilithium4_OID		{0x2B,0xCE,0x0F,0x02,0x05}
+#define dilithium4_OID_LEN	5
+//#define picnicl1fs_OID		{0x2B,0x06,0x01,0x04,0x01,0x82,0x37,0x59,0x02,0x01,0x01}
+//#define picnicl1fs_OID_LEN	11
+//#define picnic2l1fs_OID		{0x2B,0x06,0x01,0x04,0x01,0x82,0x37,0x59,0x02,0x01,0x0B}
+//#define picnic2l1fs_OID_LEN	11
+#define qteslapi_OID		{0x2B,0x06,0x01,0x04,0x01,0x82,0x37,0x59,0x02,0x02,0x0A}
+#define qteslapi_OID_LEN	11
+#define qteslapiii_OID		{0x2B,0x06,0x01,0x04,0x01,0x82,0x37,0x59,0x02,0x02,0x14}
+#define qteslapiii_OID_LEN	11
 
-// OQS note: the ALG_OID values can be found in the kObjectData array in crypto/evp/obj_dat.h
-#define oqs_sigdefault_OID {0x2b,0xce,0x0f,0x01,0x01}
-#define dilithium2_OID {0x2b,0xce,0x0f,0x02,0x01}
-DEFINE_OQS_FUNCTIONS(oqs_sigdefault, OQS_SIG_alg_default, EVP_PKEY_OQS_SIGDEFAULT)
-DEFINE_OQS_FUNCTIONS(dilithium2, OQS_SIG_alg_dilithium_2, EVP_PKEY_DILITHIUM2)
+// FIXMEOQS: add template
+DEFINE_OQS_FUNCTIONS(oqs_sigdefault, 	OQS_SIG_alg_default, 		EVP_PKEY_OQS_SIGDEFAULT)
+DEFINE_OQS_FUNCTIONS(dilithium2,	OQS_SIG_alg_dilithium_2, 	EVP_PKEY_DILITHIUM2)
+DEFINE_OQS_FUNCTIONS(dilithium3, 	OQS_SIG_alg_dilithium_3, 	EVP_PKEY_DILITHIUM3)
+DEFINE_OQS_FUNCTIONS(dilithium4, 	OQS_SIG_alg_dilithium_4, 	EVP_PKEY_DILITHIUM4)
+//DEFINE_OQS_FUNCTIONS(picnicl1fs, 	OQS_SIG_alg_picnic_L1_FS,	EVP_PKEY_PICNICL1FS)
+//DEFINE_OQS_FUNCTIONS(picnic2l1fs, 	OQS_SIG_alg_picnic2_L1_FS,	EVP_PKEY_PICNIC2L1FS)
+DEFINE_OQS_FUNCTIONS(qteslapi, 		OQS_SIG_alg_qTesla_p_I, 	EVP_PKEY_QTESLAPI)
+DEFINE_OQS_FUNCTIONS(qteslapiii, 	OQS_SIG_alg_qTesla_p_III, 	EVP_PKEY_QTESLAPIII)
+// FIXMEOQS: add template

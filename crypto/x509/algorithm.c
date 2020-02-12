@@ -86,7 +86,13 @@ int x509_digest_sign_algorithm(EVP_MD_CTX *ctx, X509_ALGOR *algor) {
   int pkey_id = EVP_PKEY_id(pkey);
   if (pkey_id == EVP_PKEY_ED25519 ||
       pkey_id == EVP_PKEY_OQS_SIGDEFAULT ||
-      pkey_id == EVP_PKEY_DILITHIUM2
+      pkey_id == EVP_PKEY_DILITHIUM2 ||
+      pkey_id == EVP_PKEY_DILITHIUM3 ||
+      pkey_id == EVP_PKEY_DILITHIUM4 ||
+      //      pkey_id == EVP_PKEY_PICNICL1FS ||
+      //      pkey_id == EVP_PKEY_PICNIC2L1FS ||
+      pkey_id == EVP_PKEY_QTESLAPI ||
+      pkey_id == EVP_PKEY_QTESLAPIII
       // FIXMEOQS: add template
       ) {
     // The NID == EVP_PKEY_id for ED25519 and the OQS schemes
