@@ -20,53 +20,54 @@
 
 #include "internal.h"
 
-// oqs_sigdefault has no parameters to copy.
-static int pkey_oqs_sigdefault_copy(EVP_PKEY_CTX *dst, EVP_PKEY_CTX *src) { return 1; }
+// oqs_sig has no parameters to copy.
+static int pkey_oqs_sig_copy(EVP_PKEY_CTX *dst, EVP_PKEY_CTX *src) { return 1; }
 
-static int pkey_oqs_sigdefault_keygen(EVP_PKEY_CTX *ctx, EVP_PKEY *pkey) {
-  OQS_KEY *key = OPENSSL_malloc(sizeof(OQS_KEY));
-  if (!key) {
-    OPENSSL_PUT_ERROR(EVP, ERR_R_MALLOC_FAILURE);
-    return 0;
-  }
-
-  if (!EVP_PKEY_set_type(pkey, EVP_PKEY_OQS_SIGDEFAULT)) {
-    OPENSSL_free(key);
-    return 0;
-  }
-
-  key->ctx = OQS_SIG_new(OQS_SIG_alg_default);
-  if (!key->ctx) {
-    OPENSSL_PUT_ERROR(EVP, EVP_R_UNSUPPORTED_ALGORITHM);
-    return 0;
-  }
-
-  key->priv = malloc(key->ctx->length_secret_key);
-  if(!key->priv)
-  {
-    OPENSSL_PUT_ERROR(EVP, ERR_R_MALLOC_FAILURE);
-    return 0;
-  }
-
-  key->pub = malloc(key->ctx->length_public_key);
-  if(!key->pub)
-  {
-    OPENSSL_PUT_ERROR(EVP, ERR_R_MALLOC_FAILURE);
-    return 0;
-  }
-
-  if (OQS_SIG_keypair(key->ctx, key->pub, key->priv) != OQS_SUCCESS) {
-    OPENSSL_PUT_ERROR(EVP, EVP_R_KEYS_NOT_SET);
-    return 0;
-  }
-  key->has_private = 1;
-
-  OPENSSL_free(pkey->pkey.ptr);
-  pkey->pkey.ptr = key;
-  return 1;
+#define DEFINE_PKEY_KEYGEN(ALG, ALG_OQS_ID, ALG_PKEY_ID)		\
+static int ALG##_pkey_keygen(EVP_PKEY_CTX *ctx, EVP_PKEY *pkey) {	\
+  OQS_KEY *key = OPENSSL_malloc(sizeof(OQS_KEY));			\
+  if (!key) {								\
+    OPENSSL_PUT_ERROR(EVP, ERR_R_MALLOC_FAILURE);			\
+    return 0;								\
+  }									\
+									\
+  if (!EVP_PKEY_set_type(pkey, ALG_PKEY_ID)) {				\
+    OPENSSL_free(key);							\
+    return 0;								\
+  }									\
+									\
+  key->ctx = OQS_SIG_new(ALG_OQS_ID);					\
+  if (!key->ctx) {							\
+    OPENSSL_PUT_ERROR(EVP, EVP_R_UNSUPPORTED_ALGORITHM);		\
+    return 0;								\
+  }									\
+									\
+  key->priv = malloc(key->ctx->length_secret_key);			\
+  if(!key->priv)							\
+  {									\
+    OPENSSL_PUT_ERROR(EVP, ERR_R_MALLOC_FAILURE);			\
+    return 0;								\
+  }									\
+									\
+  key->pub = malloc(key->ctx->length_public_key);			\
+  if(!key->pub)								\
+  {									\
+    OPENSSL_PUT_ERROR(EVP, ERR_R_MALLOC_FAILURE);			\
+    return 0;								\
+  }									\
+									\
+  if (OQS_SIG_keypair(key->ctx, key->pub, key->priv) != OQS_SUCCESS) {	\
+    OPENSSL_PUT_ERROR(EVP, EVP_R_KEYS_NOT_SET);				\
+    return 0;								\
+  }									\
+  key->has_private = 1;							\
+									\
+  OPENSSL_free(pkey->pkey.ptr);						\
+  pkey->pkey.ptr = key;							\
+  return 1;								\
 }
 
-static int pkey_oqs_sigdefault_sign_message(EVP_PKEY_CTX *ctx, uint8_t *sig,
+static int pkey_oqs_sig_sign_message(EVP_PKEY_CTX *ctx, uint8_t *sig,
                                      size_t *siglen, const uint8_t *tbs,
                                      size_t tbslen) {
   OQS_KEY *key = ctx->pkey->pkey.ptr;
@@ -92,7 +93,7 @@ static int pkey_oqs_sigdefault_sign_message(EVP_PKEY_CTX *ctx, uint8_t *sig,
   return 1;
 }
 
-static int pkey_oqs_sigdefault_verify_message(EVP_PKEY_CTX *ctx, const uint8_t *sig,
+static int pkey_oqs_sig_verify_message(EVP_PKEY_CTX *ctx, const uint8_t *sig,
                                        size_t siglen, const uint8_t *tbs,
                                        size_t tbslen) {
   OQS_KEY *key = ctx->pkey->pkey.ptr;
@@ -105,25 +106,33 @@ static int pkey_oqs_sigdefault_verify_message(EVP_PKEY_CTX *ctx, const uint8_t *
   return 1;
 }
 
-static int pkey_oqs_sigdefault_ctrl(EVP_PKEY_CTX *ctx, int type, int p1, void *p2) {
+static int pkey_oqs_sig_ctrl(EVP_PKEY_CTX *ctx, int type, int p1, void *p2) {
     return 1;
 }
 
-
-const EVP_PKEY_METHOD oqs_sigdefault_pkey_meth = {
-    EVP_PKEY_OQS_SIGDEFAULT,
-    NULL /* init */,
-    pkey_oqs_sigdefault_copy,
-    NULL /* cleanup */,
-    pkey_oqs_sigdefault_keygen,
-    NULL /* sign */,
-    pkey_oqs_sigdefault_sign_message,
-    NULL /* verify */,
-    pkey_oqs_sigdefault_verify_message,
-    NULL /* verify_recover */,
-    NULL /* encrypt */,
-    NULL /* decrypt */,
-    NULL /* derive */,
-    NULL /* paramgen */,
-    pkey_oqs_sigdefault_ctrl,
+#define DEFINE_OQS_SIG_PKEY_METHOD(ALG, ALG_PKEY_ID) \
+const EVP_PKEY_METHOD ALG##_pkey_meth = {	     \
+    ALG_PKEY_ID,				     \
+    NULL /* init */,				     \
+    pkey_oqs_sig_copy,				     \
+    NULL /* cleanup */,				     \
+    ALG##_pkey_keygen,				     \
+    NULL /* sign */,				     \
+    pkey_oqs_sig_sign_message,			     \
+    NULL /* verify */,				     \
+    pkey_oqs_sig_verify_message,		     \
+    NULL /* verify_recover */,			     \
+    NULL /* encrypt */,				     \
+    NULL /* decrypt */,				     \
+    NULL /* derive */,				     \
+    NULL /* paramgen */,			     \
+    pkey_oqs_sig_ctrl,				     \
 };
+
+// FIXMEOQS: add template
+#define DEFINE_OQS_FUNCTIONS(ALG, ALG_OQS_ID, ALG_PKEY_ID) \
+DEFINE_PKEY_KEYGEN(ALG, ALG_OQS_ID, ALG_PKEY_ID)	   \
+DEFINE_OQS_SIG_PKEY_METHOD(ALG, ALG_PKEY_ID)
+
+DEFINE_OQS_FUNCTIONS(oqs_sigdefault, OQS_SIG_alg_default, EVP_PKEY_OQS_SIGDEFAULT)
+DEFINE_OQS_FUNCTIONS(dilithium2, OQS_SIG_alg_dilithium_2, EVP_PKEY_DILITHIUM2)

@@ -264,14 +264,17 @@ extern const EVP_PKEY_ASN1_METHOD ec_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD rsa_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD ed25519_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD x25519_asn1_meth;
+// FIXMEOQS: add template
 extern const EVP_PKEY_ASN1_METHOD oqs_sigdefault_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD dilithium2_asn1_meth;
 
 extern const EVP_PKEY_METHOD rsa_pkey_meth;
 extern const EVP_PKEY_METHOD ec_pkey_meth;
 extern const EVP_PKEY_METHOD ed25519_pkey_meth;
 extern const EVP_PKEY_METHOD x25519_pkey_meth;
+// FIXMEOQS: add template
 extern const EVP_PKEY_METHOD oqs_sigdefault_pkey_meth;
-
+extern const EVP_PKEY_METHOD dilithium2_pkey_meth;
 
 #if defined(__cplusplus)
 }  // extern C

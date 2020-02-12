@@ -4247,7 +4247,104 @@ extern "C" {
 #define NID_oqs_p256_kemdefault 962
 
 #define SN_oqs_sigdefault "oqs_sigdefault"
+#define LN_oqs_sigdefault "oqs_sigdefault"
 #define NID_oqs_sigdefault 963
+#define OBJ_oqs_sigdefault 1L, 3L, 9999L, 1L, 1L
+
+#define SN_p256_oqs_sigdefault "p256_oqs_sigdefault"
+#define LN_p256_oqs_sigdefault "p256_oqs_sigdefault"
+#define NID_p256_oqs_sigdefault 964
+#define OBJ_p256_oqs_sigdefault 1L, 3L, 9999L, 1L, 2L
+
+#define SN_rsa3072_oqs_sigdefault "rsa3072_oqs_sigdefault"
+#define LN_rsa3072_oqs_sigdefault "rsa3072_oqs_sigdefault"
+#define NID_rsa3072_oqs_sigdefault 965
+#define OBJ_rsa3072_oqs_sigdefault 1L, 3L, 9999L, 1L, 3L
+
+#define SN_dilithium2 "dilithium2"
+#define LN_dilithium2 "dilithium2"
+#define NID_dilithium2 966
+#define OBJ_dilithium2 1L, 3L, 9999L, 2L, 1L
+
+#define SN_p256_dilithium2 "p256_dilithium2"
+#define LN_p256_dilithium2 "p256_dilithium2"
+#define NID_p256_dilithium2 967
+#define OBJ_p256_dilithium2 1L, 3L, 9999L, 2L, 2L
+
+#define SN_rsa3072_dilithium2 "rsa3072_dilithium2"
+#define LN_rsa3072_dilithium2 "rsa3072_dilithium2"
+#define NID_rsa3072_dilithium2 968
+#define OBJ_rsa3072_dilithium2 1L, 3L, 9999L, 2L, 3L
+
+#define SN_dilithium3 "dilithium3"
+#define LN_dilithium3 "dilithium3"
+#define NID_dilithium3 969
+#define OBJ_dilithium3 1L, 3L, 9999L, 2L, 4L
+
+#define SN_dilithium4 "dilithium4"
+#define LN_dilithium4 "dilithium4"
+#define NID_dilithium4 970
+#define OBJ_dilithium4 1L, 3L, 9999L, 2L, 5L
+
+#define SN_p384_dilithium4 "p384_dilithium4"
+#define LN_p384_dilithium4 "p384_dilithium4"
+#define NID_p384_dilithium4 971
+#define OBJ_p384_dilithium4 1L, 3L, 9999L, 2L, 6L
+
+#define SN_picnicl1fs "picnicl1fs"
+#define LN_picnicl1fs "picnicl1fs"
+#define NID_picnicl1fs 972
+#define OBJ_picnicl1fs 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 1L, 1L
+
+#define SN_p256_picnicl1fs "p256_picnicl1fs"
+#define LN_p256_picnicl1fs "p256_picnicl1fs"
+#define NID_p256_picnicl1fs 973
+#define OBJ_p256_picnicl1fs 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 1L, 2L
+
+#define SN_rsa3072_picnicl1fs "rsa3072_picnicl1fs"
+#define LN_rsa3072_picnicl1fs "rsa3072_picnicl1fs"
+#define NID_rsa3072_picnicl1fs 974
+#define OBJ_rsa3072_picnicl1fs 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 1L, 3L
+
+#define SN_picnic2l1fs "picnic2l1fs"
+#define LN_picnic2l1fs "picnic2l1fs"
+#define NID_picnic2l1fs 975
+#define OBJ_picnic2l1fs 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 1L, 11L
+
+#define SN_p256_picnic2l1fs "p256_picnic2l1fs"
+#define LN_p256_picnic2l1fs "p256_picnic2l1fs"
+#define NID_p256_picnic2l1fs 976
+#define OBJ_p256_picnic2l1fs 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 1L, 12L
+
+#define SN_rsa3072_picnic2l1fs "rsa3072_picnic2l1fs"
+#define LN_rsa3072_picnic2l1fs "rsa3072_picnic2l1fs"
+#define NID_rsa3072_picnic2l1fs 977
+#define OBJ_rsa3072_picnic2l1fs 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 1L, 13L
+
+#define SN_qteslapi "qteslapi"
+#define LN_qteslapi "qteslapi"
+#define NID_qteslapi 978
+#define OBJ_qteslapi 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 2L, 10L
+
+#define SN_p256_qteslapi "p256_qteslapi"
+#define LN_p256_qteslapi "p256_qteslapi"
+#define NID_p256_qteslapi 979
+#define OBJ_p256_qteslapi 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 2L, 11L
+
+#define SN_rsa3072_qteslapi "rsa3072_qteslapi"
+#define LN_rsa3072_qteslapi "rsa3072_qteslapi"
+#define NID_rsa3072_qteslapi 980
+#define OBJ_rsa3072_qteslapi 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 2L, 12L
+
+#define SN_qteslapiii "qteslapiii"
+#define LN_qteslapiii "qteslapiii"
+#define NID_qteslapiii 981
+#define OBJ_qteslapiii 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 2L, 20L
+
+#define SN_p384_qteslapiii "p384_qteslapiii"
+#define LN_p384_qteslapiii "p384_qteslapiii"
+#define NID_p384_qteslapiii 982
+#define OBJ_p384_qteslapiii 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 2L, 21L
 
 
 #if defined(__cplusplus)

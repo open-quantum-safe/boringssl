@@ -204,6 +204,9 @@ static const EVP_PKEY_ASN1_METHOD *evp_pkey_asn1_find(int nid) {
       return &x25519_asn1_meth;
     case EVP_PKEY_OQS_SIGDEFAULT:
       return &oqs_sigdefault_asn1_meth;
+    case EVP_PKEY_DILITHIUM2:
+      return &dilithium2_asn1_meth;
+      // FIXMEOQS: add template
     default:
       return NULL;
   }
