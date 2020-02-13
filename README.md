@@ -126,11 +126,7 @@ BoringSSL contains a basic TLS server (`s_server`) and TLS client (`s_client`) w
 
 To run a basic TLS server with all libOQS ciphersuites enabled, from the `build` directory, run (where `<SIG>` = one of the quantum-safe or hybrid signature algorithms listed in the [Supported Algorithms](#supported-algorithms) section above; if the `sig-alg` option is omitted, the default classical algorithm `ecdhe` with prime curve `X9_62_prime256v1` is used):
 
-<<<<<<< HEAD
 	tool/bssl server -accept 4433 -sig-alg <SIG> -loop
-=======
-	tool/bssl server -accept 4433 -sig-alg oqs_<SIG> -loop
->>>>>>> 019db01920938986ad3cba1ce9827bec0355c4ff
 
 In another terminal window, you can run a TLS client requesting one of the supported ciphersuites (where `<KEX>` = one of the quantum-safe or hybrid key exchange algorithms listed in the [Supported Algorithms](#supported-algorithms) section above):
 
