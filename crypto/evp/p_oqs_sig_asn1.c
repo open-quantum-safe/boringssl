@@ -212,10 +212,19 @@ static int ALG##_priv_encode(CBB *out, const EVP_PKEY *pkey) { \
 //           We'll need to refactor the API to support them.
 static int oqs_sig_size(const EVP_PKEY *pkey) {
   const OQS_KEY *key = pkey->pkey.ptr;
-  return key->ctx->length_secret_key + key->ctx->length_public_key;
+  return key->ctx->length_signature;
 }
 
-static int oqs_sig_bits(const EVP_PKEY *pkey) { return 253; /*TODO: Update with actual bit count*/ }
+// FIXMEOQS: boringssl uses an in for this function, which is too small for some PQ schemes.
+//           We'll need to refactor the API to support them.
+// FIXMEOQS: what should we return here? RSA returns the modulus size, ECDSA returns the length
+//           of the group order. This function is not used in the boringssl code base (other than
+//           for some rsa-specific processing), so it's unclear what we should do. Currently
+//           returning the public key size, which won't overflow the int for the schemes in OQS (for now).
+static int oqs_sig_bits(const EVP_PKEY *pkey) {
+  const OQS_KEY *key = pkey->pkey.ptr;
+  return key->ctx->length_public_key;
+}
 
 #define DEFINE_OQS_SIG_PKEY_ASN1_METHOD(ALG, ALG_PKEY_ID) \
 const EVP_PKEY_ASN1_METHOD ALG##_asn1_meth = {		  \
