@@ -549,6 +549,8 @@ static constexpr struct {
     {EVP_PKEY_EC, NID_sha384, SSL_SIGN_ECDSA_SECP384R1_SHA384},
     {EVP_PKEY_EC, NID_sha512, SSL_SIGN_ECDSA_SECP521R1_SHA512},
     {EVP_PKEY_ED25519, NID_undef, SSL_SIGN_ED25519},
+    // TODO: OQS Add templating
+    {EVP_PKEY_OQS_SIGDEFAULT, NID_undef, SSL_SIGN_OQS_SIGDEFAULT},
 };
 
 static bool parse_sigalg_pairs(Array<uint16_t> *out, const int *values,

@@ -605,8 +605,15 @@ add_custom_target(
     ${MAYBE_USES_TERMINAL})
 
 add_custom_target(
-    run_oqs_tests
-    COMMAND python3 -m pytest -v oqs_test/test_kems.py --bssl_shim=$<TARGET_FILE:bssl_shim> --bssl=$<TARGET_FILE:bssl>
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    run_basic_oqs_tests
+    COMMAND python3 -m pytest --verbose test_basic.py --bssl-shim=$<TARGET_FILE:bssl_shim> --bssl=$<TARGET_FILE:bssl>
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/oqs_test
+    DEPENDS all_tests bssl_shim
+    ${MAYBE_USES_TERMINAL})
+
+add_custom_target(
+    run_full_oqs_tests
+    COMMAND python3 -m pytest --verbose test_full.py --bssl-shim=$<TARGET_FILE:bssl_shim> --bssl=$<TARGET_FILE:bssl>
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/oqs_test
     DEPENDS all_tests bssl_shim
     ${MAYBE_USES_TERMINAL})

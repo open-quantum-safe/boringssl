@@ -112,12 +112,10 @@ static bool LoadOCSPResponse(SSL_CTX *ctx, const char *filename) {
 static bssl::UniquePtr<EVP_PKEY> MakeKeyPairForSelfSignedCert(int sig_alg_nid) {
   // TODO: Add RSA 3072, Ed25519 (if needed)
   bssl::UniquePtr<EVP_PKEY> evp_pkey(EVP_PKEY_new());
-  switch(sig_alg_nid)
-  {
-    case NID_secp224r1:
-    case NID_X9_62_prime256v1:
-    case NID_secp384r1:
-    case NID_secp521r1:
+  if(sig_alg_nid == NID_secp224r1 ||
+     sig_alg_nid == NID_X9_62_prime256v1 ||
+     sig_alg_nid == NID_secp384r1 ||
+     sig_alg_nid == NID_secp521r1) {
       bssl::UniquePtr<EC_KEY> ec_key(EC_KEY_new_by_curve_name(sig_alg_nid));
       if (!ec_key || !EC_KEY_generate_key(ec_key.get())) {
         fprintf(stderr, "Failed to generate key pair.\n");
@@ -127,8 +125,7 @@ static bssl::UniquePtr<EVP_PKEY> MakeKeyPairForSelfSignedCert(int sig_alg_nid) {
         fprintf(stderr, "Failed to assign key pair.\n");
         return nullptr;
       }
-      break;
-    default:
+    } else {
       EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new_id(sig_alg_nid, NULL);
       EVP_PKEY *pkey = evp_pkey.get();
       if (!ctx || EVP_PKEY_keygen_init(ctx) != 1 || EVP_PKEY_keygen(ctx, &pkey) != 1) {
