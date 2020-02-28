@@ -1,5 +1,4 @@
 import oqs_mappings
-import os
 import pytest
 import sys
 import subprocess
@@ -16,8 +15,8 @@ def bssl_server_port(bssl):
                                           '-accept', '44433',
                                           '-sig-alg', 'oqs_sigdefault',
                                           '-loop'],
-                                    stdout=open(os.devnull),
-                                    stderr=open(os.devnull))
+                                    stdout=subprocess.PIPE,
+                                    stderr=subprocess.STDOUT)
     time.sleep(0.01)
     # Run tests
     yield '44433'
@@ -44,13 +43,13 @@ def test_kem(bssl_server_port, bssl_shim, kem_name):
 
 @pytest.mark.parametrize('sig_name', oqs_mappings.sig_to_code_point.keys())
 def test_sig(bssl, bssl_shim, sig_name):
-    subprocess.Popen([bssl, 'server',
-                            '-accept', '44433',
-                            '-curves', 'oqs_kemdefault',
-                            '-sig-alg', sig_name],
-                            stdout=open(os.devnull),
-                            stderr=open(os.devnull))
-    time.sleep(0.01)
+    bssl_server = subprocess.Popen([bssl, 'server',
+                                         '-accept', '44433',
+                                         '-curves', 'oqs_kemdefault',
+                                         '-sig-alg', sig_name],
+                                    stdout=subprocess.PIPE,
+                                    stderr=subprocess.STDOUT)
+    time.sleep(0.1)
     result = subprocess.run(
         [bssl_shim, '-port', '44433',
                     '-expect-version', 'TLSv1.3',

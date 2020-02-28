@@ -4052,6 +4052,10 @@ TEST(SSLTest, SignatureAlgorithmProperties) {
             SSL_get_signature_algorithm_key_type(SSL_SIGN_DILITHIUM3));
   EXPECT_EQ(EVP_PKEY_DILITHIUM4,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_DILITHIUM4));
+  EXPECT_EQ(EVP_PKEY_PICNICL1FS,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_PICNICL1FS));
+  EXPECT_EQ(EVP_PKEY_PICNIC2L1FS,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_PICNIC2L1FS));
   EXPECT_EQ(EVP_PKEY_QTESLAPI,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_QTESLAPI));
   EXPECT_EQ(EVP_PKEY_QTESLAPIII,

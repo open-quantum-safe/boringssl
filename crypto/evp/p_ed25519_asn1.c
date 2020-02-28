@@ -194,7 +194,7 @@ static int ed25519_priv_encode(CBB *out, const EVP_PKEY *pkey) {
   return 1;
 }
 
-static int ed25519_size(const EVP_PKEY *pkey) { return 64; }
+static size_t ed25519_size(const EVP_PKEY *pkey) { return 64; }
 
 static int ed25519_bits(const EVP_PKEY *pkey) { return 253; }
 

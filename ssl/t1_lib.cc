@@ -456,6 +456,8 @@ static const uint16_t kVerifySignatureAlgorithms[] = {
     SSL_SIGN_DILITHIUM2,
     SSL_SIGN_DILITHIUM3,
     SSL_SIGN_DILITHIUM4,
+    SSL_SIGN_PICNICL1FS,
+    SSL_SIGN_PICNIC2L1FS,
     SSL_SIGN_QTESLAPI,
     SSL_SIGN_QTESLAPIII,
     // FIXMEOQS: add template
@@ -491,8 +493,8 @@ static const uint16_t kSignSignatureAlgorithms[] = {
     SSL_SIGN_DILITHIUM2,
     SSL_SIGN_DILITHIUM3,
     SSL_SIGN_DILITHIUM4,
-    //    SSL_SIGN_PICNICL1FS,
-    //    SSL_SIGN_PICNIC2L1FS,
+    SSL_SIGN_PICNICL1FS,
+    SSL_SIGN_PICNIC2L1FS,
     SSL_SIGN_QTESLAPI,
     SSL_SIGN_QTESLAPIII,
     // FIXMEOQS: add template
@@ -3850,8 +3852,8 @@ Span<const uint16_t> tls1_get_peer_verify_algorithms(const SSL_HANDSHAKE *hs) {
                               SSL_SIGN_DILITHIUM2,
                               SSL_SIGN_DILITHIUM3,
                               SSL_SIGN_DILITHIUM4,
-                              // SSL_SIGN_PICNICL1FS,
-                              // SSL_SIGN_PICNIC2L1FS,
+                              SSL_SIGN_PICNICL1FS,
+                              SSL_SIGN_PICNIC2L1FS,
                               SSL_SIGN_QTESLAPI,
                               SSL_SIGN_QTESLAPIII
                               // FIXMEOQS: add template

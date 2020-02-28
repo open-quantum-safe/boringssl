@@ -124,7 +124,8 @@ OPENSSL_EXPORT int EVP_PKEY_missing_parameters(const EVP_PKEY *pkey);
 // |pkey|. For an RSA key, this returns the number of bytes needed to represent
 // the modulus. For an EC key, this returns the maximum size of a DER-encoded
 // ECDSA signature.
-OPENSSL_EXPORT int EVP_PKEY_size(const EVP_PKEY *pkey);
+// OQS note: We've changed the return type from "int" to "size_t" to allow for PQ algorithms with large signatures.
+OPENSSL_EXPORT size_t EVP_PKEY_size(const EVP_PKEY *pkey);
 
 // EVP_PKEY_bits returns the "size", in bits, of |pkey|. For an RSA key, this
 // returns the bit length of the modulus. For an EC key, this returns the bit
@@ -181,8 +182,8 @@ OPENSSL_EXPORT EC_KEY *EVP_PKEY_get1_EC_KEY(const EVP_PKEY *pkey);
 #define EVP_PKEY_DILITHIUM2 NID_dilithium2
 #define EVP_PKEY_DILITHIUM3 NID_dilithium3
 #define EVP_PKEY_DILITHIUM4 NID_dilithium4
-//#define EVP_PKEY_PICNICL1FS NID_picnicl1fs
-//#define EVP_PKEY_PICNIC2L1FS NID_picnic2l1fs
+#define EVP_PKEY_PICNICL1FS NID_picnicl1fs
+#define EVP_PKEY_PICNIC2L1FS NID_picnic2l1fs
 #define EVP_PKEY_QTESLAPI NID_qteslapi
 #define EVP_PKEY_QTESLAPIII NID_qteslapiii
 // FIXMEOQS: add template

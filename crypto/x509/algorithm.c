@@ -89,8 +89,8 @@ int x509_digest_sign_algorithm(EVP_MD_CTX *ctx, X509_ALGOR *algor) {
       pkey_id == EVP_PKEY_DILITHIUM2 ||
       pkey_id == EVP_PKEY_DILITHIUM3 ||
       pkey_id == EVP_PKEY_DILITHIUM4 ||
-      //      pkey_id == EVP_PKEY_PICNICL1FS ||
-      //      pkey_id == EVP_PKEY_PICNIC2L1FS ||
+      pkey_id == EVP_PKEY_PICNICL1FS ||
+      pkey_id == EVP_PKEY_PICNIC2L1FS ||
       pkey_id == EVP_PKEY_QTESLAPI ||
       pkey_id == EVP_PKEY_QTESLAPIII
       // FIXMEOQS: add template

@@ -1,6 +1,5 @@
 import itertools
 import oqs_mappings
-import os
 import pytest
 import sys
 import subprocess
@@ -20,9 +19,9 @@ def bssl_server_sig(bssl, request):
                                           '-accept', '44433',
                                           '-sig-alg', request.param,
                                           '-loop'],
-                                    stdout=open(os.devnull),
-                                    stderr=open(os.devnull))
-    time.sleep(0.01)
+                                    stdout=subprocess.PIPE,
+                                    stderr=subprocess.STDOUT)
+    time.sleep(0.1)
     # Run tests
     yield request.param
     # Teardown: stop bssl server

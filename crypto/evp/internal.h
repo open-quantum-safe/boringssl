@@ -107,7 +107,10 @@ struct evp_pkey_asn1_method_st {
   // custom implementations which do not expose key material and parameters.
   int (*pkey_opaque)(const EVP_PKEY *pk);
 
-  int (*pkey_size)(const EVP_PKEY *pk);
+  // OQS note: We've changed the return type from "int" to "size_t"
+  // to allow for PQ algorithms with large signatures.
+  size_t (*pkey_size)(const EVP_PKEY *pk);
+
   int (*pkey_bits)(const EVP_PKEY *pk);
 
   int (*param_missing)(const EVP_PKEY *pk);
@@ -269,8 +272,8 @@ extern const EVP_PKEY_ASN1_METHOD oqs_sigdefault_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD dilithium2_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD dilithium3_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD dilithium4_asn1_meth;
-//extern const EVP_PKEY_ASN1_METHOD picnicl1fs_asn1_meth;
-//extern const EVP_PKEY_ASN1_METHOD picnic2l1fs_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD picnicl1fs_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD picnic2l1fs_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD qteslapi_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD qteslapiii_asn1_meth;
 
@@ -283,8 +286,8 @@ extern const EVP_PKEY_METHOD oqs_sigdefault_pkey_meth;
 extern const EVP_PKEY_METHOD dilithium2_pkey_meth;
 extern const EVP_PKEY_METHOD dilithium3_pkey_meth;
 extern const EVP_PKEY_METHOD dilithium4_pkey_meth;
-//extern const EVP_PKEY_METHOD picnicl1fs_pkey_meth;
-//extern const EVP_PKEY_METHOD picnic2l1fs_pkey_meth;
+extern const EVP_PKEY_METHOD picnicl1fs_pkey_meth;
+extern const EVP_PKEY_METHOD picnic2l1fs_pkey_meth;
 extern const EVP_PKEY_METHOD qteslapi_pkey_meth;
 extern const EVP_PKEY_METHOD qteslapiii_pkey_meth;
 

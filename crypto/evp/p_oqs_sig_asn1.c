@@ -29,7 +29,7 @@ static void oqs_sig_free(EVP_PKEY *pkey) {
   pkey->pkey.ptr = NULL;
 }
 
-#define DEFINE_OQS_SIG_SET_PRIV_RAW(ALG, ALG_OQS_ID)                           \
+#define DEFINE_OQS_SIG_SET_PRIV_RAW(ALG, OQS_METH)                             \
 static int ALG##_set_priv_raw(EVP_PKEY *pkey, const uint8_t *in, size_t len) { \
   OQS_KEY *key = OPENSSL_malloc(sizeof(OQS_KEY));                              \
   if (key == NULL) {                                                           \
@@ -37,7 +37,7 @@ static int ALG##_set_priv_raw(EVP_PKEY *pkey, const uint8_t *in, size_t len) { \
     return 0;                                                                  \
   }                                                                            \
                                                                                \
-  key->ctx = OQS_SIG_new(ALG_OQS_ID);                                          \
+  key->ctx = OQS_SIG_new(OQS_METH);                                            \
   if (!key->ctx) {                                                             \
     OPENSSL_PUT_ERROR(EVP, EVP_R_UNSUPPORTED_ALGORITHM);                       \
     return 0;                                                                  \
@@ -61,7 +61,7 @@ static int ALG##_set_priv_raw(EVP_PKEY *pkey, const uint8_t *in, size_t len) { \
   return 1;                                                                    \
 }
 
-#define DEFINE_OQS_SIG_SET_PUB_RAW(ALG, ALG_OQS_ID)                           \
+#define DEFINE_OQS_SIG_SET_PUB_RAW(ALG, OQS_METH)                             \
 static int ALG##_set_pub_raw(EVP_PKEY *pkey, const uint8_t *in, size_t len) { \
   OQS_KEY *key = OPENSSL_malloc(sizeof(OQS_KEY));                             \
   if (key == NULL) {                                                          \
@@ -69,7 +69,7 @@ static int ALG##_set_pub_raw(EVP_PKEY *pkey, const uint8_t *in, size_t len) { \
     return 0;                                                                 \
   }                                                                           \
                                                                               \
-  key->ctx = OQS_SIG_new(ALG_OQS_ID);                                         \
+  key->ctx = OQS_SIG_new(OQS_METH);                                           \
   if (!key->ctx) {                                                            \
     OPENSSL_PUT_ERROR(EVP, EVP_R_UNSUPPORTED_ALGORITHM);                      \
     return 0;                                                                 \
@@ -208,29 +208,24 @@ static int ALG##_priv_encode(CBB *out, const EVP_PKEY *pkey) {              \
   return 1;                                                                 \
 }
 
-// FIXMEOQS: boringssl uses an int for this function, which is too small for some PQ schemes.
-//           We'll need to refactor the API to support them.
-static int oqs_sig_size(const EVP_PKEY *pkey) {
+static size_t oqs_sig_size(const EVP_PKEY *pkey) {
   const OQS_KEY *key = pkey->pkey.ptr;
   return key->ctx->length_signature;
 }
 
-// FIXMEOQS: boringssl uses an int for this function, which is too small for some PQ schemes.
-//           We'll need to refactor the API to support them.
-// FIXMEOQS: what should we return here? RSA returns the modulus size, ECDSA returns the length
-//           of the group order. This function is not used in the boringssl code base (other than
-//           for some rsa-specific processing), so it's unclear what we should do. Currently
-//           returning the public key size, which won't overflow the int for the schemes in OQS (for now).
-static int oqs_sig_bits(const EVP_PKEY *pkey) {
-  const OQS_KEY *key = pkey->pkey.ptr;
-  return key->ctx->length_public_key;
-}
+#define DEFINE_OQS_ASN1_FUNCTIONS(ALG, OQS_METH, ALG_PKEY)    \
+DEFINE_OQS_SIG_SET_PUB_RAW(ALG, OQS_METH)                     \
+DEFINE_OQS_SIG_SET_PRIV_RAW(ALG, OQS_METH)                    \
+DEFINE_OQS_SIG_PUB_ENCODE(ALG)                                \
+DEFINE_OQS_SIG_PUB_DECODE(ALG)                                \
+DEFINE_OQS_SIG_PRIV_ENCODE(ALG)                               \
+DEFINE_OQS_SIG_PRIV_DECODE(ALG)
 
-#define DEFINE_OQS_SIG_PKEY_ASN1_METHOD(ALG, ALG_PKEY_ID) \
+#define DEFINE_OQS_SIG_PKEY_ASN1_METHOD(ALG, ALG_PKEY, OID_LEN, ...)    \
 const EVP_PKEY_ASN1_METHOD ALG##_asn1_meth = {            \
-    ALG_PKEY_ID,                                          \
-    ALG##_OID,                                            \
-    ALG##_OID_LEN, /* FIXMEOQS: make a macro for this */  \
+    ALG_PKEY,                                             \
+    {__VA_ARGS__},                                            \
+    OID_LEN,                                        \
     ALG##_pub_decode,                                     \
     ALG##_pub_encode,                                     \
     oqs_sig_pub_cmp,                                      \
@@ -242,47 +237,37 @@ const EVP_PKEY_ASN1_METHOD ALG##_asn1_meth = {            \
     oqs_sig_get_pub_raw,                                  \
     NULL /* pkey_opaque */,                               \
     oqs_sig_size,                                         \
-    oqs_sig_bits,                                         \
+    NULL /* pkey_bits */,                                 \
     NULL /* param_missing */,                             \
     NULL /* param_copy */,                                \
     NULL /* param_cmp */,                                 \
     oqs_sig_free,                                         \
 };
 
-#define DEFINE_OQS_FUNCTIONS(ALG, ALG_OQS_ID, ALG_PKEY_ID) \
-DEFINE_OQS_SIG_SET_PUB_RAW(ALG, ALG_OQS_ID)                \
-DEFINE_OQS_SIG_SET_PRIV_RAW(ALG, ALG_OQS_ID)               \
-DEFINE_OQS_SIG_PUB_ENCODE(ALG)                             \
-DEFINE_OQS_SIG_PUB_DECODE(ALG)                             \
-DEFINE_OQS_SIG_PRIV_ENCODE(ALG)                            \
-DEFINE_OQS_SIG_PRIV_DECODE(ALG)                            \
-DEFINE_OQS_SIG_PKEY_ASN1_METHOD(ALG, ALG_PKEY_ID)
+#define UNWRAP(...) __VA_ARGS__
 
-// OQS note: the ALG_OID values can be found in the kObjectData array in crypto/objects/obj_dat.h
-#define oqs_sigdefault_OID  {0x2B,0xCE,0x0F,0x01,0x01}
-#define oqs_sigdefault_OID_LEN  5
-#define dilithium2_OID      {0x2B,0xCE,0x0F,0x02,0x01}
-#define dilithium2_OID_LEN  5
-#define dilithium3_OID      {0x2B,0xCE,0x0F,0x02,0x04}
-#define dilithium3_OID_LEN  5
-#define dilithium4_OID      {0x2B,0xCE,0x0F,0x02,0x05}
-#define dilithium4_OID_LEN  5
-//#define picnicl1fs_OID        {0x2B,0x06,0x01,0x04,0x01,0x82,0x37,0x59,0x02,0x01,0x01}
-//#define picnicl1fs_OID_LEN    11
-//#define picnic2l1fs_OID       {0x2B,0x06,0x01,0x04,0x01,0x82,0x37,0x59,0x02,0x01,0x0B}
-//#define picnic2l1fs_OID_LEN   11
-#define qteslapi_OID        {0x2B,0x06,0x01,0x04,0x01,0x82,0x37,0x59,0x02,0x02,0x0A}
-#define qteslapi_OID_LEN    11
-#define qteslapiii_OID      {0x2B,0x06,0x01,0x04,0x01,0x82,0x37,0x59,0x02,0x02,0x14}
-#define qteslapiii_OID_LEN  11
+// the ALG_OID values can be found in the kObjectData array in crypto/objects/obj_dat.h
+DEFINE_OQS_ASN1_FUNCTIONS(oqs_sigdefault, OQS_SIG_alg_default, EVP_PKEY_OQS_SIGDEFAULT)
+DEFINE_OQS_SIG_PKEY_ASN1_METHOD(oqs_sigdefault, EVP_PKEY_OQS_SIGDEFAULT, 5, UNWRAP(0x2B, 0xCE, 0x0F, 0x01, 0x01))
 
-// FIXMEOQS: add template
-DEFINE_OQS_FUNCTIONS(oqs_sigdefault, OQS_SIG_alg_default, EVP_PKEY_OQS_SIGDEFAULT)
-DEFINE_OQS_FUNCTIONS(dilithium2, OQS_SIG_alg_dilithium_2, EVP_PKEY_DILITHIUM2)
-DEFINE_OQS_FUNCTIONS(dilithium3, OQS_SIG_alg_dilithium_3, EVP_PKEY_DILITHIUM3)
-DEFINE_OQS_FUNCTIONS(dilithium4, OQS_SIG_alg_dilithium_4, EVP_PKEY_DILITHIUM4)
-//DEFINE_OQS_FUNCTIONS(picnicl1fs, OQS_SIG_alg_picnic_L1_FS, EVP_PKEY_PICNICL1FS)
-//DEFINE_OQS_FUNCTIONS(picnic2l1fs, OQS_SIG_alg_picnic2_L1_FS, EVP_PKEY_PICNIC2L1FS)
-DEFINE_OQS_FUNCTIONS(qteslapi, OQS_SIG_alg_qTesla_p_I, EVP_PKEY_QTESLAPI)
-DEFINE_OQS_FUNCTIONS(qteslapiii, OQS_SIG_alg_qTesla_p_III, EVP_PKEY_QTESLAPIII)
+DEFINE_OQS_ASN1_FUNCTIONS(dilithium2, OQS_SIG_alg_dilithium_2, EVP_PKEY_DILITHIUM2)
+DEFINE_OQS_SIG_PKEY_ASN1_METHOD(dilithium2, EVP_PKEY_DILITHIUM2, 5, UNWRAP(0x2B, 0xCE, 0x0F, 0x02, 0x01))
+
+DEFINE_OQS_ASN1_FUNCTIONS(dilithium3, OQS_SIG_alg_dilithium_3, EVP_PKEY_DILITHIUM3)
+DEFINE_OQS_SIG_PKEY_ASN1_METHOD(dilithium3, EVP_PKEY_DILITHIUM3, 5, UNWRAP(0x2B, 0xCE, 0x0F, 0x02, 0x04))
+
+DEFINE_OQS_ASN1_FUNCTIONS(dilithium4, OQS_SIG_alg_dilithium_4, EVP_PKEY_DILITHIUM4)
+DEFINE_OQS_SIG_PKEY_ASN1_METHOD(dilithium4, EVP_PKEY_DILITHIUM4, 5, UNWRAP(0x2B, 0xCE, 0x0F, 0x02, 0x05))
+
+DEFINE_OQS_ASN1_FUNCTIONS(picnicl1fs, OQS_SIG_alg_picnic_L1_FS, EVP_PKEY_PICNICL1FS)
+DEFINE_OQS_SIG_PKEY_ASN1_METHOD(picnicl1fs, EVP_PKEY_PICNICL1FS, 11, UNWRAP(0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x59, 0x02, 0x01, 0x01))
+
+DEFINE_OQS_ASN1_FUNCTIONS(picnic2l1fs, OQS_SIG_alg_picnic2_L1_FS, EVP_PKEY_PICNIC2L1FS)
+DEFINE_OQS_SIG_PKEY_ASN1_METHOD(picnic2l1fs, EVP_PKEY_PICNIC2L1FS, 11, UNWRAP(0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x59, 0x02, 0x01, 0x0B))
+
+DEFINE_OQS_ASN1_FUNCTIONS(qteslapi, OQS_SIG_alg_qTesla_p_I, EVP_PKEY_QTESLAPI)
+DEFINE_OQS_SIG_PKEY_ASN1_METHOD(qteslapi, EVP_PKEY_QTESLAPI, 11, UNWRAP(0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x59, 0x02, 0x02, 0x0A))
+
+DEFINE_OQS_ASN1_FUNCTIONS(qteslapiii, OQS_SIG_alg_qTesla_p_III, EVP_PKEY_QTESLAPIII)
+DEFINE_OQS_SIG_PKEY_ASN1_METHOD(qteslapiii, EVP_PKEY_QTESLAPIII, 11, UNWRAP(0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x59, 0x02, 0x02, 0x14))
 // FIXMEOQS: add template

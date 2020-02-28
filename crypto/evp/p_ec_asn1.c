@@ -188,7 +188,9 @@ static int eckey_priv_encode(CBB *out, const EVP_PKEY *key) {
   return 1;
 }
 
-static int int_ec_size(const EVP_PKEY *pkey) {
+// OQS note: We have renamed this from "int_ec_size"
+// to "size_t_ec_size"
+static size_t size_t_ec_size(const EVP_PKEY *pkey) {
   return ECDSA_size(pkey->pkey.ec);
 }
 
@@ -244,7 +246,7 @@ const EVP_PKEY_ASN1_METHOD ec_asn1_meth = {
 
   eckey_opaque,
 
-  int_ec_size,
+  size_t_ec_size,
   ec_bits,
 
   ec_missing_parameters,

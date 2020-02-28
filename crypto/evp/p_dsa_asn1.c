@@ -191,7 +191,9 @@ static int dsa_priv_encode(CBB *out, const EVP_PKEY *key) {
   return 1;
 }
 
-static int int_dsa_size(const EVP_PKEY *pkey) {
+// OQS note: We have renamed this from "int_dsa_size"
+// to "size_t_dsa_size"
+static size_t size_t_dsa_size(const EVP_PKEY *pkey) {
   return DSA_size(pkey->pkey.dsa);
 }
 
@@ -262,7 +264,7 @@ const EVP_PKEY_ASN1_METHOD dsa_asn1_meth = {
 
   NULL /* pkey_opaque */,
 
-  int_dsa_size,
+  size_t_dsa_size,
   dsa_bits,
 
   dsa_missing_parameters,

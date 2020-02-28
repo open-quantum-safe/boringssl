@@ -1028,8 +1028,8 @@ OPENSSL_EXPORT int SSL_set_ocsp_response(SSL *ssl,
 #define SSL_SIGN_DILITHIUM2 0xfe03
 #define SSL_SIGN_DILITHIUM3 0xfe06
 #define SSL_SIGN_DILITHIUM4 0xfe07
-//#define SSL_SIGN_PICNICL1FS 0xfe09
-//#define SSL_SIGN_PICNIC2L1FS 0xfe0c
+#define SSL_SIGN_PICNICL1FS 0xfe09
+#define SSL_SIGN_PICNIC2L1FS 0xfe0c
 #define SSL_SIGN_QTESLAPI 0xfe0f
 #define SSL_SIGN_QTESLAPIII 0xfe12
 // FIXMEOQS: add template

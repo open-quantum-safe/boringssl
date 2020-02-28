@@ -169,7 +169,10 @@ int EVP_PKEY_missing_parameters(const EVP_PKEY *pkey) {
   return 0;
 }
 
-int EVP_PKEY_size(const EVP_PKEY *pkey) {
+// OQS note: We've changed the return type
+// from "int" to "size_t" to allow for PQ
+// algorithms with large signatures.
+size_t EVP_PKEY_size(const EVP_PKEY *pkey) {
   if (pkey && pkey->ameth && pkey->ameth->pkey_size) {
     return pkey->ameth->pkey_size(pkey);
   }
@@ -210,10 +213,10 @@ static const EVP_PKEY_ASN1_METHOD *evp_pkey_asn1_find(int nid) {
       return &dilithium3_asn1_meth;
     case EVP_PKEY_DILITHIUM4:
       return &dilithium4_asn1_meth;
-      //    case EVP_PKEY_PICNICL1FS:
-      //      return &picnicl1fs_asn1_meth;
-      //    case EVP_PKEY_PICNIC2L1FS:
-      //      return &picnic2l1fs_asn1_meth;
+    case EVP_PKEY_PICNICL1FS:
+      return &picnicl1fs_asn1_meth;
+    case EVP_PKEY_PICNIC2L1FS:
+      return &picnic2l1fs_asn1_meth;
     case EVP_PKEY_QTESLAPI:
       return &qteslapi_asn1_meth;
     case EVP_PKEY_QTESLAPIII:
