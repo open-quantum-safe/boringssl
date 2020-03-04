@@ -387,10 +387,10 @@ class CECPQ2bKeyShare : public SSLKeyShare {
 // post-quantum algorithms.
 class OQSKeyShare : public SSLKeyShare {
  public:
-  // Although oqs_meth can be determined from the group_id,
+  // While oqs_meth can be determined from the group_id,
   // we pass both in as the translation from group_id to
-  // oqs_meth is already done by SLKeyShare::Create
-  // to determine whether oqs_meth is enabled in liboqs
+  // oqs_meth is already done by SSLKeyShare::Create to
+  // to determine if oqs_meth is enabled in liboqs and
   // and return nullptr if not. It is easier to handle
   // the error in there as opposed to in this constructor.
   OQSKeyShare(uint16_t group_id, const char *oqs_meth) : group_id_(group_id) {

@@ -24,12 +24,12 @@
 #include "../internal.h"
 
 
-static void oqs_sig_free(EVP_PKEY *pkey) {
+static void oqs_free(EVP_PKEY *pkey) {
   OPENSSL_free(pkey->pkey.ptr);
   pkey->pkey.ptr = NULL;
 }
 
-#define DEFINE_OQS_SIG_SET_PRIV_RAW(ALG, OQS_METH)                             \
+#define DEFINE_OQS_SET_PRIV_RAW(ALG, OQS_METH)                                 \
 static int ALG##_set_priv_raw(EVP_PKEY *pkey, const uint8_t *in, size_t len) { \
   OQS_KEY *key = OPENSSL_malloc(sizeof(OQS_KEY));                              \
   if (key == NULL) {                                                           \
@@ -56,12 +56,12 @@ static int ALG##_set_priv_raw(EVP_PKEY *pkey, const uint8_t *in, size_t len) { \
   }                                                                            \
   key->has_private = 1;                                                        \
                                                                                \
-  oqs_sig_free(pkey);                                                          \
+  oqs_free(pkey);                                                              \
   pkey->pkey.ptr = key;                                                        \
   return 1;                                                                    \
 }
 
-#define DEFINE_OQS_SIG_SET_PUB_RAW(ALG, OQS_METH)                             \
+#define DEFINE_OQS_SET_PUB_RAW(ALG, OQS_METH)                                 \
 static int ALG##_set_pub_raw(EVP_PKEY *pkey, const uint8_t *in, size_t len) { \
   OQS_KEY *key = OPENSSL_malloc(sizeof(OQS_KEY));                             \
   if (key == NULL) {                                                          \
@@ -84,12 +84,12 @@ static int ALG##_set_pub_raw(EVP_PKEY *pkey, const uint8_t *in, size_t len) { \
   OPENSSL_memcpy(key->pub, in, key->ctx->length_public_key);                  \
   key->has_private = 0;                                                       \
                                                                               \
-  oqs_sig_free(pkey);                                                         \
+  oqs_free(pkey);                                                             \
   pkey->pkey.ptr = key;                                                       \
   return 1;                                                                   \
 }
 
-static int oqs_sig_get_priv_raw(const EVP_PKEY *pkey, uint8_t *out,
+static int oqs_get_priv_raw(const EVP_PKEY *pkey, uint8_t *out,
                                 size_t *out_len) {
   const OQS_KEY *key = pkey->pkey.ptr;
   if (!key->has_private) {
@@ -112,7 +112,7 @@ static int oqs_sig_get_priv_raw(const EVP_PKEY *pkey, uint8_t *out,
   return 1;
 }
 
-static int oqs_sig_get_pub_raw(const EVP_PKEY *pkey, uint8_t *out,
+static int oqs_get_pub_raw(const EVP_PKEY *pkey, uint8_t *out,
                                size_t *out_len) {
   const OQS_KEY *key = pkey->pkey.ptr;
   if (out == NULL) {
@@ -130,7 +130,7 @@ static int oqs_sig_get_pub_raw(const EVP_PKEY *pkey, uint8_t *out,
   return 1;
 }
 
-#define DEFINE_OQS_SIG_PUB_DECODE(ALG)                              \
+#define DEFINE_OQS_PUB_DECODE(ALG)                                  \
 static int ALG##_pub_decode(EVP_PKEY *out, CBS *params, CBS *key) { \
   if (CBS_len(params) != 0) {                                       \
     OPENSSL_PUT_ERROR(EVP, EVP_R_DECODE_ERROR);                     \
@@ -140,7 +140,7 @@ static int ALG##_pub_decode(EVP_PKEY *out, CBS *params, CBS *key) { \
   return ALG##_set_pub_raw(out, CBS_data(key), CBS_len(key));       \
 }
 
-#define DEFINE_OQS_SIG_PUB_ENCODE(ALG)                                       \
+#define DEFINE_OQS_PUB_ENCODE(ALG)                                           \
 static int ALG##_pub_encode(CBB *out, const EVP_PKEY *pkey) {                \
   const OQS_KEY *key = pkey->pkey.ptr;                                       \
                                                                              \
@@ -161,13 +161,13 @@ static int ALG##_pub_encode(CBB *out, const EVP_PKEY *pkey) {                \
   return 1;                                                                  \
 }
 
-static int oqs_sig_pub_cmp(const EVP_PKEY *a, const EVP_PKEY *b) {
+static int oqs_pub_cmp(const EVP_PKEY *a, const EVP_PKEY *b) {
   const OQS_KEY *a_key = a->pkey.ptr;
   const OQS_KEY *b_key = b->pkey.ptr;
   return OPENSSL_memcmp(a_key->pub, b_key->pub, a_key->ctx->length_public_key) == 0;
 }
 
-#define DEFINE_OQS_SIG_PRIV_DECODE(ALG)                              \
+#define DEFINE_OQS_PRIV_DECODE(ALG)                                  \
 static int ALG##_priv_decode(EVP_PKEY *out, CBS *params, CBS *key) { \
 /* See RFC 8410, section 7. */                                       \
                                                                      \
@@ -182,7 +182,7 @@ static int ALG##_priv_decode(EVP_PKEY *out, CBS *params, CBS *key) { \
   return ALG##_set_priv_raw(out, CBS_data(&inner), CBS_len(&inner)); \
 }
 
-#define DEFINE_OQS_SIG_PRIV_ENCODE(ALG)                                     \
+#define DEFINE_OQS_PRIV_ENCODE(ALG)                                         \
 static int ALG##_priv_encode(CBB *out, const EVP_PKEY *pkey) {              \
   OQS_KEY *key = pkey->pkey.ptr;                                            \
   if (!key->has_private) {                                                  \
@@ -208,66 +208,69 @@ static int ALG##_priv_encode(CBB *out, const EVP_PKEY *pkey) {              \
   return 1;                                                                 \
 }
 
-static size_t oqs_sig_size(const EVP_PKEY *pkey) {
+static size_t oqs_size(const EVP_PKEY *pkey) {
   const OQS_KEY *key = pkey->pkey.ptr;
   return key->ctx->length_signature;
 }
 
-#define DEFINE_OQS_ASN1_FUNCTIONS(ALG, OQS_METH, ALG_PKEY)    \
-DEFINE_OQS_SIG_SET_PUB_RAW(ALG, OQS_METH)                     \
-DEFINE_OQS_SIG_SET_PRIV_RAW(ALG, OQS_METH)                    \
-DEFINE_OQS_SIG_PUB_ENCODE(ALG)                                \
-DEFINE_OQS_SIG_PUB_DECODE(ALG)                                \
-DEFINE_OQS_SIG_PRIV_ENCODE(ALG)                               \
-DEFINE_OQS_SIG_PRIV_DECODE(ALG)
+// Dummy wrapper to improve readability
+#define OID(...) __VA_ARGS__
 
-#define DEFINE_OQS_SIG_PKEY_ASN1_METHOD(ALG, ALG_PKEY, OID_LEN, ...)    \
-const EVP_PKEY_ASN1_METHOD ALG##_asn1_meth = {            \
-    ALG_PKEY,                                             \
-    {__VA_ARGS__},                                            \
-    OID_LEN,                                        \
-    ALG##_pub_decode,                                     \
-    ALG##_pub_encode,                                     \
-    oqs_sig_pub_cmp,                                      \
-    ALG##_priv_decode,                                    \
-    ALG##_priv_encode,                                    \
-    ALG##_set_priv_raw,                                   \
-    ALG##_set_pub_raw,                                    \
-    oqs_sig_get_priv_raw,                                 \
-    oqs_sig_get_pub_raw,                                  \
-    NULL /* pkey_opaque */,                               \
-    oqs_sig_size,                                         \
-    NULL /* pkey_bits */,                                 \
-    NULL /* param_missing */,                             \
-    NULL /* param_copy */,                                \
-    NULL /* param_cmp */,                                 \
-    oqs_sig_free,                                         \
+#define OID_LEN(...)  (sizeof((int[]){__VA_ARGS__})/sizeof(int))
+
+#define DEFINE_OQS_ASN1_FUNCTIONS(ALG, OQS_METH, ALG_PKEY) \
+DEFINE_OQS_SET_PUB_RAW(ALG, OQS_METH)                      \
+DEFINE_OQS_SET_PRIV_RAW(ALG, OQS_METH)                     \
+DEFINE_OQS_PUB_ENCODE(ALG)                                 \
+DEFINE_OQS_PUB_DECODE(ALG)                                 \
+DEFINE_OQS_PRIV_ENCODE(ALG)                                \
+DEFINE_OQS_PRIV_DECODE(ALG)
+
+#define DEFINE_OQS_PKEY_ASN1_METHOD(ALG, ALG_PKEY, ...) \
+const EVP_PKEY_ASN1_METHOD ALG##_asn1_meth = {          \
+    ALG_PKEY,                                           \
+    {__VA_ARGS__},                                      \
+    OID_LEN(__VA_ARGS__),                               \
+    ALG##_pub_decode,                                   \
+    ALG##_pub_encode,                                   \
+    oqs_pub_cmp,                                        \
+    ALG##_priv_decode,                                  \
+    ALG##_priv_encode,                                  \
+    ALG##_set_priv_raw,                                 \
+    ALG##_set_pub_raw,                                  \
+    oqs_get_priv_raw,                                   \
+    oqs_get_pub_raw,                                    \
+    NULL /* pkey_opaque */,                             \
+    oqs_size,                                           \
+    NULL /* pkey_bits */,                               \
+    NULL /* param_missing */,                           \
+    NULL /* param_copy */,                              \
+    NULL /* param_cmp */,                               \
+    oqs_free,                                           \
 };
 
-#define UNWRAP(...) __VA_ARGS__
-
-// the ALG_OID values can be found in the kObjectData array in crypto/objects/obj_dat.h
+// the OIDs can also be found in the kObjectData array in crypto/obj/obj_dat.h
 DEFINE_OQS_ASN1_FUNCTIONS(oqs_sigdefault, OQS_SIG_alg_default, EVP_PKEY_OQS_SIGDEFAULT)
-DEFINE_OQS_SIG_PKEY_ASN1_METHOD(oqs_sigdefault, EVP_PKEY_OQS_SIGDEFAULT, 5, UNWRAP(0x2B, 0xCE, 0x0F, 0x01, 0x01))
+DEFINE_OQS_PKEY_ASN1_METHOD(oqs_sigdefault, EVP_PKEY_OQS_SIGDEFAULT, OID(0x2B, 0xCE, 0x0F, 0x01, 0x01))
 
 DEFINE_OQS_ASN1_FUNCTIONS(dilithium2, OQS_SIG_alg_dilithium_2, EVP_PKEY_DILITHIUM2)
-DEFINE_OQS_SIG_PKEY_ASN1_METHOD(dilithium2, EVP_PKEY_DILITHIUM2, 5, UNWRAP(0x2B, 0xCE, 0x0F, 0x02, 0x01))
+DEFINE_OQS_PKEY_ASN1_METHOD(dilithium2, EVP_PKEY_DILITHIUM2, OID(0x2B, 0xCE, 0x0F, 0x02, 0x01))
 
 DEFINE_OQS_ASN1_FUNCTIONS(dilithium3, OQS_SIG_alg_dilithium_3, EVP_PKEY_DILITHIUM3)
-DEFINE_OQS_SIG_PKEY_ASN1_METHOD(dilithium3, EVP_PKEY_DILITHIUM3, 5, UNWRAP(0x2B, 0xCE, 0x0F, 0x02, 0x04))
+DEFINE_OQS_PKEY_ASN1_METHOD(dilithium3, EVP_PKEY_DILITHIUM3, OID(0x2B, 0xCE, 0x0F, 0x02, 0x04))
 
 DEFINE_OQS_ASN1_FUNCTIONS(dilithium4, OQS_SIG_alg_dilithium_4, EVP_PKEY_DILITHIUM4)
-DEFINE_OQS_SIG_PKEY_ASN1_METHOD(dilithium4, EVP_PKEY_DILITHIUM4, 5, UNWRAP(0x2B, 0xCE, 0x0F, 0x02, 0x05))
+DEFINE_OQS_PKEY_ASN1_METHOD(dilithium4, EVP_PKEY_DILITHIUM4, OID(0x2B, 0xCE, 0x0F, 0x02, 0x05))
 
 DEFINE_OQS_ASN1_FUNCTIONS(picnicl1fs, OQS_SIG_alg_picnic_L1_FS, EVP_PKEY_PICNICL1FS)
-DEFINE_OQS_SIG_PKEY_ASN1_METHOD(picnicl1fs, EVP_PKEY_PICNICL1FS, 11, UNWRAP(0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x59, 0x02, 0x01, 0x01))
+DEFINE_OQS_PKEY_ASN1_METHOD(picnicl1fs, EVP_PKEY_PICNICL1FS, OID(0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x59, 0x02, 0x01, 0x01))
 
 DEFINE_OQS_ASN1_FUNCTIONS(picnic2l1fs, OQS_SIG_alg_picnic2_L1_FS, EVP_PKEY_PICNIC2L1FS)
-DEFINE_OQS_SIG_PKEY_ASN1_METHOD(picnic2l1fs, EVP_PKEY_PICNIC2L1FS, 11, UNWRAP(0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x59, 0x02, 0x01, 0x0B))
+DEFINE_OQS_PKEY_ASN1_METHOD(picnic2l1fs, EVP_PKEY_PICNIC2L1FS, OID(0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x59, 0x02, 0x01, 0x0B))
 
 DEFINE_OQS_ASN1_FUNCTIONS(qteslapi, OQS_SIG_alg_qTesla_p_I, EVP_PKEY_QTESLAPI)
-DEFINE_OQS_SIG_PKEY_ASN1_METHOD(qteslapi, EVP_PKEY_QTESLAPI, 11, UNWRAP(0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x59, 0x02, 0x02, 0x0A))
+DEFINE_OQS_PKEY_ASN1_METHOD(qteslapi, EVP_PKEY_QTESLAPI, OID(0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x59, 0x02, 0x02, 0x0A))
 
 DEFINE_OQS_ASN1_FUNCTIONS(qteslapiii, OQS_SIG_alg_qTesla_p_III, EVP_PKEY_QTESLAPIII)
-DEFINE_OQS_SIG_PKEY_ASN1_METHOD(qteslapiii, EVP_PKEY_QTESLAPIII, 11, UNWRAP(0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x59, 0x02, 0x02, 0x14))
+DEFINE_OQS_PKEY_ASN1_METHOD(qteslapiii, EVP_PKEY_QTESLAPIII, OID(0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x59, 0x02, 0x02, 0x14))
 // FIXMEOQS: add template

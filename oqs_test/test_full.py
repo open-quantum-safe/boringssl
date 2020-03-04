@@ -21,7 +21,7 @@ def bssl_server_sig(bssl, request):
                                           '-loop'],
                                     stdout=subprocess.PIPE,
                                     stderr=subprocess.STDOUT)
-    time.sleep(0.1)
+    time.sleep(0.5)
     # Run tests
     yield request.param
     # Teardown: stop bssl server

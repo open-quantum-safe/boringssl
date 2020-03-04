@@ -17,7 +17,7 @@ def bssl_server_port(bssl):
                                           '-loop'],
                                     stdout=subprocess.PIPE,
                                     stderr=subprocess.STDOUT)
-    time.sleep(0.01)
+    time.sleep(0.5)
     # Run tests
     yield '44433'
     # Teardown: stop bssl server
@@ -45,14 +45,14 @@ def test_kem(bssl_server_port, bssl_shim, kem_name):
 def test_sig(bssl, bssl_shim, sig_name):
     bssl_server = subprocess.Popen([bssl, 'server',
                                          '-accept', '44433',
-                                         '-curves', 'oqs_kemdefault',
                                          '-sig-alg', sig_name],
                                     stdout=subprocess.PIPE,
                                     stderr=subprocess.STDOUT)
-    time.sleep(0.1)
+    time.sleep(0.5)
     result = subprocess.run(
         [bssl_shim, '-port', '44433',
                     '-expect-version', 'TLSv1.3',
+                    '-curves', oqs_mappings.kem_to_nid['oqs_kemdefault'],
                     '-expect-curve-id', oqs_mappings.kem_to_nid['oqs_kemdefault'],
                     '-expect-peer-signature-algorithm', oqs_mappings.sig_to_code_point[sig_name],
                     '-shim-shuts-down'
