@@ -384,12 +384,8 @@ class CECPQ2bKeyShare : public SSLKeyShare {
   uint8_t public_sike_[SIKE_PUB_BYTESZ];
 };
 
-// KeyShare class for OQS supplied hybrid and post-quantum crypto algs
-// Following the format specified in https://tools.ietf.org/html/draft-stebila-tls-hybrid-design-03,
-// hybrid key-shares are encoded as follows:
-// classical key length (16 bits) | classical key | pq key length (16 bits) | pq_key
-// hybrid shared secrets are encoded as follows:
-// classical secret || PQ secret
+// Class for key-exchange using OQS supplied
+// post-quantum algorithms
 class OQSKeyShare : public SSLKeyShare {
  public:
   // Although oqs_meth can be determined from the group_id,
@@ -398,48 +394,139 @@ class OQSKeyShare : public SSLKeyShare {
   // to determine whether oqs_meth is enabled in liboqs
   // and return nullptr if not. It is easier to handle
   // the error in there as opposed to in this constructor.
-  OQSKeyShare(uint16_t group_id, const char *oqs_meth, bool is_hybrid) : group_id_(group_id), is_hybrid_(is_hybrid) {
-    pq_kex_= OQS_KEM_new(oqs_meth);
-    if (is_hybrid_) {
-      classical_kex_ = SSLKeyShare::Create(SSL_CURVE_SECP256R1);
+  OQSKeyShare(uint16_t group_id, const char *oqs_meth) : group_id_(group_id) {
+    kex_alg_ = OQS_KEM_new(oqs_meth);
+  }
+
+  uint16_t GroupID() const override { return group_id_; }
+
+  // Client sends its public key to server
+  bool Offer(CBB *out) override {
+    Array<uint8_t> public_key;
+
+    if (!public_key.Init(kex_alg_->length_public_key) ||
+        !private_key_.Init(kex_alg_->length_secret_key)) {
+      OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
+      return false;
     }
+    if (OQS_KEM_keypair(kex_alg_, public_key.data(), private_key_.data()) != OQS_SUCCESS) {
+      OPENSSL_PUT_ERROR(SSL, SSL_R_PRIVATE_KEY_OPERATION_FAILED);
+      return false;
+    }
+
+    if (!CBB_add_bytes(out, public_key.data(), public_key.size())) {
+      return false;
+    }
+
+    return true;
+  }
+
+  // Server computes shared secret under client's public key
+  // and sends a ciphertext to client
+  bool Accept(CBB *out_public_key, Array<uint8_t> *out_secret,
+              uint8_t *out_alert, Span<const uint8_t> peer_key) override {
+    Array<uint8_t> shared_secret;
+    Array<uint8_t> ciphertext;
+
+    if (peer_key.size() != kex_alg_->length_public_key) {
+      *out_alert = SSL_AD_DECODE_ERROR;
+      OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_ECPOINT);
+      return false;
+    }
+
+    if (!shared_secret.Init(kex_alg_->length_shared_secret) ||
+        !ciphertext.Init(kex_alg_->length_ciphertext)) {
+      OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
+      return false;
+    }
+
+    if (OQS_KEM_encaps(kex_alg_, ciphertext.data(), shared_secret.data(), peer_key.data()) != OQS_SUCCESS) {
+      *out_alert = SSL_AD_DECODE_ERROR;
+      OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_ECPOINT);
+      return false;
+    }
+
+    if (!CBB_add_bytes(out_public_key, ciphertext.data(), kex_alg_->length_ciphertext)) {
+      return false;
+    }
+
+    *out_secret = std::move(shared_secret);
+
+    return true;
+  }
+
+  // Client decapsulates the ciphertext using its
+  // private key to obtain the shared secret.
+  bool Finish(Array<uint8_t> *out_secret, uint8_t *out_alert,
+              Span<const uint8_t> peer_key) override {
+    Array<uint8_t> shared_secret;
+
+    if (peer_key.size() != kex_alg_->length_ciphertext) {
+      *out_alert = SSL_AD_DECODE_ERROR;
+      OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_ECPOINT);
+      return false;
+    }
+
+    if (!shared_secret.Init(kex_alg_->length_shared_secret)) {
+      OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
+      return false;
+    }
+
+    if (OQS_KEM_decaps(kex_alg_, shared_secret.data(), peer_key.data(), private_key_.data()) != OQS_SUCCESS) {
+      *out_alert = SSL_AD_DECODE_ERROR;
+      OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_ECPOINT);
+      return false;
+    }
+
+    *out_secret = std::move(shared_secret);
+
+    return true;
+  }
+
+ private:
+  uint16_t group_id_;
+
+  OQS_KEM *kex_alg_;
+  Array<uint8_t> private_key_;
+};
+
+// Class for key-exchange using ECDH in hybrid mode
+// with OQS supplied post-quantum algorithms.
+// Following https://tools.ietf.org/html/draft-stebila-tls-hybrid-design-03#section-3.2,
+// hybrid messages are encoded as follows
+// classical_len (16 bits) | classical_artifact | pq_len (16 bits) | pq_artifact
+class EC_OQSKeyShare : public SSLKeyShare {
+ public:
+  EC_OQSKeyShare(uint16_t group_id, uint16_t classical_group_id, const char *oqs_meth) : group_id_(group_id) {
+    classical_kex_ = SSLKeyShare::Create(classical_group_id);
+    pq_kex_ = MakeUnique<OQSKeyShare>(0, oqs_meth); //We won't need to call pq_kex_->GroupID()
   }
 
   uint16_t GroupID() const override { return group_id_; }
 
   bool Offer(CBB *out) override {
-    Array<uint8_t> classical_public_key;
-    Array<uint8_t> pq_public_key;
+    ScopedCBB classical_offer;
+    ScopedCBB pq_offer;
 
-    // For a hybrid KEX, generate the classical keys first
-    if (is_hybrid_) {
-      ScopedCBB classical_offer;
-      if (!CBB_init(classical_offer.get(), p256_public_key_size_) ||
-          !classical_kex_->Offer(classical_offer.get()) ||
-          !CBBFinishArray(classical_offer.get(), &classical_public_key)) {
-        // the classical code will set the appropriate error on failure
-        return false;
-      }
+    if (!CBB_init(classical_offer.get(), 0) ||
+        !classical_kex_->Offer(classical_offer.get()) ||
+        !CBB_flush(classical_offer.get())) {
+      // classical_kex_ will set the appropriate error on failure
+      return false;
     }
-    // Generate the PQ key pair.
-    if (!pq_public_key.Init(pq_kex_->length_public_key) ||
-        !pq_private_key_.Init(pq_kex_->length_secret_key)) {
+
+    if (!CBB_init(pq_offer.get(), 0) ||
+        !pq_kex_->Offer(pq_offer.get()) ||
+        !CBB_flush(pq_offer.get())) {
+      // pq_kex_ will set the appropriate error on failure
+      return false;
+    }
+
+    if (!CBB_add_u16(out, CBB_len(classical_offer.get())) ||
+        !CBB_add_bytes(out, CBB_data(classical_offer.get()), CBB_len(classical_offer.get())) ||
+        !CBB_add_u16(out, CBB_len(pq_offer.get())) ||
+        !CBB_add_bytes(out, CBB_data(pq_offer.get()), CBB_len(pq_offer.get()))) {
       OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
-      return false;
-    }
-    if (OQS_KEM_keypair(pq_kex_, pq_public_key.data(), pq_private_key_.data()) != OQS_SUCCESS) {
-      OPENSSL_PUT_ERROR(SSL, SSL_R_PRIVATE_KEY_OPERATION_FAILED);
-      return false;
-    }
-    if (is_hybrid_) {
-      if (!CBB_add_u16(out, classical_public_key.size()) ||
-          !CBB_add_bytes(out, classical_public_key.data(), classical_public_key.size()) ||
-          !CBB_add_u16(out, pq_kex_->length_public_key)) {
-        return false;
-      }
-    }
-    // Serialize the PQ public key.
-    if (!CBB_add_bytes(out, pq_public_key.data(), pq_kex_->length_public_key)) {
       return false;
     }
 
@@ -448,130 +535,84 @@ class OQSKeyShare : public SSLKeyShare {
 
   bool Accept(CBB *out_public_key, Array<uint8_t> *out_secret,
               uint8_t *out_alert, Span<const uint8_t> peer_key) override {
-    Array<uint8_t> classical_public_key;
-    Array<uint8_t> classical_secret;
-    Array<uint8_t> secret;
-    Array<uint8_t> ciphertext;
+    uint16_t peer_classical_public_key_size = (peer_key[0] << 8) | peer_key[1];
+    Array<uint8_t> out_classical_secret;
+    ScopedCBB out_classical_public_key;
 
-    // Validate peer key size.
-    size_t expected_peer_key_bytes;
-    if(is_hybrid_) {
-        expected_peer_key_bytes = 2 + pq_kex_->length_public_key + 2 + p256_public_key_size_;
-    } else {
-        expected_peer_key_bytes = pq_kex_->length_public_key;
-    }
-    if (peer_key.size() != expected_peer_key_bytes) {
-      *out_alert = SSL_AD_DECODE_ERROR;
-      OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_ECPOINT);
+    uint16_t peer_pq_public_key_size = (peer_key[2 + peer_classical_public_key_size] << 8) |
+                                        peer_key[2 + peer_classical_public_key_size + 1];
+    Array<uint8_t> out_pq_secret;
+    ScopedCBB out_pq_ciphertext;
+
+    ScopedCBB out_secret_cbb;
+
+    if (!CBB_init(out_classical_public_key.get(), 0) ||
+        !classical_kex_->Accept(out_classical_public_key.get(), &out_classical_secret, out_alert, peer_key.subspan(2, peer_classical_public_key_size)) ||
+        !CBB_flush(out_classical_public_key.get())) {
       return false;
     }
 
-    // OQS note: in the hybrid case, we allocate space for both the classical and PQ secret. Since we
-    // currently only support P-256, we can hardcode the classical secret size of 32; more generally
-    // this might not work. We prefer this now because there are no concat Array method to make this simple.
-    size_t classical_secret_size = is_hybrid_ ? 32 : 0;
-    if (!secret.Init(classical_secret_size + pq_kex_->length_shared_secret) ||
-        !ciphertext.Init(pq_kex_->length_ciphertext)) {
+    if (!CBB_init(out_pq_ciphertext.get(), 0) ||
+        !pq_kex_->Accept(out_pq_ciphertext.get(), &out_pq_secret, out_alert, peer_key.subspan(2 + peer_classical_public_key_size + 2, peer_pq_public_key_size)) ||
+        !CBB_flush(out_pq_ciphertext.get())) {
+      // pq_kex_ will set the appropriate error on failure
+      return false;
+    }
+
+    if (!CBB_add_u16(out_public_key, CBB_len(out_classical_public_key.get())) ||
+        !CBB_add_bytes(out_public_key, CBB_data(out_classical_public_key.get()), CBB_len(out_classical_public_key.get())) ||
+        !CBB_add_u16(out_public_key, CBB_len(out_pq_ciphertext.get())) ||
+        !CBB_add_bytes(out_public_key, CBB_data(out_pq_ciphertext.get()), CBB_len(out_pq_ciphertext.get()))) {
       OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
       return false;
     }
 
-    // In the hybrid case, first handle the classical Accept
-    if (is_hybrid_) {
-      ScopedCBB out_classical_public_key;
-      if (!CBB_init(out_classical_public_key.get(), p256_public_key_size_) ||
-          !classical_kex_->Accept(out_classical_public_key.get(), &classical_secret, out_alert, peer_key.subspan(2, p256_public_key_size_)) ||
-          !CBBFinishArray(out_classical_public_key.get(), &classical_public_key)) {
-        // the classical code will set the appropriate alert and error on failure
-        return false;
-      }
-      OPENSSL_memcpy(secret.data(), classical_secret.data(), classical_secret.size());
-    }
-
-    // compute the servers's shared secret and message (encoded in encoded_point)
-    const uint8_t *public_key = is_hybrid_ ? peer_key.subspan(2 + p256_public_key_size_ + 2, pq_kex_->length_ciphertext).data() : peer_key.data();
-    if (OQS_KEM_encaps(pq_kex_, ciphertext.data(), secret.data() + classical_secret_size, public_key) != OQS_SUCCESS) {
-      *out_alert = SSL_AD_DECODE_ERROR;
-      OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_ECPOINT);
+    if (!CBB_init(out_secret_cbb.get(), out_classical_secret.size() + out_pq_secret.size()) ||
+        !CBB_add_bytes(out_secret_cbb.get(), out_classical_secret.data(), out_classical_secret.size()) ||
+        !CBB_add_bytes(out_secret_cbb.get(), out_pq_secret.data(), out_pq_secret.size()) ||
+        !CBBFinishArray(out_secret_cbb.get(), out_secret)) {
+      OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
       return false;
     }
-
-    if (is_hybrid_) {
-      if (!CBB_add_u16(out_public_key, classical_public_key.size()) ||
-          !CBB_add_bytes(out_public_key, classical_public_key.data(), classical_public_key.size()) ||
-          !CBB_add_u16(out_public_key, pq_kex_->length_ciphertext)) {
-        return false;
-      }
-    }
-    if (!CBB_add_bytes(out_public_key, ciphertext.data(), pq_kex_->length_ciphertext)) {
-      return false;
-    }
-
-    *out_secret = std::move(secret);
 
     return true;
   }
 
   bool Finish(Array<uint8_t> *out_secret, uint8_t *out_alert,
               Span<const uint8_t> peer_key) override {
-    Array<uint8_t> classical_secret;
-    Array<uint8_t> secret;
-    *out_alert = SSL_AD_INTERNAL_ERROR;
+    ScopedCBB out_secret_cbb;
 
-    // Validate peer key size.
-    size_t expected_peer_key_bytes;
-    if(is_hybrid_) {
-        expected_peer_key_bytes = 2 + pq_kex_->length_ciphertext + 2 + p256_public_key_size_;
-    } else {
-        expected_peer_key_bytes = pq_kex_->length_ciphertext;
-    }
-    if (peer_key.size() != expected_peer_key_bytes) {
-      std::cout << "Peer key size: " << peer_key.size() << std::endl;
-      std::cout << "Expected : " << expected_peer_key_bytes << std::endl;
-      *out_alert = SSL_AD_DECODE_ERROR;
-      OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_ECPOINT);
+    uint16_t peer_classical_public_key_size = (peer_key[0] << 8) | peer_key[1];
+    Array<uint8_t> out_classical_secret;
+
+    uint16_t peer_pq_ciphertext_size = (peer_key[2 + peer_classical_public_key_size] << 8) |
+                                        peer_key[2 + peer_classical_public_key_size + 1];
+    Array<uint8_t> out_pq_secret;
+
+    if (!classical_kex_->Finish(&out_classical_secret, out_alert, peer_key.subspan(2, peer_classical_public_key_size))) {
+      // classical_kex_ will set the appropriate error on failure
       return false;
     }
 
-    // OQS note: in hybrid case, we allocate space for both the classical and PQ secret. Since we
-    // currently only support P-256, we can hardcode the classical secret size of 32; more generally
-    // this might not work. We prefer this now because there are no concat Array method to make this simple.
-    int classical_secret_size = is_hybrid_ ? 32 : 0;
-    if (!secret.Init(classical_secret_size + pq_kex_->length_shared_secret)) {
-      OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
+    if (!pq_kex_->Finish(&out_pq_secret, out_alert, peer_key.subspan(2 + peer_classical_public_key_size + 2, peer_pq_ciphertext_size))) {
+      // pq_kex_ will set the appropriate error on failure
       return false;
     }
 
-    // In the hybrid case, first handle the classical Finish
-    if (is_hybrid_) {
-      if (!classical_kex_->Finish(&classical_secret, out_alert, peer_key.subspan(2, p256_public_key_size_))) {
-return false;
-     }
-      OPENSSL_memcpy(secret.data(), classical_secret.data(), classical_secret.size());
-    }
-
-    const uint8_t *public_key = is_hybrid_ ? peer_key.subspan(2 + p256_public_key_size_ + 2, pq_kex_->length_ciphertext).data() : peer_key.data();
-    if (OQS_KEM_decaps(pq_kex_, secret.data() + classical_secret_size, public_key, pq_private_key_.data()) != OQS_SUCCESS) {
-      *out_alert = SSL_AD_DECODE_ERROR;
-      OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_ECPOINT);
+    if (!CBB_init(out_secret_cbb.get(), out_classical_secret.size() + out_pq_secret.size()) ||
+        !CBB_add_bytes(out_secret_cbb.get(), out_classical_secret.data(), out_classical_secret.size()) ||
+        !CBB_add_bytes(out_secret_cbb.get(), out_pq_secret.data(), out_pq_secret.size()) ||
+        !CBBFinishArray(out_secret_cbb.get(), out_secret)) {
       return false;
     }
-
-    *out_secret = std::move(secret);
 
     return true;
   }
 
  private:
   uint16_t group_id_;
-
-  OQS_KEM* pq_kex_;
-  Array<uint8_t> pq_private_key_;
-
-  bool is_hybrid_;
   UniquePtr<SSLKeyShare> classical_kex_;
-
-  const int p256_public_key_size_ = 65;
+  UniquePtr<OQSKeyShare> pq_kex_;
 };
 
 CONSTEXPR_ARRAY NamedGroup kNamedGroups[] = {
@@ -619,22 +660,22 @@ UniquePtr<SSLKeyShare> SSLKeyShare::Create(uint16_t group_id) {
 ///// OQS_TEMPLATE_FRAGMENT_HANDLE_GROUP_IDS_START
     case SSL_CURVE_OQS_KEMDEFAULT:
       if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_default))
-          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_OQS_KEMDEFAULT, OQS_KEM_alg_default, false));
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_OQS_KEMDEFAULT, OQS_KEM_alg_default));
       else
           return nullptr;
     case SSL_CURVE_P256_OQS_KEMDEFAULT:
       if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_default))
-          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_P256_OQS_KEMDEFAULT, OQS_KEM_alg_default, true));
+          return UniquePtr<SSLKeyShare>(New<EC_OQSKeyShare>(SSL_CURVE_P256_OQS_KEMDEFAULT, SSL_CURVE_SECP256R1, OQS_KEM_alg_frodokem_640_aes));
       else
           return nullptr;
     case SSL_CURVE_FRODO640AES:
       if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_frodokem_640_aes))
-          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_FRODO640AES, OQS_KEM_alg_frodokem_640_aes, false));
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_FRODO640AES, OQS_KEM_alg_frodokem_640_aes));
       else
           return nullptr;
     case SSL_CURVE_P256_FRODO640AES:
       if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_frodokem_640_aes))
-          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_P256_FRODO640AES, OQS_KEM_alg_frodokem_640_aes, true));
+          return UniquePtr<SSLKeyShare>(New<EC_OQSKeyShare>(SSL_CURVE_P256_FRODO640AES, SSL_CURVE_SECP256R1, OQS_KEM_alg_frodokem_640_aes));
       else
           return nullptr;
 ///// OQS_TEMPLATE_FRAGMENT_HANDLE_GROUP_IDS_END
