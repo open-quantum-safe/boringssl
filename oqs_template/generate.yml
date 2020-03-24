@@ -4,10 +4,10 @@ kems:
   -
     name: "oqs_kemdefault"
     nid: "511"
-    mix_with: [{'name': 'p256', 'nid':'767'}]
+    mix_with: [{'name': 'p256', 'mix_nid':'767', 'nid':'SSL_CURVE_SECP256R1'}]
     oqs_meth: "OQS_KEM_alg_default"
   -
     name: "frodo640aes"
     nid: "512"
-    mix_with: [{'name': 'p256', 'nid':'768'}]
+    mix_with: [{'name': 'p256', 'mix_nid':'768', 'nid':'SSL_CURVE_SECP256R1'}]
     oqs_meth: "OQS_KEM_alg_frodokem_640_aes"

@@ -1,13 +1,13 @@
 {% for kem in config['kems'] %}
     case SSL_CURVE_{{ kem['name']|upper }}:
       if(OQS_KEM_alg_is_enabled({{ kem['oqs_meth'] }}))
-          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_{{ kem['name']|upper }}, {{ kem['oqs_meth'] }}, false));
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_{{ kem['name']|upper }}, {{ kem['oqs_meth'] }}));
       else
           return nullptr;
     {%- for classical_alg in kem['mix_with'] %}
     case SSL_CURVE_{{ classical_alg['name']|upper }}_{{ kem['name']|upper }}:
       if(OQS_KEM_alg_is_enabled({{ kem['oqs_meth'] }}))
-          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_{{ classical_alg['name']|upper}}_{{ kem['name']|upper }}, {{ kem['oqs_meth'] }}, true));
+          return UniquePtr<SSLKeyShare>(New<ClassicalOQSKeyShare>(SSL_CURVE_{{ classical_alg['name']|upper}}_{{ kem['name']|upper }}, {{ classical_alg['nid'] }}, {{ kem['oqs_meth'] }}));
       else
           return nullptr;
     {%- endfor %}
