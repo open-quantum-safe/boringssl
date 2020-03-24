@@ -494,11 +494,11 @@ class OQSKeyShare : public SSLKeyShare {
 // algorithms. Following https://tools.ietf.org/html/draft-stebila-tls-hybrid-design-03#section-3.2,
 // hybrid messages are encoded as follows:
 // classical_len (16 bits) | classical_artifact | pq_len (16 bits) | pq_artifact
-class ClassicalOQSKeyShare : public SSLKeyShare {
+class ClassicalWithOQSKeyShare : public SSLKeyShare {
  public:
-  ClassicalOQSKeyShare(uint16_t group_id, uint16_t classical_group_id, const char *oqs_meth) : group_id_(group_id) {
+  ClassicalWithOQSKeyShare(uint16_t group_id, uint16_t classical_group_id, const char *oqs_meth) : group_id_(group_id) {
     classical_kex_ = SSLKeyShare::Create(classical_group_id);
-    pq_kex_ = MakeUnique<OQSKeyShare>(0, oqs_meth); //We won't need to call pq_kex_->GroupID()
+    pq_kex_ = MakeUnique<OQSKeyShare>(0, oqs_meth); //We don't need pq_kex_->GroupID()
   }
 
   uint16_t GroupID() const override { return group_id_; }
@@ -554,7 +554,6 @@ class ClassicalOQSKeyShare : public SSLKeyShare {
     if (!CBB_init(out_pq_ciphertext.get(), 0) ||
         !pq_kex_->Accept(out_pq_ciphertext.get(), &out_pq_secret, out_alert, peer_key.subspan(2 + peer_classical_public_key_size + 2, peer_pq_public_key_size)) ||
         !CBB_flush(out_pq_ciphertext.get())) {
-      // pq_kex_ will set the appropriate error on failure
       return false;
     }
 
@@ -589,12 +588,10 @@ class ClassicalOQSKeyShare : public SSLKeyShare {
     Array<uint8_t> out_pq_secret;
 
     if (!classical_kex_->Finish(&out_classical_secret, out_alert, peer_key.subspan(2, peer_classical_public_key_size))) {
-      // classical_kex_ will set the appropriate error on failure
       return false;
     }
 
     if (!pq_kex_->Finish(&out_pq_secret, out_alert, peer_key.subspan(2 + peer_classical_public_key_size + 2, peer_pq_ciphertext_size))) {
-      // pq_kex_ will set the appropriate error on failure
       return false;
     }
 
@@ -664,7 +661,7 @@ UniquePtr<SSLKeyShare> SSLKeyShare::Create(uint16_t group_id) {
           return nullptr;
     case SSL_CURVE_P256_OQS_KEMDEFAULT:
       if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_default))
-          return UniquePtr<SSLKeyShare>(New<ClassicalOQSKeyShare>(SSL_CURVE_P256_OQS_KEMDEFAULT, SSL_CURVE_SECP256R1, OQS_KEM_alg_default));
+          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P256_OQS_KEMDEFAULT, SSL_CURVE_SECP256R1, OQS_KEM_alg_default));
       else
           return nullptr;
     case SSL_CURVE_FRODO640AES:
@@ -674,7 +671,7 @@ UniquePtr<SSLKeyShare> SSLKeyShare::Create(uint16_t group_id) {
           return nullptr;
     case SSL_CURVE_P256_FRODO640AES:
       if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_frodokem_640_aes))
-          return UniquePtr<SSLKeyShare>(New<ClassicalOQSKeyShare>(SSL_CURVE_P256_FRODO640AES, SSL_CURVE_SECP256R1, OQS_KEM_alg_frodokem_640_aes));
+          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P256_FRODO640AES, SSL_CURVE_SECP256R1, OQS_KEM_alg_frodokem_640_aes));
       else
           return nullptr;
 ///// OQS_TEMPLATE_FRAGMENT_HANDLE_GROUP_IDS_END
