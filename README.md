@@ -76,7 +76,7 @@ The steps below have been confirmed to work on Ubuntu 19.10 (gcc-8.3.0).
 
 On **Ubuntu**, you need to install the following packages:
 
-	sudo apt install autoconf automake cmake gcc golang-go libtool libssl-dev make ninja python3-pytest unzip xsltproc
+	sudo apt install gcc golang-go cmake ninja python3-pytest python3-pytest-xdist
 
 Then, get source code of this fork (`<BORINGSSL_DIR>` is a directory of your choosing):
 
@@ -84,14 +84,14 @@ Then, get source code of this fork (`<BORINGSSL_DIR>` is a directory of your cho
 
 #### Step 1: Build and install liboqs
 
-The following instructions will download and build liboqs, then install it into a subdirectory inside the OpenSSL folder.
+The following instructions will download and build liboqs, then install it to `<BORINGSSL_DIR>/oqs`.
 
 	git clone --branch master https://github.com/open-quantum-safe/liboqs.git
 	cd liboqs
-	autoreconf -i
-	./configure --prefix=<BORINGSSL_DIR>/oqs --without-openssl --enable-shared=no
-	make -j
-	make install
+	mkdir build && cd build
+	cmake -G"Ninja" -DCMAKE_INSTALL_PREFIX=<BORINGSSL_DIR>/oqs -DOQS_USE_OPENSSL=OFF ..
+	ninja
+	ninja install
 
 #### Step 2: Build the fork
 
