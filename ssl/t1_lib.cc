@@ -114,6 +114,7 @@
 #include <string.h>
 
 #include <utility>
+#include <iostream>
 
 #include <openssl/bytestring.h>
 #include <openssl/chacha.h>
@@ -300,12 +301,28 @@ static const uint16_t kDefaultGroups[] = {
     SSL_CURVE_X25519,
     SSL_CURVE_SECP256R1,
     SSL_CURVE_SECP384R1,
-///// OQS_TEMPLATE_FRAGMENT_ADD_TO_DEFAULT_GROUPS_START
+///// OQS_TEMPLATE_FRAGMENT_ADD_DEFAULT_GROUPS_START
     SSL_CURVE_P256_OQS_KEMDEFAULT,
-    SSL_CURVE_OQS_KEMDEFAULT,
     SSL_CURVE_P256_FRODO640AES,
+///// OQS_TEMPLATE_FRAGMENT_ADD_DEFAULT_GROUPS_END
+};
+
+// OQS note: since it would be too unwieldy to add the
+// group IDs and keyshares of all of liboqs's alogrithms
+// (and their corresponding hybrid variants) to the ClientHello,
+// we only list the level-1 P-256 hybrids in kDefaultGroups, and
+// list all supported algorithms here. Algorithms that appear
+// only in this list can be used through SSL_CTX_set1_curves_list().
+static const uint16_t kAllServerSupportedGroups[] = {
+    SSL_CURVE_X25519,
+    SSL_CURVE_SECP256R1,
+    SSL_CURVE_SECP384R1,
+///// OQS_TEMPLATE_FRAGMENT_ADD_ALL_KEM_CURVEIDS_START
+    SSL_CURVE_P256_OQS_KEMDEFAULT,
+    SSL_CURVE_P256_FRODO640AES,
+    SSL_CURVE_OQS_KEMDEFAULT,
     SSL_CURVE_FRODO640AES,
-///// OQS_TEMPLATE_FRAGMENT_ADD_TO_DEFAULT_GROUPS_END
+///// OQS_TEMPLATE_FRAGMENT_ADD_ALL_KEM_CURVEIDS_END
 };
 
 Span<const uint16_t> tls1_get_grouplist(const SSL_HANDSHAKE *hs) {
@@ -328,7 +345,14 @@ bool tls1_get_shared_group(SSL_HANDSHAKE *hs, uint16_t *out_group_id) {
   // support our favoured group. Thus we do not special-case an emtpy
   // |peer_supported_group_list|.
 
-  Span<const uint16_t> groups = tls1_get_grouplist(hs);
+  // OQS note: We have removed the call to tls1_get_grouplist()
+  Span<const uint16_t> groups;
+  if(!hs->config->supported_group_list.empty()) {
+    groups = hs->config->supported_group_list;
+  } else {
+    groups = Span<const uint16_t>(kAllServerSupportedGroups);
+  }
+
   Span<const uint16_t> pref, supp;
   if (ssl->options & SSL_OP_CIPHER_SERVER_PREFERENCE) {
     pref = groups;
@@ -2216,12 +2240,14 @@ static bool ext_key_share_add_clienthello(SSL_HANDSHAKE *hs, CBB *out) {
 
     group_id = groups[0];
 
-    if (is_post_quantum_group(group_id) && groups.size() >= 2) {
+    // OQS Note: We have commented this out since we
+    // expect the peer to use our fork.
+    /*if (is_post_quantum_group(group_id) && groups.size() >= 2) {
       // CECPQ2(b) is not sent as the only initial key share. We'll include the
       // 2nd preference group too to avoid round-trips.
       second_group_id = groups[1];
       assert(second_group_id != group_id);
-    }
+    }*/
   }
 
   CBB key_exchange;
