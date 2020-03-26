@@ -7,7 +7,7 @@
     {%- for classical_alg in kem['mix_with'] %}
     case SSL_CURVE_{{ classical_alg['name']|upper }}_{{ kem['name']|upper }}:
       if(OQS_KEM_alg_is_enabled({{ kem['oqs_meth'] }}))
-          return UniquePtr<SSLKeyShare>(New<ClassicalOQSKeyShare>(SSL_CURVE_{{ classical_alg['name']|upper}}_{{ kem['name']|upper }}, {{ classical_alg['nid'] }}, {{ kem['oqs_meth'] }}));
+          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_{{ classical_alg['name']|upper}}_{{ kem['name']|upper }}, {{ classical_alg['nid'] }}, {{ kem['oqs_meth'] }}));
       else
           return nullptr;
     {%- endfor %}

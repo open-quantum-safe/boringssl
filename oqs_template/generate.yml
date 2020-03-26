@@ -10,4 +10,5 @@ kems:
     name: "frodo640aes"
     nid: "512"
     mix_with: [{'name': 'p256', 'mix_nid':'768', 'nid':'SSL_CURVE_SECP256R1'}]
+    use_as_default_with: 'p256'
     oqs_meth: "OQS_KEM_alg_frodokem_640_aes"
