@@ -117,7 +117,10 @@ on **Ubuntu**, run:
 
 The fork can also be built with shared libraries, to do so, run `cmake -DBUILD_SHARED_LIBRARIES=ON -GNinja ..`.
 
-To execute the white-box and black-box tests, run `ninja run_tests` from the `build` directory. These largely exclude the OQS key-exchanges, which can be tested using `ninja run_oqs_tests`.
+To execute the white-box and black-box tests, run `ninja run_tests` from the `build` directory. These exclude the OQS key-exchange and digital signature algorithms, which can be tested using `ninja run_basic_oqs_tests` and `ninja run_full_oqs_tests`:
+
+- `ninja run_basic_oqs_tests` first tests all key-exchanges with the signature set to `oqs_sigdefault`, and then tests all signatures with the key-exchange algorithm set to `oqs_kemdefault`.
+- `ninja run_full_oqs_tests` tests all possible combinations of OQS key-exchange and signature schemes.
 
 ### Running
 
