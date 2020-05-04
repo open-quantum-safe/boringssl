@@ -1,5 +1,5 @@
 include_directories(../include)
-include_directories(${OQS_DIR}/include)
+include_directories(${LIBOQS_DIR}/include)
 
 if(NOT OPENSSL_NO_ASM)
   if(UNIX)
@@ -459,7 +459,7 @@ endif()
 if(USE_CUSTOM_LIBCXX)
   target_link_libraries(crypto libcxx)
 endif()
-target_link_libraries(crypto ${OQS_DIR}/lib/liboqs.a)
+target_link_libraries(crypto ${LIBOQS_DIR}/lib/liboqs.a)
 
 add_executable(
   crypto_test

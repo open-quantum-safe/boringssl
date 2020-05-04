@@ -554,8 +554,10 @@ add_custom_command(
 
 add_library(crypto_test_data OBJECT crypto_test_data.cc)
 
-set(OQS_DIR ${CMAKE_SOURCE_DIR}/oqs)
-if(NOT EXISTS ${OQS_DIR}/include/oqs/oqsconfig.h)
+if(NOT DEFINED LIBOQS_DIR)
+    set(LIBOQS_DIR ${CMAKE_SOURCE_DIR}/oqs)
+endif()
+if(NOT EXISTS ${LIBOQS_DIR}/include/oqs/oqsconfig.h)
   message(FATAL_ERROR "This fork requires liboqs to be built first.")
 endif()
 
