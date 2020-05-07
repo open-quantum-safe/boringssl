@@ -74,6 +74,8 @@ The following quantum-safe algorithms from liboqs are supported (assuming they h
 - `dilithium4`
 - `qteslapi`
 - `qteslapiii`
+- `picnicl1fs`
+- `picnic2l1fs`
 
 ## Quickstart
 
