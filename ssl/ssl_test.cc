@@ -419,11 +419,11 @@ static const CurveTest kCurveTests[] = {
   },
   {
 ///// OQS_TEMPLATE_FRAGMENT_ADD_CURVETEST_START
-    "p256_oqs_kemdefault:oqs_kemdefault:p256_frodo640aes:frodo640aes",
+    "p256_oqs_kem_default:oqs_kem_default:p256_frodo640aes:frodo640aes",
     {
 
-      SSL_CURVE_P256_OQS_KEMDEFAULT,
-      SSL_CURVE_OQS_KEMDEFAULT,
+      SSL_CURVE_P256_OQS_KEM_DEFAULT,
+      SSL_CURVE_OQS_KEM_DEFAULT,
       SSL_CURVE_P256_FRODO640AES,
       SSL_CURVE_FRODO640AES,
     },
@@ -4043,9 +4043,9 @@ TEST(SSLTest, SignatureAlgorithmProperties) {
   EXPECT_EQ(EVP_sha384(),
             SSL_get_signature_algorithm_digest(SSL_SIGN_RSA_PSS_RSAE_SHA384));
   EXPECT_TRUE(SSL_is_signature_algorithm_rsa_pss(SSL_SIGN_RSA_PSS_RSAE_SHA384));
-  // OQS TODO: Add templating.
-  EXPECT_EQ(EVP_PKEY_OQS_SIGDEFAULT,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_OQS_SIGDEFAULT));
+///// OQS_TEMPLATE_FRAGMENT_ADD_SIG_ALG_PROP_TESTS_START
+  EXPECT_EQ(EVP_PKEY_OQS_SIG_DEFAULT,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_OQS_SIG_DEFAULT));
   EXPECT_EQ(EVP_PKEY_DILITHIUM2,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_DILITHIUM2));
   EXPECT_EQ(EVP_PKEY_DILITHIUM3,
@@ -4060,7 +4060,7 @@ TEST(SSLTest, SignatureAlgorithmProperties) {
             SSL_get_signature_algorithm_key_type(SSL_SIGN_QTESLAPI));
   EXPECT_EQ(EVP_PKEY_QTESLAPIII,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_QTESLAPIII));
-
+///// OQS_TEMPLATE_FRAGMENT_ADD_SIG_ALG_PROP_TESTS_END
 }
 
 static int XORCompressFunc(SSL *ssl, CBB *out, const uint8_t *in,
@@ -4323,8 +4323,16 @@ TEST(SSLTest, SigAlgs) {
       {{NID_undef, EVP_PKEY_ED25519, NID_sha384, EVP_PKEY_EC},
        true,
        {SSL_SIGN_ED25519, SSL_SIGN_ECDSA_SECP384R1_SHA384}},
-      // TODO: OQS add templating
-      {{NID_undef, EVP_PKEY_OQS_SIGDEFAULT}, true, {SSL_SIGN_OQS_SIGDEFAULT}},
+///// OQS_TEMPLATE_FRAGMENT_ADD_SIG_ALG_EQ_TESTS_START
+      {{NID_undef, EVP_PKEY_OQS_SIG_DEFAULT}, true, {SSL_SIGN_OQS_SIG_DEFAULT}},
+      {{NID_undef, EVP_PKEY_DILITHIUM2}, true, {SSL_SIGN_DILITHIUM2}},
+      {{NID_undef, EVP_PKEY_DILITHIUM3}, true, {SSL_SIGN_DILITHIUM3}},
+      {{NID_undef, EVP_PKEY_DILITHIUM4}, true, {SSL_SIGN_DILITHIUM4}},
+      {{NID_undef, EVP_PKEY_PICNICL1FS}, true, {SSL_SIGN_PICNICL1FS}},
+      {{NID_undef, EVP_PKEY_PICNIC2L1FS}, true, {SSL_SIGN_PICNIC2L1FS}},
+      {{NID_undef, EVP_PKEY_QTESLAPI}, true, {SSL_SIGN_QTESLAPI}},
+      {{NID_undef, EVP_PKEY_QTESLAPIII}, true, {SSL_SIGN_QTESLAPIII}},
+///// OQS_TEMPLATE_FRAGMENT_ADD_SIG_ALG_EQ_TESTS_END
   };
 
   UniquePtr<SSL_CTX> ctx(SSL_CTX_new(TLS_method()));
@@ -4380,8 +4388,9 @@ TEST(SSLTest, SigAlgsList) {
        {SSL_SIGN_ECDSA_SECP256R1_SHA256, SSL_SIGN_RSA_PSS_RSAE_SHA256}},
       {"RSA-PSS+SHA256", true, {SSL_SIGN_RSA_PSS_RSAE_SHA256}},
       {"PSS+SHA256", true, {SSL_SIGN_RSA_PSS_RSAE_SHA256}},
-      // OQS: Add templating
+///// OQS_TEMPLATE_FRAGMENT_SIGALGS_LIST_TESTS_START
       {"oqs_sigdefault", true, {SSL_SIGN_OQS_SIGDEFAULT}},
+///// OQS_TEMPLATE_FRAGMENT_SIGALGS_LIST_TESTS_END
   };
 
   UniquePtr<SSL_CTX> ctx(SSL_CTX_new(TLS_method()));

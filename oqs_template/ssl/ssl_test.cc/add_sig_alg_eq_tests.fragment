@@ -1,0 +1,4 @@
+{%- for sig in config['sigs'] %}
+      {% raw -%} {{ {%- endraw -%} NID_undef, EVP_PKEY_{{ sig['name']|upper }}}, true, {SSL_SIGN_{{ sig['name']|upper }} {%- raw -%} }} {%- endraw -%},
+{%- endfor %}
+

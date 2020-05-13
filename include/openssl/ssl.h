@@ -1023,7 +1023,7 @@ OPENSSL_EXPORT int SSL_set_ocsp_response(SSL *ssl,
 #define SSL_SIGN_RSA_PSS_RSAE_SHA384 0x0805
 #define SSL_SIGN_RSA_PSS_RSAE_SHA512 0x0806
 #define SSL_SIGN_ED25519 0x0807
-// OQS note: make sure the code points match the ones in the OpenSSL fork
+///// OQS_TEMPLATE_FRAGMENT_DEFINE_SIG_CODEPOINTS_START
 #define SSL_SIGN_OQS_SIGDEFAULT 0xfe00
 #define SSL_SIGN_DILITHIUM2 0xfe03
 #define SSL_SIGN_DILITHIUM3 0xfe06
@@ -1032,7 +1032,7 @@ OPENSSL_EXPORT int SSL_set_ocsp_response(SSL *ssl,
 #define SSL_SIGN_PICNIC2L1FS 0xfe0c
 #define SSL_SIGN_QTESLAPI 0xfe0f
 #define SSL_SIGN_QTESLAPIII 0xfe12
-// FIXMEOQS: add template
+///// OQS_TEMPLATE_FRAGMENT_DEFINE_SIG_CODEPOINTS_END
 
 // SSL_SIGN_RSA_PKCS1_MD5_SHA1 is an internal signature algorithm used to
 // specify raw RSASSA-PKCS1-v1_5 with an MD5/SHA-1 concatenation, as used in TLS
@@ -2223,12 +2223,12 @@ OPENSSL_EXPORT int SSL_set1_curves_list(SSL *ssl, const char *curves);
 #define SSL_CURVE_X25519 29
 #define SSL_CURVE_CECPQ2 16696
 #define SSL_CURVE_CECPQ2b 65074
-///// OQS_TEMPLATE_FRAGMENT_DEFINE_KEM_CURVEID_START
+///// OQS_TEMPLATE_FRAGMENT_DEFINE_KEM_CURVEIDS_START
 #define SSL_CURVE_OQS_KEMDEFAULT 511
 #define SSL_CURVE_P256_OQS_KEMDEFAULT 767
 #define SSL_CURVE_FRODO640AES 512
 #define SSL_CURVE_P256_FRODO640AES 768
-///// OQS_TEMPLATE_FRAGMENT_DEFINE_KEM_CURVEID_END
+///// OQS_TEMPLATE_FRAGMENT_DEFINE_KEM_CURVEIDS_END
 
 // SSL_get_curve_id returns the ID of the curve used by |ssl|'s most recently
 // completed handshake or 0 if not applicable.

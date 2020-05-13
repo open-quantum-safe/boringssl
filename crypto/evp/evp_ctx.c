@@ -70,6 +70,7 @@ static const EVP_PKEY_METHOD *const evp_methods[] = {
     &ec_pkey_meth,
     &ed25519_pkey_meth,
     &x25519_pkey_meth,
+///// OQS_TEMPLATE_FRAGMENT_LIST_PKEY_METHS_START
     &oqs_sigdefault_pkey_meth,
     &dilithium2_pkey_meth,
     &dilithium3_pkey_meth,
@@ -78,7 +79,7 @@ static const EVP_PKEY_METHOD *const evp_methods[] = {
     &picnic2l1fs_pkey_meth,
     &qteslapi_pkey_meth,
     &qteslapiii_pkey_meth,
-    // FIXMEOQS: add template
+///// OQS_TEMPLATE_FRAGMENT_LIST_PKEY_METHS_END
 };
 
 static const EVP_PKEY_METHOD *evp_pkey_meth_find(int type) {

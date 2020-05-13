@@ -1,0 +1,4 @@
+{% for sig in config['sigs'] %}
+#define EVP_PKEY_{{ sig['name']|upper }} NID_{{ sig['name'] }}
+{%- endfor %}
+

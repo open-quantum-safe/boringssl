@@ -205,6 +205,7 @@ static const EVP_PKEY_ASN1_METHOD *evp_pkey_asn1_find(int nid) {
       return &ed25519_asn1_meth;
     case EVP_PKEY_X25519:
       return &x25519_asn1_meth;
+///// OQS_TEMPLATE_FRAGMENT_PKEY_TO_ASN1_METH_START
     case EVP_PKEY_OQS_SIGDEFAULT:
       return &oqs_sigdefault_asn1_meth;
     case EVP_PKEY_DILITHIUM2:
@@ -221,7 +222,7 @@ static const EVP_PKEY_ASN1_METHOD *evp_pkey_asn1_find(int nid) {
       return &qteslapi_asn1_meth;
     case EVP_PKEY_QTESLAPIII:
       return &qteslapiii_asn1_meth;
-      // FIXMEOQS: add template
+///// OQS_TEMPLATE_FRAGMENT_PKEY_TO_ASN1_METH_END
     default:
       return NULL;
   }

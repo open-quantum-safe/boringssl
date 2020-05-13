@@ -1,0 +1,4 @@
+{%- for sig in config['sigs'] %}
+    {EVP_PKEY_{{ sig['name']|upper }}, NID_undef, SSL_SIGN_{{ sig['name']|upper }}},
+{%- endfor %}
+

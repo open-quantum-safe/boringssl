@@ -47,14 +47,25 @@ def load_config():
 config = load_config()
 
 # kems
-populate('include/openssl/ssl.h', config, '/////')
 populate('ssl/s3_both.cc', config, '/////')
 populate('ssl/ssl_key_share.cc', config, '/////')
-populate('ssl/ssl_test.cc', config, '/////')
-populate('ssl/t1_lib.cc', config, '/////')
 populate('ssl/test/fuzzer.h', config, '/////')
 populate('ssl/test/test_config.cc', config, '/////')
-populate('crypto/obj/objects.txt', config, '#####')
 
-# tests
-populate('oqs_test/test_kems.py', config, '#####')
+# sigs
+populate('crypto/evp/p_oqs_asn1.c', config, '/////')
+populate('crypto/evp/evp_ctx.c', config, '/////')
+populate('crypto/evp/evp.c', config, '/////')
+populate('crypto/evp/internal.h', config, '/////')
+populate('crypto/evp/evp_asn1.c', config, '/////')
+populate('crypto/evp/p_oqs.c', config, '/////')
+populate('crypto/x509/algorithm.c', config, '/////')
+populate('ssl/ssl_privkey.cc', config, '/////')
+populate('include/openssl/evp.h', config, '/////')
+
+# both
+populate('crypto/obj/objects.txt', config, '#####')
+populate('ssl/ssl_test.cc', config, '/////')
+populate('ssl/t1_lib.cc', config, '/////')
+populate('include/openssl/ssl.h', config, '/////')
+populate('oqs_test/oqs_algorithms.py', config, '#####')

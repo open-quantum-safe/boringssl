@@ -111,34 +111,35 @@ static int pkey_oqs_ctrl(EVP_PKEY_CTX *ctx, int type, int p1, void *p2) {
 }
 
 #define DEFINE_OQS_PKEY_METHOD(ALG, ALG_PKEY) \
-const EVP_PKEY_METHOD ALG##_pkey_meth = {         \
-    ALG_PKEY,                                     \
-    NULL /* init */,                              \
+const EVP_PKEY_METHOD ALG##_pkey_meth = {     \
+    ALG_PKEY,                                 \
+    NULL /* init */,                          \
     pkey_oqs_copy,                            \
-    NULL /* cleanup */,                           \
-    ALG##_pkey_keygen,                            \
-    NULL /* sign */,                              \
+    NULL /* cleanup */,                       \
+    ALG##_pkey_keygen,                        \
+    NULL /* sign */,                          \
     pkey_oqs_sign_message,                    \
-    NULL /* verify */,                            \
+    NULL /* verify */,                        \
     pkey_oqs_verify_message,                  \
-    NULL /* verify_recover */,                    \
-    NULL /* encrypt */,                           \
-    NULL /* decrypt */,                           \
-    NULL /* derive */,                            \
-    NULL /* paramgen */,                          \
+    NULL /* verify_recover */,                \
+    NULL /* encrypt */,                       \
+    NULL /* decrypt */,                       \
+    NULL /* derive */,                        \
+    NULL /* paramgen */,                      \
     pkey_oqs_ctrl,                            \
 };
 
-#define DEFINE_OQS_PKEY_FUNCTIONS(ALG, OQS_METH, ALG_PKEY) \
-DEFINE_PKEY_KEYGEN(ALG, OQS_METH, ALG_PKEY)                \
+#define DEFINE_OQS_PKEY_METHODS(ALG, OQS_METH, ALG_PKEY) \
+DEFINE_PKEY_KEYGEN(ALG, OQS_METH, ALG_PKEY)              \
 DEFINE_OQS_PKEY_METHOD(ALG, ALG_PKEY)
 
-DEFINE_OQS_PKEY_FUNCTIONS(oqs_sigdefault, OQS_SIG_alg_default, EVP_PKEY_OQS_SIGDEFAULT)
-DEFINE_OQS_PKEY_FUNCTIONS(dilithium2, OQS_SIG_alg_dilithium_2, EVP_PKEY_DILITHIUM2)
-DEFINE_OQS_PKEY_FUNCTIONS(dilithium3, OQS_SIG_alg_dilithium_3, EVP_PKEY_DILITHIUM3)
-DEFINE_OQS_PKEY_FUNCTIONS(dilithium4, OQS_SIG_alg_dilithium_4, EVP_PKEY_DILITHIUM4)
-DEFINE_OQS_PKEY_FUNCTIONS(picnicl1fs, OQS_SIG_alg_picnic_L1_FS, EVP_PKEY_PICNICL1FS)
-DEFINE_OQS_PKEY_FUNCTIONS(picnic2l1fs, OQS_SIG_alg_picnic2_L1_FS, EVP_PKEY_PICNIC2L1FS)
-DEFINE_OQS_PKEY_FUNCTIONS(qteslapi, OQS_SIG_alg_qTesla_p_I, EVP_PKEY_QTESLAPI)
-DEFINE_OQS_PKEY_FUNCTIONS(qteslapiii, OQS_SIG_alg_qTesla_p_III, EVP_PKEY_QTESLAPIII)
-// FIXMEOQS: add template
+///// OQS_TEMPLATE_FRAGMENT_DEF_PKEY_METHODS_START
+DEFINE_OQS_PKEY_METHODS(oqs_sigdefault, OQS_SIG_alg_default, EVP_PKEY_OQS_SIGDEFAULT)
+DEFINE_OQS_PKEY_METHODS(dilithium2, OQS_SIG_alg_dilithium_2, EVP_PKEY_DILITHIUM2)
+DEFINE_OQS_PKEY_METHODS(dilithium3, OQS_SIG_alg_dilithium_3, EVP_PKEY_DILITHIUM3)
+DEFINE_OQS_PKEY_METHODS(dilithium4, OQS_SIG_alg_dilithium_4, EVP_PKEY_DILITHIUM4)
+DEFINE_OQS_PKEY_METHODS(picnicl1fs, OQS_SIG_alg_picnic_L1_FS, EVP_PKEY_PICNICL1FS)
+DEFINE_OQS_PKEY_METHODS(picnic2l1fs, OQS_SIG_alg_picnic2_L1_FS, EVP_PKEY_PICNIC2L1FS)
+DEFINE_OQS_PKEY_METHODS(qteslapi, OQS_SIG_alg_qTesla_p_I, EVP_PKEY_QTESLAPI)
+DEFINE_OQS_PKEY_METHODS(qteslapiii, OQS_SIG_alg_qTesla_p_III, EVP_PKEY_QTESLAPIII)
+///// OQS_TEMPLATE_FRAGMENT_DEF_PKEY_METHODS_END

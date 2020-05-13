@@ -451,7 +451,7 @@ bool tls1_check_group_id(const SSL_HANDSHAKE *hs, uint16_t group_id) {
 // restore them.
 static const uint16_t kVerifySignatureAlgorithms[] = {
     // List our preferred algorithms first.
-    // OQS note: we add the PQ algs to this list
+///// OQS_TEMPLATE_FRAGMENT_LIST_VERIFY_SIG_ALGS_START
     SSL_SIGN_OQS_SIGDEFAULT,
     SSL_SIGN_DILITHIUM2,
     SSL_SIGN_DILITHIUM3,
@@ -460,7 +460,7 @@ static const uint16_t kVerifySignatureAlgorithms[] = {
     SSL_SIGN_PICNIC2L1FS,
     SSL_SIGN_QTESLAPI,
     SSL_SIGN_QTESLAPIII,
-    // FIXMEOQS: add template
+///// OQS_TEMPLATE_FRAGMENT_LIST_VERIFY_SIG_ALGS_END
 
     SSL_SIGN_ED25519,
     SSL_SIGN_ECDSA_SECP256R1_SHA256,
@@ -488,7 +488,7 @@ static const uint16_t kVerifySignatureAlgorithms[] = {
 // restore them.
 static const uint16_t kSignSignatureAlgorithms[] = {
     // List our preferred algorithms first.
-    // OQS note: we add the PQ algs to this list
+///// OQS_TEMPLATE_FRAGMENT_LIST_SIGN_SIG_ALGS_START
     SSL_SIGN_OQS_SIGDEFAULT,
     SSL_SIGN_DILITHIUM2,
     SSL_SIGN_DILITHIUM3,
@@ -497,7 +497,7 @@ static const uint16_t kSignSignatureAlgorithms[] = {
     SSL_SIGN_PICNIC2L1FS,
     SSL_SIGN_QTESLAPI,
     SSL_SIGN_QTESLAPIII,
-    // FIXMEOQS: add template
+///// OQS_TEMPLATE_FRAGMENT_LIST_SIGN_SIG_ALGS_END
 
     SSL_SIGN_ED25519,
     SSL_SIGN_ECDSA_SECP256R1_SHA256,
@@ -3847,7 +3847,10 @@ Span<const uint16_t> tls1_get_peer_verify_algorithms(const SSL_HANDSHAKE *hs) {
     // If the client didn't specify any signature_algorithms extension then
     // we can assume that it supports SHA1. See
     // http://tools.ietf.org/html/rfc5246#section-7.4.1.4.1
-    static const uint16_t kDefaultPeerAlgorithms[] = {SSL_SIGN_RSA_PKCS1_SHA1, SSL_SIGN_ECDSA_SHA1,
+    static const uint16_t kDefaultPeerAlgorithms[] = {
+                              SSL_SIGN_RSA_PKCS1_SHA1,
+                              SSL_SIGN_ECDSA_SHA1,
+///// OQS_TEMPLATE_FRAGMENT_LIST_DEFAULT_SIG_ALGS_START
                               SSL_SIGN_OQS_SIGDEFAULT,
                               SSL_SIGN_DILITHIUM2,
                               SSL_SIGN_DILITHIUM3,
@@ -3855,8 +3858,8 @@ Span<const uint16_t> tls1_get_peer_verify_algorithms(const SSL_HANDSHAKE *hs) {
                               SSL_SIGN_PICNICL1FS,
                               SSL_SIGN_PICNIC2L1FS,
                               SSL_SIGN_QTESLAPI,
-                              SSL_SIGN_QTESLAPIII
-                              // FIXMEOQS: add template
+                              SSL_SIGN_QTESLAPIII,
+///// OQS_TEMPLATE_FRAGMENT_LIST_DEFAULT_SIG_ALGS_END
     };
     peer_sigalgs = kDefaultPeerAlgorithms;
   }
