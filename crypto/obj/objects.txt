@@ -1375,4 +1375,5 @@ secg-scheme 14 3 : dhSinglePass-cofactorDH-sha512kdf-scheme
 1 3 6 1 4 1 311 89 2 1 11 : picnic2l1fs : picnic2l1fs
 1 3 6 1 4 1 311 89 2 2 10 : qteslapi : qteslapi
 1 3 6 1 4 1 311 89 2 2 20 : qteslapiii : qteslapiii
+1 3 9999 3 1 : sphincs_haraka_128f_robust : sphincs_haraka_128f_robust
 ##### OQS_TEMPLATE_FRAGMENT_ASSIGN_OIDS_END

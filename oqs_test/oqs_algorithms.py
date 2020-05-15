@@ -17,5 +17,6 @@ sig_to_code_point = {
         'picnic2l1fs': '65036',
         'qteslapi': '65039',
         'qteslapiii': '65042',
+        'sphincs_haraka_128f_robust': '65060',
 ##### OQS_TEMPLATE_FRAGMENT_MAP_SIG_TO_CODEPOINT_END
 }

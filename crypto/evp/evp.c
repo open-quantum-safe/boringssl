@@ -222,6 +222,8 @@ static const EVP_PKEY_ASN1_METHOD *evp_pkey_asn1_find(int nid) {
       return &qteslapi_asn1_meth;
     case EVP_PKEY_QTESLAPIII:
       return &qteslapiii_asn1_meth;
+    case EVP_PKEY_SPHINCS_HARAKA_128F_ROBUST:
+      return &sphincs_haraka_128f_robust_asn1_meth;
 ///// OQS_TEMPLATE_FRAGMENT_PKEY_TO_ASN1_METH_END
     default:
       return NULL;

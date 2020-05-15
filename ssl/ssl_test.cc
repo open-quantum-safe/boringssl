@@ -4060,6 +4060,8 @@ TEST(SSLTest, SignatureAlgorithmProperties) {
             SSL_get_signature_algorithm_key_type(SSL_SIGN_QTESLAPI));
   EXPECT_EQ(EVP_PKEY_QTESLAPIII,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_QTESLAPIII));
+  EXPECT_EQ(EVP_PKEY_SPHINCS_HARAKA_128F_ROBUST,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCS_HARAKA_128F_ROBUST));
 ///// OQS_TEMPLATE_FRAGMENT_ADD_SIG_ALG_PROP_TESTS_END
 }
 
@@ -4332,6 +4334,7 @@ TEST(SSLTest, SigAlgs) {
       {{NID_undef, EVP_PKEY_PICNIC2L1FS}, true, {SSL_SIGN_PICNIC2L1FS}},
       {{NID_undef, EVP_PKEY_QTESLAPI}, true, {SSL_SIGN_QTESLAPI}},
       {{NID_undef, EVP_PKEY_QTESLAPIII}, true, {SSL_SIGN_QTESLAPIII}},
+      {{NID_undef, EVP_PKEY_SPHINCS_HARAKA_128F_ROBUST}, true, {SSL_SIGN_SPHINCS_HARAKA_128F_ROBUST}},
 ///// OQS_TEMPLATE_FRAGMENT_ADD_SIG_ALG_EQ_TESTS_END
   };
 
@@ -4397,6 +4400,7 @@ TEST(SSLTest, SigAlgsList) {
       {"picnic2l1fs", true, {SSL_SIGN_PICNIC2L1FS}},
       {"qteslapi", true, {SSL_SIGN_QTESLAPI}},
       {"qteslapiii", true, {SSL_SIGN_QTESLAPIII}},
+      {"sphincs_haraka_128f_robust", true, {SSL_SIGN_SPHINCS_HARAKA_128F_ROBUST}},
 ///// OQS_TEMPLATE_FRAGMENT_SIGALGS_LIST_TESTS_END
   };
 

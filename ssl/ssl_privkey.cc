@@ -83,7 +83,8 @@ bool ssl_is_key_type_supported(int key_type) {
          key_type == EVP_PKEY_PICNICL1FS ||
          key_type == EVP_PKEY_PICNIC2L1FS ||
          key_type == EVP_PKEY_QTESLAPI ||
-         key_type == EVP_PKEY_QTESLAPIII;
+         key_type == EVP_PKEY_QTESLAPIII ||
+         key_type == EVP_PKEY_SPHINCS_HARAKA_128F_ROBUST;
 ///// OQS_TEMPLATE_FRAGMENT_CHECK_KEY_TYPE_END
 }
 
@@ -142,6 +143,7 @@ static const SSL_SIGNATURE_ALGORITHM kSignatureAlgorithms[] = {
     {SSL_SIGN_PICNIC2L1FS, EVP_PKEY_PICNIC2L1FS, NID_undef, nullptr, false},
     {SSL_SIGN_QTESLAPI, EVP_PKEY_QTESLAPI, NID_undef, nullptr, false},
     {SSL_SIGN_QTESLAPIII, EVP_PKEY_QTESLAPIII, NID_undef, nullptr, false},
+    {SSL_SIGN_SPHINCS_HARAKA_128F_ROBUST, EVP_PKEY_SPHINCS_HARAKA_128F_ROBUST, NID_undef, nullptr, false},
 ///// OQS_TEMPLATE_FRAGMENT_LIST_SSL_SIG_ALGS_END
 };
 
@@ -450,7 +452,9 @@ void SSL_CTX_set_private_key_method(SSL_CTX *ctx,
   ctx->cert->key_method = key_method;
 }
 
-static constexpr size_t kMaxSignatureAlgorithmNameLen = 23;
+// OQS note: This was changed from 23 to 30 to accommodate
+// large algorithm names (such as "Rainbow-IIIc-Cyclic-Compressed").
+static constexpr size_t kMaxSignatureAlgorithmNameLen = 30;
 
 // This was "constexpr" rather than "const", but that triggered a bug in MSVC
 // where it didn't pad the strings to the correct length.
@@ -480,6 +484,7 @@ static const struct {
     {SSL_SIGN_PICNIC2L1FS, "picnic2l1fs"},
     {SSL_SIGN_QTESLAPI, "qteslapi"},
     {SSL_SIGN_QTESLAPIII, "qteslapiii"},
+    {SSL_SIGN_SPHINCS_HARAKA_128F_ROBUST, "sphincs_haraka_128f_robust"},
 ///// OQS_TEMPLATE_FRAGMENT_NAME_SIG_ALG_END
 };
 
@@ -562,6 +567,7 @@ static constexpr struct {
     {EVP_PKEY_PICNIC2L1FS, NID_undef, SSL_SIGN_PICNIC2L1FS},
     {EVP_PKEY_QTESLAPI, NID_undef, SSL_SIGN_QTESLAPI},
     {EVP_PKEY_QTESLAPIII, NID_undef, SSL_SIGN_QTESLAPIII},
+    {EVP_PKEY_SPHINCS_HARAKA_128F_ROBUST, NID_undef, SSL_SIGN_SPHINCS_HARAKA_128F_ROBUST},
 ///// OQS_TEMPLATE_FRAGMENT_ADD_SIG_ALG_MAPPINGS_END
 };
 

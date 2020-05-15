@@ -82,6 +82,7 @@ static const EVP_PKEY_ASN1_METHOD *const kASN1Methods[] = {
     &picnic2l1fs_asn1_meth,
     &qteslapi_asn1_meth,
     &qteslapiii_asn1_meth,
+    &sphincs_haraka_128f_robust_asn1_meth,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_PKEY_ASN1_METHS_END
 };
 

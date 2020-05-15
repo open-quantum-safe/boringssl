@@ -1032,6 +1032,7 @@ OPENSSL_EXPORT int SSL_set_ocsp_response(SSL *ssl,
 #define SSL_SIGN_PICNIC2L1FS 0xfe0c
 #define SSL_SIGN_QTESLAPI 0xfe0f
 #define SSL_SIGN_QTESLAPIII 0xfe12
+#define SSL_SIGN_SPHINCS_HARAKA_128F_ROBUST 0xfe24
 ///// OQS_TEMPLATE_FRAGMENT_DEFINE_SIG_CODEPOINTS_END
 
 // SSL_SIGN_RSA_PKCS1_MD5_SHA1 is an internal signature algorithm used to

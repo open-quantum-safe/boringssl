@@ -187,6 +187,7 @@ OPENSSL_EXPORT EC_KEY *EVP_PKEY_get1_EC_KEY(const EVP_PKEY *pkey);
 #define EVP_PKEY_PICNIC2L1FS NID_picnic2l1fs
 #define EVP_PKEY_QTESLAPI NID_qteslapi
 #define EVP_PKEY_QTESLAPIII NID_qteslapiii
+#define EVP_PKEY_SPHINCS_HARAKA_128F_ROBUST NID_sphincs_haraka_128f_robust
 ///// OQS_TEMPLATE_FRAGMENT_DEFINE_EVP_PKEYS_END
 
 // EVP_PKEY_assign sets the underlying key of |pkey| to |key|, which must be of

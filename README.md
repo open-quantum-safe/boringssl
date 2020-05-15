@@ -76,6 +76,8 @@ The following quantum-safe algorithms from liboqs are supported (assuming they h
 - `qteslapiii`
 - `picnicl1fs`
 - `picnic2l1fs`
+- `picnic2l1fs`
+- `sphincs_haraka_128f_robust`
 
 ## Quickstart
 

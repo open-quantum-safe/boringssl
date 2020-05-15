@@ -961,3 +961,4 @@ qteslapiii		972
 oqs_kem_default		973
 p256_oqs_kem_default		974
 oqs_sig_default		975
+sphincs_haraka_128f_robust		976

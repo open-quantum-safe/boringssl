@@ -93,7 +93,8 @@ int x509_digest_sign_algorithm(EVP_MD_CTX *ctx, X509_ALGOR *algor) {
       pkey_id == EVP_PKEY_PICNICL1FS ||
       pkey_id == EVP_PKEY_PICNIC2L1FS ||
       pkey_id == EVP_PKEY_QTESLAPI ||
-      pkey_id == EVP_PKEY_QTESLAPIII
+      pkey_id == EVP_PKEY_QTESLAPIII ||
+      pkey_id == EVP_PKEY_SPHINCS_HARAKA_128F_ROBUST
 ///// OQS_TEMPLATE_FRAGMENT_CHECK_PKEY_ID_END
       ) {
     // The NID == EVP_PKEY_id for ED25519 and the OQS schemes

@@ -4292,6 +4292,11 @@ extern "C" {
 #define NID_oqs_sig_default 975
 #define OBJ_oqs_sig_default 1L, 3L, 9999L, 1L, 1L
 
+#define SN_sphincs_haraka_128f_robust "sphincs_haraka_128f_robust"
+#define LN_sphincs_haraka_128f_robust "sphincs_haraka_128f_robust"
+#define NID_sphincs_haraka_128f_robust 976
+#define OBJ_sphincs_haraka_128f_robust 1L, 3L, 9999L, 3L, 1L
+
 
 #if defined(__cplusplus)
 } /* extern C */
