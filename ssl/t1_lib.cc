@@ -202,8 +202,8 @@ static bool is_post_quantum_group(uint16_t id) {
   return id == SSL_CURVE_CECPQ2 ||
          id == SSL_CURVE_CECPQ2b ||
 ///// OQS_TEMPLATE_FRAGMENT_ADD_PQ_GROUPS_START
-         id == SSL_CURVE_OQS_KEMDEFAULT ||
-         id == SSL_CURVE_P256_OQS_KEMDEFAULT ||
+         id == SSL_CURVE_OQS_KEM_DEFAULT ||
+         id == SSL_CURVE_P256_OQS_KEM_DEFAULT ||
          id == SSL_CURVE_FRODO640AES ||
          id == SSL_CURVE_P256_FRODO640AES;
 ///// OQS_TEMPLATE_FRAGMENT_ADD_PQ_GROUPS_END
@@ -316,8 +316,8 @@ static const uint16_t kAllSupportedGroups[] = {
     SSL_CURVE_SECP256R1,
     SSL_CURVE_SECP384R1,
 ///// OQS_TEMPLATE_FRAGMENT_ADD_ALL_KEMS_START
-    SSL_CURVE_P256_OQS_KEMDEFAULT,
-    SSL_CURVE_OQS_KEMDEFAULT,
+    SSL_CURVE_P256_OQS_KEM_DEFAULT,
+    SSL_CURVE_OQS_KEM_DEFAULT,
     SSL_CURVE_P256_FRODO640AES,
     SSL_CURVE_FRODO640AES,
 ///// OQS_TEMPLATE_FRAGMENT_ADD_ALL_KEMS_END
@@ -452,7 +452,7 @@ bool tls1_check_group_id(const SSL_HANDSHAKE *hs, uint16_t group_id) {
 static const uint16_t kVerifySignatureAlgorithms[] = {
     // List our preferred algorithms first.
 ///// OQS_TEMPLATE_FRAGMENT_LIST_VERIFY_SIG_ALGS_START
-    SSL_SIGN_OQS_SIGDEFAULT,
+    SSL_SIGN_OQS_SIG_DEFAULT,
     SSL_SIGN_DILITHIUM2,
     SSL_SIGN_DILITHIUM3,
     SSL_SIGN_DILITHIUM4,
@@ -489,7 +489,7 @@ static const uint16_t kVerifySignatureAlgorithms[] = {
 static const uint16_t kSignSignatureAlgorithms[] = {
     // List our preferred algorithms first.
 ///// OQS_TEMPLATE_FRAGMENT_LIST_SIGN_SIG_ALGS_START
-    SSL_SIGN_OQS_SIGDEFAULT,
+    SSL_SIGN_OQS_SIG_DEFAULT,
     SSL_SIGN_DILITHIUM2,
     SSL_SIGN_DILITHIUM3,
     SSL_SIGN_DILITHIUM4,
@@ -3851,7 +3851,7 @@ Span<const uint16_t> tls1_get_peer_verify_algorithms(const SSL_HANDSHAKE *hs) {
                               SSL_SIGN_RSA_PKCS1_SHA1,
                               SSL_SIGN_ECDSA_SHA1,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_DEFAULT_SIG_ALGS_START
-                              SSL_SIGN_OQS_SIGDEFAULT,
+                              SSL_SIGN_OQS_SIG_DEFAULT,
                               SSL_SIGN_DILITHIUM2,
                               SSL_SIGN_DILITHIUM3,
                               SSL_SIGN_DILITHIUM4,

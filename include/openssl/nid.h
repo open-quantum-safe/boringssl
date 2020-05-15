@@ -4240,22 +4240,11 @@ extern "C" {
 #define SN_CECPQ2b "CECPQ2b"
 #define NID_CECPQ2b 960
 
-#define SN_oqs_kemdefault "oqs_kemdefault"
-#define NID_oqs_kemdefault 961
-
-#define SN_p256_oqs_kemdefault "p256_oqs_kemdefault"
-#define NID_p256_oqs_kemdefault 962
-
 #define SN_frodo640aes "frodo640aes"
 #define NID_frodo640aes 963
 
 #define SN_p256_frodo640aes "p256_frodo640aes"
 #define NID_p256_frodo640aes 964
-
-#define SN_oqs_sigdefault "oqs_sigdefault"
-#define LN_oqs_sigdefault "oqs_sigdefault"
-#define NID_oqs_sigdefault 965
-#define OBJ_oqs_sigdefault 1L, 3L, 9999L, 1L, 1L
 
 #define SN_dilithium2 "dilithium2"
 #define LN_dilithium2 "dilithium2"
@@ -4291,6 +4280,17 @@ extern "C" {
 #define LN_qteslapiii "qteslapiii"
 #define NID_qteslapiii 972
 #define OBJ_qteslapiii 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 2L, 20L
+
+#define SN_oqs_kem_default "oqs_kem_default"
+#define NID_oqs_kem_default 973
+
+#define SN_p256_oqs_kem_default "p256_oqs_kem_default"
+#define NID_p256_oqs_kem_default 974
+
+#define SN_oqs_sig_default "oqs_sig_default"
+#define LN_oqs_sig_default "oqs_sig_default"
+#define NID_oqs_sig_default 975
+#define OBJ_oqs_sig_default 1L, 3L, 9999L, 1L, 1L
 
 
 #if defined(__cplusplus)

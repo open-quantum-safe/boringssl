@@ -74,7 +74,7 @@ static const EVP_PKEY_ASN1_METHOD *const kASN1Methods[] = {
     &ed25519_asn1_meth,
     &x25519_asn1_meth,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_PKEY_ASN1_METHS_START
-    &oqs_sigdefault_asn1_meth,
+    &oqs_sig_default_asn1_meth,
     &dilithium2_asn1_meth,
     &dilithium3_asn1_meth,
     &dilithium4_asn1_meth,

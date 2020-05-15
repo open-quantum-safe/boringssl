@@ -71,7 +71,7 @@ static const EVP_PKEY_METHOD *const evp_methods[] = {
     &ed25519_pkey_meth,
     &x25519_pkey_meth,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_PKEY_METHS_START
-    &oqs_sigdefault_pkey_meth,
+    &oqs_sig_default_pkey_meth,
     &dilithium2_pkey_meth,
     &dilithium3_pkey_meth,
     &dilithium4_pkey_meth,

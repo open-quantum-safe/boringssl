@@ -663,8 +663,8 @@ class CipherScorer {
         security_128_is_fine_(group_id != SSL_CURVE_CECPQ2 &&
                               group_id != SSL_CURVE_CECPQ2b &&
 ///// OQS_TEMPLATE_FRAGMENT_LIST_CURVES_START
-                              group_id != SSL_CURVE_OQS_KEMDEFAULT &&
-                              group_id != SSL_CURVE_P256_OQS_KEMDEFAULT &&
+                              group_id != SSL_CURVE_OQS_KEM_DEFAULT &&
+                              group_id != SSL_CURVE_P256_OQS_KEM_DEFAULT &&
                               group_id != SSL_CURVE_FRODO640AES &&
                               group_id != SSL_CURVE_P256_FRODO640AES
 ///// OQS_TEMPLATE_FRAGMENT_LIST_CURVES_END

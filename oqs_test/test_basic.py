@@ -13,7 +13,7 @@ def bssl_server_port(bssl):
     # Setup: start bssl server
     bssl_server = subprocess.Popen([bssl, 'server',
                                           '-accept', '44433',
-                                          '-sig-alg', 'oqs_sigdefault',
+                                          '-sig-alg', 'oqs_sig_default',
                                           '-loop'],
                                     stdout=subprocess.PIPE,
                                     stderr=subprocess.STDOUT)
@@ -30,7 +30,7 @@ def test_kem(bssl_server_port, bssl_shim, kex_name):
                     '-expect-version', 'TLSv1.3',
                     '-curves', oqs_algorithms.kex_to_nid[kex_name],
                     '-expect-curve-id', oqs_algorithms.kex_to_nid[kex_name],
-                    '-expect-peer-signature-algorithm', oqs_algorithms.sig_to_code_point['oqs_sigdefault'],
+                    '-expect-peer-signature-algorithm', oqs_algorithms.sig_to_code_point['oqs_sig_default'],
                     '-shim-shuts-down'
         ],
         stdout=subprocess.PIPE,
@@ -51,8 +51,8 @@ def test_sig(bssl, bssl_shim, sig_name):
     result = subprocess.run(
         [bssl_shim, '-port', '44433',
                     '-expect-version', 'TLSv1.3',
-                    '-curves', oqs_algorithms.kex_to_nid['oqs_kemdefault'],
-                    '-expect-curve-id', oqs_algorithms.kex_to_nid['oqs_kemdefault'],
+                    '-curves', oqs_algorithms.kex_to_nid['oqs_kem_default'],
+                    '-expect-curve-id', oqs_algorithms.kex_to_nid['oqs_kem_default'],
                     '-expect-peer-signature-algorithm', oqs_algorithms.sig_to_code_point[sig_name],
                     '-shim-shuts-down'
 

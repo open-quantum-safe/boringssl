@@ -620,8 +620,8 @@ CONSTEXPR_ARRAY NamedGroup kNamedGroups[] = {
     {NID_CECPQ2, SSL_CURVE_CECPQ2, "CECPQ2", "CECPQ2"},
     {NID_CECPQ2b, SSL_CURVE_CECPQ2b, "CECPQ2b", "CECPQ2b"},
 ///// OQS_TEMPLATE_FRAGMENT_DEF_NAMEDGROUPS_START
-    {NID_oqs_kemdefault, SSL_CURVE_OQS_KEMDEFAULT, "oqs_kemdefault", "oqs_kemdefault"},
-    {NID_p256_oqs_kemdefault, SSL_CURVE_P256_OQS_KEMDEFAULT, "p256_oqs_kemdefault", "p256_oqs_kemdefault"},
+    {NID_oqs_kem_default, SSL_CURVE_OQS_KEM_DEFAULT, "oqs_kem_default", "oqs_kem_default"},
+    {NID_p256_oqs_kem_default, SSL_CURVE_P256_OQS_KEM_DEFAULT, "p256_oqs_kem_default", "p256_oqs_kem_default"},
     {NID_frodo640aes, SSL_CURVE_FRODO640AES, "frodo640aes", "frodo640aes"},
     {NID_p256_frodo640aes, SSL_CURVE_P256_FRODO640AES, "p256_frodo640aes", "p256_frodo640aes"},
 ///// OQS_TEMPLATE_FRAGMENT_DEF_NAMEDGROUPS_END
@@ -654,14 +654,14 @@ UniquePtr<SSLKeyShare> SSLKeyShare::Create(uint16_t group_id) {
     case SSL_CURVE_CECPQ2b:
       return UniquePtr<SSLKeyShare>(New<CECPQ2bKeyShare>());
 ///// OQS_TEMPLATE_FRAGMENT_HANDLE_GROUP_IDS_START
-    case SSL_CURVE_OQS_KEMDEFAULT:
+    case SSL_CURVE_OQS_KEM_DEFAULT:
       if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_default))
-          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_OQS_KEMDEFAULT, OQS_KEM_alg_default));
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_OQS_KEM_DEFAULT, OQS_KEM_alg_default));
       else
           return nullptr;
-    case SSL_CURVE_P256_OQS_KEMDEFAULT:
+    case SSL_CURVE_P256_OQS_KEM_DEFAULT:
       if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_default))
-          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P256_OQS_KEMDEFAULT, SSL_CURVE_SECP256R1, OQS_KEM_alg_default));
+          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P256_OQS_KEM_DEFAULT, SSL_CURVE_SECP256R1, OQS_KEM_alg_default));
       else
           return nullptr;
     case SSL_CURVE_FRODO640AES:

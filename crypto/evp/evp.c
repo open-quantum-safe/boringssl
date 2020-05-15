@@ -206,8 +206,8 @@ static const EVP_PKEY_ASN1_METHOD *evp_pkey_asn1_find(int nid) {
     case EVP_PKEY_X25519:
       return &x25519_asn1_meth;
 ///// OQS_TEMPLATE_FRAGMENT_PKEY_TO_ASN1_METH_START
-    case EVP_PKEY_OQS_SIGDEFAULT:
-      return &oqs_sigdefault_asn1_meth;
+    case EVP_PKEY_OQS_SIG_DEFAULT:
+      return &oqs_sig_default_asn1_meth;
     case EVP_PKEY_DILITHIUM2:
       return &dilithium2_asn1_meth;
     case EVP_PKEY_DILITHIUM3:

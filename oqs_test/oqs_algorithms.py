@@ -1,7 +1,7 @@
 kex_to_nid = {
 ##### OQS_TEMPLATE_FRAGMENT_MAP_KEM_TO_NID_START
-        'oqs_kemdefault': '511',
-        'p256_oqs_kemdefault': '767',
+        'oqs_kem_default': '511',
+        'p256_oqs_kem_default': '767',
         'frodo640aes': '512',
         'p256_frodo640aes': '768',
 ##### OQS_TEMPLATE_FRAGMENT_MAP_KEM_TO_NID_END
@@ -9,7 +9,7 @@ kex_to_nid = {
 
 sig_to_code_point = {
 ##### OQS_TEMPLATE_FRAGMENT_MAP_SIG_TO_CODEPOINT_START
-        'oqs_sigdefault': '65024',
+        'oqs_sig_default': '65024',
         'dilithium2': '65027',
         'dilithium3': '65030',
         'dilithium4': '65031',

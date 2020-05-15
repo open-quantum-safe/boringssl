@@ -86,7 +86,7 @@ int x509_digest_sign_algorithm(EVP_MD_CTX *ctx, X509_ALGOR *algor) {
   int pkey_id = EVP_PKEY_id(pkey);
   if (pkey_id == EVP_PKEY_ED25519 ||
 ///// OQS_TEMPLATE_FRAGMENT_CHECK_PKEY_ID_START
-      pkey_id == EVP_PKEY_OQS_SIGDEFAULT ||
+      pkey_id == EVP_PKEY_OQS_SIG_DEFAULT ||
       pkey_id == EVP_PKEY_DILITHIUM2 ||
       pkey_id == EVP_PKEY_DILITHIUM3 ||
       pkey_id == EVP_PKEY_DILITHIUM4 ||

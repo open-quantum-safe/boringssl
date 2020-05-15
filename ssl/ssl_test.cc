@@ -4389,7 +4389,14 @@ TEST(SSLTest, SigAlgsList) {
       {"RSA-PSS+SHA256", true, {SSL_SIGN_RSA_PSS_RSAE_SHA256}},
       {"PSS+SHA256", true, {SSL_SIGN_RSA_PSS_RSAE_SHA256}},
 ///// OQS_TEMPLATE_FRAGMENT_SIGALGS_LIST_TESTS_START
-      {"oqs_sigdefault", true, {SSL_SIGN_OQS_SIGDEFAULT}},
+      {"oqs_sig_default", true, {SSL_SIGN_OQS_SIG_DEFAULT}},
+      {"dilithium2", true, {SSL_SIGN_DILITHIUM2}},
+      {"dilithium3", true, {SSL_SIGN_DILITHIUM3}},
+      {"dilithium4", true, {SSL_SIGN_DILITHIUM4}},
+      {"picnicl1fs", true, {SSL_SIGN_PICNICL1FS}},
+      {"picnic2l1fs", true, {SSL_SIGN_PICNIC2L1FS}},
+      {"qteslapi", true, {SSL_SIGN_QTESLAPI}},
+      {"qteslapiii", true, {SSL_SIGN_QTESLAPIII}},
 ///// OQS_TEMPLATE_FRAGMENT_SIGALGS_LIST_TESTS_END
   };
 

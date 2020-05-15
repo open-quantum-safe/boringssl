@@ -418,7 +418,7 @@ class TLSFuzzer {
         NID_CECPQ2, NID_X25519, NID_X9_62_prime256v1,
         NID_secp384r1, NID_secp521r1
 ///// OQS_TEMPLATE_FRAGMENT_LIST_NIDS_START
-        NID_oqs_kemdefault, NID_p256_oqs_kemdefault,
+        NID_oqs_kem_default, NID_p256_oqs_kem_default,
         NID_frodo640aes, NID_p256_frodo640aes,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_NIDS_END
     };

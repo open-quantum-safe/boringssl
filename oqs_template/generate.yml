@@ -2,7 +2,7 @@
 # in OQS-OpenSSL 1.1.1 for interoperability.
 kems:
   -
-    name: 'oqs_kemdefault'
+    name: 'oqs_kem_default'
     nid: '511'
     mix_with: [{'name': 'p256', 'mix_nid':'767', 'nid':'SSL_CURVE_SECP256R1'}]
     oqs_meth: 'OQS_KEM_alg_default'
@@ -17,7 +17,7 @@ kems:
 # in OQS-OpenSSL 1.1.1 for interoperability.
 sigs:
   -
-    name: 'oqs_sigdefault'
+    name: 'oqs_sig_default'
     oid: '1 3 9999 1 1'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x01, 0x01'
     oqs_meth: 'OQS_SIG_alg_default'
