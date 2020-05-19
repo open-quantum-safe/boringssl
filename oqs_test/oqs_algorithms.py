@@ -1,9 +1,9 @@
 kex_to_nid = {
 ##### OQS_TEMPLATE_FRAGMENT_MAP_KEM_TO_NID_START
         'oqs_kem_default': '511',
-        'p256_oqs_kem_default': '767',
+        'p256_oqs_kem_default': '12287',
         'frodo640aes': '512',
-        'p256_frodo640aes': '768',
+        'p256_frodo640aes': '12032',
 ##### OQS_TEMPLATE_FRAGMENT_MAP_KEM_TO_NID_END
 }
 
