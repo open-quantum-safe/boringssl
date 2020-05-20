@@ -4249,17 +4249,17 @@ extern "C" {
 #define SN_dilithium2 "dilithium2"
 #define LN_dilithium2 "dilithium2"
 #define NID_dilithium2 966
-#define OBJ_dilithium2 1L, 3L, 9999L, 2L, 1L
+#define OBJ_dilithium2 1L, 3L, 6L, 1L, 4L, 1L, 2L, 267L, 6L, 4L, 3L
 
 #define SN_dilithium3 "dilithium3"
 #define LN_dilithium3 "dilithium3"
 #define NID_dilithium3 967
-#define OBJ_dilithium3 1L, 3L, 9999L, 2L, 4L
+#define OBJ_dilithium3 1L, 3L, 6L, 1L, 4L, 1L, 2L, 267L, 6L, 5L, 4L
 
 #define SN_dilithium4 "dilithium4"
 #define LN_dilithium4 "dilithium4"
 #define NID_dilithium4 968
-#define OBJ_dilithium4 1L, 3L, 9999L, 2L, 5L
+#define OBJ_dilithium4 1L, 3L, 6L, 1L, 4L, 1L, 2L, 267L, 6L, 6L, 5L
 
 #define SN_picnicl1fs "picnicl1fs"
 #define LN_picnicl1fs "picnicl1fs"
