@@ -22,19 +22,16 @@ localCheckout: &localCheckout
         command: git clone https://github.com/open-quantum-safe/liboqs.git
     - run:
         name: Build liboqs
-        command: .circleci/git_no_checkin_in_last_day.sh || (mkdir build && cd build && cmake .. -G"Ninja" -DBUILD_SHARED_LIBS=${LIBOQS_SHARED} -DOQS_USE_OPENSSL=OFF -DOQS_BUILD_ONLY_LIB=ON -DCMAKE_INSTALL_PREFIX=../../oqs && ninja install)
-        working_directory: liboqs
+        command: .circleci/git_no_checkin_in_last_day.sh || (cd liboqs && mkdir build && cd build && cmake .. -G"Ninja" -DBUILD_SHARED_LIBS=${LIBOQS_SHARED} -DOQS_USE_OPENSSL=OFF -DOQS_BUILD_ONLY_LIB=ON -DCMAKE_INSTALL_PREFIX=../../oqs && ninja install)
     - run:
         name: Build BoringSSL
         command: .circleci/git_no_checkin_in_last_day.sh || (mkdir build && cd build && cmake .. -G"Ninja" -DBUILD_SHARED_LIBS=${BORINGSSL_SHARED} -DLIBOQS_SHARED=${LIBOQS_SHARED} && ninja)
     - run:
         name: Run BoringSSL tests
-        command: .circleci/git_no_checkin_in_last_day.sh || ninja run_tests
-        working_directory: build
+        command: .circleci/git_no_checkin_in_last_day.sh || ninja -C build run_tests
     - run:
         name: Run OQS connection tests
-        command: .circleci/git_no_checkin_in_last_day.sh || ninja run_full_oqs_tests
-        working_directory: build
+        command: .circleci/git_no_checkin_in_last_day.sh || ninja -C build run_full_oqs_tests
     - store_test_results: # Note that this command will fail when running CircleCI locally, that is expected behaviour
         path: oqs-test/tmp/test-results
 
