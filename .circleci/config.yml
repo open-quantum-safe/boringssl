@@ -26,7 +26,7 @@ localCheckout: &localCheckout
         working_directory: liboqs
     - run:
         name: Build BoringSSL
-        command: .circleci/git_no_checkin_in_last_day.sh || (mkdir build && cd build && cmake .. -G"Ninja" -DBUILD_SHARED_LIBS=${BORINGSSL_SHARED} && ninja)
+        command: .circleci/git_no_checkin_in_last_day.sh || (mkdir build && cd build && cmake .. -G"Ninja" -DBUILD_SHARED_LIBS=${BORINGSSL_SHARED} -DLIBOQS_SHARED=${LIBOQS_SHARED} && ninja)
     - run:
         name: Run BoringSSL tests
         command: .circleci/git_no_checkin_in_last_day.sh || ninja run_tests

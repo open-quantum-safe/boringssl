@@ -459,7 +459,7 @@ endif()
 if(USE_CUSTOM_LIBCXX)
   target_link_libraries(crypto libcxx)
 endif()
-target_link_libraries(crypto ${LIBOQS_DIR}/lib/liboqs.a)
+target_link_libraries(crypto ${LIBOQS})
 
 add_executable(
   crypto_test

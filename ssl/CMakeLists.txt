@@ -44,7 +44,7 @@ add_library(
 
 add_dependencies(ssl global_target)
 
-target_link_libraries(ssl crypto ${LIBOQS_DIR}/lib/liboqs.a)
+target_link_libraries(ssl crypto ${LIBOQS})
 
 add_executable(
   ssl_test
