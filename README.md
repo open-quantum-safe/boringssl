@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/open-quantum-safe/boringssl/tree/master.svg?style=svg)](https://circleci.com/gh/open-quantum-safe/boringssl/tree/master)
+
 OQS-BoringSSL
 ==================================
 

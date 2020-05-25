@@ -25,7 +25,7 @@ localCheckout: &localCheckout
         command: .circleci/git_no_checkin_in_last_day.sh || (cd liboqs && mkdir build && cd build && cmake .. -G"Ninja" -DBUILD_SHARED_LIBS=${LIBOQS_SHARED} -DOQS_USE_OPENSSL=OFF -DOQS_BUILD_ONLY_LIB=ON -DCMAKE_INSTALL_PREFIX=../../oqs && ninja install)
     - run:
         name: Build BoringSSL
-        command: .circleci/git_no_checkin_in_last_day.sh || (mkdir build && cd build && cmake .. -G"Ninja" -DBUILD_SHARED_LIBS=${BORINGSSL_SHARED} -DLIBOQS_SHARED=${LIBOQS_SHARED} && ninja)
+        command: .circleci/git_no_checkin_in_last_day.sh || (mkdir build && cd build && cmake .. -G"Ninja" -DBUILD_SHARED_LIBS=${BORINGSSL_SHARED} -DLIBOQS_SHARED=${LIBOQS_SHARED} && ninja -j15)
     - run:
         name: Run BoringSSL tests
         command: .circleci/git_no_checkin_in_last_day.sh || ninja -C build run_tests
