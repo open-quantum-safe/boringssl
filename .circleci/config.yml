@@ -1,0 +1,71 @@
+version: 2
+
+# TODO: Add psutil to CI images.
+
+# CircleCI doesn't handle large file sets properly for local builds
+# https://github.com/CircleCI-Public/circleci-cli/issues/281#issuecomment-472808051
+localCheckout: &localCheckout
+  run: |-
+    PROJECT_PATH=$(cd ${CIRCLE_WORKING_DIRECTORY}; pwd)
+    mkdir -p ${PROJECT_PATH}
+    cd /tmp/_circleci_local_build_repo
+    git ls-files -z | xargs -0 -s 2090860 tar -c | tar -x -C ${PROJECT_PATH}
+    cp -a /tmp/_circleci_local_build_repo/.git ${PROJECT_PATH}
+
+.boringssl_job: &boringssljob
+  docker:
+    - image: ${IMAGE}
+  steps:
+    - checkout # change this from "checkout" to "*localCheckout" when running CircleCI locally
+    - run:
+        name: Clone liboqs
+        command: git clone https://github.com/open-quantum-safe/liboqs.git
+    - run:
+        name: Build liboqs
+        command: .circleci/git_no_checkin_in_last_day.sh || (mkdir build && cd build && cmake .. -G"Ninja" -DBUILD_SHARED_LIBS=${LIBOQS_SHARED} -DOQS_USE_OPENSSL=OFF -DOQS_BUILD_ONLY_LIB=ON -DCMAKE_INSTALL_PREFIX=../../oqs && ninja install)
+        working_directory: liboqs
+    - run:
+        name: Build BoringSSL
+        command: .circleci/git_no_checkin_in_last_day.sh || (mkdir build && cd build && cmake .. -G"Ninja" -DBUILD_SHARED_LIBS=${BORINGSSL_SHARED} && ninja)
+    - run:
+        name: Run BoringSSL tests
+        command: .circleci/git_no_checkin_in_last_day.sh || ninja run_tests
+        working_directory: build
+    - run:
+        name: Run OQS connection tests
+        command: .circleci/git_no_checkin_in_last_day.sh || ninja run_full_oqs_tests
+        working_directory: build
+    - store_test_results: # Note that this command will fail when running CircleCI locally, that is expected behaviour
+        path: oqs-test/tmp/test-results
+
+jobs:
+  ubuntu_bionic-static_oqs-static_bssl:
+    <<: *boringssljob
+    environment:
+      IMAGE: openquantumsafe/ci-ubuntu-bionic-x86_64:latest
+      LIBOQS_SHARED: OFF
+      BORINGSSL_SHARED: OFF
+  ubuntu_bionic-shared_oqs-shared_bssl:
+    <<: *boringssljob
+    environment:
+      IMAGE: openquantumsafe/ci-ubuntu-bionic-x86_64:latest
+      LIBOQS_SHARED: ON
+      BORINGSSL_SHARED: ON
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - ubuntu_bionic-static_oqs-static_bssl
+      - ubuntu_bionic-shared_oqs-shared_bssl
+  nightly:
+    triggers:
+      - schedule:
+          cron: "0 3 * * *"
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - ubuntu_bionic-static_oqs-static_ossl
+      - ubuntu_bionic-shared_oqs-shared_bssl
