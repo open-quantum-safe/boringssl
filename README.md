@@ -67,6 +67,8 @@ The following quantum-safe algorithms from liboqs are supported (assuming they h
 - **NewHope**: `newhope512cca`, `newhope1024cca`
 - **NTRU**: `ntru_hps2048509`, `ntru_hps2048677`, `ntru_hps4096821`, `ntru_hrss701`
 - **SABER**: `lightsaber`, `saber`, `firesaber`
+- **SIDH**: `sidhp434`, `sidhp503`, `sidhp610`, `sidhp751`
+- **SIKE**: `sikep434`, `sikep503`, `sikep610`, `sikep751`
 
 The following hybrid algorithms are supported depending on the security of each scheme above, denoted by `<KEX>`:
 

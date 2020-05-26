@@ -444,6 +444,14 @@ class TLSFuzzer {
         NID_lightsaber, NID_p256_lightsaber,
         NID_saber, NID_p384_saber,
         NID_firesaber, NID_p521_firesaber,
+        NID_sidhp434, NID_p256_sidhp434,
+        NID_sidhp503, NID_p256_sidhp503,
+        NID_sidhp610, NID_p384_sidhp610,
+        NID_sidhp751, NID_p521_sidhp751,
+        NID_sikep434, NID_p256_sikep434,
+        NID_sikep503, NID_p256_sikep503,
+        NID_sikep610, NID_p384_sikep610,
+        NID_sikep751, NID_p521_sikep751,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_NIDS_END
     };
     if (!SSL_CTX_set1_curves(ctx_.get(), kCurves,

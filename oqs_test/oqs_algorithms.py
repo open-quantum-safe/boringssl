@@ -52,6 +52,22 @@ kex_to_nid = {
         'p384_saber': '12057',
         'firesaber': '538',
         'p521_firesaber': '12058',
+        'sidhp434': '539',
+        'p256_sidhp434': '12059',
+        'sidhp503': '540',
+        'p256_sidhp503': '12060',
+        'sidhp610': '541',
+        'p384_sidhp610': '12061',
+        'sidhp751': '542',
+        'p521_sidhp751': '12062',
+        'sikep434': '543',
+        'p256_sikep434': '12063',
+        'sikep503': '544',
+        'p256_sikep503': '12064',
+        'sikep610': '545',
+        'p384_sikep610': '12065',
+        'sikep751': '546',
+        'p521_sikep751': '12066',
 ##### OQS_TEMPLATE_FRAGMENT_MAP_KEM_TO_NID_END
 }
 

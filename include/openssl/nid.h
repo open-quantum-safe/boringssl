@@ -4441,6 +4441,54 @@ extern "C" {
 #define SN_p521_firesaber "p521_firesaber"
 #define NID_p521_firesaber 1026
 
+#define SN_sidhp434 "sidhp434"
+#define NID_sidhp434 1027
+
+#define SN_p256_sidhp434 "p256_sidhp434"
+#define NID_p256_sidhp434 1028
+
+#define SN_sidhp503 "sidhp503"
+#define NID_sidhp503 1029
+
+#define SN_p256_sidhp503 "p256_sidhp503"
+#define NID_p256_sidhp503 1030
+
+#define SN_sidhp610 "sidhp610"
+#define NID_sidhp610 1031
+
+#define SN_p384_sidhp610 "p384_sidhp610"
+#define NID_p384_sidhp610 1032
+
+#define SN_sidhp751 "sidhp751"
+#define NID_sidhp751 1033
+
+#define SN_p521_sidhp751 "p521_sidhp751"
+#define NID_p521_sidhp751 1034
+
+#define SN_sikep434 "sikep434"
+#define NID_sikep434 1035
+
+#define SN_p256_sikep434 "p256_sikep434"
+#define NID_p256_sikep434 1036
+
+#define SN_sikep503 "sikep503"
+#define NID_sikep503 1037
+
+#define SN_p256_sikep503 "p256_sikep503"
+#define NID_p256_sikep503 1038
+
+#define SN_sikep610 "sikep610"
+#define NID_sikep610 1039
+
+#define SN_p384_sikep610 "p384_sikep610"
+#define NID_p384_sikep610 1040
+
+#define SN_sikep751 "sikep751"
+#define NID_sikep751 1041
+
+#define SN_p521_sikep751 "p521_sikep751"
+#define NID_p521_sikep751 1042
+
 
 #if defined(__cplusplus)
 } /* extern C */

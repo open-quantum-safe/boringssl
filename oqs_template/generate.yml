@@ -131,14 +131,54 @@ kems:
     name: 'saber'
     nid: '0x0219'
     mix_with: [{'name': 'p384', 'mix_nid':'0x2F19', 'nid':'SSL_CURVE_SECP384R1'}]
-    use_as_default_with: 'p384'
     oqs_meth: 'OQS_KEM_alg_saber_saber'
   -
     name: 'firesaber'
     nid: '0x021A'
     mix_with: [{'name': 'p521', 'mix_nid':'0x2F1A', 'nid':'SSL_CURVE_SECP521R1'}]
-    use_as_default_with: 'p521'
     oqs_meth: 'OQS_KEM_alg_saber_firesaber'
+  -
+    name: 'sidhp434'
+    nid: '0x021B'
+    mix_with: [{'name': 'p256', 'mix_nid':'0x2F1B', 'nid':'SSL_CURVE_SECP256R1'}]
+    use_as_default_with: 'p256'
+    oqs_meth: 'OQS_KEM_alg_sidh_p434'
+  -
+    name: 'sidhp503'
+    nid: '0x021C'
+    mix_with: [{'name': 'p256', 'mix_nid':'0x2F1C', 'nid':'SSL_CURVE_SECP256R1'}]
+    oqs_meth: 'OQS_KEM_alg_sidh_p503'
+  -
+    name: 'sidhp610'
+    nid: '0x021D'
+    mix_with: [{'name': 'p384', 'mix_nid':'0x2F1D', 'nid':'SSL_CURVE_SECP384R1'}]
+    oqs_meth: 'OQS_KEM_alg_sidh_p610'
+  -
+    name: 'sidhp751'
+    nid: '0x021E'
+    mix_with: [{'name': 'p521', 'mix_nid':'0x2F1E', 'nid':'SSL_CURVE_SECP521R1'}]
+    oqs_meth: 'OQS_KEM_alg_sidh_p751'
+  -
+    name: 'sikep434'
+    nid: '0x021F'
+    mix_with: [{'name': 'p256', 'mix_nid':'0x2F1F', 'nid':'SSL_CURVE_SECP256R1'}]
+    use_as_default_with: 'p256'
+    oqs_meth: 'OQS_KEM_alg_sike_p434'
+  -
+    name: 'sikep503'
+    nid: '0x0220'
+    mix_with: [{'name': 'p256', 'mix_nid':'0x2F20', 'nid':'SSL_CURVE_SECP256R1'}]
+    oqs_meth: 'OQS_KEM_alg_sike_p503'
+  -
+    name: 'sikep610'
+    nid: '0x0221'
+    mix_with: [{'name': 'p384', 'mix_nid':'0x2F21', 'nid':'SSL_CURVE_SECP384R1'}]
+    oqs_meth: 'OQS_KEM_alg_sike_p610'
+  -
+    name: 'sikep751'
+    nid: '0x0222'
+    mix_with: [{'name': 'p521', 'mix_nid':'0x2F22', 'nid':'SSL_CURVE_SECP521R1'}]
+    oqs_meth: 'OQS_KEM_alg_sike_p751'
 
 # N.B: Code points and OIDs must match those used
 # in OQS-OpenSSL 1.1.1 for interoperability.
