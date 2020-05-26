@@ -666,6 +666,12 @@ CONSTEXPR_ARRAY NamedGroup kNamedGroups[] = {
     {NID_p521_ntru_hps4096821, SSL_CURVE_P521_NTRU_HPS4096821, "p521_ntru_hps4096821", "p521_ntru_hps4096821"},
     {NID_ntru_hrss701, SSL_CURVE_NTRU_HRSS701, "ntru_hrss701", "ntru_hrss701"},
     {NID_p256_ntru_hrss701, SSL_CURVE_P256_NTRU_HRSS701, "p256_ntru_hrss701", "p256_ntru_hrss701"},
+    {NID_lightsaber, SSL_CURVE_LIGHTSABER, "lightsaber", "lightsaber"},
+    {NID_p256_lightsaber, SSL_CURVE_P256_LIGHTSABER, "p256_lightsaber", "p256_lightsaber"},
+    {NID_saber, SSL_CURVE_SABER, "saber", "saber"},
+    {NID_p384_saber, SSL_CURVE_P384_SABER, "p384_saber", "p384_saber"},
+    {NID_firesaber, SSL_CURVE_FIRESABER, "firesaber", "firesaber"},
+    {NID_p521_firesaber, SSL_CURVE_P521_FIRESABER, "p521_firesaber", "p521_firesaber"},
 ///// OQS_TEMPLATE_FRAGMENT_DEF_NAMEDGROUPS_END
 };
 
@@ -924,6 +930,36 @@ UniquePtr<SSLKeyShare> SSLKeyShare::Create(uint16_t group_id) {
     case SSL_CURVE_P256_NTRU_HRSS701:
       if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_ntru_hrss701))
           return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P256_NTRU_HRSS701, SSL_CURVE_SECP256R1, OQS_KEM_alg_ntru_hrss701));
+      else
+          return nullptr;
+    case SSL_CURVE_LIGHTSABER:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_saber_lightsaber))
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_LIGHTSABER, OQS_KEM_alg_saber_lightsaber));
+      else
+          return nullptr;
+    case SSL_CURVE_P256_LIGHTSABER:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_saber_lightsaber))
+          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P256_LIGHTSABER, SSL_CURVE_SECP256R1, OQS_KEM_alg_saber_lightsaber));
+      else
+          return nullptr;
+    case SSL_CURVE_SABER:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_saber_saber))
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_SABER, OQS_KEM_alg_saber_saber));
+      else
+          return nullptr;
+    case SSL_CURVE_P384_SABER:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_saber_saber))
+          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P384_SABER, SSL_CURVE_SECP384R1, OQS_KEM_alg_saber_saber));
+      else
+          return nullptr;
+    case SSL_CURVE_FIRESABER:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_saber_firesaber))
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_FIRESABER, OQS_KEM_alg_saber_firesaber));
+      else
+          return nullptr;
+    case SSL_CURVE_P521_FIRESABER:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_saber_firesaber))
+          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P521_FIRESABER, SSL_CURVE_SECP521R1, OQS_KEM_alg_saber_firesaber));
       else
           return nullptr;
 ///// OQS_TEMPLATE_FRAGMENT_HANDLE_GROUP_IDS_END

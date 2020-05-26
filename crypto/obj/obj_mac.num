@@ -1004,3 +1004,9 @@ ntru_hps4096821		1017
 p521_ntru_hps4096821		1018
 ntru_hrss701		1019
 p256_ntru_hrss701		1020
+lightsaber		1021
+p256_lightsaber		1022
+saber		1023
+p384_saber		1024
+firesaber		1025
+p521_firesaber		1026

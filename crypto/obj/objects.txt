@@ -1406,6 +1406,12 @@ secg-scheme 14 3 : dhSinglePass-cofactorDH-sha512kdf-scheme
  : p521_ntru_hps4096821
  : ntru_hrss701
  : p256_ntru_hrss701
+ : lightsaber
+ : p256_lightsaber
+ : saber
+ : p384_saber
+ : firesaber
+ : p521_firesaber
 ##### OQS_TEMPLATE_FRAGMENT_DEF_NIDS_END
 
 ##### OQS_TEMPLATE_FRAGMENT_ASSIGN_OIDS_START

@@ -1750,6 +1750,24 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
         case SSL_CURVE_P256_NTRU_HRSS701:
           nids.push_back(NID_p256_ntru_hrss701);
           break;
+        case SSL_CURVE_LIGHTSABER:
+          nids.push_back(NID_lightsaber);
+          break;
+        case SSL_CURVE_P256_LIGHTSABER:
+          nids.push_back(NID_p256_lightsaber);
+          break;
+        case SSL_CURVE_SABER:
+          nids.push_back(NID_saber);
+          break;
+        case SSL_CURVE_P384_SABER:
+          nids.push_back(NID_p384_saber);
+          break;
+        case SSL_CURVE_FIRESABER:
+          nids.push_back(NID_firesaber);
+          break;
+        case SSL_CURVE_P521_FIRESABER:
+          nids.push_back(NID_p521_firesaber);
+          break;
 ///// OQS_TEMPLATE_FRAGMENT_ADD_NIDS_END
       }
       if (!SSL_set1_curves(ssl.get(), &nids[0], nids.size())) {
@@ -1785,6 +1803,9 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
         NID_ntru_hps2048677, NID_p384_ntru_hps2048677,
         NID_ntru_hps4096821, NID_p521_ntru_hps4096821,
         NID_ntru_hrss701, NID_p256_ntru_hrss701,
+        NID_lightsaber, NID_p256_lightsaber,
+        NID_saber, NID_p384_saber,
+        NID_firesaber, NID_p521_firesaber,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_PQ_CURVEIDS_END
     };
     if (!SSL_set1_curves(ssl.get(), kAllCurves,

@@ -121,6 +121,24 @@ kems:
     nid: '0x0217'
     mix_with: [{'name': 'p256', 'mix_nid':'0x2F17', 'nid':'SSL_CURVE_SECP256R1'}]
     oqs_meth: 'OQS_KEM_alg_ntru_hrss701'
+  -
+    name: 'lightsaber'
+    nid: '0x0218'
+    mix_with: [{'name': 'p256', 'mix_nid':'0x2F18', 'nid':'SSL_CURVE_SECP256R1'}]
+    use_as_default_with: 'p256'
+    oqs_meth: 'OQS_KEM_alg_saber_lightsaber'
+  -
+    name: 'saber'
+    nid: '0x0219'
+    mix_with: [{'name': 'p384', 'mix_nid':'0x2F19', 'nid':'SSL_CURVE_SECP384R1'}]
+    use_as_default_with: 'p384'
+    oqs_meth: 'OQS_KEM_alg_saber_saber'
+  -
+    name: 'firesaber'
+    nid: '0x021A'
+    mix_with: [{'name': 'p521', 'mix_nid':'0x2F1A', 'nid':'SSL_CURVE_SECP521R1'}]
+    use_as_default_with: 'p521'
+    oqs_meth: 'OQS_KEM_alg_saber_firesaber'
 
 # N.B: Code points and OIDs must match those used
 # in OQS-OpenSSL 1.1.1 for interoperability.

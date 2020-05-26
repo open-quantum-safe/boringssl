@@ -4423,6 +4423,24 @@ extern "C" {
 #define SN_p256_ntru_hrss701 "p256_ntru_hrss701"
 #define NID_p256_ntru_hrss701 1020
 
+#define SN_lightsaber "lightsaber"
+#define NID_lightsaber 1021
+
+#define SN_p256_lightsaber "p256_lightsaber"
+#define NID_p256_lightsaber 1022
+
+#define SN_saber "saber"
+#define NID_saber 1023
+
+#define SN_p384_saber "p384_saber"
+#define NID_p384_saber 1024
+
+#define SN_firesaber "firesaber"
+#define NID_firesaber 1025
+
+#define SN_p521_firesaber "p521_firesaber"
+#define NID_p521_firesaber 1026
+
 
 #if defined(__cplusplus)
 } /* extern C */
