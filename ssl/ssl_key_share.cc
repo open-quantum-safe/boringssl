@@ -658,6 +658,14 @@ CONSTEXPR_ARRAY NamedGroup kNamedGroups[] = {
     {NID_p256_newhope512cca, SSL_CURVE_P256_NEWHOPE512CCA, "p256_newhope512cca", "p256_newhope512cca"},
     {NID_newhope1024cca, SSL_CURVE_NEWHOPE1024CCA, "newhope1024cca", "newhope1024cca"},
     {NID_p521_newhope1024cca, SSL_CURVE_P521_NEWHOPE1024CCA, "p521_newhope1024cca", "p521_newhope1024cca"},
+    {NID_ntru_hps2048509, SSL_CURVE_NTRU_HPS2048509, "ntru_hps2048509", "ntru_hps2048509"},
+    {NID_p256_ntru_hps2048509, SSL_CURVE_P256_NTRU_HPS2048509, "p256_ntru_hps2048509", "p256_ntru_hps2048509"},
+    {NID_ntru_hps2048677, SSL_CURVE_NTRU_HPS2048677, "ntru_hps2048677", "ntru_hps2048677"},
+    {NID_p384_ntru_hps2048677, SSL_CURVE_P384_NTRU_HPS2048677, "p384_ntru_hps2048677", "p384_ntru_hps2048677"},
+    {NID_ntru_hps4096821, SSL_CURVE_NTRU_HPS4096821, "ntru_hps4096821", "ntru_hps4096821"},
+    {NID_p521_ntru_hps4096821, SSL_CURVE_P521_NTRU_HPS4096821, "p521_ntru_hps4096821", "p521_ntru_hps4096821"},
+    {NID_ntru_hrss701, SSL_CURVE_NTRU_HRSS701, "ntru_hrss701", "ntru_hrss701"},
+    {NID_p256_ntru_hrss701, SSL_CURVE_P256_NTRU_HRSS701, "p256_ntru_hrss701", "p256_ntru_hrss701"},
 ///// OQS_TEMPLATE_FRAGMENT_DEF_NAMEDGROUPS_END
 };
 
@@ -876,6 +884,46 @@ UniquePtr<SSLKeyShare> SSLKeyShare::Create(uint16_t group_id) {
     case SSL_CURVE_P521_NEWHOPE1024CCA:
       if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_newhope_1024cca))
           return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P521_NEWHOPE1024CCA, SSL_CURVE_SECP521R1, OQS_KEM_alg_newhope_1024cca));
+      else
+          return nullptr;
+    case SSL_CURVE_NTRU_HPS2048509:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_ntru_hps2048509))
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_NTRU_HPS2048509, OQS_KEM_alg_ntru_hps2048509));
+      else
+          return nullptr;
+    case SSL_CURVE_P256_NTRU_HPS2048509:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_ntru_hps2048509))
+          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P256_NTRU_HPS2048509, SSL_CURVE_SECP256R1, OQS_KEM_alg_ntru_hps2048509));
+      else
+          return nullptr;
+    case SSL_CURVE_NTRU_HPS2048677:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_ntru_hps2048677))
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_NTRU_HPS2048677, OQS_KEM_alg_ntru_hps2048677));
+      else
+          return nullptr;
+    case SSL_CURVE_P384_NTRU_HPS2048677:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_ntru_hps2048677))
+          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P384_NTRU_HPS2048677, SSL_CURVE_SECP384R1, OQS_KEM_alg_ntru_hps2048677));
+      else
+          return nullptr;
+    case SSL_CURVE_NTRU_HPS4096821:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_ntru_hps4096821))
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_NTRU_HPS4096821, OQS_KEM_alg_ntru_hps4096821));
+      else
+          return nullptr;
+    case SSL_CURVE_P521_NTRU_HPS4096821:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_ntru_hps4096821))
+          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P521_NTRU_HPS4096821, SSL_CURVE_SECP521R1, OQS_KEM_alg_ntru_hps4096821));
+      else
+          return nullptr;
+    case SSL_CURVE_NTRU_HRSS701:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_ntru_hrss701))
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_NTRU_HRSS701, OQS_KEM_alg_ntru_hrss701));
+      else
+          return nullptr;
+    case SSL_CURVE_P256_NTRU_HRSS701:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_ntru_hrss701))
+          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P256_NTRU_HRSS701, SSL_CURVE_SECP256R1, OQS_KEM_alg_ntru_hrss701));
       else
           return nullptr;
 ///// OQS_TEMPLATE_FRAGMENT_HANDLE_GROUP_IDS_END

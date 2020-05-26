@@ -38,6 +38,14 @@ kex_to_nid = {
         'p256_newhope512cca': '12050',
         'newhope1024cca': '531',
         'p521_newhope1024cca': '12051',
+        'ntru_hps2048509': '532',
+        'p256_ntru_hps2048509': '12052',
+        'ntru_hps2048677': '533',
+        'p384_ntru_hps2048677': '12053',
+        'ntru_hps4096821': '534',
+        'p521_ntru_hps4096821': '12054',
+        'ntru_hrss701': '535',
+        'p256_ntru_hrss701': '12055',
 ##### OQS_TEMPLATE_FRAGMENT_MAP_KEM_TO_NID_END
 }
 

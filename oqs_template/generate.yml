@@ -93,12 +93,34 @@ kems:
     name: 'newhope512cca'
     nid: '0x0212'
     mix_with: [{'name': 'p256', 'mix_nid':'0x2F12', 'nid':'SSL_CURVE_SECP256R1'}]
+    use_as_default_with: 'p256'
     oqs_meth: 'OQS_KEM_alg_newhope_512cca'
   -
     name: 'newhope1024cca'
     nid: '0x0213'
     mix_with: [{'name': 'p521', 'mix_nid':'0x2F13', 'nid':'SSL_CURVE_SECP521R1'}]
     oqs_meth: 'OQS_KEM_alg_newhope_1024cca'
+  -
+    name: 'ntru_hps2048509'
+    nid: '0x0214'
+    mix_with: [{'name': 'p256', 'mix_nid':'0x2F14', 'nid':'SSL_CURVE_SECP256R1'}]
+    use_as_default_with: 'p256'
+    oqs_meth: 'OQS_KEM_alg_ntru_hps2048509'
+  -
+    name: 'ntru_hps2048677'
+    nid: '0x0215'
+    mix_with: [{'name': 'p384', 'mix_nid':'0x2F15', 'nid':'SSL_CURVE_SECP384R1'}]
+    oqs_meth: 'OQS_KEM_alg_ntru_hps2048677'
+  -
+    name: 'ntru_hps4096821'
+    nid: '0x0216'
+    mix_with: [{'name': 'p521', 'mix_nid':'0x2F16', 'nid':'SSL_CURVE_SECP521R1'}]
+    oqs_meth: 'OQS_KEM_alg_ntru_hps4096821'
+  -
+    name: 'ntru_hrss701'
+    nid: '0x0217'
+    mix_with: [{'name': 'p256', 'mix_nid':'0x2F17', 'nid':'SSL_CURVE_SECP256R1'}]
+    oqs_meth: 'OQS_KEM_alg_ntru_hrss701'
 
 # N.B: Code points and OIDs must match those used
 # in OQS-OpenSSL 1.1.1 for interoperability.

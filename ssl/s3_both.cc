@@ -700,7 +700,15 @@ class CipherScorer {
                               group_id != SSL_CURVE_NEWHOPE512CCA &&
                               group_id != SSL_CURVE_P256_NEWHOPE512CCA &&
                               group_id != SSL_CURVE_NEWHOPE1024CCA &&
-                              group_id != SSL_CURVE_P521_NEWHOPE1024CCA
+                              group_id != SSL_CURVE_P521_NEWHOPE1024CCA &&
+                              group_id != SSL_CURVE_NTRU_HPS2048509 &&
+                              group_id != SSL_CURVE_P256_NTRU_HPS2048509 &&
+                              group_id != SSL_CURVE_NTRU_HPS2048677 &&
+                              group_id != SSL_CURVE_P384_NTRU_HPS2048677 &&
+                              group_id != SSL_CURVE_NTRU_HPS4096821 &&
+                              group_id != SSL_CURVE_P521_NTRU_HPS4096821 &&
+                              group_id != SSL_CURVE_NTRU_HRSS701 &&
+                              group_id != SSL_CURVE_P256_NTRU_HRSS701
 ///// OQS_TEMPLATE_FRAGMENT_LIST_CURVES_END
                               ) {}
 

@@ -4399,6 +4399,30 @@ extern "C" {
 #define SN_p521_newhope1024cca "p521_newhope1024cca"
 #define NID_p521_newhope1024cca 1012
 
+#define SN_ntru_hps2048509 "ntru_hps2048509"
+#define NID_ntru_hps2048509 1013
+
+#define SN_p256_ntru_hps2048509 "p256_ntru_hps2048509"
+#define NID_p256_ntru_hps2048509 1014
+
+#define SN_ntru_hps2048677 "ntru_hps2048677"
+#define NID_ntru_hps2048677 1015
+
+#define SN_p384_ntru_hps2048677 "p384_ntru_hps2048677"
+#define NID_p384_ntru_hps2048677 1016
+
+#define SN_ntru_hps4096821 "ntru_hps4096821"
+#define NID_ntru_hps4096821 1017
+
+#define SN_p521_ntru_hps4096821 "p521_ntru_hps4096821"
+#define NID_p521_ntru_hps4096821 1018
+
+#define SN_ntru_hrss701 "ntru_hrss701"
+#define NID_ntru_hrss701 1019
+
+#define SN_p256_ntru_hrss701 "p256_ntru_hrss701"
+#define NID_p256_ntru_hrss701 1020
+
 
 #if defined(__cplusplus)
 } /* extern C */
