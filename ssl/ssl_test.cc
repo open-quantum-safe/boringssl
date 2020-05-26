@@ -419,13 +419,23 @@ static const CurveTest kCurveTests[] = {
   },
   {
 ///// OQS_TEMPLATE_FRAGMENT_ADD_CURVETEST_START
-    "p256_oqs_kem_default:oqs_kem_default:p256_frodo640aes:frodo640aes",
+    "p256_oqs_kem_default:oqs_kem_default:p256_frodo640aes:frodo640aes:p256_frodo640shake:frodo640shake:p384_frodo976aes:frodo976aes:p384_frodo976shake:frodo976shake:p521_frodo1344aes:frodo1344aes:p521_frodo1344shake:frodo1344shake",
     {
 
       SSL_CURVE_P256_OQS_KEM_DEFAULT,
       SSL_CURVE_OQS_KEM_DEFAULT,
       SSL_CURVE_P256_FRODO640AES,
       SSL_CURVE_FRODO640AES,
+      SSL_CURVE_P256_FRODO640SHAKE,
+      SSL_CURVE_FRODO640SHAKE,
+      SSL_CURVE_P384_FRODO976AES,
+      SSL_CURVE_FRODO976AES,
+      SSL_CURVE_P384_FRODO976SHAKE,
+      SSL_CURVE_FRODO976SHAKE,
+      SSL_CURVE_P521_FRODO1344AES,
+      SSL_CURVE_FRODO1344AES,
+      SSL_CURVE_P521_FRODO1344SHAKE,
+      SSL_CURVE_FRODO1344SHAKE,
     },
 ///// OQS_TEMPLATE_FRAGMENT_ADD_CURVETEST_END
   },

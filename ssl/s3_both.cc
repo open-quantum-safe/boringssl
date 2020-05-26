@@ -666,7 +666,17 @@ class CipherScorer {
                               group_id != SSL_CURVE_OQS_KEM_DEFAULT &&
                               group_id != SSL_CURVE_P256_OQS_KEM_DEFAULT &&
                               group_id != SSL_CURVE_FRODO640AES &&
-                              group_id != SSL_CURVE_P256_FRODO640AES
+                              group_id != SSL_CURVE_P256_FRODO640AES &&
+                              group_id != SSL_CURVE_FRODO640SHAKE &&
+                              group_id != SSL_CURVE_P256_FRODO640SHAKE &&
+                              group_id != SSL_CURVE_FRODO976AES &&
+                              group_id != SSL_CURVE_P384_FRODO976AES &&
+                              group_id != SSL_CURVE_FRODO976SHAKE &&
+                              group_id != SSL_CURVE_P384_FRODO976SHAKE &&
+                              group_id != SSL_CURVE_FRODO1344AES &&
+                              group_id != SSL_CURVE_P521_FRODO1344AES &&
+                              group_id != SSL_CURVE_FRODO1344SHAKE &&
+                              group_id != SSL_CURVE_P521_FRODO1344SHAKE
 ///// OQS_TEMPLATE_FRAGMENT_LIST_CURVES_END
                               ) {}
 

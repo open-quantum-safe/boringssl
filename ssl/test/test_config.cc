@@ -1624,6 +1624,36 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
         case SSL_CURVE_P256_FRODO640AES:
           nids.push_back(NID_p256_frodo640aes);
           break;
+        case SSL_CURVE_FRODO640SHAKE:
+          nids.push_back(NID_frodo640shake);
+          break;
+        case SSL_CURVE_P256_FRODO640SHAKE:
+          nids.push_back(NID_p256_frodo640shake);
+          break;
+        case SSL_CURVE_FRODO976AES:
+          nids.push_back(NID_frodo976aes);
+          break;
+        case SSL_CURVE_P384_FRODO976AES:
+          nids.push_back(NID_p384_frodo976aes);
+          break;
+        case SSL_CURVE_FRODO976SHAKE:
+          nids.push_back(NID_frodo976shake);
+          break;
+        case SSL_CURVE_P384_FRODO976SHAKE:
+          nids.push_back(NID_p384_frodo976shake);
+          break;
+        case SSL_CURVE_FRODO1344AES:
+          nids.push_back(NID_frodo1344aes);
+          break;
+        case SSL_CURVE_P521_FRODO1344AES:
+          nids.push_back(NID_p521_frodo1344aes);
+          break;
+        case SSL_CURVE_FRODO1344SHAKE:
+          nids.push_back(NID_frodo1344shake);
+          break;
+        case SSL_CURVE_P521_FRODO1344SHAKE:
+          nids.push_back(NID_p521_frodo1344shake);
+          break;
 ///// OQS_TEMPLATE_FRAGMENT_ADD_NIDS_END
       }
       if (!SSL_set1_curves(ssl.get(), &nids[0], nids.size())) {
@@ -1638,6 +1668,11 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
 ///// OQS_TEMPLATE_FRAGMENT_LIST_PQ_CURVEIDS_START
         NID_oqs_kem_default, NID_p256_oqs_kem_default,
         NID_frodo640aes, NID_p256_frodo640aes,
+        NID_frodo640shake, NID_p256_frodo640shake,
+        NID_frodo976aes, NID_p384_frodo976aes,
+        NID_frodo976shake, NID_p384_frodo976shake,
+        NID_frodo1344aes, NID_p521_frodo1344aes,
+        NID_frodo1344shake, NID_p521_frodo1344shake,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_PQ_CURVEIDS_END
     };
     if (!SSL_set1_curves(ssl.get(), kAllCurves,

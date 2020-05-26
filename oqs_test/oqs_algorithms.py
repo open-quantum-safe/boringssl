@@ -4,6 +4,16 @@ kex_to_nid = {
         'p256_oqs_kem_default': '12287',
         'frodo640aes': '512',
         'p256_frodo640aes': '12032',
+        'frodo640shake': '513',
+        'p256_frodo640shake': '12033',
+        'frodo976aes': '514',
+        'p384_frodo976aes': '12034',
+        'frodo976shake': '515',
+        'p384_frodo976shake': '12035',
+        'frodo1344aes': '516',
+        'p521_frodo1344aes': '12036',
+        'frodo1344shake': '517',
+        'p521_frodo1344shake': '12037',
 ##### OQS_TEMPLATE_FRAGMENT_MAP_KEM_TO_NID_END
 }
 

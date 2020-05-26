@@ -624,6 +624,16 @@ CONSTEXPR_ARRAY NamedGroup kNamedGroups[] = {
     {NID_p256_oqs_kem_default, SSL_CURVE_P256_OQS_KEM_DEFAULT, "p256_oqs_kem_default", "p256_oqs_kem_default"},
     {NID_frodo640aes, SSL_CURVE_FRODO640AES, "frodo640aes", "frodo640aes"},
     {NID_p256_frodo640aes, SSL_CURVE_P256_FRODO640AES, "p256_frodo640aes", "p256_frodo640aes"},
+    {NID_frodo640shake, SSL_CURVE_FRODO640SHAKE, "frodo640shake", "frodo640shake"},
+    {NID_p256_frodo640shake, SSL_CURVE_P256_FRODO640SHAKE, "p256_frodo640shake", "p256_frodo640shake"},
+    {NID_frodo976aes, SSL_CURVE_FRODO976AES, "frodo976aes", "frodo976aes"},
+    {NID_p384_frodo976aes, SSL_CURVE_P384_FRODO976AES, "p384_frodo976aes", "p384_frodo976aes"},
+    {NID_frodo976shake, SSL_CURVE_FRODO976SHAKE, "frodo976shake", "frodo976shake"},
+    {NID_p384_frodo976shake, SSL_CURVE_P384_FRODO976SHAKE, "p384_frodo976shake", "p384_frodo976shake"},
+    {NID_frodo1344aes, SSL_CURVE_FRODO1344AES, "frodo1344aes", "frodo1344aes"},
+    {NID_p521_frodo1344aes, SSL_CURVE_P521_FRODO1344AES, "p521_frodo1344aes", "p521_frodo1344aes"},
+    {NID_frodo1344shake, SSL_CURVE_FRODO1344SHAKE, "frodo1344shake", "frodo1344shake"},
+    {NID_p521_frodo1344shake, SSL_CURVE_P521_FRODO1344SHAKE, "p521_frodo1344shake", "p521_frodo1344shake"},
 ///// OQS_TEMPLATE_FRAGMENT_DEF_NAMEDGROUPS_END
 };
 
@@ -672,6 +682,56 @@ UniquePtr<SSLKeyShare> SSLKeyShare::Create(uint16_t group_id) {
     case SSL_CURVE_P256_FRODO640AES:
       if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_frodokem_640_aes))
           return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P256_FRODO640AES, SSL_CURVE_SECP256R1, OQS_KEM_alg_frodokem_640_aes));
+      else
+          return nullptr;
+    case SSL_CURVE_FRODO640SHAKE:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_frodokem_640_shake))
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_FRODO640SHAKE, OQS_KEM_alg_frodokem_640_shake));
+      else
+          return nullptr;
+    case SSL_CURVE_P256_FRODO640SHAKE:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_frodokem_640_shake))
+          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P256_FRODO640SHAKE, SSL_CURVE_SECP256R1, OQS_KEM_alg_frodokem_640_shake));
+      else
+          return nullptr;
+    case SSL_CURVE_FRODO976AES:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_frodokem_976_aes))
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_FRODO976AES, OQS_KEM_alg_frodokem_976_aes));
+      else
+          return nullptr;
+    case SSL_CURVE_P384_FRODO976AES:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_frodokem_976_aes))
+          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P384_FRODO976AES, SSL_CURVE_SECP384R1, OQS_KEM_alg_frodokem_976_aes));
+      else
+          return nullptr;
+    case SSL_CURVE_FRODO976SHAKE:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_frodokem_976_shake))
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_FRODO976SHAKE, OQS_KEM_alg_frodokem_976_shake));
+      else
+          return nullptr;
+    case SSL_CURVE_P384_FRODO976SHAKE:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_frodokem_976_shake))
+          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P384_FRODO976SHAKE, SSL_CURVE_SECP384R1, OQS_KEM_alg_frodokem_976_shake));
+      else
+          return nullptr;
+    case SSL_CURVE_FRODO1344AES:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_frodokem_1344_aes))
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_FRODO1344AES, OQS_KEM_alg_frodokem_1344_aes));
+      else
+          return nullptr;
+    case SSL_CURVE_P521_FRODO1344AES:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_frodokem_1344_aes))
+          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P521_FRODO1344AES, SSL_CURVE_SECP521R1, OQS_KEM_alg_frodokem_1344_aes));
+      else
+          return nullptr;
+    case SSL_CURVE_FRODO1344SHAKE:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_frodokem_1344_shake))
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_FRODO1344SHAKE, OQS_KEM_alg_frodokem_1344_shake));
+      else
+          return nullptr;
+    case SSL_CURVE_P521_FRODO1344SHAKE:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_frodokem_1344_shake))
+          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P521_FRODO1344SHAKE, SSL_CURVE_SECP521R1, OQS_KEM_alg_frodokem_1344_shake));
       else
           return nullptr;
 ///// OQS_TEMPLATE_FRAGMENT_HANDLE_GROUP_IDS_END

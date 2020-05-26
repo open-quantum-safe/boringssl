@@ -1364,6 +1364,16 @@ secg-scheme 14 3 : dhSinglePass-cofactorDH-sha512kdf-scheme
  : p256_oqs_kem_default
  : frodo640aes
  : p256_frodo640aes
+ : frodo640shake
+ : p256_frodo640shake
+ : frodo976aes
+ : p384_frodo976aes
+ : frodo976shake
+ : p384_frodo976shake
+ : frodo1344aes
+ : p521_frodo1344aes
+ : frodo1344shake
+ : p521_frodo1344shake
 ##### OQS_TEMPLATE_FRAGMENT_DEF_NIDS_END
 
 ##### OQS_TEMPLATE_FRAGMENT_ASSIGN_OIDS_START

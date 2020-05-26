@@ -420,6 +420,11 @@ class TLSFuzzer {
 ///// OQS_TEMPLATE_FRAGMENT_LIST_NIDS_START
         NID_oqs_kem_default, NID_p256_oqs_kem_default,
         NID_frodo640aes, NID_p256_frodo640aes,
+        NID_frodo640shake, NID_p256_frodo640shake,
+        NID_frodo976aes, NID_p384_frodo976aes,
+        NID_frodo976shake, NID_p384_frodo976shake,
+        NID_frodo1344aes, NID_p521_frodo1344aes,
+        NID_frodo1344shake, NID_p521_frodo1344shake,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_NIDS_END
     };
     if (!SSL_CTX_set1_curves(ctx_.get(), kCurves,

@@ -4297,6 +4297,36 @@ extern "C" {
 #define NID_sphincs_haraka_128f_robust 976
 #define OBJ_sphincs_haraka_128f_robust 1L, 3L, 9999L, 3L, 1L
 
+#define SN_frodo640shake "frodo640shake"
+#define NID_frodo640shake 977
+
+#define SN_p256_frodo640shake "p256_frodo640shake"
+#define NID_p256_frodo640shake 978
+
+#define SN_frodo976aes "frodo976aes"
+#define NID_frodo976aes 979
+
+#define SN_p384_frodo976aes "p384_frodo976aes"
+#define NID_p384_frodo976aes 980
+
+#define SN_frodo976shake "frodo976shake"
+#define NID_frodo976shake 981
+
+#define SN_p384_frodo976shake "p384_frodo976shake"
+#define NID_p384_frodo976shake 982
+
+#define SN_frodo1344aes "frodo1344aes"
+#define NID_frodo1344aes 983
+
+#define SN_p521_frodo1344aes "p521_frodo1344aes"
+#define NID_p521_frodo1344aes 984
+
+#define SN_frodo1344shake "frodo1344shake"
+#define NID_frodo1344shake 985
+
+#define SN_p521_frodo1344shake "p521_frodo1344shake"
+#define NID_p521_frodo1344shake 986
+
 
 #if defined(__cplusplus)
 } /* extern C */

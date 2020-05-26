@@ -201,7 +201,9 @@ bool ssl_add_message_cbb(SSL *ssl, CBB *cbb) {
 size_t ssl_max_handshake_message_len(const SSL *ssl) {
   // kMaxMessageLen is the default maximum message size for handshakes which do
   // not accept peer certificate chains.
-  static const size_t kMaxMessageLen = 16384;
+  // OQS note: We have changed this from 16384
+  // to 32768 to accomadate the FrodoKEM 1344 variants.
+  static const size_t kMaxMessageLen = 32768;
 
   if (SSL_in_init(ssl)) {
     SSL_CONFIG *config = ssl->config.get();  // SSL_in_init() implies not NULL.

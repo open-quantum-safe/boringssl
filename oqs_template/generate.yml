@@ -12,6 +12,31 @@ kems:
     mix_with: [{'name': 'p256', 'mix_nid':'0x2F00', 'nid':'SSL_CURVE_SECP256R1'}]
     use_as_default_with: 'p256'
     oqs_meth: 'OQS_KEM_alg_frodokem_640_aes'
+  -
+    name: 'frodo640shake'
+    nid: '0x0201'
+    mix_with: [{'name': 'p256', 'mix_nid':'0x2F01', 'nid':'SSL_CURVE_SECP256R1'}]
+    oqs_meth: 'OQS_KEM_alg_frodokem_640_shake'
+  -
+    name: 'frodo976aes'
+    nid: '0x0202'
+    mix_with: [{'name': 'p384', 'mix_nid':'0x2F02', 'nid':'SSL_CURVE_SECP384R1'}]
+    oqs_meth: 'OQS_KEM_alg_frodokem_976_aes'
+  -
+    name: 'frodo976shake'
+    nid: '0x0203'
+    mix_with: [{'name': 'p384', 'mix_nid':'0x2F03', 'nid':'SSL_CURVE_SECP384R1'}]
+    oqs_meth: 'OQS_KEM_alg_frodokem_976_shake'
+  -
+    name: 'frodo1344aes'
+    nid: '0x0204'
+    mix_with: [{'name': 'p521', 'mix_nid':'0x2F04', 'nid':'SSL_CURVE_SECP521R1'}]
+    oqs_meth: 'OQS_KEM_alg_frodokem_1344_aes'
+  -
+    name: 'frodo1344shake'
+    nid: '0x0205'
+    mix_with: [{'name': 'p521', 'mix_nid':'0x2F05', 'nid':'SSL_CURVE_SECP521R1'}]
+    oqs_meth: 'OQS_KEM_alg_frodokem_1344_shake'
 
 # N.B: Code points and OIDs must match those used
 # in OQS-OpenSSL 1.1.1 for interoperability.
