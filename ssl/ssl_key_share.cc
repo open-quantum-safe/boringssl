@@ -688,6 +688,18 @@ CONSTEXPR_ARRAY NamedGroup kNamedGroups[] = {
     {NID_p384_sikep610, SSL_CURVE_P384_SIKEP610, "p384_sikep610", "p384_sikep610"},
     {NID_sikep751, SSL_CURVE_SIKEP751, "sikep751", "sikep751"},
     {NID_p521_sikep751, SSL_CURVE_P521_SIKEP751, "p521_sikep751", "p521_sikep751"},
+    {NID_babybear, SSL_CURVE_BABYBEAR, "babybear", "babybear"},
+    {NID_p256_babybear, SSL_CURVE_P256_BABYBEAR, "p256_babybear", "p256_babybear"},
+    {NID_mamabear, SSL_CURVE_MAMABEAR, "mamabear", "mamabear"},
+    {NID_p384_mamabear, SSL_CURVE_P384_MAMABEAR, "p384_mamabear", "p384_mamabear"},
+    {NID_papabear, SSL_CURVE_PAPABEAR, "papabear", "papabear"},
+    {NID_p521_papabear, SSL_CURVE_P521_PAPABEAR, "p521_papabear", "p521_papabear"},
+    {NID_babybearephem, SSL_CURVE_BABYBEAREPHEM, "babybearephem", "babybearephem"},
+    {NID_p256_babybearephem, SSL_CURVE_P256_BABYBEAREPHEM, "p256_babybearephem", "p256_babybearephem"},
+    {NID_mamabearephem, SSL_CURVE_MAMABEAREPHEM, "mamabearephem", "mamabearephem"},
+    {NID_p384_mamabearephem, SSL_CURVE_P384_MAMABEAREPHEM, "p384_mamabearephem", "p384_mamabearephem"},
+    {NID_papabearephem, SSL_CURVE_PAPABEAREPHEM, "papabearephem", "papabearephem"},
+    {NID_p521_papabearephem, SSL_CURVE_P521_PAPABEAREPHEM, "p521_papabearephem", "p521_papabearephem"},
 ///// OQS_TEMPLATE_FRAGMENT_DEF_NAMEDGROUPS_END
 };
 
@@ -1056,6 +1068,66 @@ UniquePtr<SSLKeyShare> SSLKeyShare::Create(uint16_t group_id) {
     case SSL_CURVE_P521_SIKEP751:
       if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_sike_p751))
           return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P521_SIKEP751, SSL_CURVE_SECP521R1, OQS_KEM_alg_sike_p751));
+      else
+          return nullptr;
+    case SSL_CURVE_BABYBEAR:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_threebears_babybear))
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_BABYBEAR, OQS_KEM_alg_threebears_babybear));
+      else
+          return nullptr;
+    case SSL_CURVE_P256_BABYBEAR:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_threebears_babybear))
+          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P256_BABYBEAR, SSL_CURVE_SECP256R1, OQS_KEM_alg_threebears_babybear));
+      else
+          return nullptr;
+    case SSL_CURVE_MAMABEAR:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_threebears_mamabear))
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_MAMABEAR, OQS_KEM_alg_threebears_mamabear));
+      else
+          return nullptr;
+    case SSL_CURVE_P384_MAMABEAR:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_threebears_mamabear))
+          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P384_MAMABEAR, SSL_CURVE_SECP384R1, OQS_KEM_alg_threebears_mamabear));
+      else
+          return nullptr;
+    case SSL_CURVE_PAPABEAR:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_threebears_papabear))
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_PAPABEAR, OQS_KEM_alg_threebears_papabear));
+      else
+          return nullptr;
+    case SSL_CURVE_P521_PAPABEAR:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_threebears_papabear))
+          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P521_PAPABEAR, SSL_CURVE_SECP521R1, OQS_KEM_alg_threebears_papabear));
+      else
+          return nullptr;
+    case SSL_CURVE_BABYBEAREPHEM:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_threebears_babybear_ephem))
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_BABYBEAREPHEM, OQS_KEM_alg_threebears_babybear_ephem));
+      else
+          return nullptr;
+    case SSL_CURVE_P256_BABYBEAREPHEM:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_threebears_babybear_ephem))
+          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P256_BABYBEAREPHEM, SSL_CURVE_SECP256R1, OQS_KEM_alg_threebears_babybear_ephem));
+      else
+          return nullptr;
+    case SSL_CURVE_MAMABEAREPHEM:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_threebears_mamabear_ephem))
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_MAMABEAREPHEM, OQS_KEM_alg_threebears_mamabear_ephem));
+      else
+          return nullptr;
+    case SSL_CURVE_P384_MAMABEAREPHEM:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_threebears_mamabear_ephem))
+          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P384_MAMABEAREPHEM, SSL_CURVE_SECP384R1, OQS_KEM_alg_threebears_mamabear_ephem));
+      else
+          return nullptr;
+    case SSL_CURVE_PAPABEAREPHEM:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_threebears_papabear_ephem))
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_PAPABEAREPHEM, OQS_KEM_alg_threebears_papabear_ephem));
+      else
+          return nullptr;
+    case SSL_CURVE_P521_PAPABEAREPHEM:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_threebears_papabear_ephem))
+          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P521_PAPABEAREPHEM, SSL_CURVE_SECP521R1, OQS_KEM_alg_threebears_papabear_ephem));
       else
           return nullptr;
 ///// OQS_TEMPLATE_FRAGMENT_HANDLE_GROUP_IDS_END

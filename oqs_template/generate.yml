@@ -179,6 +179,37 @@ kems:
     nid: '0x0222'
     mix_with: [{'name': 'p521', 'mix_nid':'0x2F22', 'nid':'SSL_CURVE_SECP521R1'}]
     oqs_meth: 'OQS_KEM_alg_sike_p751'
+  -
+    name: 'babybear'
+    nid: '0x022C'
+    mix_with: [{'name': 'p256', 'mix_nid':'0x2F2C', 'nid':'SSL_CURVE_SECP256R1'}]
+    use_as_default_with: 'p256'
+    oqs_meth: 'OQS_KEM_alg_threebears_babybear'
+  -
+    name: 'mamabear'
+    nid: '0x022D'
+    mix_with: [{'name': 'p384', 'mix_nid':'0x2F2D', 'nid':'SSL_CURVE_SECP384R1'}]
+    oqs_meth: 'OQS_KEM_alg_threebears_mamabear'
+  -
+    name: 'papabear'
+    nid: '0x022E'
+    mix_with: [{'name': 'p521', 'mix_nid':'0x2F2E', 'nid':'SSL_CURVE_SECP521R1'}]
+    oqs_meth: 'OQS_KEM_alg_threebears_papabear'
+  -
+    name: 'babybearephem'
+    nid: '0x022F'
+    mix_with: [{'name': 'p256', 'mix_nid':'0x2F2F', 'nid':'SSL_CURVE_SECP256R1'}]
+    oqs_meth: 'OQS_KEM_alg_threebears_babybear_ephem'
+  -
+    name: 'mamabearephem'
+    nid: '0x0230'
+    mix_with: [{'name': 'p384', 'mix_nid':'0x2F30', 'nid':'SSL_CURVE_SECP384R1'}]
+    oqs_meth: 'OQS_KEM_alg_threebears_mamabear_ephem'
+  -
+    name: 'papabearephem'
+    nid: '0x0231'
+    mix_with: [{'name': 'p521', 'mix_nid':'0x2F31', 'nid':'SSL_CURVE_SECP521R1'}]
+    oqs_meth: 'OQS_KEM_alg_threebears_papabear_ephem'
 
 # N.B: Code points and OIDs must match those used
 # in OQS-OpenSSL 1.1.1 for interoperability.

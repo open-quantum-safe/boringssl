@@ -419,7 +419,7 @@ static const CurveTest kCurveTests[] = {
   },
   {
 ///// OQS_TEMPLATE_FRAGMENT_ADD_CURVETEST_START
-    "p256_oqs_kem_default:oqs_kem_default:p256_bike1l1cpa:bike1l1cpa:p384_bike1l3cpa:bike1l3cpa:p256_bike1l1fo:bike1l1fo:p384_bike1l3fo:bike1l3fo:p256_frodo640aes:frodo640aes:p256_frodo640shake:frodo640shake:p384_frodo976aes:frodo976aes:p384_frodo976shake:frodo976shake:p521_frodo1344aes:frodo1344aes:p521_frodo1344shake:frodo1344shake:p256_kyber512:kyber512:p384_kyber768:kyber768:p521_kyber1024:kyber1024:p256_kyber90s512:kyber90s512:p384_kyber90s768:kyber90s768:p521_kyber90s1024:kyber90s1024:p256_newhope512cca:newhope512cca:p521_newhope1024cca:newhope1024cca:p256_ntru_hps2048509:ntru_hps2048509:p384_ntru_hps2048677:ntru_hps2048677:p521_ntru_hps4096821:ntru_hps4096821:p256_ntru_hrss701:ntru_hrss701:p256_lightsaber:lightsaber:p384_saber:saber:p521_firesaber:firesaber:p256_sidhp434:sidhp434:p256_sidhp503:sidhp503:p384_sidhp610:sidhp610:p521_sidhp751:sidhp751:p256_sikep434:sikep434:p256_sikep503:sikep503:p384_sikep610:sikep610:p521_sikep751:sikep751",
+    "p256_oqs_kem_default:oqs_kem_default:p256_bike1l1cpa:bike1l1cpa:p384_bike1l3cpa:bike1l3cpa:p256_bike1l1fo:bike1l1fo:p384_bike1l3fo:bike1l3fo:p256_frodo640aes:frodo640aes:p256_frodo640shake:frodo640shake:p384_frodo976aes:frodo976aes:p384_frodo976shake:frodo976shake:p521_frodo1344aes:frodo1344aes:p521_frodo1344shake:frodo1344shake:p256_kyber512:kyber512:p384_kyber768:kyber768:p521_kyber1024:kyber1024:p256_kyber90s512:kyber90s512:p384_kyber90s768:kyber90s768:p521_kyber90s1024:kyber90s1024:p256_newhope512cca:newhope512cca:p521_newhope1024cca:newhope1024cca:p256_ntru_hps2048509:ntru_hps2048509:p384_ntru_hps2048677:ntru_hps2048677:p521_ntru_hps4096821:ntru_hps4096821:p256_ntru_hrss701:ntru_hrss701:p256_lightsaber:lightsaber:p384_saber:saber:p521_firesaber:firesaber:p256_sidhp434:sidhp434:p256_sidhp503:sidhp503:p384_sidhp610:sidhp610:p521_sidhp751:sidhp751:p256_sikep434:sikep434:p256_sikep503:sikep503:p384_sikep610:sikep610:p521_sikep751:sikep751:p256_babybear:babybear:p384_mamabear:mamabear:p521_papabear:papabear:p256_babybearephem:babybearephem:p384_mamabearephem:mamabearephem:p521_papabearephem:papabearephem",
     {
 
       SSL_CURVE_P256_OQS_KEM_DEFAULT,
@@ -490,6 +490,18 @@ static const CurveTest kCurveTests[] = {
       SSL_CURVE_SIKEP610,
       SSL_CURVE_P521_SIKEP751,
       SSL_CURVE_SIKEP751,
+      SSL_CURVE_P256_BABYBEAR,
+      SSL_CURVE_BABYBEAR,
+      SSL_CURVE_P384_MAMABEAR,
+      SSL_CURVE_MAMABEAR,
+      SSL_CURVE_P521_PAPABEAR,
+      SSL_CURVE_PAPABEAR,
+      SSL_CURVE_P256_BABYBEAREPHEM,
+      SSL_CURVE_BABYBEAREPHEM,
+      SSL_CURVE_P384_MAMABEAREPHEM,
+      SSL_CURVE_MAMABEAREPHEM,
+      SSL_CURVE_P521_PAPABEAREPHEM,
+      SSL_CURVE_PAPABEAREPHEM,
     },
 ///// OQS_TEMPLATE_FRAGMENT_ADD_CURVETEST_END
   },

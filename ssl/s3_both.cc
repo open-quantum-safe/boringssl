@@ -730,7 +730,19 @@ class CipherScorer {
                               group_id != SSL_CURVE_SIKEP610 &&
                               group_id != SSL_CURVE_P384_SIKEP610 &&
                               group_id != SSL_CURVE_SIKEP751 &&
-                              group_id != SSL_CURVE_P521_SIKEP751
+                              group_id != SSL_CURVE_P521_SIKEP751 &&
+                              group_id != SSL_CURVE_BABYBEAR &&
+                              group_id != SSL_CURVE_P256_BABYBEAR &&
+                              group_id != SSL_CURVE_MAMABEAR &&
+                              group_id != SSL_CURVE_P384_MAMABEAR &&
+                              group_id != SSL_CURVE_PAPABEAR &&
+                              group_id != SSL_CURVE_P521_PAPABEAR &&
+                              group_id != SSL_CURVE_BABYBEAREPHEM &&
+                              group_id != SSL_CURVE_P256_BABYBEAREPHEM &&
+                              group_id != SSL_CURVE_MAMABEAREPHEM &&
+                              group_id != SSL_CURVE_P384_MAMABEAREPHEM &&
+                              group_id != SSL_CURVE_PAPABEAREPHEM &&
+                              group_id != SSL_CURVE_P521_PAPABEAREPHEM
 ///// OQS_TEMPLATE_FRAGMENT_LIST_CURVES_END
                               ) {}
 

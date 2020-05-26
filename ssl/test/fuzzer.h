@@ -452,6 +452,12 @@ class TLSFuzzer {
         NID_sikep503, NID_p256_sikep503,
         NID_sikep610, NID_p384_sikep610,
         NID_sikep751, NID_p521_sikep751,
+        NID_babybear, NID_p256_babybear,
+        NID_mamabear, NID_p384_mamabear,
+        NID_papabear, NID_p521_papabear,
+        NID_babybearephem, NID_p256_babybearephem,
+        NID_mamabearephem, NID_p384_mamabearephem,
+        NID_papabearephem, NID_p521_papabearephem,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_NIDS_END
     };
     if (!SSL_CTX_set1_curves(ctx_.get(), kCurves,

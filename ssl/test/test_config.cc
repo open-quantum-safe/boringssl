@@ -1816,6 +1816,42 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
         case SSL_CURVE_P521_SIKEP751:
           nids.push_back(NID_p521_sikep751);
           break;
+        case SSL_CURVE_BABYBEAR:
+          nids.push_back(NID_babybear);
+          break;
+        case SSL_CURVE_P256_BABYBEAR:
+          nids.push_back(NID_p256_babybear);
+          break;
+        case SSL_CURVE_MAMABEAR:
+          nids.push_back(NID_mamabear);
+          break;
+        case SSL_CURVE_P384_MAMABEAR:
+          nids.push_back(NID_p384_mamabear);
+          break;
+        case SSL_CURVE_PAPABEAR:
+          nids.push_back(NID_papabear);
+          break;
+        case SSL_CURVE_P521_PAPABEAR:
+          nids.push_back(NID_p521_papabear);
+          break;
+        case SSL_CURVE_BABYBEAREPHEM:
+          nids.push_back(NID_babybearephem);
+          break;
+        case SSL_CURVE_P256_BABYBEAREPHEM:
+          nids.push_back(NID_p256_babybearephem);
+          break;
+        case SSL_CURVE_MAMABEAREPHEM:
+          nids.push_back(NID_mamabearephem);
+          break;
+        case SSL_CURVE_P384_MAMABEAREPHEM:
+          nids.push_back(NID_p384_mamabearephem);
+          break;
+        case SSL_CURVE_PAPABEAREPHEM:
+          nids.push_back(NID_papabearephem);
+          break;
+        case SSL_CURVE_P521_PAPABEAREPHEM:
+          nids.push_back(NID_p521_papabearephem);
+          break;
 ///// OQS_TEMPLATE_FRAGMENT_ADD_NIDS_END
       }
       if (!SSL_set1_curves(ssl.get(), &nids[0], nids.size())) {
@@ -1862,6 +1898,12 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
         NID_sikep503, NID_p256_sikep503,
         NID_sikep610, NID_p384_sikep610,
         NID_sikep751, NID_p521_sikep751,
+        NID_babybear, NID_p256_babybear,
+        NID_mamabear, NID_p384_mamabear,
+        NID_papabear, NID_p521_papabear,
+        NID_babybearephem, NID_p256_babybearephem,
+        NID_mamabearephem, NID_p384_mamabearephem,
+        NID_papabearephem, NID_p521_papabearephem,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_PQ_CURVEIDS_END
     };
     if (!SSL_set1_curves(ssl.get(), kAllCurves,

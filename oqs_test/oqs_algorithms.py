@@ -68,6 +68,18 @@ kex_to_nid = {
         'p384_sikep610': '12065',
         'sikep751': '546',
         'p521_sikep751': '12066',
+        'babybear': '556',
+        'p256_babybear': '12076',
+        'mamabear': '557',
+        'p384_mamabear': '12077',
+        'papabear': '558',
+        'p521_papabear': '12078',
+        'babybearephem': '559',
+        'p256_babybearephem': '12079',
+        'mamabearephem': '560',
+        'p384_mamabearephem': '12080',
+        'papabearephem': '561',
+        'p521_papabearephem': '12081',
 ##### OQS_TEMPLATE_FRAGMENT_MAP_KEM_TO_NID_END
 }
 

@@ -69,6 +69,7 @@ The following quantum-safe algorithms from liboqs are supported (assuming they h
 - **SABER**: `lightsaber`, `saber`, `firesaber`
 - **SIDH**: `sidhp434`, `sidhp503`, `sidhp610`, `sidhp751`
 - **SIKE**: `sikep434`, `sikep503`, `sikep610`, `sikep751`
+- **ThreeBears**: `babybear`, `babybear_ephem`, `mamabear`, `mamabear_ephem`, `papabear`, `papabear_ephem`
 
 The following hybrid algorithms are supported depending on the security of each scheme above, denoted by `<KEX>`:
 

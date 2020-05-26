@@ -4489,6 +4489,42 @@ extern "C" {
 #define SN_p521_sikep751 "p521_sikep751"
 #define NID_p521_sikep751 1042
 
+#define SN_babybear "babybear"
+#define NID_babybear 1043
+
+#define SN_p256_babybear "p256_babybear"
+#define NID_p256_babybear 1044
+
+#define SN_mamabear "mamabear"
+#define NID_mamabear 1045
+
+#define SN_p384_mamabear "p384_mamabear"
+#define NID_p384_mamabear 1046
+
+#define SN_papabear "papabear"
+#define NID_papabear 1047
+
+#define SN_p521_papabear "p521_papabear"
+#define NID_p521_papabear 1048
+
+#define SN_babybearephem "babybearephem"
+#define NID_babybearephem 1049
+
+#define SN_p256_babybearephem "p256_babybearephem"
+#define NID_p256_babybearephem 1050
+
+#define SN_mamabearephem "mamabearephem"
+#define NID_mamabearephem 1051
+
+#define SN_p384_mamabearephem "p384_mamabearephem"
+#define NID_p384_mamabearephem 1052
+
+#define SN_papabearephem "papabearephem"
+#define NID_papabearephem 1053
+
+#define SN_p521_papabearephem "p521_papabearephem"
+#define NID_p521_papabearephem 1054
+
 
 #if defined(__cplusplus)
 } /* extern C */
