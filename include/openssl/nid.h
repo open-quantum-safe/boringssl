@@ -4387,6 +4387,18 @@ extern "C" {
 #define SN_p521_kyber90s1024 "p521_kyber90s1024"
 #define NID_p521_kyber90s1024 1008
 
+#define SN_newhope512cca "newhope512cca"
+#define NID_newhope512cca 1009
+
+#define SN_p256_newhope512cca "p256_newhope512cca"
+#define NID_p256_newhope512cca 1010
+
+#define SN_newhope1024cca "newhope1024cca"
+#define NID_newhope1024cca 1011
+
+#define SN_p521_newhope1024cca "p521_newhope1024cca"
+#define NID_p521_newhope1024cca 1012
+
 
 #if defined(__cplusplus)
 } /* extern C */

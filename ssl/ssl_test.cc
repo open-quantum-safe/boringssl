@@ -419,7 +419,7 @@ static const CurveTest kCurveTests[] = {
   },
   {
 ///// OQS_TEMPLATE_FRAGMENT_ADD_CURVETEST_START
-    "p256_oqs_kem_default:oqs_kem_default:p256_bike1l1cpa:bike1l1cpa:p384_bike1l3cpa:bike1l3cpa:p256_bike1l1fo:bike1l1fo:p384_bike1l3fo:bike1l3fo:p256_frodo640aes:frodo640aes:p256_frodo640shake:frodo640shake:p384_frodo976aes:frodo976aes:p384_frodo976shake:frodo976shake:p521_frodo1344aes:frodo1344aes:p521_frodo1344shake:frodo1344shake:p256_kyber512:kyber512:p384_kyber768:kyber768:p521_kyber1024:kyber1024:p256_kyber90s512:kyber90s512:p384_kyber90s768:kyber90s768:p521_kyber90s1024:kyber90s1024",
+    "p256_oqs_kem_default:oqs_kem_default:p256_bike1l1cpa:bike1l1cpa:p384_bike1l3cpa:bike1l3cpa:p256_bike1l1fo:bike1l1fo:p384_bike1l3fo:bike1l3fo:p256_frodo640aes:frodo640aes:p256_frodo640shake:frodo640shake:p384_frodo976aes:frodo976aes:p384_frodo976shake:frodo976shake:p521_frodo1344aes:frodo1344aes:p521_frodo1344shake:frodo1344shake:p256_kyber512:kyber512:p384_kyber768:kyber768:p521_kyber1024:kyber1024:p256_kyber90s512:kyber90s512:p384_kyber90s768:kyber90s768:p521_kyber90s1024:kyber90s1024:p256_newhope512cca:newhope512cca:p521_newhope1024cca:newhope1024cca",
     {
 
       SSL_CURVE_P256_OQS_KEM_DEFAULT,
@@ -456,6 +456,10 @@ static const CurveTest kCurveTests[] = {
       SSL_CURVE_KYBER90S768,
       SSL_CURVE_P521_KYBER90S1024,
       SSL_CURVE_KYBER90S1024,
+      SSL_CURVE_P256_NEWHOPE512CCA,
+      SSL_CURVE_NEWHOPE512CCA,
+      SSL_CURVE_P521_NEWHOPE1024CCA,
+      SSL_CURVE_NEWHOPE1024CCA,
     },
 ///// OQS_TEMPLATE_FRAGMENT_ADD_CURVETEST_END
   },

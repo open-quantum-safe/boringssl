@@ -1394,6 +1394,10 @@ secg-scheme 14 3 : dhSinglePass-cofactorDH-sha512kdf-scheme
  : p384_kyber90s768
  : kyber90s1024
  : p521_kyber90s1024
+ : newhope512cca
+ : p256_newhope512cca
+ : newhope1024cca
+ : p521_newhope1024cca
 ##### OQS_TEMPLATE_FRAGMENT_DEF_NIDS_END
 
 ##### OQS_TEMPLATE_FRAGMENT_ASSIGN_OIDS_START

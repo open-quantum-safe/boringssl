@@ -64,6 +64,7 @@ The following quantum-safe algorithms from liboqs are supported (assuming they h
 - **FrodoKEM**: `frodo640aes`, `frodo640shake`, `frodo976aes`, `frodo976shake`, `frodo1344aes`, `frodo1344shake`
 - **BIKE**: `bike1l1cpa`, `bike1l3cpa`, `bikel1fo`, `bike1l3fo`
 - **CRYSTALS-Kyber**: `kyber512`, `kyber768`, `kyber1024`, `kyber90s512`, `kyber90s768`, `kyber90s1024`
+- **NewHope**: `newhope512cca`, `newhope1024cca`
 
 The following hybrid algorithms are supported depending on the security of each scheme above, denoted by `<KEX>`:
 

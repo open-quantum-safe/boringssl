@@ -62,7 +62,6 @@ kems:
     name: 'kyber512'
     nid: '0x020F'
     mix_with: [{'name': 'p256', 'mix_nid':'0x2F0F', 'nid':'SSL_CURVE_SECP256R1'}]
-    use_as_default_with: 'p256'
     oqs_meth: 'OQS_KEM_alg_kyber_512'
   -
     name: 'kyber768'
@@ -90,6 +89,16 @@ kems:
     nid: '0x022B'
     mix_with: [{'name': 'p521', 'mix_nid':'0x2F2B', 'nid':'SSL_CURVE_SECP521R1'}]
     oqs_meth: 'OQS_KEM_alg_kyber_1024_90s'
+  -
+    name: 'newhope512cca'
+    nid: '0x0212'
+    mix_with: [{'name': 'p256', 'mix_nid':'0x2F12', 'nid':'SSL_CURVE_SECP256R1'}]
+    oqs_meth: 'OQS_KEM_alg_newhope_512cca'
+  -
+    name: 'newhope1024cca'
+    nid: '0x0213'
+    mix_with: [{'name': 'p521', 'mix_nid':'0x2F13', 'nid':'SSL_CURVE_SECP521R1'}]
+    oqs_meth: 'OQS_KEM_alg_newhope_1024cca'
 
 # N.B: Code points and OIDs must match those used
 # in OQS-OpenSSL 1.1.1 for interoperability.

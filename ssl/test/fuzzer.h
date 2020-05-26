@@ -435,6 +435,8 @@ class TLSFuzzer {
         NID_kyber90s512, NID_p256_kyber90s512,
         NID_kyber90s768, NID_p384_kyber90s768,
         NID_kyber90s1024, NID_p521_kyber90s1024,
+        NID_newhope512cca, NID_p256_newhope512cca,
+        NID_newhope1024cca, NID_p521_newhope1024cca,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_NIDS_END
     };
     if (!SSL_CTX_set1_curves(ctx_.get(), kCurves,

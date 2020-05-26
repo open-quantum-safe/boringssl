@@ -654,6 +654,10 @@ CONSTEXPR_ARRAY NamedGroup kNamedGroups[] = {
     {NID_p384_kyber90s768, SSL_CURVE_P384_KYBER90S768, "p384_kyber90s768", "p384_kyber90s768"},
     {NID_kyber90s1024, SSL_CURVE_KYBER90S1024, "kyber90s1024", "kyber90s1024"},
     {NID_p521_kyber90s1024, SSL_CURVE_P521_KYBER90S1024, "p521_kyber90s1024", "p521_kyber90s1024"},
+    {NID_newhope512cca, SSL_CURVE_NEWHOPE512CCA, "newhope512cca", "newhope512cca"},
+    {NID_p256_newhope512cca, SSL_CURVE_P256_NEWHOPE512CCA, "p256_newhope512cca", "p256_newhope512cca"},
+    {NID_newhope1024cca, SSL_CURVE_NEWHOPE1024CCA, "newhope1024cca", "newhope1024cca"},
+    {NID_p521_newhope1024cca, SSL_CURVE_P521_NEWHOPE1024CCA, "p521_newhope1024cca", "p521_newhope1024cca"},
 ///// OQS_TEMPLATE_FRAGMENT_DEF_NAMEDGROUPS_END
 };
 
@@ -852,6 +856,26 @@ UniquePtr<SSLKeyShare> SSLKeyShare::Create(uint16_t group_id) {
     case SSL_CURVE_P521_KYBER90S1024:
       if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_kyber_1024_90s))
           return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P521_KYBER90S1024, SSL_CURVE_SECP521R1, OQS_KEM_alg_kyber_1024_90s));
+      else
+          return nullptr;
+    case SSL_CURVE_NEWHOPE512CCA:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_newhope_512cca))
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_NEWHOPE512CCA, OQS_KEM_alg_newhope_512cca));
+      else
+          return nullptr;
+    case SSL_CURVE_P256_NEWHOPE512CCA:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_newhope_512cca))
+          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P256_NEWHOPE512CCA, SSL_CURVE_SECP256R1, OQS_KEM_alg_newhope_512cca));
+      else
+          return nullptr;
+    case SSL_CURVE_NEWHOPE1024CCA:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_newhope_1024cca))
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_NEWHOPE1024CCA, OQS_KEM_alg_newhope_1024cca));
+      else
+          return nullptr;
+    case SSL_CURVE_P521_NEWHOPE1024CCA:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_newhope_1024cca))
+          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P521_NEWHOPE1024CCA, SSL_CURVE_SECP521R1, OQS_KEM_alg_newhope_1024cca));
       else
           return nullptr;
 ///// OQS_TEMPLATE_FRAGMENT_HANDLE_GROUP_IDS_END

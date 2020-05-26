@@ -992,3 +992,7 @@ kyber90s768		1005
 p384_kyber90s768		1006
 kyber90s1024		1007
 p521_kyber90s1024		1008
+newhope512cca		1009
+p256_newhope512cca		1010
+newhope1024cca		1011
+p521_newhope1024cca		1012

@@ -696,7 +696,11 @@ class CipherScorer {
                               group_id != SSL_CURVE_KYBER90S768 &&
                               group_id != SSL_CURVE_P384_KYBER90S768 &&
                               group_id != SSL_CURVE_KYBER90S1024 &&
-                              group_id != SSL_CURVE_P521_KYBER90S1024
+                              group_id != SSL_CURVE_P521_KYBER90S1024 &&
+                              group_id != SSL_CURVE_NEWHOPE512CCA &&
+                              group_id != SSL_CURVE_P256_NEWHOPE512CCA &&
+                              group_id != SSL_CURVE_NEWHOPE1024CCA &&
+                              group_id != SSL_CURVE_P521_NEWHOPE1024CCA
 ///// OQS_TEMPLATE_FRAGMENT_LIST_CURVES_END
                               ) {}
 

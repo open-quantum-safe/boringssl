@@ -34,6 +34,10 @@ kex_to_nid = {
         'p384_kyber90s768': '12074',
         'kyber90s1024': '555',
         'p521_kyber90s1024': '12075',
+        'newhope512cca': '530',
+        'p256_newhope512cca': '12050',
+        'newhope1024cca': '531',
+        'p521_newhope1024cca': '12051',
 ##### OQS_TEMPLATE_FRAGMENT_MAP_KEM_TO_NID_END
 }
 
