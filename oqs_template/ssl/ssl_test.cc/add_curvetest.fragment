@@ -1,13 +1,15 @@
-
-    "{% for kem in config['kems'] %}
+{%- for kem in config['kems'] %}
+  {
+    "{{ kem['name'] }}:
     {%- for classical_alg in kem['mix_with'] -%}
-    {{ classical_alg['name'] }}_{{ kem['name'] }}:{%- endfor -%}{{ kem['name'] }}{%- if not loop.last -%}: {%- endif -%}{%- endfor %}",
+        {{ classical_alg['name'] }}_{{ kem['name'] }}{%- if not loop.last -%}: {%- endif -%}
+    {%- endfor -%}",
     {
-{% for kem in config['kems'] %}
+      SSL_CURVE_{{ kem['name']|upper }},
     {%- for classical_alg in kem['mix_with'] %}
       SSL_CURVE_{{ classical_alg['name']|upper }}_{{ kem['name']|upper }},
     {%- endfor %}
-      SSL_CURVE_{{ kem['name']|upper }},
-{%- endfor %}
     },
+  },
+{%- endfor %}
 
