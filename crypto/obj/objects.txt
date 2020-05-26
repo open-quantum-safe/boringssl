@@ -1362,6 +1362,14 @@ secg-scheme 14 3 : dhSinglePass-cofactorDH-sha512kdf-scheme
 ###### OQS_TEMPLATE_FRAGMENT_DEF_NIDS_START
  : oqs_kem_default
  : p256_oqs_kem_default
+ : bike1l1cpa
+ : p256_bike1l1cpa
+ : bike1l3cpa
+ : p384_bike1l3cpa
+ : bike1l1fo
+ : p256_bike1l1fo
+ : bike1l3fo
+ : p384_bike1l3fo
  : frodo640aes
  : p256_frodo640aes
  : frodo640shake

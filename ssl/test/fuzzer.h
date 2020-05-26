@@ -419,6 +419,10 @@ class TLSFuzzer {
         NID_secp384r1, NID_secp521r1
 ///// OQS_TEMPLATE_FRAGMENT_LIST_NIDS_START
         NID_oqs_kem_default, NID_p256_oqs_kem_default,
+        NID_bike1l1cpa, NID_p256_bike1l1cpa,
+        NID_bike1l3cpa, NID_p384_bike1l3cpa,
+        NID_bike1l1fo, NID_p256_bike1l1fo,
+        NID_bike1l3fo, NID_p384_bike1l3fo,
         NID_frodo640aes, NID_p256_frodo640aes,
         NID_frodo640shake, NID_p256_frodo640shake,
         NID_frodo976aes, NID_p384_frodo976aes,

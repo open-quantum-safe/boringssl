@@ -665,6 +665,14 @@ class CipherScorer {
 ///// OQS_TEMPLATE_FRAGMENT_LIST_CURVES_START
                               group_id != SSL_CURVE_OQS_KEM_DEFAULT &&
                               group_id != SSL_CURVE_P256_OQS_KEM_DEFAULT &&
+                              group_id != SSL_CURVE_BIKE1L1CPA &&
+                              group_id != SSL_CURVE_P256_BIKE1L1CPA &&
+                              group_id != SSL_CURVE_BIKE1L3CPA &&
+                              group_id != SSL_CURVE_P384_BIKE1L3CPA &&
+                              group_id != SSL_CURVE_BIKE1L1FO &&
+                              group_id != SSL_CURVE_P256_BIKE1L1FO &&
+                              group_id != SSL_CURVE_BIKE1L3FO &&
+                              group_id != SSL_CURVE_P384_BIKE1L3FO &&
                               group_id != SSL_CURVE_FRODO640AES &&
                               group_id != SSL_CURVE_P256_FRODO640AES &&
                               group_id != SSL_CURVE_FRODO640SHAKE &&

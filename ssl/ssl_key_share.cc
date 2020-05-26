@@ -622,6 +622,14 @@ CONSTEXPR_ARRAY NamedGroup kNamedGroups[] = {
 ///// OQS_TEMPLATE_FRAGMENT_DEF_NAMEDGROUPS_START
     {NID_oqs_kem_default, SSL_CURVE_OQS_KEM_DEFAULT, "oqs_kem_default", "oqs_kem_default"},
     {NID_p256_oqs_kem_default, SSL_CURVE_P256_OQS_KEM_DEFAULT, "p256_oqs_kem_default", "p256_oqs_kem_default"},
+    {NID_bike1l1cpa, SSL_CURVE_BIKE1L1CPA, "bike1l1cpa", "bike1l1cpa"},
+    {NID_p256_bike1l1cpa, SSL_CURVE_P256_BIKE1L1CPA, "p256_bike1l1cpa", "p256_bike1l1cpa"},
+    {NID_bike1l3cpa, SSL_CURVE_BIKE1L3CPA, "bike1l3cpa", "bike1l3cpa"},
+    {NID_p384_bike1l3cpa, SSL_CURVE_P384_BIKE1L3CPA, "p384_bike1l3cpa", "p384_bike1l3cpa"},
+    {NID_bike1l1fo, SSL_CURVE_BIKE1L1FO, "bike1l1fo", "bike1l1fo"},
+    {NID_p256_bike1l1fo, SSL_CURVE_P256_BIKE1L1FO, "p256_bike1l1fo", "p256_bike1l1fo"},
+    {NID_bike1l3fo, SSL_CURVE_BIKE1L3FO, "bike1l3fo", "bike1l3fo"},
+    {NID_p384_bike1l3fo, SSL_CURVE_P384_BIKE1L3FO, "p384_bike1l3fo", "p384_bike1l3fo"},
     {NID_frodo640aes, SSL_CURVE_FRODO640AES, "frodo640aes", "frodo640aes"},
     {NID_p256_frodo640aes, SSL_CURVE_P256_FRODO640AES, "p256_frodo640aes", "p256_frodo640aes"},
     {NID_frodo640shake, SSL_CURVE_FRODO640SHAKE, "frodo640shake", "frodo640shake"},
@@ -672,6 +680,46 @@ UniquePtr<SSLKeyShare> SSLKeyShare::Create(uint16_t group_id) {
     case SSL_CURVE_P256_OQS_KEM_DEFAULT:
       if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_default))
           return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P256_OQS_KEM_DEFAULT, SSL_CURVE_SECP256R1, OQS_KEM_alg_default));
+      else
+          return nullptr;
+    case SSL_CURVE_BIKE1L1CPA:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_bike1_l1_cpa))
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_BIKE1L1CPA, OQS_KEM_alg_bike1_l1_cpa));
+      else
+          return nullptr;
+    case SSL_CURVE_P256_BIKE1L1CPA:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_bike1_l1_cpa))
+          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P256_BIKE1L1CPA, SSL_CURVE_SECP256R1, OQS_KEM_alg_bike1_l1_cpa));
+      else
+          return nullptr;
+    case SSL_CURVE_BIKE1L3CPA:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_bike1_l3_cpa))
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_BIKE1L3CPA, OQS_KEM_alg_bike1_l3_cpa));
+      else
+          return nullptr;
+    case SSL_CURVE_P384_BIKE1L3CPA:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_bike1_l3_cpa))
+          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P384_BIKE1L3CPA, SSL_CURVE_SECP384R1, OQS_KEM_alg_bike1_l3_cpa));
+      else
+          return nullptr;
+    case SSL_CURVE_BIKE1L1FO:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_bike1_l1_fo))
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_BIKE1L1FO, OQS_KEM_alg_bike1_l1_fo));
+      else
+          return nullptr;
+    case SSL_CURVE_P256_BIKE1L1FO:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_bike1_l1_fo))
+          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P256_BIKE1L1FO, SSL_CURVE_SECP256R1, OQS_KEM_alg_bike1_l1_fo));
+      else
+          return nullptr;
+    case SSL_CURVE_BIKE1L3FO:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_bike1_l3_fo))
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_BIKE1L3FO, OQS_KEM_alg_bike1_l3_fo));
+      else
+          return nullptr;
+    case SSL_CURVE_P384_BIKE1L3FO:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_bike1_l3_fo))
+          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P384_BIKE1L3FO, SSL_CURVE_SECP384R1, OQS_KEM_alg_bike1_l3_fo));
       else
           return nullptr;
     case SSL_CURVE_FRODO640AES:

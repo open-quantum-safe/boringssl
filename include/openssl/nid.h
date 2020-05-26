@@ -4327,6 +4327,30 @@ extern "C" {
 #define SN_p521_frodo1344shake "p521_frodo1344shake"
 #define NID_p521_frodo1344shake 986
 
+#define SN_bike1l3cpa "bike1l3cpa"
+#define NID_bike1l3cpa 989
+
+#define SN_p384_bike1l3cpa "p384_bike1l3cpa"
+#define NID_p384_bike1l3cpa 990
+
+#define SN_bike1l1fo "bike1l1fo"
+#define NID_bike1l1fo 991
+
+#define SN_p256_bike1l1fo "p256_bike1l1fo"
+#define NID_p256_bike1l1fo 992
+
+#define SN_bike1l3fo "bike1l3fo"
+#define NID_bike1l3fo 993
+
+#define SN_p384_bike1l3fo "p384_bike1l3fo"
+#define NID_p384_bike1l3fo 994
+
+#define SN_bike1l1cpa "bike1l1cpa"
+#define NID_bike1l1cpa 995
+
+#define SN_p256_bike1l1cpa "p256_bike1l1cpa"
+#define NID_p256_bike1l1cpa 996
+
 
 #if defined(__cplusplus)
 } /* extern C */

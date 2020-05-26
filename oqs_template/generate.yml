@@ -7,6 +7,27 @@ kems:
     mix_with: [{'name': 'p256', 'mix_nid':'0x2FFF', 'nid':'SSL_CURVE_SECP256R1'}]
     oqs_meth: 'OQS_KEM_alg_default'
   -
+    name: 'bike1l1cpa'
+    nid: '0x0206'
+    mix_with: [{'name': 'p256', 'mix_nid':'0x2F06', 'nid':'SSL_CURVE_SECP256R1'}]
+    use_as_default_with: 'p256'
+    oqs_meth: 'OQS_KEM_alg_bike1_l1_cpa'
+  -
+    name: 'bike1l3cpa'
+    nid: '0x0207'
+    mix_with: [{'name': 'p384', 'mix_nid':'0x2F07', 'nid':'SSL_CURVE_SECP384R1'}]
+    oqs_meth: 'OQS_KEM_alg_bike1_l3_cpa'
+  -
+    name: 'bike1l1fo'
+    nid: '0x0223'
+    mix_with: [{'name': 'p256', 'mix_nid':'0x2F23', 'nid':'SSL_CURVE_SECP256R1'}]
+    oqs_meth: 'OQS_KEM_alg_bike1_l1_fo'
+  -
+    name: 'bike1l3fo'
+    nid: '0x0224'
+    mix_with: [{'name': 'p384', 'mix_nid':'0x2F24', 'nid':'SSL_CURVE_SECP384R1'}]
+    oqs_meth: 'OQS_KEM_alg_bike1_l3_fo'
+  -
     name: 'frodo640aes'
     nid: '0x0200'
     mix_with: [{'name': 'p256', 'mix_nid':'0x2F00', 'nid':'SSL_CURVE_SECP256R1'}]
