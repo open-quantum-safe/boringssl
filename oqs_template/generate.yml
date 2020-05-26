@@ -58,6 +58,38 @@ kems:
     nid: '0x0205'
     mix_with: [{'name': 'p521', 'mix_nid':'0x2F05', 'nid':'SSL_CURVE_SECP521R1'}]
     oqs_meth: 'OQS_KEM_alg_frodokem_1344_shake'
+  -
+    name: 'kyber512'
+    nid: '0x020F'
+    mix_with: [{'name': 'p256', 'mix_nid':'0x2F0F', 'nid':'SSL_CURVE_SECP256R1'}]
+    use_as_default_with: 'p256'
+    oqs_meth: 'OQS_KEM_alg_kyber_512'
+  -
+    name: 'kyber768'
+    nid: '0x0210'
+    mix_with: [{'name': 'p384', 'mix_nid':'0x2F10', 'nid':'SSL_CURVE_SECP384R1'}]
+    oqs_meth: 'OQS_KEM_alg_kyber_768'
+  -
+    name: 'kyber1024'
+    nid: '0x0211'
+    mix_with: [{'name': 'p521', 'mix_nid':'0x2F11', 'nid':'SSL_CURVE_SECP521R1'}]
+    oqs_meth: 'OQS_KEM_alg_kyber_1024'
+  -
+    name: 'kyber90s512'
+    nid: '0x0229'
+    mix_with: [{'name': 'p256', 'mix_nid':'0x2F29', 'nid':'SSL_CURVE_SECP256R1'}]
+    use_as_default_with: 'p256'
+    oqs_meth: 'OQS_KEM_alg_kyber_512_90s'
+  -
+    name: 'kyber90s768'
+    nid: '0x022A'
+    mix_with: [{'name': 'p384', 'mix_nid':'0x2F2A', 'nid':'SSL_CURVE_SECP384R1'}]
+    oqs_meth: 'OQS_KEM_alg_kyber_768_90s'
+  -
+    name: 'kyber90s1024'
+    nid: '0x022B'
+    mix_with: [{'name': 'p521', 'mix_nid':'0x2F2B', 'nid':'SSL_CURVE_SECP521R1'}]
+    oqs_meth: 'OQS_KEM_alg_kyber_1024_90s'
 
 # N.B: Code points and OIDs must match those used
 # in OQS-OpenSSL 1.1.1 for interoperability.

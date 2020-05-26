@@ -63,6 +63,7 @@ The following quantum-safe algorithms from liboqs are supported (assuming they h
 - `oqs_kem_default` (see [here](https://github.com/open-quantum-safe/boringssl/wiki/Using-liboqs-algorithms-not-in-the-fork#oqsdefault) for what this denotes)
 - **FrodoKEM**: `frodo640aes`, `frodo640shake`, `frodo976aes`, `frodo976shake`, `frodo1344aes`, `frodo1344shake`
 - **BIKE**: `bike1l1cpa`, `bike1l3cpa`, `bikel1fo`, `bike1l3fo`
+- **CRYSTALS-Kyber**: `kyber512`, `kyber768`, `kyber1024`, `kyber90s512`, `kyber90s768`, `kyber90s1024`
 
 The following hybrid algorithms are supported depending on the security of each scheme above, denoted by `<KEX>`:
 

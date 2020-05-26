@@ -980,3 +980,15 @@ bike1l3fo		993
 p384_bike1l3fo		994
 bike1l1cpa		995
 p256_bike1l1cpa		996
+kyber512		997
+p256_kyber512		998
+kyber768		999
+p384_kyber768		1000
+kyber1024		1001
+p521_kyber1024		1002
+kyber90s512		1003
+p256_kyber90s512		1004
+kyber90s768		1005
+p384_kyber90s768		1006
+kyber90s1024		1007
+p521_kyber90s1024		1008

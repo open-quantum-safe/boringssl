@@ -1678,6 +1678,42 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
         case SSL_CURVE_P521_FRODO1344SHAKE:
           nids.push_back(NID_p521_frodo1344shake);
           break;
+        case SSL_CURVE_KYBER512:
+          nids.push_back(NID_kyber512);
+          break;
+        case SSL_CURVE_P256_KYBER512:
+          nids.push_back(NID_p256_kyber512);
+          break;
+        case SSL_CURVE_KYBER768:
+          nids.push_back(NID_kyber768);
+          break;
+        case SSL_CURVE_P384_KYBER768:
+          nids.push_back(NID_p384_kyber768);
+          break;
+        case SSL_CURVE_KYBER1024:
+          nids.push_back(NID_kyber1024);
+          break;
+        case SSL_CURVE_P521_KYBER1024:
+          nids.push_back(NID_p521_kyber1024);
+          break;
+        case SSL_CURVE_KYBER90S512:
+          nids.push_back(NID_kyber90s512);
+          break;
+        case SSL_CURVE_P256_KYBER90S512:
+          nids.push_back(NID_p256_kyber90s512);
+          break;
+        case SSL_CURVE_KYBER90S768:
+          nids.push_back(NID_kyber90s768);
+          break;
+        case SSL_CURVE_P384_KYBER90S768:
+          nids.push_back(NID_p384_kyber90s768);
+          break;
+        case SSL_CURVE_KYBER90S1024:
+          nids.push_back(NID_kyber90s1024);
+          break;
+        case SSL_CURVE_P521_KYBER90S1024:
+          nids.push_back(NID_p521_kyber90s1024);
+          break;
 ///// OQS_TEMPLATE_FRAGMENT_ADD_NIDS_END
       }
       if (!SSL_set1_curves(ssl.get(), &nids[0], nids.size())) {
@@ -1701,6 +1737,12 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
         NID_frodo976shake, NID_p384_frodo976shake,
         NID_frodo1344aes, NID_p521_frodo1344aes,
         NID_frodo1344shake, NID_p521_frodo1344shake,
+        NID_kyber512, NID_p256_kyber512,
+        NID_kyber768, NID_p384_kyber768,
+        NID_kyber1024, NID_p521_kyber1024,
+        NID_kyber90s512, NID_p256_kyber90s512,
+        NID_kyber90s768, NID_p384_kyber90s768,
+        NID_kyber90s1024, NID_p521_kyber90s1024,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_PQ_CURVEIDS_END
     };
     if (!SSL_set1_curves(ssl.get(), kAllCurves,

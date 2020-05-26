@@ -4351,6 +4351,42 @@ extern "C" {
 #define SN_p256_bike1l1cpa "p256_bike1l1cpa"
 #define NID_p256_bike1l1cpa 996
 
+#define SN_kyber512 "kyber512"
+#define NID_kyber512 997
+
+#define SN_p256_kyber512 "p256_kyber512"
+#define NID_p256_kyber512 998
+
+#define SN_kyber768 "kyber768"
+#define NID_kyber768 999
+
+#define SN_p384_kyber768 "p384_kyber768"
+#define NID_p384_kyber768 1000
+
+#define SN_kyber1024 "kyber1024"
+#define NID_kyber1024 1001
+
+#define SN_p521_kyber1024 "p521_kyber1024"
+#define NID_p521_kyber1024 1002
+
+#define SN_kyber90s512 "kyber90s512"
+#define NID_kyber90s512 1003
+
+#define SN_p256_kyber90s512 "p256_kyber90s512"
+#define NID_p256_kyber90s512 1004
+
+#define SN_kyber90s768 "kyber90s768"
+#define NID_kyber90s768 1005
+
+#define SN_p384_kyber90s768 "p384_kyber90s768"
+#define NID_p384_kyber90s768 1006
+
+#define SN_kyber90s1024 "kyber90s1024"
+#define NID_kyber90s1024 1007
+
+#define SN_p521_kyber90s1024 "p521_kyber90s1024"
+#define NID_p521_kyber90s1024 1008
+
 
 #if defined(__cplusplus)
 } /* extern C */

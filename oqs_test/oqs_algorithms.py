@@ -22,6 +22,18 @@ kex_to_nid = {
         'p521_frodo1344aes': '12036',
         'frodo1344shake': '517',
         'p521_frodo1344shake': '12037',
+        'kyber512': '527',
+        'p256_kyber512': '12047',
+        'kyber768': '528',
+        'p384_kyber768': '12048',
+        'kyber1024': '529',
+        'p521_kyber1024': '12049',
+        'kyber90s512': '553',
+        'p256_kyber90s512': '12073',
+        'kyber90s768': '554',
+        'p384_kyber90s768': '12074',
+        'kyber90s1024': '555',
+        'p521_kyber90s1024': '12075',
 ##### OQS_TEMPLATE_FRAGMENT_MAP_KEM_TO_NID_END
 }
 

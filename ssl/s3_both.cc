@@ -684,7 +684,19 @@ class CipherScorer {
                               group_id != SSL_CURVE_FRODO1344AES &&
                               group_id != SSL_CURVE_P521_FRODO1344AES &&
                               group_id != SSL_CURVE_FRODO1344SHAKE &&
-                              group_id != SSL_CURVE_P521_FRODO1344SHAKE
+                              group_id != SSL_CURVE_P521_FRODO1344SHAKE &&
+                              group_id != SSL_CURVE_KYBER512 &&
+                              group_id != SSL_CURVE_P256_KYBER512 &&
+                              group_id != SSL_CURVE_KYBER768 &&
+                              group_id != SSL_CURVE_P384_KYBER768 &&
+                              group_id != SSL_CURVE_KYBER1024 &&
+                              group_id != SSL_CURVE_P521_KYBER1024 &&
+                              group_id != SSL_CURVE_KYBER90S512 &&
+                              group_id != SSL_CURVE_P256_KYBER90S512 &&
+                              group_id != SSL_CURVE_KYBER90S768 &&
+                              group_id != SSL_CURVE_P384_KYBER90S768 &&
+                              group_id != SSL_CURVE_KYBER90S1024 &&
+                              group_id != SSL_CURVE_P521_KYBER90S1024
 ///// OQS_TEMPLATE_FRAGMENT_LIST_CURVES_END
                               ) {}
 
