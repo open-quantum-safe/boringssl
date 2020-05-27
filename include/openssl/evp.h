@@ -188,7 +188,10 @@ OPENSSL_EXPORT EC_KEY *EVP_PKEY_get1_EC_KEY(const EVP_PKEY *pkey);
 #define EVP_PKEY_MQDSS3148 NID_mqdss3148
 #define EVP_PKEY_MQDSS3164 NID_mqdss3164
 #define EVP_PKEY_PICNICL1FS NID_picnicl1fs
+#define EVP_PKEY_PICNICL1UR NID_picnicl1ur
 #define EVP_PKEY_PICNIC2L1FS NID_picnic2l1fs
+#define EVP_PKEY_PICNIC2L3FS NID_picnic2l3fs
+#define EVP_PKEY_PICNIC2L5FS NID_picnic2l5fs
 #define EVP_PKEY_QTESLAPI NID_qteslapi
 #define EVP_PKEY_QTESLAPIII NID_qteslapiii
 #define EVP_PKEY_SPHINCS_HARAKA_128F_ROBUST NID_sphincs_haraka_128f_robust

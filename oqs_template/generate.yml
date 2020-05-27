@@ -226,55 +226,62 @@ sigs:
     oid: "1 3 6 1 4 1 2 267 6 4 3"
     oid_encoded: '0x2B, 0x06, 0x01, 0x04, 0x01, 0x02, 0x82, 0x0B, 0x06, 0x04, 0x03'
     oqs_meth: 'OQS_SIG_alg_dilithium_2'
-    code_point: '0xfe03'
+    code_point: '0xfe01'
     claimed_security_level: '1'
   -
     name: 'dilithium3'
     oid: "1 3 6 1 4 1 2 267 6 5 4"
     oid_encoded: '0x2B, 0x06, 0x01, 0x04, 0x01, 0x02, 0x82, 0x0B, 0x06, 0x05, 0x04'
     oqs_meth: 'OQS_SIG_alg_dilithium_3'
-    code_point: '0xfe06'
+    code_point: '0xfe02'
     claimed_security_level: '2'
   -
     name: 'dilithium4'
     oid: "1 3 6 1 4 1 2 267 6 6 5"
     oid_encoded: '0x2B, 0x06, 0x01, 0x04, 0x01, 0x02, 0x82, 0x0B, 0x06, 0x06, 0x05'
     oqs_meth: 'OQS_SIG_alg_dilithium_4'
-    code_point: '0xfe07'
+    code_point: '0xfe03'
     claimed_security_level: '3'
   -
     name: 'falcon512'
     oid: "1 3 9999 3 2"
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x03, 0x02'
     oqs_meth: 'OQS_SIG_alg_falcon_512'
-    code_point: '0xfe30'
+    code_point: '0xfe04'
     claimed_security_level: '1'
   -
     name: 'falcon1024'
     oid: "1 3 9999 3 4"
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x03, 0x04'
     oqs_meth: 'OQS_SIG_alg_falcon_1024'
-    code_point: '0xfe31'
+    code_point: '0xfe05'
     claimed_security_level: '5'
   -
     name: 'mqdss3148'
     oid: "1 3 9999 4 1"
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x04, 0x01'
     oqs_meth: 'OQS_SIG_alg_mqdss_31_48'
-    code_point: '0xfe32'
+    code_point: '0xfe06'
     claimed_security_level: '1'
   -
     name: 'mqdss3164'
     oid: "1 3 9999 4 2"
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x04, 0x02'
     oqs_meth: 'OQS_SIG_alg_mqdss_31_64'
-    code_point: '0xfe33'
+    code_point: '0xfe07'
     claimed_security_level: '3'
   -
     name: 'picnicl1fs'
     oid: '1 3 6 1 4 1 311 89 2 1 1'
     oid_encoded: '0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x59, 0x02, 0x01, 0x01'
     oqs_meth: 'OQS_SIG_alg_picnic_L1_FS'
+    code_point: '0xfe08'
+    claimed_security_level: '1'
+  -
+    name: 'picnicl1ur'
+    oid: '1 3 6 1 4 1 311 89 2 1 2'
+    oid_encoded: '0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x59, 0x02, 0x01, 0x02'
+    oqs_meth: 'OQS_SIG_alg_picnic_L1_UR'
     code_point: '0xfe09'
     claimed_security_level: '1'
   -
@@ -282,26 +289,40 @@ sigs:
     oid: '1 3 6 1 4 1 311 89 2 1 11'
     oid_encoded: '0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x59, 0x02, 0x01, 0x0B'
     oqs_meth: 'OQS_SIG_alg_picnic2_L1_FS'
-    code_point: '0xfe0c'
+    code_point: '0xfe0a'
     claimed_security_level: '1'
+  -
+    name: 'picnic2l3fs'
+    oid: '1 3 6 1 4 1 311 89 2 1 12'
+    oid_encoded: '0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x59, 0x02, 0x01, 0x0C'
+    oqs_meth: 'OQS_SIG_alg_picnic2_L3_FS'
+    code_point: '0xfe0b'
+    claimed_security_level: '3'
+  -
+    name: 'picnic2l5fs'
+    oid: '1 3 6 1 4 1 311 89 2 1 13'
+    oid_encoded: '0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x59, 0x02, 0x01, 0x0D'
+    oqs_meth: 'OQS_SIG_alg_picnic2_L5_FS'
+    code_point: '0xfe0c'
+    claimed_security_level: '3'
   -
     name: 'qteslapi'
     oid: '1 3 6 1 4 1 311 89 2 2 10'
     oid_encoded: '0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x59, 0x02, 0x02, 0x0A'
     oqs_meth: 'OQS_SIG_alg_qTesla_p_I'
-    code_point: '0xfe0f'
+    code_point: '0xfe0d'
     claimed_security_level: '1'
   -
     name: 'qteslapiii'
     oid: '1 3 6 1 4 1 311 89 2 2 20'
     oid_encoded: '0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x59, 0x02, 0x02, 0x14'
     oqs_meth: 'OQS_SIG_alg_qTesla_p_III'
-    code_point: '0xfe12'
+    code_point: '0xfe0e'
     claimed_security_level: '3'
   -
     name: 'sphincs_haraka_128f_robust'
     oid: '1 3 9999 3 1'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x03, 0x01'
     oqs_meth: 'OQS_SIG_alg_sphincs_haraka_128f_robust'
-    code_point: '0xfe24'
+    code_point: '0xfe0f'
     claimed_security_level: '1'

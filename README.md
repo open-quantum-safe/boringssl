@@ -85,11 +85,8 @@ The following quantum-safe algorithms from liboqs are supported (assuming they h
 - **CRYSTALS-DILITHIUM**: `dilithium2`, `dilithium3`, `dilithium4`
 - **Falcon**: `falcon512`, `falcon1024`
 - **MQDSS**: `mqdss3148`, `mqdss3164`
-- `qteslapi`
-- `qteslapiii`
-- `picnicl1fs`
-- `picnic2l1fs`
-- `picnic2l1fs`
+- **Picnic**: `picnicl1fs`, `picnicl1ur`, `picnic2l1fs`, `picnic2l3fs`, `picnic2l5fs`
+- **qTESLA**: `qteslapi`, `qteslapiii`
 - `sphincs_haraka_128f_robust`
 
 ## Quickstart

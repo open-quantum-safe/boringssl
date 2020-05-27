@@ -4545,6 +4545,21 @@ extern "C" {
 #define NID_mqdss3164 1058
 #define OBJ_mqdss3164 1L, 3L, 9999L, 4L, 2L
 
+#define SN_picnicl1ur "picnicl1ur"
+#define LN_picnicl1ur "picnicl1ur"
+#define NID_picnicl1ur 1059
+#define OBJ_picnicl1ur 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 1L, 2L
+
+#define SN_picnic2l3fs "picnic2l3fs"
+#define LN_picnic2l3fs "picnic2l3fs"
+#define NID_picnic2l3fs 1060
+#define OBJ_picnic2l3fs 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 1L, 12L
+
+#define SN_picnic2l5fs "picnic2l5fs"
+#define LN_picnic2l5fs "picnic2l5fs"
+#define NID_picnic2l5fs 1061
+#define OBJ_picnic2l5fs 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 1L, 13L
+
 
 #if defined(__cplusplus)
 } /* extern C */

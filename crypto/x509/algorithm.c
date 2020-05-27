@@ -95,7 +95,10 @@ int x509_digest_sign_algorithm(EVP_MD_CTX *ctx, X509_ALGOR *algor) {
       pkey_id == EVP_PKEY_MQDSS3148 ||
       pkey_id == EVP_PKEY_MQDSS3164 ||
       pkey_id == EVP_PKEY_PICNICL1FS ||
+      pkey_id == EVP_PKEY_PICNICL1UR ||
       pkey_id == EVP_PKEY_PICNIC2L1FS ||
+      pkey_id == EVP_PKEY_PICNIC2L3FS ||
+      pkey_id == EVP_PKEY_PICNIC2L5FS ||
       pkey_id == EVP_PKEY_QTESLAPI ||
       pkey_id == EVP_PKEY_QTESLAPIII ||
       pkey_id == EVP_PKEY_SPHINCS_HARAKA_128F_ROBUST
