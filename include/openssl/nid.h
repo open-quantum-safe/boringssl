@@ -4528,12 +4528,22 @@ extern "C" {
 #define SN_falcon512 "falcon512"
 #define LN_falcon512 "falcon512"
 #define NID_falcon512 1055
-#define OBJ_falcon512 1L, 3L, 9999L, 3L, 1L
+#define OBJ_falcon512 1L, 3L, 9999L, 3L, 2L
 
 #define SN_falcon1024 "falcon1024"
 #define LN_falcon1024 "falcon1024"
 #define NID_falcon1024 1056
 #define OBJ_falcon1024 1L, 3L, 9999L, 3L, 4L
+
+#define SN_mqdss3148 "mqdss3148"
+#define LN_mqdss3148 "mqdss3148"
+#define NID_mqdss3148 1057
+#define OBJ_mqdss3148 1L, 3L, 9999L, 4L, 1L
+
+#define SN_mqdss3164 "mqdss3164"
+#define LN_mqdss3164 "mqdss3164"
+#define NID_mqdss3164 1058
+#define OBJ_mqdss3164 1L, 3L, 9999L, 4L, 2L
 
 
 #if defined(__cplusplus)

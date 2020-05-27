@@ -84,6 +84,7 @@ The following quantum-safe algorithms from liboqs are supported (assuming they h
 - `oqs_sig_default` (see [here](https://github.com/open-quantum-safe/boringssl/wiki/Using-liboqs-algorithms-not-in-the-fork#oqsdefault) for what this denotes)
 - **CRYSTALS-DILITHIUM**: `dilithium2`, `dilithium3`, `dilithium4`
 - **Falcon**: `falcon512`, `falcon1024`
+- **MQDSS**: `mqdss3148`, `mqdss3164`
 - `qteslapi`
 - `qteslapiii`
 - `picnicl1fs`

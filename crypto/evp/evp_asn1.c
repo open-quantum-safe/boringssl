@@ -80,6 +80,8 @@ static const EVP_PKEY_ASN1_METHOD *const kASN1Methods[] = {
     &dilithium4_asn1_meth,
     &falcon512_asn1_meth,
     &falcon1024_asn1_meth,
+    &mqdss3148_asn1_meth,
+    &mqdss3164_asn1_meth,
     &picnicl1fs_asn1_meth,
     &picnic2l1fs_asn1_meth,
     &qteslapi_asn1_meth,

@@ -91,6 +91,8 @@ sig_to_code_point = {
         'dilithium4': '65031',
         'falcon512': '65072',
         'falcon1024': '65073',
+        'mqdss3148': '65074',
+        'mqdss3164': '65075',
         'picnicl1fs': '65033',
         'picnic2l1fs': '65036',
         'qteslapi': '65039',

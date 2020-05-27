@@ -82,6 +82,8 @@ bool ssl_is_key_type_supported(int key_type) {
          key_type == EVP_PKEY_DILITHIUM4 ||
          key_type == EVP_PKEY_FALCON512 ||
          key_type == EVP_PKEY_FALCON1024 ||
+         key_type == EVP_PKEY_MQDSS3148 ||
+         key_type == EVP_PKEY_MQDSS3164 ||
          key_type == EVP_PKEY_PICNICL1FS ||
          key_type == EVP_PKEY_PICNIC2L1FS ||
          key_type == EVP_PKEY_QTESLAPI ||
@@ -143,6 +145,8 @@ static const SSL_SIGNATURE_ALGORITHM kSignatureAlgorithms[] = {
     {SSL_SIGN_DILITHIUM4, EVP_PKEY_DILITHIUM4, NID_undef, &EVP_sha384, false},
     {SSL_SIGN_FALCON512, EVP_PKEY_FALCON512, NID_undef, &EVP_sha256, false},
     {SSL_SIGN_FALCON1024, EVP_PKEY_FALCON1024, NID_undef, &EVP_sha512, false},
+    {SSL_SIGN_MQDSS3148, EVP_PKEY_MQDSS3148, NID_undef, &EVP_sha256, false},
+    {SSL_SIGN_MQDSS3164, EVP_PKEY_MQDSS3164, NID_undef, &EVP_sha384, false},
     {SSL_SIGN_PICNICL1FS, EVP_PKEY_PICNICL1FS, NID_undef, &EVP_sha256, false},
     {SSL_SIGN_PICNIC2L1FS, EVP_PKEY_PICNIC2L1FS, NID_undef, &EVP_sha256, false},
     {SSL_SIGN_QTESLAPI, EVP_PKEY_QTESLAPI, NID_undef, &EVP_sha256, false},
@@ -486,6 +490,8 @@ static const struct {
     {SSL_SIGN_DILITHIUM4, "dilithium4"},
     {SSL_SIGN_FALCON512, "falcon512"},
     {SSL_SIGN_FALCON1024, "falcon1024"},
+    {SSL_SIGN_MQDSS3148, "mqdss3148"},
+    {SSL_SIGN_MQDSS3164, "mqdss3164"},
     {SSL_SIGN_PICNICL1FS, "picnicl1fs"},
     {SSL_SIGN_PICNIC2L1FS, "picnic2l1fs"},
     {SSL_SIGN_QTESLAPI, "qteslapi"},
@@ -571,6 +577,8 @@ static constexpr struct {
     {EVP_PKEY_DILITHIUM4, NID_sha384, SSL_SIGN_DILITHIUM4},
     {EVP_PKEY_FALCON512, NID_sha256, SSL_SIGN_FALCON512},
     {EVP_PKEY_FALCON1024, NID_sha512, SSL_SIGN_FALCON1024},
+    {EVP_PKEY_MQDSS3148, NID_sha256, SSL_SIGN_MQDSS3148},
+    {EVP_PKEY_MQDSS3164, NID_sha384, SSL_SIGN_MQDSS3164},
     {EVP_PKEY_PICNICL1FS, NID_sha256, SSL_SIGN_PICNICL1FS},
     {EVP_PKEY_PICNIC2L1FS, NID_sha256, SSL_SIGN_PICNIC2L1FS},
     {EVP_PKEY_QTESLAPI, NID_sha256, SSL_SIGN_QTESLAPI},
