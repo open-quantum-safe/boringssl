@@ -1,4 +1,4 @@
-# N.B: For interoperability, NIDS must match the curve IDs used in
+# N.B: For interoperability, NIDS must match the group IDs used in
 # https://docs.google.com/spreadsheets/d/12YarzaNv3XQNLnvDsWLlRKwtZFhRrDdWf36YlzwrPeg/edit#gid=0
 kems:
   -
@@ -242,6 +242,20 @@ sigs:
     oqs_meth: 'OQS_SIG_alg_dilithium_4'
     code_point: '0xfe07'
     claimed_security_level: '3'
+  -
+    name: 'falcon512'
+    oid: "1 3 9999 3 2"
+    oid_encoded: '0x2B, 0xCE, 0x0F, 0x03, 0x02'
+    oqs_meth: 'OQS_SIG_alg_falcon_512'
+    code_point: '0xfe30'
+    claimed_security_level: '1'
+  -
+    name: 'falcon1024'
+    oid: "1 3 9999 3 4"
+    oid_encoded: '0x2B, 0xCE, 0x0F, 0x03, 0x04'
+    oqs_meth: 'OQS_SIG_alg_falcon_1024'
+    code_point: '0xfe31'
+    claimed_security_level: '5'
   -
     name: 'picnicl1fs'
     oid: '1 3 6 1 4 1 311 89 2 1 1'

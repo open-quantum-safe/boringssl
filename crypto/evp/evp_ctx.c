@@ -75,6 +75,8 @@ static const EVP_PKEY_METHOD *const evp_methods[] = {
     &dilithium2_pkey_meth,
     &dilithium3_pkey_meth,
     &dilithium4_pkey_meth,
+    &falcon512_pkey_meth,
+    &falcon1024_pkey_meth,
     &picnicl1fs_pkey_meth,
     &picnic2l1fs_pkey_meth,
     &qteslapi_pkey_meth,

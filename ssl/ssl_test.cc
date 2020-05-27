@@ -4322,6 +4322,10 @@ TEST(SSLTest, SignatureAlgorithmProperties) {
             SSL_get_signature_algorithm_key_type(SSL_SIGN_DILITHIUM3));
   EXPECT_EQ(EVP_PKEY_DILITHIUM4,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_DILITHIUM4));
+  EXPECT_EQ(EVP_PKEY_FALCON512,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_FALCON512));
+  EXPECT_EQ(EVP_PKEY_FALCON1024,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_FALCON1024));
   EXPECT_EQ(EVP_PKEY_PICNICL1FS,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_PICNICL1FS));
   EXPECT_EQ(EVP_PKEY_PICNIC2L1FS,
@@ -4600,6 +4604,8 @@ TEST(SSLTest, SigAlgs) {
       {{NID_sha256, EVP_PKEY_DILITHIUM2}, true, {SSL_SIGN_DILITHIUM2}},
       {{NID_sha256, EVP_PKEY_DILITHIUM3}, true, {SSL_SIGN_DILITHIUM3}},
       {{NID_sha384, EVP_PKEY_DILITHIUM4}, true, {SSL_SIGN_DILITHIUM4}},
+      {{NID_sha256, EVP_PKEY_FALCON512}, true, {SSL_SIGN_FALCON512}},
+      {{NID_sha512, EVP_PKEY_FALCON1024}, true, {SSL_SIGN_FALCON1024}},
       {{NID_sha256, EVP_PKEY_PICNICL1FS}, true, {SSL_SIGN_PICNICL1FS}},
       {{NID_sha256, EVP_PKEY_PICNIC2L1FS}, true, {SSL_SIGN_PICNIC2L1FS}},
       {{NID_sha256, EVP_PKEY_QTESLAPI}, true, {SSL_SIGN_QTESLAPI}},
@@ -4666,6 +4672,8 @@ TEST(SSLTest, SigAlgsList) {
       {"dilithium2", true, {SSL_SIGN_DILITHIUM2}},
       {"dilithium3", true, {SSL_SIGN_DILITHIUM3}},
       {"dilithium4", true, {SSL_SIGN_DILITHIUM4}},
+      {"falcon512", true, {SSL_SIGN_FALCON512}},
+      {"falcon1024", true, {SSL_SIGN_FALCON1024}},
       {"picnicl1fs", true, {SSL_SIGN_PICNICL1FS}},
       {"picnic2l1fs", true, {SSL_SIGN_PICNIC2L1FS}},
       {"qteslapi", true, {SSL_SIGN_QTESLAPI}},
