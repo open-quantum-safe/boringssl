@@ -3,8 +3,8 @@
     {SSL_SIGN_{{ sig['name']|upper }}, EVP_PKEY_{{ sig['name']|upper }}, NID_undef, &EVP_sha256, false},
     {%- elif sig['claimed_security_level'] == '3' or sig['claimed_security_level'] == '4' %}
     {SSL_SIGN_{{ sig['name']|upper }}, EVP_PKEY_{{ sig['name']|upper }}, NID_undef, &EVP_sha384, false},
-    {%- else %} {# claimed_security_level == '5' #}
+    {%- else %}{# claimed_security_level == '5' #}
     {SSL_SIGN_{{ sig['name']|upper }}, EVP_PKEY_{{ sig['name']|upper }}, NID_undef, &EVP_sha512, false},
-    {% endif -%}
+    {%- endif %}
 {%- endfor %}
 
