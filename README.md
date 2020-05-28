@@ -89,6 +89,7 @@ The following quantum-safe algorithms from liboqs are supported (assuming they h
 - **qTESLA**: `qteslapi`, `qteslapiii`
 - **Rainbow**: `rainbowIaclassic`, `rainbowIacyclic`, `rainbowIacycliccompressed`, `rainbowIIIcclassic`, `rainbowIIIccyclic`, `rainbowIIIccycliccompressed`, `rainbowVcclassic`, `rainbowVccylic`, `rainbowVccycliccompressed`
 - **SPHINCS-Haraka**: `sphincsharaka128frobust`, `sphincsharaka128fsimple`, `sphincsharaka128srobust`, `sphincsharaka128ssimple`, `sphincsharaka192frobust`, `sphincsharaka192fsimple`, `sphincsharaka192srobust`, `sphincsharaka192ssimple`, `sphincsharaka256frobust`, `sphincsharaka256fsimple`, `sphincsharaka256srobust`, `sphincsharaka256ssimple`
+- **SPHINCS-SHA256**: `sphincssha256128frobust`, `sphincssha256128fsimple`, `sphincssha256128srobust`, `sphincssha256128ssimple`, `sphincssha256192frobust`, `sphincssha256192fsimple`, `sphincssha256192srobust`, `sphincssha256192ssimple`, `sphincssha256256frobust`, `sphincssha256256fsimple`, `sphincssha256256srobust`, `sphincssha256256ssimple`
 
 ## Quickstart
 

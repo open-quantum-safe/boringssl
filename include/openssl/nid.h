@@ -4528,17 +4528,17 @@ extern "C" {
 #define SN_falcon1024 "falcon1024"
 #define LN_falcon1024 "falcon1024"
 #define NID_falcon1024 1056
-#define OBJ_falcon1024 1L, 3L, 9999L, 3L, 4L
+#define OBJ_falcon1024 1L, 3L, 9999L, 3L, 3L, 4L
 
 #define SN_mqdss3148 "mqdss3148"
 #define LN_mqdss3148 "mqdss3148"
 #define NID_mqdss3148 1057
-#define OBJ_mqdss3148 1L, 3L, 9999L, 4L, 1L
+#define OBJ_mqdss3148 1L, 3L, 9999L, 4L, 4L, 1L
 
 #define SN_mqdss3164 "mqdss3164"
 #define LN_mqdss3164 "mqdss3164"
 #define NID_mqdss3164 1058
-#define OBJ_mqdss3164 1L, 3L, 9999L, 4L, 2L
+#define OBJ_mqdss3164 1L, 3L, 9999L, 4L, 4L, 2L
 
 #define SN_picnicl1ur "picnicl1ur"
 #define LN_picnicl1ur "picnicl1ur"
@@ -4662,6 +4662,66 @@ extern "C" {
 #define LN_sphincsharaka256ssimple "sphincsharaka256ssimple"
 #define NID_sphincsharaka256ssimple 1082
 #define OBJ_sphincsharaka256ssimple 1L, 3L, 9999L, 4L, 3L
+
+#define SN_sphincssha256128frobust "sphincssha256128frobust"
+#define LN_sphincssha256128frobust "sphincssha256128frobust"
+#define NID_sphincssha256128frobust 1083
+#define OBJ_sphincssha256128frobust 1L, 3L, 9999L, 4L, 4L
+
+#define SN_sphincssha256128fsimple "sphincssha256128fsimple"
+#define LN_sphincssha256128fsimple "sphincssha256128fsimple"
+#define NID_sphincssha256128fsimple 1084
+#define OBJ_sphincssha256128fsimple 1L, 3L, 9999L, 4L, 5L
+
+#define SN_sphincssha256128srobust "sphincssha256128srobust"
+#define LN_sphincssha256128srobust "sphincssha256128srobust"
+#define NID_sphincssha256128srobust 1085
+#define OBJ_sphincssha256128srobust 1L, 3L, 9999L, 4L, 6L
+
+#define SN_sphincssha256128ssimple "sphincssha256128ssimple"
+#define LN_sphincssha256128ssimple "sphincssha256128ssimple"
+#define NID_sphincssha256128ssimple 1086
+#define OBJ_sphincssha256128ssimple 1L, 3L, 9999L, 4L, 7L
+
+#define SN_sphincssha256192frobust "sphincssha256192frobust"
+#define LN_sphincssha256192frobust "sphincssha256192frobust"
+#define NID_sphincssha256192frobust 1087
+#define OBJ_sphincssha256192frobust 1L, 3L, 9999L, 4L, 8L
+
+#define SN_sphincssha256192fsimple "sphincssha256192fsimple"
+#define LN_sphincssha256192fsimple "sphincssha256192fsimple"
+#define NID_sphincssha256192fsimple 1088
+#define OBJ_sphincssha256192fsimple 1L, 3L, 9999L, 4L, 9L
+
+#define SN_sphincssha256192srobust "sphincssha256192srobust"
+#define LN_sphincssha256192srobust "sphincssha256192srobust"
+#define NID_sphincssha256192srobust 1089
+#define OBJ_sphincssha256192srobust 1L, 3L, 9999L, 5L, 1L
+
+#define SN_sphincssha256192ssimple "sphincssha256192ssimple"
+#define LN_sphincssha256192ssimple "sphincssha256192ssimple"
+#define NID_sphincssha256192ssimple 1090
+#define OBJ_sphincssha256192ssimple 1L, 3L, 9999L, 5L, 2L
+
+#define SN_sphincssha256256frobust "sphincssha256256frobust"
+#define LN_sphincssha256256frobust "sphincssha256256frobust"
+#define NID_sphincssha256256frobust 1091
+#define OBJ_sphincssha256256frobust 1L, 3L, 9999L, 5L, 3L
+
+#define SN_sphincssha256256fsimple "sphincssha256256fsimple"
+#define LN_sphincssha256256fsimple "sphincssha256256fsimple"
+#define NID_sphincssha256256fsimple 1092
+#define OBJ_sphincssha256256fsimple 1L, 3L, 9999L, 5L, 3L, 1L
+
+#define SN_sphincssha256256srobust "sphincssha256256srobust"
+#define LN_sphincssha256256srobust "sphincssha256256srobust"
+#define NID_sphincssha256256srobust 1093
+#define OBJ_sphincssha256256srobust 1L, 3L, 9999L, 5L, 4L
+
+#define SN_sphincssha256256ssimple "sphincssha256256ssimple"
+#define LN_sphincssha256256ssimple "sphincssha256256ssimple"
+#define NID_sphincssha256256ssimple 1094
+#define OBJ_sphincssha256256ssimple 1L, 3L, 9999L, 5L, 5L
 
 
 #if defined(__cplusplus)

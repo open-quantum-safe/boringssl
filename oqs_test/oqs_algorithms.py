@@ -121,5 +121,17 @@ sig_to_code_point = {
         'sphincsharaka256fsimple': '65057',
         'sphincsharaka256srobust': '65058',
         'sphincsharaka256ssimple': '65059',
+        'sphincssha256128frobust': '65060',
+        'sphincssha256128fsimple': '65061',
+        'sphincssha256128srobust': '65062',
+        'sphincssha256128ssimple': '65063',
+        'sphincssha256192frobust': '65064',
+        'sphincssha256192fsimple': '65065',
+        'sphincssha256192srobust': '65066',
+        'sphincssha256192ssimple': '65067',
+        'sphincssha256256frobust': '65068',
+        'sphincssha256256fsimple': '65069',
+        'sphincssha256256srobust': '65070',
+        'sphincssha256256ssimple': '65071',
 ##### OQS_TEMPLATE_FRAGMENT_MAP_SIG_TO_CODEPOINT_END
 }

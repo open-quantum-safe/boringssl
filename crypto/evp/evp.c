@@ -278,6 +278,30 @@ static const EVP_PKEY_ASN1_METHOD *evp_pkey_asn1_find(int nid) {
       return &sphincsharaka256srobust_asn1_meth;
     case EVP_PKEY_SPHINCSHARAKA256SSIMPLE:
       return &sphincsharaka256ssimple_asn1_meth;
+    case EVP_PKEY_SPHINCSSHA256128FROBUST:
+      return &sphincssha256128frobust_asn1_meth;
+    case EVP_PKEY_SPHINCSSHA256128FSIMPLE:
+      return &sphincssha256128fsimple_asn1_meth;
+    case EVP_PKEY_SPHINCSSHA256128SROBUST:
+      return &sphincssha256128srobust_asn1_meth;
+    case EVP_PKEY_SPHINCSSHA256128SSIMPLE:
+      return &sphincssha256128ssimple_asn1_meth;
+    case EVP_PKEY_SPHINCSSHA256192FROBUST:
+      return &sphincssha256192frobust_asn1_meth;
+    case EVP_PKEY_SPHINCSSHA256192FSIMPLE:
+      return &sphincssha256192fsimple_asn1_meth;
+    case EVP_PKEY_SPHINCSSHA256192SROBUST:
+      return &sphincssha256192srobust_asn1_meth;
+    case EVP_PKEY_SPHINCSSHA256192SSIMPLE:
+      return &sphincssha256192ssimple_asn1_meth;
+    case EVP_PKEY_SPHINCSSHA256256FROBUST:
+      return &sphincssha256256frobust_asn1_meth;
+    case EVP_PKEY_SPHINCSSHA256256FSIMPLE:
+      return &sphincssha256256fsimple_asn1_meth;
+    case EVP_PKEY_SPHINCSSHA256256SROBUST:
+      return &sphincssha256256srobust_asn1_meth;
+    case EVP_PKEY_SPHINCSSHA256256SSIMPLE:
+      return &sphincssha256256ssimple_asn1_meth;
 ///// OQS_TEMPLATE_FRAGMENT_PKEY_TO_ASN1_METH_END
     default:
       return NULL;

@@ -107,6 +107,18 @@ static const EVP_PKEY_METHOD *const evp_methods[] = {
     &sphincsharaka256fsimple_pkey_meth,
     &sphincsharaka256srobust_pkey_meth,
     &sphincsharaka256ssimple_pkey_meth,
+    &sphincssha256128frobust_pkey_meth,
+    &sphincssha256128fsimple_pkey_meth,
+    &sphincssha256128srobust_pkey_meth,
+    &sphincssha256128ssimple_pkey_meth,
+    &sphincssha256192frobust_pkey_meth,
+    &sphincssha256192fsimple_pkey_meth,
+    &sphincssha256192srobust_pkey_meth,
+    &sphincssha256192ssimple_pkey_meth,
+    &sphincssha256256frobust_pkey_meth,
+    &sphincssha256256fsimple_pkey_meth,
+    &sphincssha256256srobust_pkey_meth,
+    &sphincssha256256ssimple_pkey_meth,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_PKEY_METHS_END
 };
 

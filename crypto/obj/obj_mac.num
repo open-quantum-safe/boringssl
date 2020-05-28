@@ -1065,3 +1065,15 @@ sphincsharaka256frobust		1079
 sphincsharaka256fsimple		1080
 sphincsharaka256srobust		1081
 sphincsharaka256ssimple		1082
+sphincssha256128frobust		1083
+sphincssha256128fsimple		1084
+sphincssha256128srobust		1085
+sphincssha256128ssimple		1086
+sphincssha256192frobust		1087
+sphincssha256192fsimple		1088
+sphincssha256192srobust		1089
+sphincssha256192ssimple		1090
+sphincssha256256frobust		1091
+sphincssha256256fsimple		1092
+sphincssha256256srobust		1093
+sphincssha256256ssimple		1094
