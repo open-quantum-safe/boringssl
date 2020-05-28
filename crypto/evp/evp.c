@@ -236,6 +236,24 @@ static const EVP_PKEY_ASN1_METHOD *evp_pkey_asn1_find(int nid) {
       return &qteslapi_asn1_meth;
     case EVP_PKEY_QTESLAPIII:
       return &qteslapiii_asn1_meth;
+    case EVP_PKEY_RAINBOWIACLASSIC:
+      return &rainbowIaclassic_asn1_meth;
+    case EVP_PKEY_RAINBOWIACYCLIC:
+      return &rainbowIacyclic_asn1_meth;
+    case EVP_PKEY_RAINBOWIACYCLICCOMPRESSED:
+      return &rainbowIacycliccompressed_asn1_meth;
+    case EVP_PKEY_RAINBOWIIICCLASSIC:
+      return &rainbowIIIcclassic_asn1_meth;
+    case EVP_PKEY_RAINBOWIIICCYCLIC:
+      return &rainbowIIIccyclic_asn1_meth;
+    case EVP_PKEY_RAINBOWIIICCYCLICCOMPRESSED:
+      return &rainbowIIIccycliccompressed_asn1_meth;
+    case EVP_PKEY_RAINBOWVCCLASSIC:
+      return &rainbowVcclassic_asn1_meth;
+    case EVP_PKEY_RAINBOWVCCYCLIC:
+      return &rainbowVccyclic_asn1_meth;
+    case EVP_PKEY_RAINBOWVCCYCLICCOMPRESSED:
+      return &rainbowVccycliccompressed_asn1_meth;
     case EVP_PKEY_SPHINCS_HARAKA_128F_ROBUST:
       return &sphincs_haraka_128f_robust_asn1_meth;
 ///// OQS_TEMPLATE_FRAGMENT_PKEY_TO_ASN1_METH_END

@@ -4560,6 +4560,54 @@ extern "C" {
 #define NID_picnic2l5fs 1061
 #define OBJ_picnic2l5fs 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 1L, 13L
 
+#define SN_rainbowIaclassic "rainbowIaclassic"
+#define LN_rainbowIaclassic "rainbowIaclassic"
+#define NID_rainbowIaclassic 1062
+#define OBJ_rainbowIaclassic 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 5L, 1L
+
+#define SN_rainbowIacyclic "rainbowIacyclic"
+#define LN_rainbowIacyclic "rainbowIacyclic"
+#define NID_rainbowIacyclic 1063
+#define OBJ_rainbowIacyclic 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 5L, 2L
+
+#define SN_rainbowIacycliccompressed "rainbowIacycliccompressed"
+#define LN_rainbowIacycliccompressed "rainbowIacycliccompressed"
+#define NID_rainbowIacycliccompressed 1064
+#define OBJ_rainbowIacycliccompressed \
+  1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 5L, 3L
+
+#define SN_rainbowIIIcclassic "rainbowIIIcclassic"
+#define LN_rainbowIIIcclassic "rainbowIIIcclassic"
+#define NID_rainbowIIIcclassic 1065
+#define OBJ_rainbowIIIcclassic 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 5L, 4L
+
+#define SN_rainbowIIIccyclic "rainbowIIIccyclic"
+#define LN_rainbowIIIccyclic "rainbowIIIccyclic"
+#define NID_rainbowIIIccyclic 1066
+#define OBJ_rainbowIIIccyclic 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 5L, 5L
+
+#define SN_rainbowIIIccycliccompressed "rainbowIIIccycliccompressed"
+#define LN_rainbowIIIccycliccompressed "rainbowIIIccycliccompressed"
+#define NID_rainbowIIIccycliccompressed 1067
+#define OBJ_rainbowIIIccycliccompressed \
+  1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 5L, 6L
+
+#define SN_rainbowVcclassic "rainbowVcclassic"
+#define LN_rainbowVcclassic "rainbowVcclassic"
+#define NID_rainbowVcclassic 1068
+#define OBJ_rainbowVcclassic 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 5L, 7L
+
+#define SN_rainbowVccyclic "rainbowVccyclic"
+#define LN_rainbowVccyclic "rainbowVccyclic"
+#define NID_rainbowVccyclic 1069
+#define OBJ_rainbowVccyclic 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 5L, 8L
+
+#define SN_rainbowVccycliccompressed "rainbowVccycliccompressed"
+#define LN_rainbowVccycliccompressed "rainbowVccycliccompressed"
+#define NID_rainbowVccycliccompressed 1070
+#define OBJ_rainbowVccycliccompressed \
+  1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 5L, 9L
+
 
 #if defined(__cplusplus)
 } /* extern C */

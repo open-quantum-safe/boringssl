@@ -89,6 +89,15 @@ static const EVP_PKEY_ASN1_METHOD *const kASN1Methods[] = {
     &picnic2l5fs_asn1_meth,
     &qteslapi_asn1_meth,
     &qteslapiii_asn1_meth,
+    &rainbowIaclassic_asn1_meth,
+    &rainbowIacyclic_asn1_meth,
+    &rainbowIacycliccompressed_asn1_meth,
+    &rainbowIIIcclassic_asn1_meth,
+    &rainbowIIIccyclic_asn1_meth,
+    &rainbowIIIccycliccompressed_asn1_meth,
+    &rainbowVcclassic_asn1_meth,
+    &rainbowVccyclic_asn1_meth,
+    &rainbowVccycliccompressed_asn1_meth,
     &sphincs_haraka_128f_robust_asn1_meth,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_PKEY_ASN1_METHS_END
 };

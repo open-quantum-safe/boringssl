@@ -101,6 +101,15 @@ int x509_digest_sign_algorithm(EVP_MD_CTX *ctx, X509_ALGOR *algor) {
       pkey_id == EVP_PKEY_PICNIC2L5FS ||
       pkey_id == EVP_PKEY_QTESLAPI ||
       pkey_id == EVP_PKEY_QTESLAPIII ||
+      pkey_id == EVP_PKEY_RAINBOWIACLASSIC ||
+      pkey_id == EVP_PKEY_RAINBOWIACYCLIC ||
+      pkey_id == EVP_PKEY_RAINBOWIACYCLICCOMPRESSED ||
+      pkey_id == EVP_PKEY_RAINBOWIIICCLASSIC ||
+      pkey_id == EVP_PKEY_RAINBOWIIICCYCLIC ||
+      pkey_id == EVP_PKEY_RAINBOWIIICCYCLICCOMPRESSED ||
+      pkey_id == EVP_PKEY_RAINBOWVCCLASSIC ||
+      pkey_id == EVP_PKEY_RAINBOWVCCYCLIC ||
+      pkey_id == EVP_PKEY_RAINBOWVCCYCLICCOMPRESSED ||
       pkey_id == EVP_PKEY_SPHINCS_HARAKA_128F_ROBUST
 ///// OQS_TEMPLATE_FRAGMENT_CHECK_PKEY_ID_END
       ) {

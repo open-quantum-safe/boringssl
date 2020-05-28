@@ -100,6 +100,15 @@ sig_to_code_point = {
         'picnic2l5fs': '65036',
         'qteslapi': '65037',
         'qteslapiii': '65038',
-        'sphincs_haraka_128f_robust': '65039',
+        'rainbowIaclassic': '65039',
+        'rainbowIacyclic': '65040',
+        'rainbowIacycliccompressed': '65041',
+        'rainbowIIIcclassic': '65042',
+        'rainbowIIIccyclic': '65043',
+        'rainbowIIIccycliccompressed': '65044',
+        'rainbowVcclassic': '65045',
+        'rainbowVccyclic': '65046',
+        'rainbowVccycliccompressed': '65047',
+        'sphincs_haraka_128f_robust': '65048',
 ##### OQS_TEMPLATE_FRAGMENT_MAP_SIG_TO_CODEPOINT_END
 }

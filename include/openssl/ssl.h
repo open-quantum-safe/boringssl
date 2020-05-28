@@ -1039,7 +1039,16 @@ OPENSSL_EXPORT int SSL_set_ocsp_response(SSL *ssl,
 #define SSL_SIGN_PICNIC2L5FS 0xfe0c
 #define SSL_SIGN_QTESLAPI 0xfe0d
 #define SSL_SIGN_QTESLAPIII 0xfe0e
-#define SSL_SIGN_SPHINCS_HARAKA_128F_ROBUST 0xfe0f
+#define SSL_SIGN_RAINBOWIACLASSIC 0xfe0f
+#define SSL_SIGN_RAINBOWIACYCLIC 0xfe10
+#define SSL_SIGN_RAINBOWIACYCLICCOMPRESSED 0xfe11
+#define SSL_SIGN_RAINBOWIIICCLASSIC 0xfe12
+#define SSL_SIGN_RAINBOWIIICCYCLIC 0xfe13
+#define SSL_SIGN_RAINBOWIIICCYCLICCOMPRESSED 0xfe14
+#define SSL_SIGN_RAINBOWVCCLASSIC 0xfe15
+#define SSL_SIGN_RAINBOWVCCYCLIC 0xfe16
+#define SSL_SIGN_RAINBOWVCCYCLICCOMPRESSED 0xfe17
+#define SSL_SIGN_SPHINCS_HARAKA_128F_ROBUST 0xfe18
 ///// OQS_TEMPLATE_FRAGMENT_DEFINE_SIG_CODEPOINTS_END
 
 // SSL_SIGN_RSA_PKCS1_MD5_SHA1 is an internal signature algorithm used to
@@ -3731,7 +3740,10 @@ OPENSSL_EXPORT int SSL_total_renegotiations(const SSL *ssl);
 
 // SSL_MAX_CERT_LIST_DEFAULT is the default maximum length, in bytes, of a peer
 // certificate chain.
-#define SSL_MAX_CERT_LIST_DEFAULT (1024 * 100)
+// OQS note: To accomodate signature schemes such as Rainbow,
+// we have changed this from (1024 * 100) to 2^(24) - 1, which
+// is the maximum permissible value established by the TLS 1.3 spec.
+#define SSL_MAX_CERT_LIST_DEFAULT 16777215
 
 // SSL_CTX_get_max_cert_list returns the maximum length, in bytes, of a peer
 // certificate chain accepted by |ctx|.

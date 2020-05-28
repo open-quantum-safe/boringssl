@@ -9,6 +9,12 @@ import time
 # to the tests to make the output
 # more comprehensible.
 
+# Give the server up to 20 seconds
+# to bind to port, since schemes like
+# Rainbow-Vc-Cyclic-Compressed can
+# take a while.
+PORT_BIND_TIMEOUT = 20
+
 @pytest.fixture()
 def oqs_sig_default_server(bssl):
     # Setup: start bssl server
@@ -18,8 +24,13 @@ def oqs_sig_default_server(bssl):
                                      '-loop'],
                                      stdout=subprocess.PIPE,
                                      stderr=subprocess.STDOUT)
-    time.sleep(2)
-    server_conn_info = psutil.Process(server.pid).connections()[0]
+
+    server_info = psutil.Process(server.pid)
+    timeout_start = time.time()
+    while time.time() < timeout_start + PORT_BIND_TIMEOUT:
+        if server_info.connections():
+            break
+    server_conn_info = server_info.connections()[0]
 
     # Run tests
     yield str(server_conn_info.laddr.port)
@@ -35,8 +46,13 @@ def parametrized_sig_server(request, bssl):
                                      '-loop'],
                                      stdout=subprocess.PIPE,
                                      stderr=subprocess.STDOUT)
-    time.sleep(2)
-    server_conn_info = psutil.Process(server.pid).connections()[0]
+
+    server_info = psutil.Process(server.pid)
+    timeout_start = time.time()
+    while time.time() < timeout_start + PORT_BIND_TIMEOUT:
+        if server_info.connections():
+            break
+    server_conn_info = server_info.connections()[0]
 
     # Run tests
     yield request.param, str(server_conn_info.laddr.port)

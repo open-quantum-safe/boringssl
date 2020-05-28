@@ -283,6 +283,15 @@ extern const EVP_PKEY_ASN1_METHOD picnic2l3fs_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD picnic2l5fs_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD qteslapi_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD qteslapiii_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD rainbowIaclassic_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD rainbowIacyclic_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD rainbowIacycliccompressed_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD rainbowIIIcclassic_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD rainbowIIIccyclic_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD rainbowIIIccycliccompressed_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD rainbowVcclassic_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD rainbowVccyclic_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD rainbowVccycliccompressed_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD sphincs_haraka_128f_robust_asn1_meth;
 ///// OQS_TEMPLATE_FRAGMENT_DECLARE_ASN1_METHS_END
 
@@ -306,6 +315,15 @@ extern const EVP_PKEY_METHOD picnic2l3fs_pkey_meth;
 extern const EVP_PKEY_METHOD picnic2l5fs_pkey_meth;
 extern const EVP_PKEY_METHOD qteslapi_pkey_meth;
 extern const EVP_PKEY_METHOD qteslapiii_pkey_meth;
+extern const EVP_PKEY_METHOD rainbowIaclassic_pkey_meth;
+extern const EVP_PKEY_METHOD rainbowIacyclic_pkey_meth;
+extern const EVP_PKEY_METHOD rainbowIacycliccompressed_pkey_meth;
+extern const EVP_PKEY_METHOD rainbowIIIcclassic_pkey_meth;
+extern const EVP_PKEY_METHOD rainbowIIIccyclic_pkey_meth;
+extern const EVP_PKEY_METHOD rainbowIIIccycliccompressed_pkey_meth;
+extern const EVP_PKEY_METHOD rainbowVcclassic_pkey_meth;
+extern const EVP_PKEY_METHOD rainbowVccyclic_pkey_meth;
+extern const EVP_PKEY_METHOD rainbowVccycliccompressed_pkey_meth;
 extern const EVP_PKEY_METHOD sphincs_haraka_128f_robust_pkey_meth;
 ///// OQS_TEMPLATE_FRAGMENT_DECLARE_PKEY_METHS_END
 

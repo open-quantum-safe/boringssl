@@ -87,6 +87,7 @@ The following quantum-safe algorithms from liboqs are supported (assuming they h
 - **MQDSS**: `mqdss3148`, `mqdss3164`
 - **Picnic**: `picnicl1fs`, `picnicl1ur`, `picnic2l1fs`, `picnic2l3fs`, `picnic2l5fs`
 - **qTESLA**: `qteslapi`, `qteslapiii`
+- **Rainbow**: `rainbowIaclassic`, `rainbowIacyclic`, `rainbowIacycliccompressed`, `rainbowIIIcclassic`, `rainbowIIIccyclic`, `rainbowIIIccycliccompressed`, `rainbowVcclassic`, `rainbowVccylic`, `rainbowVccycliccompressed`
 - `sphincs_haraka_128f_robust`
 
 ## Quickstart

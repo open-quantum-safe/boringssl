@@ -86,6 +86,15 @@ static const EVP_PKEY_METHOD *const evp_methods[] = {
     &picnic2l5fs_pkey_meth,
     &qteslapi_pkey_meth,
     &qteslapiii_pkey_meth,
+    &rainbowIaclassic_pkey_meth,
+    &rainbowIacyclic_pkey_meth,
+    &rainbowIacycliccompressed_pkey_meth,
+    &rainbowIIIcclassic_pkey_meth,
+    &rainbowIIIccyclic_pkey_meth,
+    &rainbowIIIccycliccompressed_pkey_meth,
+    &rainbowVcclassic_pkey_meth,
+    &rainbowVccyclic_pkey_meth,
+    &rainbowVccycliccompressed_pkey_meth,
     &sphincs_haraka_128f_robust_pkey_meth,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_PKEY_METHS_END
 };
