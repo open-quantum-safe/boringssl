@@ -1077,3 +1077,15 @@ sphincssha256256frobust		1091
 sphincssha256256fsimple		1092
 sphincssha256256srobust		1093
 sphincssha256256ssimple		1094
+sphincsshake256128frobust		1095
+sphincsshake256128fsimple		1096
+sphincsshake256128srobust		1097
+sphincsshake256128ssimple		1098
+sphincsshake256192frobust		1099
+sphincsshake256192fsimple		1100
+sphincsshake256192srobust		1101
+sphincsshake256192ssimple		1102
+sphincsshake256256frobust		1103
+sphincsshake256256fsimple		1104
+sphincsshake256256srobust		1105
+sphincsshake256256ssimple		1106

@@ -1449,8 +1449,8 @@ secg-scheme 14 3 : dhSinglePass-cofactorDH-sha512kdf-scheme
 1 3 6 1 4 1 2 267 6 6 5 : dilithium4 : dilithium4
 1 3 9999 3 3 1 : falcon512 : falcon512
 1 3 9999 3 3 4 : falcon1024 : falcon1024
-1 3 9999 4 4 1 : mqdss3148 : mqdss3148
-1 3 9999 4 4 2 : mqdss3164 : mqdss3164
+1 3 9999 4 4 4 1 : mqdss3148 : mqdss3148
+1 3 9999 4 4 4 2 : mqdss3164 : mqdss3164
 1 3 6 1 4 1 311 89 2 1 1 : picnicl1fs : picnicl1fs
 1 3 6 1 4 1 311 89 2 1 2 : picnicl1ur : picnicl1ur
 1 3 6 1 4 1 311 89 2 1 11 : picnic2l1fs : picnic2l1fs
@@ -1491,4 +1491,16 @@ secg-scheme 14 3 : dhSinglePass-cofactorDH-sha512kdf-scheme
 1 3 9999 5 3 1 : sphincssha256256fsimple : sphincssha256256fsimple
 1 3 9999 5 4 : sphincssha256256srobust : sphincssha256256srobust
 1 3 9999 5 5 : sphincssha256256ssimple : sphincssha256256ssimple
+1 3 9999 4 4 1 : sphincsshake256128frobust : sphincsshake256128frobust
+1 3 9999 4 4 2 : sphincsshake256128fsimple : sphincsshake256128fsimple
+1 3 9999 4 4 3 : sphincsshake256128srobust : sphincsshake256128srobust
+1 3 9999 4 4 4 : sphincsshake256128ssimple : sphincsshake256128ssimple
+1 3 9999 4 4 5 : sphincsshake256192frobust : sphincsshake256192frobust
+1 3 9999 4 4 6 : sphincsshake256192fsimple : sphincsshake256192fsimple
+1 3 9999 4 4 7 : sphincsshake256192srobust : sphincsshake256192srobust
+1 3 9999 4 4 8 : sphincsshake256192ssimple : sphincsshake256192ssimple
+1 3 9999 4 4 9 : sphincsshake256256frobust : sphincsshake256256frobust
+1 3 9999 4 5 1 : sphincsshake256256fsimple : sphincsshake256256fsimple
+1 3 9999 4 5 2 : sphincsshake256256srobust : sphincsshake256256srobust
+1 3 9999 4 5 3 : sphincsshake256256ssimple : sphincsshake256256ssimple
 ##### OQS_TEMPLATE_FRAGMENT_ASSIGN_OIDS_END

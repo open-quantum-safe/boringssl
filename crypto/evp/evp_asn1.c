@@ -122,6 +122,18 @@ static const EVP_PKEY_ASN1_METHOD *const kASN1Methods[] = {
     &sphincssha256256fsimple_asn1_meth,
     &sphincssha256256srobust_asn1_meth,
     &sphincssha256256ssimple_asn1_meth,
+    &sphincsshake256128frobust_asn1_meth,
+    &sphincsshake256128fsimple_asn1_meth,
+    &sphincsshake256128srobust_asn1_meth,
+    &sphincsshake256128ssimple_asn1_meth,
+    &sphincsshake256192frobust_asn1_meth,
+    &sphincsshake256192fsimple_asn1_meth,
+    &sphincsshake256192srobust_asn1_meth,
+    &sphincsshake256192ssimple_asn1_meth,
+    &sphincsshake256256frobust_asn1_meth,
+    &sphincsshake256256fsimple_asn1_meth,
+    &sphincsshake256256srobust_asn1_meth,
+    &sphincsshake256256ssimple_asn1_meth,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_PKEY_ASN1_METHS_END
 };
 
