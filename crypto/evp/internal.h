@@ -292,7 +292,18 @@ extern const EVP_PKEY_ASN1_METHOD rainbowIIIccycliccompressed_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD rainbowVcclassic_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD rainbowVccyclic_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD rainbowVccycliccompressed_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD sphincs_haraka_128f_robust_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD sphincsharaka128frobust_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD sphincsharaka128fsimple_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD sphincsharaka128srobust_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD sphincsharaka128ssimple_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD sphincsharaka192frobust_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD sphincsharaka192fsimple_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD sphincsharaka192srobust_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD sphincsharaka192ssimple_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD sphincsharaka256frobust_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD sphincsharaka256fsimple_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD sphincsharaka256srobust_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD sphincsharaka256ssimple_asn1_meth;
 ///// OQS_TEMPLATE_FRAGMENT_DECLARE_ASN1_METHS_END
 
 extern const EVP_PKEY_METHOD rsa_pkey_meth;
@@ -324,7 +335,18 @@ extern const EVP_PKEY_METHOD rainbowIIIccycliccompressed_pkey_meth;
 extern const EVP_PKEY_METHOD rainbowVcclassic_pkey_meth;
 extern const EVP_PKEY_METHOD rainbowVccyclic_pkey_meth;
 extern const EVP_PKEY_METHOD rainbowVccycliccompressed_pkey_meth;
-extern const EVP_PKEY_METHOD sphincs_haraka_128f_robust_pkey_meth;
+extern const EVP_PKEY_METHOD sphincsharaka128frobust_pkey_meth;
+extern const EVP_PKEY_METHOD sphincsharaka128fsimple_pkey_meth;
+extern const EVP_PKEY_METHOD sphincsharaka128srobust_pkey_meth;
+extern const EVP_PKEY_METHOD sphincsharaka128ssimple_pkey_meth;
+extern const EVP_PKEY_METHOD sphincsharaka192frobust_pkey_meth;
+extern const EVP_PKEY_METHOD sphincsharaka192fsimple_pkey_meth;
+extern const EVP_PKEY_METHOD sphincsharaka192srobust_pkey_meth;
+extern const EVP_PKEY_METHOD sphincsharaka192ssimple_pkey_meth;
+extern const EVP_PKEY_METHOD sphincsharaka256frobust_pkey_meth;
+extern const EVP_PKEY_METHOD sphincsharaka256fsimple_pkey_meth;
+extern const EVP_PKEY_METHOD sphincsharaka256srobust_pkey_meth;
+extern const EVP_PKEY_METHOD sphincsharaka256ssimple_pkey_meth;
 ///// OQS_TEMPLATE_FRAGMENT_DECLARE_PKEY_METHS_END
 
 #if defined(__cplusplus)

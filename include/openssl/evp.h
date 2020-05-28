@@ -203,7 +203,18 @@ OPENSSL_EXPORT EC_KEY *EVP_PKEY_get1_EC_KEY(const EVP_PKEY *pkey);
 #define EVP_PKEY_RAINBOWVCCLASSIC NID_rainbowVcclassic
 #define EVP_PKEY_RAINBOWVCCYCLIC NID_rainbowVccyclic
 #define EVP_PKEY_RAINBOWVCCYCLICCOMPRESSED NID_rainbowVccycliccompressed
-#define EVP_PKEY_SPHINCS_HARAKA_128F_ROBUST NID_sphincs_haraka_128f_robust
+#define EVP_PKEY_SPHINCSHARAKA128FROBUST NID_sphincsharaka128frobust
+#define EVP_PKEY_SPHINCSHARAKA128FSIMPLE NID_sphincsharaka128fsimple
+#define EVP_PKEY_SPHINCSHARAKA128SROBUST NID_sphincsharaka128srobust
+#define EVP_PKEY_SPHINCSHARAKA128SSIMPLE NID_sphincsharaka128ssimple
+#define EVP_PKEY_SPHINCSHARAKA192FROBUST NID_sphincsharaka192frobust
+#define EVP_PKEY_SPHINCSHARAKA192FSIMPLE NID_sphincsharaka192fsimple
+#define EVP_PKEY_SPHINCSHARAKA192SROBUST NID_sphincsharaka192srobust
+#define EVP_PKEY_SPHINCSHARAKA192SSIMPLE NID_sphincsharaka192ssimple
+#define EVP_PKEY_SPHINCSHARAKA256FROBUST NID_sphincsharaka256frobust
+#define EVP_PKEY_SPHINCSHARAKA256FSIMPLE NID_sphincsharaka256fsimple
+#define EVP_PKEY_SPHINCSHARAKA256SROBUST NID_sphincsharaka256srobust
+#define EVP_PKEY_SPHINCSHARAKA256SSIMPLE NID_sphincsharaka256ssimple
 ///// OQS_TEMPLATE_FRAGMENT_DEFINE_EVP_PKEYS_END
 
 // EVP_PKEY_assign sets the underlying key of |pkey| to |key|, which must be of

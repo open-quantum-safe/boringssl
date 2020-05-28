@@ -109,6 +109,17 @@ sig_to_code_point = {
         'rainbowVcclassic': '65045',
         'rainbowVccyclic': '65046',
         'rainbowVccycliccompressed': '65047',
-        'sphincs_haraka_128f_robust': '65048',
+        'sphincsharaka128frobust': '65048',
+        'sphincsharaka128fsimple': '65049',
+        'sphincsharaka128srobust': '65050',
+        'sphincsharaka128ssimple': '65051',
+        'sphincsharaka192frobust': '65052',
+        'sphincsharaka192fsimple': '65053',
+        'sphincsharaka192srobust': '65054',
+        'sphincsharaka192ssimple': '65055',
+        'sphincsharaka256frobust': '65056',
+        'sphincsharaka256fsimple': '65057',
+        'sphincsharaka256srobust': '65058',
+        'sphincsharaka256ssimple': '65059',
 ##### OQS_TEMPLATE_FRAGMENT_MAP_SIG_TO_CODEPOINT_END
 }

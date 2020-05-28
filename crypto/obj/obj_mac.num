@@ -961,7 +961,6 @@ qteslapiii		972
 oqs_kem_default		973
 p256_oqs_kem_default		974
 oqs_sig_default		975
-sphincs_haraka_128f_robust		976
 frodo640shake		977
 p256_frodo640shake		978
 frodo976aes		979
@@ -1054,3 +1053,15 @@ rainbowIIIccycliccompressed		1067
 rainbowVcclassic		1068
 rainbowVccyclic		1069
 rainbowVccycliccompressed		1070
+sphincsharaka128frobust		1071
+sphincsharaka128fsimple		1072
+sphincsharaka128srobust		1073
+sphincsharaka128ssimple		1074
+sphincsharaka192frobust		1075
+sphincsharaka192fsimple		1076
+sphincsharaka192srobust		1077
+sphincsharaka192ssimple		1078
+sphincsharaka256frobust		1079
+sphincsharaka256fsimple		1080
+sphincsharaka256srobust		1081
+sphincsharaka256ssimple		1082

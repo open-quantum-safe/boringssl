@@ -244,29 +244,29 @@ sigs:
     claimed_security_level: '3'
   -
     name: 'falcon512'
-    oid: "1 3 9999 3 2"
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x03, 0x02'
+    oid: "1 3 9999 3 3 1"
+    oid_encoded: '0x2B, 0xCE, 0x0F, 0x03, 0x03, 0x01'
     oqs_meth: 'OQS_SIG_alg_falcon_512'
     code_point: '0xfe04'
     claimed_security_level: '1'
   -
     name: 'falcon1024'
-    oid: "1 3 9999 3 4"
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x03, 0x04'
+    oid: "1 3 9999 3 3 4"
+    oid_encoded: '0x2B, 0xCE, 0x0F, 0x03, 0x03, 0x04'
     oqs_meth: 'OQS_SIG_alg_falcon_1024'
     code_point: '0xfe05'
     claimed_security_level: '5'
   -
     name: 'mqdss3148'
-    oid: "1 3 9999 4 1"
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x04, 0x01'
+    oid: "1 3 9999 4 4 1"
+    oid_encoded: '0x2B, 0xCE, 0x0F, 0x04, 0x04, 0x01'
     oqs_meth: 'OQS_SIG_alg_mqdss_31_48'
     code_point: '0xfe06'
     claimed_security_level: '1'
   -
     name: 'mqdss3164'
-    oid: "1 3 9999 4 2"
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x04, 0x02'
+    oid: "1 3 9999 4 4 2"
+    oid_encoded: '0x2B, 0xCE, 0x0F, 0x04, 0x04, 0x02'
     oqs_meth: 'OQS_SIG_alg_mqdss_31_64'
     code_point: '0xfe07'
     claimed_security_level: '3'
@@ -383,9 +383,86 @@ sigs:
     code_point: '0xfe17'
     claimed_security_level: '5'
   -
-    name: 'sphincs_haraka_128f_robust'
+    name: 'sphincsharaka128frobust'
     oid: '1 3 9999 3 1'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x03, 0x01'
     oqs_meth: 'OQS_SIG_alg_sphincs_haraka_128f_robust'
     code_point: '0xfe18'
     claimed_security_level: '1'
+  -
+    name: 'sphincsharaka128fsimple'
+    oid: '1 3 9999 3 2'
+    oid_encoded: '0x2B, 0xCE, 0x0F, 0x03, 0x02'
+    oqs_meth: 'OQS_SIG_alg_sphincs_haraka_128f_simple'
+    code_point: '0xfe19'
+    claimed_security_level: '1'
+  -
+    name: 'sphincsharaka128srobust'
+    oid: '1 3 9999 3 3'
+    oid_encoded: '0x2B, 0xCE, 0x0F, 0x03, 0x03'
+    oqs_meth: 'OQS_SIG_alg_sphincs_haraka_128s_robust'
+    code_point: '0xfe1a'
+    claimed_security_level: '1'
+  -
+    name: 'sphincsharaka128ssimple'
+    oid: '1 3 9999 3 4'
+    oid_encoded: '0x2B, 0xCE, 0x0F, 0x03, 0x04'
+    oqs_meth: 'OQS_SIG_alg_sphincs_haraka_128s_simple'
+    code_point: '0xfe1b'
+    claimed_security_level: '1'
+  -
+    name: 'sphincsharaka192frobust'
+    oid: '1 3 9999 3 5'
+    oid_encoded: '0x2B, 0xCE, 0x0F, 0x03, 0x05'
+    oqs_meth: 'OQS_SIG_alg_sphincs_haraka_192f_robust'
+    code_point: '0xfe1c'
+    claimed_security_level: '3'
+  -
+    name: 'sphincsharaka192fsimple'
+    oid: '1 3 9999 3 6'
+    oid_encoded: '0x2B, 0xCE, 0x0F, 0x03, 0x06'
+    oqs_meth: 'OQS_SIG_alg_sphincs_haraka_192f_simple'
+    code_point: '0xfe1d'
+    claimed_security_level: '3'
+  -
+    name: 'sphincsharaka192srobust'
+    oid: '1 3 9999 3 7'
+    oid_encoded: '0x2B, 0xCE, 0x0F, 0x03, 0x07'
+    oqs_meth: 'OQS_SIG_alg_sphincs_haraka_192s_robust'
+    code_point: '0xfe1e'
+    claimed_security_level: '3'
+  -
+    name: 'sphincsharaka192ssimple'
+    oid: '1 3 9999 3 8'
+    oid_encoded: '0x2B, 0xCE, 0x0F, 0x03, 0x08'
+    oqs_meth: 'OQS_SIG_alg_sphincs_haraka_192s_simple'
+    code_point: '0xfe1f'
+    claimed_security_level: '3'
+  -
+    name: 'sphincsharaka256frobust'
+    oid: '1 3 9999 3 9'
+    oid_encoded: '0x2B, 0xCE, 0x0F, 0x03, 0x09'
+    oqs_meth: 'OQS_SIG_alg_sphincs_haraka_256f_robust'
+    code_point: '0xfe20'
+    claimed_security_level: '5'
+  -
+    name: 'sphincsharaka256fsimple'
+    oid: '1 3 9999 4 1'
+    oid_encoded: '0x2B, 0xCE, 0x0F, 0x04, 0x01'
+    oqs_meth: 'OQS_SIG_alg_sphincs_haraka_256f_simple'
+    code_point: '0xfe21'
+    claimed_security_level: '5'
+  -
+    name: 'sphincsharaka256srobust'
+    oid: '1 3 9999 4 2'
+    oid_encoded: '0x2B, 0xCE, 0x0F, 0x04, 0x02'
+    oqs_meth: 'OQS_SIG_alg_sphincs_haraka_256s_robust'
+    code_point: '0xfe22'
+    claimed_security_level: '5'
+  -
+    name: 'sphincsharaka256ssimple'
+    oid: '1 3 9999 4 3'
+    oid_encoded: '0x2B, 0xCE, 0x0F, 0x04, 0x03'
+    oqs_meth: 'OQS_SIG_alg_sphincs_haraka_256s_simple'
+    code_point: '0xfe23'
+    claimed_security_level: '5'

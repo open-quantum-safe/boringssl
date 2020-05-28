@@ -254,8 +254,30 @@ static const EVP_PKEY_ASN1_METHOD *evp_pkey_asn1_find(int nid) {
       return &rainbowVccyclic_asn1_meth;
     case EVP_PKEY_RAINBOWVCCYCLICCOMPRESSED:
       return &rainbowVccycliccompressed_asn1_meth;
-    case EVP_PKEY_SPHINCS_HARAKA_128F_ROBUST:
-      return &sphincs_haraka_128f_robust_asn1_meth;
+    case EVP_PKEY_SPHINCSHARAKA128FROBUST:
+      return &sphincsharaka128frobust_asn1_meth;
+    case EVP_PKEY_SPHINCSHARAKA128FSIMPLE:
+      return &sphincsharaka128fsimple_asn1_meth;
+    case EVP_PKEY_SPHINCSHARAKA128SROBUST:
+      return &sphincsharaka128srobust_asn1_meth;
+    case EVP_PKEY_SPHINCSHARAKA128SSIMPLE:
+      return &sphincsharaka128ssimple_asn1_meth;
+    case EVP_PKEY_SPHINCSHARAKA192FROBUST:
+      return &sphincsharaka192frobust_asn1_meth;
+    case EVP_PKEY_SPHINCSHARAKA192FSIMPLE:
+      return &sphincsharaka192fsimple_asn1_meth;
+    case EVP_PKEY_SPHINCSHARAKA192SROBUST:
+      return &sphincsharaka192srobust_asn1_meth;
+    case EVP_PKEY_SPHINCSHARAKA192SSIMPLE:
+      return &sphincsharaka192ssimple_asn1_meth;
+    case EVP_PKEY_SPHINCSHARAKA256FROBUST:
+      return &sphincsharaka256frobust_asn1_meth;
+    case EVP_PKEY_SPHINCSHARAKA256FSIMPLE:
+      return &sphincsharaka256fsimple_asn1_meth;
+    case EVP_PKEY_SPHINCSHARAKA256SROBUST:
+      return &sphincsharaka256srobust_asn1_meth;
+    case EVP_PKEY_SPHINCSHARAKA256SSIMPLE:
+      return &sphincsharaka256ssimple_asn1_meth;
 ///// OQS_TEMPLATE_FRAGMENT_PKEY_TO_ASN1_METH_END
     default:
       return NULL;

@@ -4292,11 +4292,6 @@ extern "C" {
 #define NID_oqs_sig_default 975
 #define OBJ_oqs_sig_default 1L, 3L, 9999L, 1L, 1L
 
-#define SN_sphincs_haraka_128f_robust "sphincs_haraka_128f_robust"
-#define LN_sphincs_haraka_128f_robust "sphincs_haraka_128f_robust"
-#define NID_sphincs_haraka_128f_robust 976
-#define OBJ_sphincs_haraka_128f_robust 1L, 3L, 9999L, 3L, 1L
-
 #define SN_frodo640shake "frodo640shake"
 #define NID_frodo640shake 977
 
@@ -4528,7 +4523,7 @@ extern "C" {
 #define SN_falcon512 "falcon512"
 #define LN_falcon512 "falcon512"
 #define NID_falcon512 1055
-#define OBJ_falcon512 1L, 3L, 9999L, 3L, 2L
+#define OBJ_falcon512 1L, 3L, 9999L, 3L, 3L, 1L
 
 #define SN_falcon1024 "falcon1024"
 #define LN_falcon1024 "falcon1024"
@@ -4607,6 +4602,66 @@ extern "C" {
 #define NID_rainbowVccycliccompressed 1070
 #define OBJ_rainbowVccycliccompressed \
   1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 5L, 9L
+
+#define SN_sphincsharaka128frobust "sphincsharaka128frobust"
+#define LN_sphincsharaka128frobust "sphincsharaka128frobust"
+#define NID_sphincsharaka128frobust 1071
+#define OBJ_sphincsharaka128frobust 1L, 3L, 9999L, 3L, 1L
+
+#define SN_sphincsharaka128fsimple "sphincsharaka128fsimple"
+#define LN_sphincsharaka128fsimple "sphincsharaka128fsimple"
+#define NID_sphincsharaka128fsimple 1072
+#define OBJ_sphincsharaka128fsimple 1L, 3L, 9999L, 3L, 2L
+
+#define SN_sphincsharaka128srobust "sphincsharaka128srobust"
+#define LN_sphincsharaka128srobust "sphincsharaka128srobust"
+#define NID_sphincsharaka128srobust 1073
+#define OBJ_sphincsharaka128srobust 1L, 3L, 9999L, 3L, 3L
+
+#define SN_sphincsharaka128ssimple "sphincsharaka128ssimple"
+#define LN_sphincsharaka128ssimple "sphincsharaka128ssimple"
+#define NID_sphincsharaka128ssimple 1074
+#define OBJ_sphincsharaka128ssimple 1L, 3L, 9999L, 3L, 4L
+
+#define SN_sphincsharaka192frobust "sphincsharaka192frobust"
+#define LN_sphincsharaka192frobust "sphincsharaka192frobust"
+#define NID_sphincsharaka192frobust 1075
+#define OBJ_sphincsharaka192frobust 1L, 3L, 9999L, 3L, 5L
+
+#define SN_sphincsharaka192fsimple "sphincsharaka192fsimple"
+#define LN_sphincsharaka192fsimple "sphincsharaka192fsimple"
+#define NID_sphincsharaka192fsimple 1076
+#define OBJ_sphincsharaka192fsimple 1L, 3L, 9999L, 3L, 6L
+
+#define SN_sphincsharaka192srobust "sphincsharaka192srobust"
+#define LN_sphincsharaka192srobust "sphincsharaka192srobust"
+#define NID_sphincsharaka192srobust 1077
+#define OBJ_sphincsharaka192srobust 1L, 3L, 9999L, 3L, 7L
+
+#define SN_sphincsharaka192ssimple "sphincsharaka192ssimple"
+#define LN_sphincsharaka192ssimple "sphincsharaka192ssimple"
+#define NID_sphincsharaka192ssimple 1078
+#define OBJ_sphincsharaka192ssimple 1L, 3L, 9999L, 3L, 8L
+
+#define SN_sphincsharaka256frobust "sphincsharaka256frobust"
+#define LN_sphincsharaka256frobust "sphincsharaka256frobust"
+#define NID_sphincsharaka256frobust 1079
+#define OBJ_sphincsharaka256frobust 1L, 3L, 9999L, 3L, 9L
+
+#define SN_sphincsharaka256fsimple "sphincsharaka256fsimple"
+#define LN_sphincsharaka256fsimple "sphincsharaka256fsimple"
+#define NID_sphincsharaka256fsimple 1080
+#define OBJ_sphincsharaka256fsimple 1L, 3L, 9999L, 4L, 1L
+
+#define SN_sphincsharaka256srobust "sphincsharaka256srobust"
+#define LN_sphincsharaka256srobust "sphincsharaka256srobust"
+#define NID_sphincsharaka256srobust 1081
+#define OBJ_sphincsharaka256srobust 1L, 3L, 9999L, 4L, 2L
+
+#define SN_sphincsharaka256ssimple "sphincsharaka256ssimple"
+#define LN_sphincsharaka256ssimple "sphincsharaka256ssimple"
+#define NID_sphincsharaka256ssimple 1082
+#define OBJ_sphincsharaka256ssimple 1L, 3L, 9999L, 4L, 3L
 
 
 #if defined(__cplusplus)
