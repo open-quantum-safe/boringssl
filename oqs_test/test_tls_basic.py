@@ -9,11 +9,11 @@ import time
 # to the tests to make the output
 # more comprehensible.
 
-# Give the server up to 60 seconds
-# to bind to port, since schemes like
+# Give the server up time to bind to
+# a port, since schemes like
 # Rainbow-Vc-Cyclic-Compressed can
 # take a while.
-PORT_BIND_TIMEOUT = 60
+PORT_BIND_TIMEOUT = 100
 
 @pytest.fixture()
 def oqs_sig_default_server(bssl):
