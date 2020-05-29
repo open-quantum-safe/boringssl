@@ -73,9 +73,9 @@ The following quantum-safe algorithms from liboqs are supported (assuming they h
 
 The following hybrid algorithms are supported depending on the security of each scheme above, denoted by `<KEX>`:
 
-- If `<KEX>` has L1 security, the method `p256_<KEX>` is available, which combines `<KEX>`  with ECDH using NIST's P256 curve:
-- If `<KEX>` has L3 security, the method `p384_<KEX>` is available, which combines `<KEX>`  with ECDH using NIST's P384 curve:
-- If `<KEX>` has L5 security, the method `p521_<KEX>` is available, which combines `<KEX>`  with ECDH using NIST's P521 curve:
+- If `<KEX>` has L1 security, the method `p256_<KEX>` is available, which combines `<KEX>` with ECDH using NIST's P256 curve:
+- If `<KEX>` has L3 security, the method `p384_<KEX>` is available, which combines `<KEX>` with ECDH using NIST's P384 curve:
+- If `<KEX>` has L5 security, the method `p521_<KEX>` is available, which combines `<KEX>` with ECDH using NIST's P521 curve:
 
 #### Signatures
 
@@ -90,6 +90,7 @@ The following quantum-safe algorithms from liboqs are supported (assuming they h
 - **Rainbow**: `rainbowIaclassic`, `rainbowIacyclic`, `rainbowIacycliccompressed`, `rainbowIIIcclassic`, `rainbowIIIccyclic`, `rainbowIIIccycliccompressed`, `rainbowVcclassic`, `rainbowVccylic`, `rainbowVccycliccompressed`
 - **SPHINCS-Haraka**: `sphincsharaka128frobust`, `sphincsharaka128fsimple`, `sphincsharaka128srobust`, `sphincsharaka128ssimple`, `sphincsharaka192frobust`, `sphincsharaka192fsimple`, `sphincsharaka192srobust`, `sphincsharaka192ssimple`, `sphincsharaka256frobust`, `sphincsharaka256fsimple`, `sphincsharaka256srobust`, `sphincsharaka256ssimple`
 - **SPHINCS-SHA256**: `sphincssha256128frobust`, `sphincssha256128fsimple`, `sphincssha256128srobust`, `sphincssha256128ssimple`, `sphincssha256192frobust`, `sphincssha256192fsimple`, `sphincssha256192srobust`, `sphincssha256192ssimple`, `sphincssha256256frobust`, `sphincssha256256fsimple`, `sphincssha256256srobust`, `sphincssha256256ssimple`
+- **SPHINCS-SHAKE256**: `sphincsshake256128frobust`, `sphincsshake256128fsimple`, `sphincsshake256128srobust`, `sphincsshake256128ssimple`, `sphincsshake256192frobust`, `sphincsshake256192fsimple`, `sphincsshake256192srobust`, `sphincsshake256192ssimple`, `sphincsshake256256frobust`, `sphincsshake256256fsimple`, `sphincsshake256256srobust`, `sphincsshake256256ssimple`
 
 ## Quickstart
 
@@ -103,22 +104,28 @@ The steps below have been confirmed to work on Ubuntu 19.10 (gcc-8.3.0).
 
 On **Ubuntu**, you need to install the following packages:
 
-	sudo apt install gcc golang-go cmake ninja python3-pytest python3-pytest-xdist
+```
+sudo apt install gcc golang-go cmake ninja python3-pytest python3-pytest-xdist python3-psutil
+```
 
 Then, get source code of this fork (`<BORINGSSL_DIR>` is a directory of your choosing):
 
-	git clone --branch master https://github.com/open-quantum-safe/boringssl.git <BORINGSSL_DIR>
+```
+git clone --branch master https://github.com/open-quantum-safe/boringssl.git <BORINGSSL_DIR>
+```
 
 #### Step 1: Build and install liboqs
 
 The following instructions will download and build liboqs, then install it to `<BORINGSSL_DIR>/oqs`.
 
-	git clone --branch master https://github.com/open-quantum-safe/liboqs.git
-	cd liboqs
-	mkdir build && cd build
-	cmake -G"Ninja" -DCMAKE_INSTALL_PREFIX=<BORINGSSL_DIR>/oqs -DOQS_USE_OPENSSL=OFF ..
-	ninja
-	ninja install
+```
+git clone --branch master https://github.com/open-quantum-safe/liboqs.git
+cd liboqs
+mkdir build && cd build
+cmake -G"Ninja" -DCMAKE_INSTALL_PREFIX=<BORINGSSL_DIR>/oqs -DOQS_USE_OPENSSL=OFF ..
+ninja
+ninja install
+```
 
 #### Step 2: Build the fork
 
@@ -126,10 +133,12 @@ Now we follow the standard instructions for building BoringSSL. Navigate to `<BO
 
 on **Ubuntu**, run:
 
-	mkdir build
-	cd build
-	cmake -GNinja ..
-	ninja
+```
+mkdir build
+cd build
+cmake -GNinja ..
+ninja
+```
 
 The fork can also be built with shared libraries, to do so, run `cmake -DBUILD_SHARED_LIBRARIES=ON -GNinja ..`.
 
@@ -146,11 +155,15 @@ BoringSSL contains a basic TLS server (`s_server`) and TLS client (`s_client`) w
 
 To run a basic TLS server with all libOQS ciphersuites enabled, from the `build` directory, run (where `<SIG>` = one of the quantum-safe or hybrid signature algorithms listed in the [Supported Algorithms](#supported-algorithms) section above; if the `sig-alg` option is omitted, the default classical algorithm `ecdhe` with prime curve `X9_62_prime256v1` is used):
 
-	tool/bssl server -accept 4433 -sig-alg <SIG> -loop
+```
+tool/bssl server -accept 4433 -sig-alg <SIG> -loop
+```
 
 In another terminal window, you can run a TLS client requesting one of the supported ciphersuites (where `<KEX>` = one of the quantum-safe or hybrid key exchange algorithms listed in the [Supported Algorithms](#supported-algorithms) section above):
 
-	tool/bssl client -curves <KEX> -connect localhost:4433
+```
+tool/bssl client -curves <KEX> -connect localhost:4433
+```
 
 ## API Stability
 
@@ -170,7 +183,6 @@ Contributors to this fork include:
 ## Acknowledgments
 
 Financial support for the development of Open Quantum Safe has been provided by Amazon Web Services and the Tutte Institute for Mathematics and Computing.
-
 We'd like to make a special acknowledgement to the companies who have dedicated programmer time to contribute source code to OQS, including Amazon Web Services, Cisco Systems, evolutionQ, and Microsoft Research.
 
 Research projects which developed specific components of OQS have been supported by various research grants, including funding from the Natural Sciences and Engineering Research Council of Canada (NSERC); see [here](https://openquantumsafe.org/papers/SAC-SteMos16.pdf) and [here](https://openquantumsafe.org/papers/NISTPQC-CroPaqSte19.pdf) for funding acknowledgments.
