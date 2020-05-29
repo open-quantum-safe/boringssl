@@ -9,10 +9,6 @@ import time
 # to the tests to make the output
 # more comprehensible.
 
-# Give the server up time to bind to
-# a port, since schemes like
-# Rainbow-Vc-Cyclic-Compressed can
-# take a while.
 PORT_BIND_TIMEOUT = 100
 
 @pytest.fixture()
