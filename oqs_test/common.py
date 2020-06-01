@@ -1,3 +1,9 @@
+import psutil
+import subprocess
+import time
+
+SERVER_START_TIMEOUT = 100
+
 kex_to_nid = {
 ##### OQS_TEMPLATE_FRAGMENT_MAP_KEM_TO_NID_START
         'oqs_kem_default': '511',
@@ -147,3 +153,39 @@ sig_to_code_point = {
         'sphincsshake256256ssimple': '65297',
 ##### OQS_TEMPLATE_FRAGMENT_MAP_SIG_TO_CODEPOINT_END
 }
+
+def start_server(bssl, bssl_shim, sig_alg):
+    server = subprocess.Popen([bssl, 'server',
+                                     '-accept', '0',
+                                     '-sig-alg', sig_alg,
+                                     '-loop'],
+                                     stdout=subprocess.PIPE,
+                                     stderr=subprocess.STDOUT)
+
+    server_info = psutil.Process(server.pid)
+
+    # Wait SERVER_START_TIMEOUT seconds
+    # for server to bind to port.
+    timeout_start = time.time()
+    while time.time() < timeout_start + SERVER_START_TIMEOUT:
+        if server_info.connections():
+            break
+    server_port = str(server_info.connections()[0].laddr.port)
+
+    # Wait SERVER_START_TIMEOUT seconds
+    # for server to be responsive.
+    server_up = False
+    timeout_start = time.time()
+    while time.time() < timeout_start + SERVER_START_TIMEOUT:
+        result = subprocess.run([bssl_shim, '-port', server_port, '-shim-shuts-down'],
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.STDOUT)
+        if result.returncode == 0: #Server should be responsive now
+            server_up = True
+            break
+
+    if not server_up:
+        raise Exception('Cannot start bssl server')
+
+    return server, server_port
+

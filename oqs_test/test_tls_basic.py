@@ -1,67 +1,41 @@
-import oqs_algorithms
+import common
 import pytest
-import psutil
 import sys
 import subprocess
-import time
 
 # We pass names instead of numbers
 # to the tests to make the output
 # more comprehensible.
 
-PORT_BIND_TIMEOUT = 100
-
 @pytest.fixture()
-def oqs_sig_default_server(bssl):
-    # Setup: start bssl server
-    server = subprocess.Popen([bssl, 'server',
-                                     '-accept', '0',
-                                     '-sig-alg', 'oqs_sig_default',
-                                     '-loop'],
-                                     stdout=subprocess.PIPE,
-                                     stderr=subprocess.STDOUT)
-
-    server_info = psutil.Process(server.pid)
-    timeout_start = time.time()
-    while time.time() < timeout_start + PORT_BIND_TIMEOUT:
-        if server_info.connections():
-            break
-    server_conn_info = server_info.connections()[0]
+def oqs_sig_default_server(bssl, bssl_shim):
+    # Setup
+    server, server_port = common.start_server(bssl, bssl_shim, 'oqs_sig_default')
 
     # Run tests
-    yield str(server_conn_info.laddr.port)
-    # Teardown: stop bssl server
+    yield str(server_port)
+
+    # Teardown
     server.kill()
 
-@pytest.fixture(params=oqs_algorithms.sig_to_code_point.keys())
-def parametrized_sig_server(request, bssl):
-    # Setup: start bssl server
-    server = subprocess.Popen([bssl, 'server',
-                                     '-accept', '0',
-                                     '-sig-alg', request.param,
-                                     '-loop'],
-                                     stdout=subprocess.PIPE,
-                                     stderr=subprocess.STDOUT)
-
-    server_info = psutil.Process(server.pid)
-    timeout_start = time.time()
-    while time.time() < timeout_start + PORT_BIND_TIMEOUT:
-        if server_info.connections():
-            break
-    server_conn_info = server_info.connections()[0]
-
+@pytest.fixture(params=common.sig_to_code_point.keys())
+def parametrized_sig_server(request, bssl, bssl_shim):
+    # Setup
+    server, server_port = common.start_server(bssl, bssl_shim, request.param)
     # Run tests
-    yield request.param, str(server_conn_info.laddr.port)
+    yield request.param, server_port
+
+    # Teardown
     server.kill()
 
-@pytest.mark.parametrize('kex_name', oqs_algorithms.kex_to_nid.keys())
+@pytest.mark.parametrize('kex_name', common.kex_to_nid.keys())
 def test_kem(oqs_sig_default_server, bssl_shim, kex_name):
     result = subprocess.run(
         [bssl_shim, '-port', oqs_sig_default_server,
                     '-expect-version', 'TLSv1.3',
-                    '-curves', oqs_algorithms.kex_to_nid[kex_name],
-                    '-expect-curve-id', oqs_algorithms.kex_to_nid[kex_name],
-                    '-expect-peer-signature-algorithm', oqs_algorithms.sig_to_code_point['oqs_sig_default'],
+                    '-curves', common.kex_to_nid[kex_name],
+                    '-expect-curve-id', common.kex_to_nid[kex_name],
+                    '-expect-peer-signature-algorithm', common.sig_to_code_point['oqs_sig_default'],
                     '-shim-shuts-down'
         ],
         stdout=subprocess.PIPE,
@@ -78,9 +52,9 @@ def test_sig(parametrized_sig_server, bssl_shim):
     result = subprocess.run(
         [bssl_shim, '-port', server_port,
                     '-expect-version', 'TLSv1.3',
-                    '-curves', oqs_algorithms.kex_to_nid['oqs_kem_default'],
-                    '-expect-curve-id', oqs_algorithms.kex_to_nid['oqs_kem_default'],
-                    '-expect-peer-signature-algorithm', oqs_algorithms.sig_to_code_point[server_sig],
+                    '-curves', common.kex_to_nid['oqs_kem_default'],
+                    '-expect-curve-id', common.kex_to_nid['oqs_kem_default'],
+                    '-expect-peer-signature-algorithm', common.sig_to_code_point[server_sig],
                     '-shim-shuts-down'
 
         ],
