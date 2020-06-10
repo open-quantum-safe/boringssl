@@ -37,8 +37,6 @@ This fork is built on top of [commit 78b3337a10a7f7b3495b6cb8140a74e265290898](h
 
 liboqs and this integration are provided "as is", without warranty of any kind.  See the [LICENSE](https://github.com/open-quantum-safe/liboqs/blob/master/LICENSE.txt) for the full disclaimer.
 
-We regularly test the fork on Ubuntu 18.04 and above. Support for other platforms and operating systems, as well as for old versions of GCC (< 8) and Clang (< 8), is not guaranteed.
-
 ### Limitations and security
 
 As research advances, the supported algorithms may see rapid changes in their security, and may even prove insecure against both classical and quantum computers.
@@ -97,6 +95,8 @@ The following quantum-safe digital signature algorithms from liboqs are supporte
 - **SPHINCS-SHAKE256**: `sphincsshake256128frobust`, `sphincsshake256128fsimple`, `sphincsshake256128srobust`, `sphincsshake256128ssimple`, `sphincsshake256192frobust`, `sphincsshake256192fsimple`, `sphincsshake256192srobust`, `sphincsshake256192ssimple`, `sphincsshake256256frobust`, `sphincsshake256256fsimple`, `sphincsshake256256srobust`, `sphincsshake256256ssimple`
 
 ## Quickstart
+
+We regularly test the fork on Ubuntu 18.04 and above. Support for other platforms and operating systems, as well as for old versions of GCC (< 8) and Clang (< 8), is not guaranteed.
 
 ### Building
 
