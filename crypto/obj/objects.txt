@@ -1450,55 +1450,55 @@ secg-scheme 14 3 : dhSinglePass-cofactorDH-sha512kdf-scheme
 1 3 9999 4 1 : mqdss3148 : mqdss3148
 1 3 9999 4 4 : mqdss3164 : mqdss3164
 1 3 6 1 4 1 311 89 2 1 1 : picnicl1fs : picnicl1fs
-1 3 6 1 4 1 311 89 2 1 2 : picnicl1ur : picnicl1ur
+1 3 6 1 4 1 311 89 2 1 4 : picnicl1ur : picnicl1ur
 1 3 6 1 4 1 311 89 2 1 11 : picnic2l1fs : picnic2l1fs
-1 3 6 1 4 1 311 89 2 1 12 : picnic2l3fs : picnic2l3fs
-1 3 6 1 4 1 311 89 2 1 13 : picnic2l5fs : picnic2l5fs
+1 3 6 1 4 1 311 89 2 1 14 : picnic2l3fs : picnic2l3fs
+1 3 6 1 4 1 311 89 2 1 16 : picnic2l5fs : picnic2l5fs
 1 3 6 1 4 1 311 89 2 2 10 : qteslapi : qteslapi
 1 3 6 1 4 1 311 89 2 2 20 : qteslapiii : qteslapiii
-1 3 9999 5 1 : rainbowIaclassic : rainbowIaclassic
-1 3 9999 5 2 : rainbowIacyclic : rainbowIacyclic
-1 3 9999 5 3 : rainbowIacycliccompressed : rainbowIacycliccompressed
-1 3 9999 5 4 : rainbowIIIcclassic : rainbowIIIcclassic
-1 3 9999 5 5 : rainbowIIIccyclic : rainbowIIIccyclic
-1 3 9999 5 6 : rainbowIIIccycliccompressed : rainbowIIIccycliccompressed
-1 3 9999 5 7 : rainbowVcclassic : rainbowVcclassic
-1 3 9999 5 8 : rainbowVccyclic : rainbowVccyclic
-1 3 9999 5 9 : rainbowVccycliccompressed : rainbowVccycliccompressed
-1 3 9999 6 1 : sphincsharaka128frobust : sphincsharaka128frobust
-1 3 9999 6 2 : sphincsharaka128fsimple : sphincsharaka128fsimple
-1 3 9999 6 3 : sphincsharaka128srobust : sphincsharaka128srobust
-1 3 9999 6 4 : sphincsharaka128ssimple : sphincsharaka128ssimple
-1 3 9999 6 5 : sphincsharaka192frobust : sphincsharaka192frobust
-1 3 9999 6 6 : sphincsharaka192fsimple : sphincsharaka192fsimple
-1 3 9999 6 7 : sphincsharaka192srobust : sphincsharaka192srobust
-1 3 9999 6 8 : sphincsharaka192ssimple : sphincsharaka192ssimple
-1 3 9999 6 9 : sphincsharaka256frobust : sphincsharaka256frobust
-1 3 9999 6 10 : sphincsharaka256fsimple : sphincsharaka256fsimple
-1 3 9999 6 11 : sphincsharaka256srobust : sphincsharaka256srobust
-1 3 9999 6 12 : sphincsharaka256ssimple : sphincsharaka256ssimple
-1 3 9999 7 1 : sphincssha256128frobust : sphincssha256128frobust
-1 3 9999 7 2 : sphincssha256128fsimple : sphincssha256128fsimple
-1 3 9999 7 3 : sphincssha256128srobust : sphincssha256128srobust
-1 3 9999 7 4 : sphincssha256128ssimple : sphincssha256128ssimple
-1 3 9999 7 5 : sphincssha256192frobust : sphincssha256192frobust
-1 3 9999 7 6 : sphincssha256192fsimple : sphincssha256192fsimple
-1 3 9999 7 7 : sphincssha256192srobust : sphincssha256192srobust
-1 3 9999 7 8 : sphincssha256192ssimple : sphincssha256192ssimple
-1 3 9999 7 9 : sphincssha256256frobust : sphincssha256256frobust
-1 3 9999 7 10 : sphincssha256256fsimple : sphincssha256256fsimple
-1 3 9999 7 11 : sphincssha256256srobust : sphincssha256256srobust
-1 3 9999 7 12 : sphincssha256256ssimple : sphincssha256256ssimple
-1 3 9999 8 1 : sphincsshake256128frobust : sphincsshake256128frobust
-1 3 9999 8 2 : sphincsshake256128fsimple : sphincsshake256128fsimple
-1 3 9999 8 3 : sphincsshake256128srobust : sphincsshake256128srobust
-1 3 9999 8 4 : sphincsshake256128ssimple : sphincsshake256128ssimple
-1 3 9999 8 5 : sphincsshake256192frobust : sphincsshake256192frobust
-1 3 9999 8 6 : sphincsshake256192fsimple : sphincsshake256192fsimple
-1 3 9999 8 7 : sphincsshake256192srobust : sphincsshake256192srobust
-1 3 9999 8 8 : sphincsshake256192ssimple : sphincsshake256192ssimple
-1 3 9999 8 9 : sphincsshake256256frobust : sphincsshake256256frobust
-1 3 9999 8 10 : sphincsshake256256fsimple : sphincsshake256256fsimple
-1 3 9999 8 11 : sphincsshake256256srobust : sphincsshake256256srobust
-1 3 9999 8 12 : sphincsshake256256ssimple : sphincsshake256256ssimple
+1 3 9999 5 1 1 : rainbowIaclassic : rainbowIaclassic
+1 3 9999 5 1 4 : rainbowIacyclic : rainbowIacyclic
+1 3 9999 5 1 7 : rainbowIacycliccompressed : rainbowIacycliccompressed
+1 3 9999 5 2 1 : rainbowIIIcclassic : rainbowIIIcclassic
+1 3 9999 5 2 3 : rainbowIIIccyclic : rainbowIIIccyclic
+1 3 9999 5 2 5 : rainbowIIIccycliccompressed : rainbowIIIccycliccompressed
+1 3 9999 5 3 1 : rainbowVcclassic : rainbowVcclassic
+1 3 9999 5 3 3 : rainbowVccyclic : rainbowVccyclic
+1 3 9999 5 3 5 : rainbowVccycliccompressed : rainbowVccycliccompressed
+1 3 9999 6 1 1 : sphincsharaka128frobust : sphincsharaka128frobust
+1 3 9999 6 1 4 : sphincsharaka128fsimple : sphincsharaka128fsimple
+1 3 9999 6 1 7 : sphincsharaka128srobust : sphincsharaka128srobust
+1 3 9999 6 1 10 : sphincsharaka128ssimple : sphincsharaka128ssimple
+1 3 9999 6 2 1 : sphincsharaka192frobust : sphincsharaka192frobust
+1 3 9999 6 2 3 : sphincsharaka192fsimple : sphincsharaka192fsimple
+1 3 9999 6 2 5 : sphincsharaka192srobust : sphincsharaka192srobust
+1 3 9999 6 2 7 : sphincsharaka192ssimple : sphincsharaka192ssimple
+1 3 9999 6 3 1 : sphincsharaka256frobust : sphincsharaka256frobust
+1 3 9999 6 3 3 : sphincsharaka256fsimple : sphincsharaka256fsimple
+1 3 9999 6 3 5 : sphincsharaka256srobust : sphincsharaka256srobust
+1 3 9999 6 3 7 : sphincsharaka256ssimple : sphincsharaka256ssimple
+1 3 9999 6 4 1 : sphincssha256128frobust : sphincssha256128frobust
+1 3 9999 6 4 4 : sphincssha256128fsimple : sphincssha256128fsimple
+1 3 9999 6 4 7 : sphincssha256128srobust : sphincssha256128srobust
+1 3 9999 6 4 10 : sphincssha256128ssimple : sphincssha256128ssimple
+1 3 9999 6 5 1 : sphincssha256192frobust : sphincssha256192frobust
+1 3 9999 6 5 3 : sphincssha256192fsimple : sphincssha256192fsimple
+1 3 9999 6 5 5 : sphincssha256192srobust : sphincssha256192srobust
+1 3 9999 6 5 7 : sphincssha256192ssimple : sphincssha256192ssimple
+1 3 9999 6 6 1 : sphincssha256256frobust : sphincssha256256frobust
+1 3 9999 6 6 3 : sphincssha256256fsimple : sphincssha256256fsimple
+1 3 9999 6 6 5 : sphincssha256256srobust : sphincssha256256srobust
+1 3 9999 6 6 7 : sphincssha256256ssimple : sphincssha256256ssimple
+1 3 9999 6 7 1 : sphincsshake256128frobust : sphincsshake256128frobust
+1 3 9999 6 7 4 : sphincsshake256128fsimple : sphincsshake256128fsimple
+1 3 9999 6 7 7 : sphincsshake256128srobust : sphincsshake256128srobust
+1 3 9999 6 7 10 : sphincsshake256128ssimple : sphincsshake256128ssimple
+1 3 9999 6 8 1 : sphincsshake256192frobust : sphincsshake256192frobust
+1 3 9999 6 8 3 : sphincsshake256192fsimple : sphincsshake256192fsimple
+1 3 9999 6 8 5 : sphincsshake256192srobust : sphincsshake256192srobust
+1 3 9999 6 8 7 : sphincsshake256192ssimple : sphincsshake256192ssimple
+1 3 9999 6 9 1 : sphincsshake256256frobust : sphincsshake256256frobust
+1 3 9999 6 9 3 : sphincsshake256256fsimple : sphincsshake256256fsimple
+1 3 9999 6 9 5 : sphincsshake256256srobust : sphincsshake256256srobust
+1 3 9999 6 9 7 : sphincsshake256256ssimple : sphincsshake256256ssimple
 ##### OQS_TEMPLATE_FRAGMENT_ASSIGN_OIDS_END
