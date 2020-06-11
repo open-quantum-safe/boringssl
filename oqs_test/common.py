@@ -2,7 +2,7 @@ import psutil
 import subprocess
 import time
 
-SERVER_START_TIMEOUT = 100
+SERVER_START_ATTEMPTS = 60
 
 kex_to_nid = {
 ##### OQS_TEMPLATE_FRAGMENT_MAP_KEM_TO_NID_START
@@ -164,28 +164,32 @@ def start_server(bssl, bssl_shim, sig_alg):
 
     server_info = psutil.Process(server.pid)
 
-    # Wait SERVER_START_TIMEOUT seconds
-    # for server to bind to port.
-    timeout_start = time.time()
-    while time.time() < timeout_start + SERVER_START_TIMEOUT:
+    # Try SERVER_START_ATTEMPTS times to see
+    # what port the server is bound to.
+    server_start_attempt = 1
+    while server_start_attempt <= SERVER_START_ATTEMPTS:
         if server_info.connections():
             break
+        else:
+            server_start_attempt += 1
+            time.sleep(2)
     server_port = str(server_info.connections()[0].laddr.port)
 
-    # Wait SERVER_START_TIMEOUT seconds
-    # for server to be responsive.
-    server_up = False
-    timeout_start = time.time()
-    while time.time() < timeout_start + SERVER_START_TIMEOUT:
+    # Check SERVER_START_ATTEMPTS times to see
+    # if the server is responsive.
+    server_start_attempt = 1
+    while server_start_attempt <= SERVER_START_ATTEMPTS:
         result = subprocess.run([bssl_shim, '-port', server_port, '-shim-shuts-down'],
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.STDOUT)
-        if result.returncode == 0: #Server should be responsive now
-            server_up = True
+        if result.returncode == 0:
             break
+        else:
+            server_start_attempt += 1
+            time.sleep(2)
 
-    if not server_up:
-        raise Exception('Cannot start bssl server')
+    if server_start_attempt > SERVER_START_ATTEMPTS:
+        raise Exception('Cannot start OpenSSL server')
 
     return server, server_port
 
