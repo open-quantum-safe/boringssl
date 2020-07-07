@@ -957,7 +957,6 @@ dilithium2		966
 dilithium3		967
 dilithium4		968
 picnicl1fs		969
-picnic2l1fs		970
 qteslapi		971
 qteslapiii		972
 oqs_kem_default		973
@@ -1043,8 +1042,6 @@ falcon1024		1056
 mqdss3148		1057
 mqdss3164		1058
 picnicl1ur		1059
-picnic2l3fs		1060
-picnic2l5fs		1061
 rainbowIaclassic		1062
 rainbowIacyclic		1063
 rainbowIacycliccompressed		1064
@@ -1091,3 +1088,6 @@ sphincsshake256256fsimple		1104
 sphincsshake256256srobust		1105
 sphincsshake256256ssimple		1106
 p384_ntru_hrss701		1107
+picnic3l1		1108
+picnic3l3		1109
+picnic3l5		1110

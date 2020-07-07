@@ -86,9 +86,9 @@ bool ssl_is_key_type_supported(int key_type) {
          key_type == EVP_PKEY_MQDSS3164 ||
          key_type == EVP_PKEY_PICNICL1FS ||
          key_type == EVP_PKEY_PICNICL1UR ||
-         key_type == EVP_PKEY_PICNIC2L1FS ||
-         key_type == EVP_PKEY_PICNIC2L3FS ||
-         key_type == EVP_PKEY_PICNIC2L5FS ||
+         key_type == EVP_PKEY_PICNIC3L1 ||
+         key_type == EVP_PKEY_PICNIC3L3 ||
+         key_type == EVP_PKEY_PICNIC3L5 ||
          key_type == EVP_PKEY_QTESLAPI ||
          key_type == EVP_PKEY_QTESLAPIII ||
          key_type == EVP_PKEY_RAINBOWIACLASSIC ||
@@ -196,9 +196,9 @@ static const SSL_SIGNATURE_ALGORITHM kSignatureAlgorithms[] = {
     {SSL_SIGN_MQDSS3164, EVP_PKEY_MQDSS3164, NID_undef, &EVP_sha384, false},
     {SSL_SIGN_PICNICL1FS, EVP_PKEY_PICNICL1FS, NID_undef, &EVP_sha256, false},
     {SSL_SIGN_PICNICL1UR, EVP_PKEY_PICNICL1UR, NID_undef, &EVP_sha256, false},
-    {SSL_SIGN_PICNIC2L1FS, EVP_PKEY_PICNIC2L1FS, NID_undef, &EVP_sha256, false},
-    {SSL_SIGN_PICNIC2L3FS, EVP_PKEY_PICNIC2L3FS, NID_undef, &EVP_sha384, false},
-    {SSL_SIGN_PICNIC2L5FS, EVP_PKEY_PICNIC2L5FS, NID_undef, &EVP_sha384, false},
+    {SSL_SIGN_PICNIC3L1, EVP_PKEY_PICNIC3L1, NID_undef, &EVP_sha256, false},
+    {SSL_SIGN_PICNIC3L3, EVP_PKEY_PICNIC3L3, NID_undef, &EVP_sha256, false},
+    {SSL_SIGN_PICNIC3L5, EVP_PKEY_PICNIC3L5, NID_undef, &EVP_sha256, false},
     {SSL_SIGN_QTESLAPI, EVP_PKEY_QTESLAPI, NID_undef, &EVP_sha256, false},
     {SSL_SIGN_QTESLAPIII, EVP_PKEY_QTESLAPIII, NID_undef, &EVP_sha384, false},
     {SSL_SIGN_RAINBOWIACLASSIC, EVP_PKEY_RAINBOWIACLASSIC, NID_undef, &EVP_sha256, false},
@@ -588,9 +588,9 @@ static const struct {
     {SSL_SIGN_MQDSS3164, "mqdss3164"},
     {SSL_SIGN_PICNICL1FS, "picnicl1fs"},
     {SSL_SIGN_PICNICL1UR, "picnicl1ur"},
-    {SSL_SIGN_PICNIC2L1FS, "picnic2l1fs"},
-    {SSL_SIGN_PICNIC2L3FS, "picnic2l3fs"},
-    {SSL_SIGN_PICNIC2L5FS, "picnic2l5fs"},
+    {SSL_SIGN_PICNIC3L1, "picnic3l1"},
+    {SSL_SIGN_PICNIC3L3, "picnic3l3"},
+    {SSL_SIGN_PICNIC3L5, "picnic3l5"},
     {SSL_SIGN_QTESLAPI, "qteslapi"},
     {SSL_SIGN_QTESLAPIII, "qteslapiii"},
     {SSL_SIGN_RAINBOWIACLASSIC, "rainbowIaclassic"},
@@ -722,9 +722,9 @@ static constexpr struct {
     {EVP_PKEY_MQDSS3164, NID_sha384, SSL_SIGN_MQDSS3164},
     {EVP_PKEY_PICNICL1FS, NID_sha256, SSL_SIGN_PICNICL1FS},
     {EVP_PKEY_PICNICL1UR, NID_sha256, SSL_SIGN_PICNICL1UR},
-    {EVP_PKEY_PICNIC2L1FS, NID_sha256, SSL_SIGN_PICNIC2L1FS},
-    {EVP_PKEY_PICNIC2L3FS, NID_sha384, SSL_SIGN_PICNIC2L3FS},
-    {EVP_PKEY_PICNIC2L5FS, NID_sha384, SSL_SIGN_PICNIC2L5FS},
+    {EVP_PKEY_PICNIC3L1, NID_sha256, SSL_SIGN_PICNIC3L1},
+    {EVP_PKEY_PICNIC3L3, NID_sha256, SSL_SIGN_PICNIC3L3},
+    {EVP_PKEY_PICNIC3L5, NID_sha256, SSL_SIGN_PICNIC3L5},
     {EVP_PKEY_QTESLAPI, NID_sha256, SSL_SIGN_QTESLAPI},
     {EVP_PKEY_QTESLAPIII, NID_sha384, SSL_SIGN_QTESLAPIII},
     {EVP_PKEY_RAINBOWIACLASSIC, NID_sha256, SSL_SIGN_RAINBOWIACLASSIC},

@@ -1451,9 +1451,9 @@ secg-scheme 14 3 : dhSinglePass-cofactorDH-sha512kdf-scheme
 1 3 9999 4 4 : mqdss3164 : mqdss3164
 1 3 6 1 4 1 311 89 2 1 1 : picnicl1fs : picnicl1fs
 1 3 6 1 4 1 311 89 2 1 4 : picnicl1ur : picnicl1ur
-1 3 6 1 4 1 311 89 2 1 11 : picnic2l1fs : picnic2l1fs
-1 3 6 1 4 1 311 89 2 1 14 : picnic2l3fs : picnic2l3fs
-1 3 6 1 4 1 311 89 2 1 16 : picnic2l5fs : picnic2l5fs
+1 3 6 1 4 1 311 89 2 1 21 : picnic3l1 : picnic3l1
+1 3 6 1 4 1 311 89 2 1 24 : picnic3l3 : picnic3l3
+1 3 6 1 4 1 311 89 2 1 26 : picnic3l5 : picnic3l5
 1 3 6 1 4 1 311 89 2 2 10 : qteslapi : qteslapi
 1 3 6 1 4 1 311 89 2 2 20 : qteslapiii : qteslapiii
 1 3 9999 5 1 1 : rainbowIaclassic : rainbowIaclassic

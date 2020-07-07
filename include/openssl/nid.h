@@ -4277,11 +4277,6 @@ extern "C" {
 #define NID_picnicl1fs 969
 #define OBJ_picnicl1fs 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 1L, 1L
 
-#define SN_picnic2l1fs "picnic2l1fs"
-#define LN_picnic2l1fs "picnic2l1fs"
-#define NID_picnic2l1fs 970
-#define OBJ_picnic2l1fs 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 1L, 11L
-
 #define SN_qteslapi "qteslapi"
 #define LN_qteslapi "qteslapi"
 #define NID_qteslapi 971
@@ -4553,16 +4548,6 @@ extern "C" {
 #define NID_picnicl1ur 1059
 #define OBJ_picnicl1ur 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 1L, 4L
 
-#define SN_picnic2l3fs "picnic2l3fs"
-#define LN_picnic2l3fs "picnic2l3fs"
-#define NID_picnic2l3fs 1060
-#define OBJ_picnic2l3fs 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 1L, 14L
-
-#define SN_picnic2l5fs "picnic2l5fs"
-#define LN_picnic2l5fs "picnic2l5fs"
-#define NID_picnic2l5fs 1061
-#define OBJ_picnic2l5fs 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 1L, 16L
-
 #define SN_rainbowIaclassic "rainbowIaclassic"
 #define LN_rainbowIaclassic "rainbowIaclassic"
 #define NID_rainbowIaclassic 1062
@@ -4790,6 +4775,21 @@ extern "C" {
 
 #define SN_p384_ntru_hrss701 "p384_ntru_hrss701"
 #define NID_p384_ntru_hrss701 1107
+
+#define SN_picnic3l1 "picnic3l1"
+#define LN_picnic3l1 "picnic3l1"
+#define NID_picnic3l1 1108
+#define OBJ_picnic3l1 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 1L, 21L
+
+#define SN_picnic3l3 "picnic3l3"
+#define LN_picnic3l3 "picnic3l3"
+#define NID_picnic3l3 1109
+#define OBJ_picnic3l3 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 1L, 24L
+
+#define SN_picnic3l5 "picnic3l5"
+#define LN_picnic3l5 "picnic3l5"
+#define NID_picnic3l5 1110
+#define OBJ_picnic3l5 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 1L, 26L
 
 
 #if defined(__cplusplus)

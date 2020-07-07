@@ -285,26 +285,26 @@ sigs:
     code_point: '0xfe18'
     claimed_security_level: '1'
   -
-    name: 'picnic2l1fs'
-    oid: '1 3 6 1 4 1 311 89 2 1 11'
-    oid_encoded: '0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x59, 0x02, 0x01, 0x0B'
-    oqs_meth: 'OQS_SIG_alg_picnic2_L1_FS'
+    name: 'picnic3l1'
+    oid: "1 3 6 1 4 1 311 89 2 1 21"
+    oid_encoded: '0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x59, 0x02, 0x01, 0x15'
+    oqs_meth: "OQS_SIG_alg_picnic3_L1"
     code_point: '0xfe1b'
     claimed_security_level: '1'
   -
-    name: 'picnic2l3fs'
-    oid: '1 3 6 1 4 1 311 89 2 1 14'
-    oid_encoded: '0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x59, 0x02, 0x01, 0x0E'
-    oqs_meth: 'OQS_SIG_alg_picnic2_L3_FS'
+    name: 'picnic3l3'
+    oid: "1 3 6 1 4 1 311 89 2 1 24"
+    oid_encoded: '0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x59, 0x02, 0x01, 0x18'
+    oqs_meth: "OQS_SIG_alg_picnic3_L3"
     code_point: '0xfe1e'
-    claimed_security_level: '3'
+    claimed_security_level: '1'
   -
-    name: 'picnic2l5fs'
-    oid: '1 3 6 1 4 1 311 89 2 1 16'
-    oid_encoded: '0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x59, 0x02, 0x01, 0x10'
-    oqs_meth: 'OQS_SIG_alg_picnic2_L5_FS'
+    name: 'picnic3l5'
+    oid: "1 3 6 1 4 1 311 89 2 1 26"
+    oid_encoded: '0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x59, 0x02, 0x01, 0x1a'
+    oqs_meth: "OQS_SIG_alg_picnic3_L5"
     code_point: '0xfe20'
-    claimed_security_level: '3'
+    claimed_security_level: '1'
   -
     name: 'qteslapi'
     oid: '1 3 6 1 4 1 311 89 2 2 10'

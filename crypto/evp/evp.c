@@ -231,12 +231,12 @@ static const EVP_PKEY_ASN1_METHOD *evp_pkey_asn1_find(int nid) {
       return &picnicl1fs_asn1_meth;
     case EVP_PKEY_PICNICL1UR:
       return &picnicl1ur_asn1_meth;
-    case EVP_PKEY_PICNIC2L1FS:
-      return &picnic2l1fs_asn1_meth;
-    case EVP_PKEY_PICNIC2L3FS:
-      return &picnic2l3fs_asn1_meth;
-    case EVP_PKEY_PICNIC2L5FS:
-      return &picnic2l5fs_asn1_meth;
+    case EVP_PKEY_PICNIC3L1:
+      return &picnic3l1_asn1_meth;
+    case EVP_PKEY_PICNIC3L3:
+      return &picnic3l3_asn1_meth;
+    case EVP_PKEY_PICNIC3L5:
+      return &picnic3l5_asn1_meth;
     case EVP_PKEY_QTESLAPI:
       return &qteslapi_asn1_meth;
     case EVP_PKEY_QTESLAPIII:
