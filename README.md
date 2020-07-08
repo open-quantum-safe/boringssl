@@ -123,7 +123,7 @@ git clone --branch master https://github.com/open-quantum-safe/boringssl.git <BO
 The following instructions will download and build liboqs, then install it to `<BORINGSSL_DIR>/oqs`.
 
 ```
-git clone --branch master https://github.com/open-quantum-safe/liboqs.git
+git clone --branch 0.3.0 --single-branch --depth 1 https://github.com/open-quantum-safe/liboqs.git
 cd liboqs
 mkdir build && cd build
 cmake -G"Ninja" -DCMAKE_INSTALL_PREFIX=<BORINGSSL_DIR>/oqs -DOQS_USE_OPENSSL=OFF ..
