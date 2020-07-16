@@ -68,8 +68,8 @@ static int ALG##_pkey_keygen(EVP_PKEY_CTX *ctx, EVP_PKEY *pkey) {       \
 }
 
 static int pkey_oqs_sign_message(EVP_PKEY_CTX *ctx, uint8_t *sig,
-                                     size_t *siglen, const uint8_t *tbs,
-                                     size_t tbslen) {
+                                 size_t *siglen, const uint8_t *tbs,
+                                 size_t tbslen) {
   OQS_KEY *key = ctx->pkey->pkey.ptr;
   if (!key->has_private) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_NOT_A_PRIVATE_KEY);
@@ -94,8 +94,8 @@ static int pkey_oqs_sign_message(EVP_PKEY_CTX *ctx, uint8_t *sig,
 }
 
 static int pkey_oqs_verify_message(EVP_PKEY_CTX *ctx, const uint8_t *sig,
-                                       size_t siglen, const uint8_t *tbs,
-                                       size_t tbslen) {
+                                   size_t siglen, const uint8_t *tbs,
+                                   size_t tbslen) {
   OQS_KEY *key = ctx->pkey->pkey.ptr;
   if (siglen > key->ctx->length_signature ||
       OQS_SIG_verify(key->ctx, tbs, tbslen, sig, siglen, key->pub) != OQS_SUCCESS) {
