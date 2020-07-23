@@ -240,6 +240,8 @@ OPENSSL_EXPORT EC_KEY *EVP_PKEY_get1_EC_KEY(const EVP_PKEY *pkey);
 #define EVP_PKEY_SPHINCSSHAKE256256FSIMPLE NID_sphincsshake256256fsimple
 #define EVP_PKEY_SPHINCSSHAKE256256SROBUST NID_sphincsshake256256srobust
 #define EVP_PKEY_SPHINCSSHAKE256256SSIMPLE NID_sphincsshake256256ssimple
+
+#define IS_OQS_PKEY(pkey_id) ( (pkey_id >= NID_oqs_sig_default) && (pkey_id <= NID_sphincsshake256256ssimple) )
 ///// OQS_TEMPLATE_FRAGMENT_DEFINE_EVP_PKEYS_END
 
 // EVP_PKEY_assign sets the underlying key of |pkey| to |key|, which must be of

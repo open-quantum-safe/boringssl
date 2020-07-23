@@ -2,3 +2,5 @@
 #define EVP_PKEY_{{ sig['name']|upper }} NID_{{ sig['name'] }}
 {%- endfor %}
 
+#define IS_OQS_PKEY(pkey_id) ( (pkey_id >= NID_{{ (config['sigs']|first)['name'] }}) && (pkey_id <= NID_{{ (config['sigs']|last)['name'] }}) )
+
