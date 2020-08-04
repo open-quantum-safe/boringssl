@@ -210,6 +210,36 @@ kems:
     nid: '0x0231'
     mix_with: [{'name': 'p521', 'mix_nid':'0x2F31', 'nid':'SSL_CURVE_SECP521R1'}]
     oqs_meth: 'OQS_KEM_alg_threebears_papabear_ephem'
+  -
+    name: 'hqc128_1_cca2'
+    nid: '0x0232'
+    mix_with: [{'name': 'p256', 'mix_nid':'0x2F32', 'nid':'SSL_CURVE_SECP256R1'}]
+    oqs_meth: 'OQS_KEM_alg_hqc_128_1_cca2'
+  -
+    name: 'hqc192_1_cca2'
+    nid: '0x0233'
+    mix_with: [{'name': 'p384', 'mix_nid':'0x2F33', 'nid':'SSL_CURVE_SECP384R1'}]
+    oqs_meth: 'OQS_KEM_alg_hqc_192_1_cca2'
+  -
+    name: 'hqc192_2_cca2'
+    nid: '0x0234'
+    mix_with: [{'name': 'p384', 'mix_nid':'0x2F34', 'nid':'SSL_CURVE_SECP384R1'}]
+    oqs_meth: 'OQS_KEM_alg_hqc_192_2_cca2'
+  -
+    name: 'hqc256_1_cca2'
+    nid: '0x0235'
+    mix_with: [{'name': 'p521', 'mix_nid':'0x2F35', 'nid':'SSL_CURVE_SECP521R1'}]
+    oqs_meth: 'OQS_KEM_alg_hqc_256_1_cca2'
+  -
+    name: 'hqc256_2_cca2'
+    nid: '0x0236'
+    mix_with: [{'name': 'p521', 'mix_nid':'0x2F36', 'nid':'SSL_CURVE_SECP521R1'}]
+    oqs_meth: 'OQS_KEM_alg_hqc_256_2_cca2'
+  -
+    name: 'hqc256_3_cca2'
+    nid: '0x0237'
+    mix_with: [{'name': 'p521', 'mix_nid':'0x2F37', 'nid':'SSL_CURVE_SECP521R1'}]
+    oqs_meth: 'OQS_KEM_alg_hqc_256_3_cca2'
 
 # N.B: Code points and OIDs must match those used
 # in OQS-OpenSSL 1.1.1 for interoperability.

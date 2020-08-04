@@ -1882,6 +1882,42 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
         case SSL_CURVE_P521_PAPABEAREPHEM:
           nids.push_back(NID_p521_papabearephem);
           break;
+        case SSL_CURVE_HQC128_1_CCA2:
+          nids.push_back(NID_hqc128_1_cca2);
+          break;
+        case SSL_CURVE_P256_HQC128_1_CCA2:
+          nids.push_back(NID_p256_hqc128_1_cca2);
+          break;
+        case SSL_CURVE_HQC192_1_CCA2:
+          nids.push_back(NID_hqc192_1_cca2);
+          break;
+        case SSL_CURVE_P384_HQC192_1_CCA2:
+          nids.push_back(NID_p384_hqc192_1_cca2);
+          break;
+        case SSL_CURVE_HQC192_2_CCA2:
+          nids.push_back(NID_hqc192_2_cca2);
+          break;
+        case SSL_CURVE_P384_HQC192_2_CCA2:
+          nids.push_back(NID_p384_hqc192_2_cca2);
+          break;
+        case SSL_CURVE_HQC256_1_CCA2:
+          nids.push_back(NID_hqc256_1_cca2);
+          break;
+        case SSL_CURVE_P521_HQC256_1_CCA2:
+          nids.push_back(NID_p521_hqc256_1_cca2);
+          break;
+        case SSL_CURVE_HQC256_2_CCA2:
+          nids.push_back(NID_hqc256_2_cca2);
+          break;
+        case SSL_CURVE_P521_HQC256_2_CCA2:
+          nids.push_back(NID_p521_hqc256_2_cca2);
+          break;
+        case SSL_CURVE_HQC256_3_CCA2:
+          nids.push_back(NID_hqc256_3_cca2);
+          break;
+        case SSL_CURVE_P521_HQC256_3_CCA2:
+          nids.push_back(NID_p521_hqc256_3_cca2);
+          break;
 ///// OQS_TEMPLATE_FRAGMENT_ADD_NIDS_END
       }
       if (!SSL_set1_curves(ssl.get(), &nids[0], nids.size())) {
@@ -1934,6 +1970,12 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
         NID_babybearephem, NID_p256_babybearephem,
         NID_mamabearephem, NID_p384_mamabearephem,
         NID_papabearephem, NID_p521_papabearephem,
+        NID_hqc128_1_cca2, NID_p256_hqc128_1_cca2,
+        NID_hqc192_1_cca2, NID_p384_hqc192_1_cca2,
+        NID_hqc192_2_cca2, NID_p384_hqc192_2_cca2,
+        NID_hqc256_1_cca2, NID_p521_hqc256_1_cca2,
+        NID_hqc256_2_cca2, NID_p521_hqc256_2_cca2,
+        NID_hqc256_3_cca2, NID_p521_hqc256_3_cca2,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_PQ_CURVEIDS_END
     };
     if (!SSL_set1_curves(ssl.get(), kAllCurves,

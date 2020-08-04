@@ -1092,3 +1092,15 @@ picnic3l1		1108
 picnic3l3		1109
 picnic3l5		1110
 picnicl1full		1111
+hqc128_1_cca2		1112
+p256_hqc128_1_cca2		1113
+hqc192_1_cca2		1114
+p384_hqc192_1_cca2		1115
+hqc192_2_cca2		1116
+p384_hqc192_2_cca2		1117
+hqc256_1_cca2		1118
+p521_hqc256_1_cca2		1119
+hqc256_2_cca2		1120
+p521_hqc256_2_cca2		1121
+hqc256_3_cca2		1122
+p521_hqc256_3_cca2		1123

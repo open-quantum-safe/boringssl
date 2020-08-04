@@ -699,6 +699,48 @@ static const CurveTest kCurveTests[] = {
       SSL_CURVE_P521_PAPABEAREPHEM,
     },
   },
+  {
+    "hqc128_1_cca2:p256_hqc128_1_cca2",
+    {
+      SSL_CURVE_HQC128_1_CCA2,
+      SSL_CURVE_P256_HQC128_1_CCA2,
+    },
+  },
+  {
+    "hqc192_1_cca2:p384_hqc192_1_cca2",
+    {
+      SSL_CURVE_HQC192_1_CCA2,
+      SSL_CURVE_P384_HQC192_1_CCA2,
+    },
+  },
+  {
+    "hqc192_2_cca2:p384_hqc192_2_cca2",
+    {
+      SSL_CURVE_HQC192_2_CCA2,
+      SSL_CURVE_P384_HQC192_2_CCA2,
+    },
+  },
+  {
+    "hqc256_1_cca2:p521_hqc256_1_cca2",
+    {
+      SSL_CURVE_HQC256_1_CCA2,
+      SSL_CURVE_P521_HQC256_1_CCA2,
+    },
+  },
+  {
+    "hqc256_2_cca2:p521_hqc256_2_cca2",
+    {
+      SSL_CURVE_HQC256_2_CCA2,
+      SSL_CURVE_P521_HQC256_2_CCA2,
+    },
+  },
+  {
+    "hqc256_3_cca2:p521_hqc256_3_cca2",
+    {
+      SSL_CURVE_HQC256_3_CCA2,
+      SSL_CURVE_P521_HQC256_3_CCA2,
+    },
+  },
 ///// OQS_TEMPLATE_FRAGMENT_ADD_CURVETEST_END
 };
 

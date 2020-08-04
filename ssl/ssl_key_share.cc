@@ -617,6 +617,18 @@ CONSTEXPR_ARRAY NamedGroup kNamedGroups[] = {
     {NID_p384_mamabearephem, SSL_CURVE_P384_MAMABEAREPHEM, "p384_mamabearephem", "p384_mamabearephem"},
     {NID_papabearephem, SSL_CURVE_PAPABEAREPHEM, "papabearephem", "papabearephem"},
     {NID_p521_papabearephem, SSL_CURVE_P521_PAPABEAREPHEM, "p521_papabearephem", "p521_papabearephem"},
+    {NID_hqc128_1_cca2, SSL_CURVE_HQC128_1_CCA2, "hqc128_1_cca2", "hqc128_1_cca2"},
+    {NID_p256_hqc128_1_cca2, SSL_CURVE_P256_HQC128_1_CCA2, "p256_hqc128_1_cca2", "p256_hqc128_1_cca2"},
+    {NID_hqc192_1_cca2, SSL_CURVE_HQC192_1_CCA2, "hqc192_1_cca2", "hqc192_1_cca2"},
+    {NID_p384_hqc192_1_cca2, SSL_CURVE_P384_HQC192_1_CCA2, "p384_hqc192_1_cca2", "p384_hqc192_1_cca2"},
+    {NID_hqc192_2_cca2, SSL_CURVE_HQC192_2_CCA2, "hqc192_2_cca2", "hqc192_2_cca2"},
+    {NID_p384_hqc192_2_cca2, SSL_CURVE_P384_HQC192_2_CCA2, "p384_hqc192_2_cca2", "p384_hqc192_2_cca2"},
+    {NID_hqc256_1_cca2, SSL_CURVE_HQC256_1_CCA2, "hqc256_1_cca2", "hqc256_1_cca2"},
+    {NID_p521_hqc256_1_cca2, SSL_CURVE_P521_HQC256_1_CCA2, "p521_hqc256_1_cca2", "p521_hqc256_1_cca2"},
+    {NID_hqc256_2_cca2, SSL_CURVE_HQC256_2_CCA2, "hqc256_2_cca2", "hqc256_2_cca2"},
+    {NID_p521_hqc256_2_cca2, SSL_CURVE_P521_HQC256_2_CCA2, "p521_hqc256_2_cca2", "p521_hqc256_2_cca2"},
+    {NID_hqc256_3_cca2, SSL_CURVE_HQC256_3_CCA2, "hqc256_3_cca2", "hqc256_3_cca2"},
+    {NID_p521_hqc256_3_cca2, SSL_CURVE_P521_HQC256_3_CCA2, "p521_hqc256_3_cca2", "p521_hqc256_3_cca2"},
 ///// OQS_TEMPLATE_FRAGMENT_DEF_NAMEDGROUPS_END
 };
 
@@ -1043,6 +1055,66 @@ UniquePtr<SSLKeyShare> SSLKeyShare::Create(uint16_t group_id) {
     case SSL_CURVE_P521_PAPABEAREPHEM:
       if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_threebears_papabear_ephem))
           return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P521_PAPABEAREPHEM, SSL_CURVE_SECP521R1, OQS_KEM_alg_threebears_papabear_ephem));
+      else
+          return nullptr;
+    case SSL_CURVE_HQC128_1_CCA2:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_hqc_128_1_cca2))
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_HQC128_1_CCA2, OQS_KEM_alg_hqc_128_1_cca2));
+      else
+          return nullptr;
+    case SSL_CURVE_P256_HQC128_1_CCA2:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_hqc_128_1_cca2))
+          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P256_HQC128_1_CCA2, SSL_CURVE_SECP256R1, OQS_KEM_alg_hqc_128_1_cca2));
+      else
+          return nullptr;
+    case SSL_CURVE_HQC192_1_CCA2:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_hqc_192_1_cca2))
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_HQC192_1_CCA2, OQS_KEM_alg_hqc_192_1_cca2));
+      else
+          return nullptr;
+    case SSL_CURVE_P384_HQC192_1_CCA2:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_hqc_192_1_cca2))
+          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P384_HQC192_1_CCA2, SSL_CURVE_SECP384R1, OQS_KEM_alg_hqc_192_1_cca2));
+      else
+          return nullptr;
+    case SSL_CURVE_HQC192_2_CCA2:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_hqc_192_2_cca2))
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_HQC192_2_CCA2, OQS_KEM_alg_hqc_192_2_cca2));
+      else
+          return nullptr;
+    case SSL_CURVE_P384_HQC192_2_CCA2:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_hqc_192_2_cca2))
+          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P384_HQC192_2_CCA2, SSL_CURVE_SECP384R1, OQS_KEM_alg_hqc_192_2_cca2));
+      else
+          return nullptr;
+    case SSL_CURVE_HQC256_1_CCA2:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_hqc_256_1_cca2))
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_HQC256_1_CCA2, OQS_KEM_alg_hqc_256_1_cca2));
+      else
+          return nullptr;
+    case SSL_CURVE_P521_HQC256_1_CCA2:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_hqc_256_1_cca2))
+          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P521_HQC256_1_CCA2, SSL_CURVE_SECP521R1, OQS_KEM_alg_hqc_256_1_cca2));
+      else
+          return nullptr;
+    case SSL_CURVE_HQC256_2_CCA2:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_hqc_256_2_cca2))
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_HQC256_2_CCA2, OQS_KEM_alg_hqc_256_2_cca2));
+      else
+          return nullptr;
+    case SSL_CURVE_P521_HQC256_2_CCA2:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_hqc_256_2_cca2))
+          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P521_HQC256_2_CCA2, SSL_CURVE_SECP521R1, OQS_KEM_alg_hqc_256_2_cca2));
+      else
+          return nullptr;
+    case SSL_CURVE_HQC256_3_CCA2:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_hqc_256_3_cca2))
+          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_HQC256_3_CCA2, OQS_KEM_alg_hqc_256_3_cca2));
+      else
+          return nullptr;
+    case SSL_CURVE_P521_HQC256_3_CCA2:
+      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_hqc_256_3_cca2))
+          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P521_HQC256_3_CCA2, SSL_CURVE_SECP521R1, OQS_KEM_alg_hqc_256_3_cca2));
       else
           return nullptr;
 ///// OQS_TEMPLATE_FRAGMENT_HANDLE_GROUP_IDS_END

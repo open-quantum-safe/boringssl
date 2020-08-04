@@ -1438,6 +1438,18 @@ secg-scheme 14 3 : dhSinglePass-cofactorDH-sha512kdf-scheme
  : p384_mamabearephem
  : papabearephem
  : p521_papabearephem
+ : hqc128_1_cca2
+ : p256_hqc128_1_cca2
+ : hqc192_1_cca2
+ : p384_hqc192_1_cca2
+ : hqc192_2_cca2
+ : p384_hqc192_2_cca2
+ : hqc256_1_cca2
+ : p521_hqc256_1_cca2
+ : hqc256_2_cca2
+ : p521_hqc256_2_cca2
+ : hqc256_3_cca2
+ : p521_hqc256_3_cca2
 ##### OQS_TEMPLATE_FRAGMENT_DEF_NIDS_END
 
 ##### OQS_TEMPLATE_FRAGMENT_ASSIGN_OIDS_START

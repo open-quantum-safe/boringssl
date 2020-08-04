@@ -86,6 +86,18 @@ kex_to_nid = {
         'p384_mamabearephem': '12080',
         'papabearephem': '561',
         'p521_papabearephem': '12081',
+        'hqc128_1_cca2': '562',
+        'p256_hqc128_1_cca2': '12082',
+        'hqc192_1_cca2': '563',
+        'p384_hqc192_1_cca2': '12083',
+        'hqc192_2_cca2': '564',
+        'p384_hqc192_2_cca2': '12084',
+        'hqc256_1_cca2': '565',
+        'p521_hqc256_1_cca2': '12085',
+        'hqc256_2_cca2': '566',
+        'p521_hqc256_2_cca2': '12086',
+        'hqc256_3_cca2': '567',
+        'p521_hqc256_3_cca2': '12087',
 ##### OQS_TEMPLATE_FRAGMENT_MAP_KEM_TO_NID_END
 }
 

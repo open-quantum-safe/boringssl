@@ -4796,6 +4796,42 @@ extern "C" {
 #define NID_picnicl1full 1111
 #define OBJ_picnicl1full 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 1L, 7L
 
+#define SN_hqc128_1_cca2 "hqc128_1_cca2"
+#define NID_hqc128_1_cca2 1112
+
+#define SN_p256_hqc128_1_cca2 "p256_hqc128_1_cca2"
+#define NID_p256_hqc128_1_cca2 1113
+
+#define SN_hqc192_1_cca2 "hqc192_1_cca2"
+#define NID_hqc192_1_cca2 1114
+
+#define SN_p384_hqc192_1_cca2 "p384_hqc192_1_cca2"
+#define NID_p384_hqc192_1_cca2 1115
+
+#define SN_hqc192_2_cca2 "hqc192_2_cca2"
+#define NID_hqc192_2_cca2 1116
+
+#define SN_p384_hqc192_2_cca2 "p384_hqc192_2_cca2"
+#define NID_p384_hqc192_2_cca2 1117
+
+#define SN_hqc256_1_cca2 "hqc256_1_cca2"
+#define NID_hqc256_1_cca2 1118
+
+#define SN_p521_hqc256_1_cca2 "p521_hqc256_1_cca2"
+#define NID_p521_hqc256_1_cca2 1119
+
+#define SN_hqc256_2_cca2 "hqc256_2_cca2"
+#define NID_hqc256_2_cca2 1120
+
+#define SN_p521_hqc256_2_cca2 "p521_hqc256_2_cca2"
+#define NID_p521_hqc256_2_cca2 1121
+
+#define SN_hqc256_3_cca2 "hqc256_3_cca2"
+#define NID_hqc256_3_cca2 1122
+
+#define SN_p521_hqc256_3_cca2 "p521_hqc256_3_cca2"
+#define NID_p521_hqc256_3_cca2 1123
+
 
 #if defined(__cplusplus)
 } /* extern C */
