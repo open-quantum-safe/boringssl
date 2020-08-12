@@ -539,20 +539,6 @@ static const CurveTest kCurveTests[] = {
     },
   },
   {
-    "newhope512cca:p256_newhope512cca",
-    {
-      SSL_CURVE_NEWHOPE512CCA,
-      SSL_CURVE_P256_NEWHOPE512CCA,
-    },
-  },
-  {
-    "newhope1024cca:p521_newhope1024cca",
-    {
-      SSL_CURVE_NEWHOPE1024CCA,
-      SSL_CURVE_P521_NEWHOPE1024CCA,
-    },
-  },
-  {
     "ntru_hps2048509:p256_ntru_hps2048509",
     {
       SSL_CURVE_NTRU_HPS2048509,
@@ -655,48 +641,6 @@ static const CurveTest kCurveTests[] = {
     {
       SSL_CURVE_SIKEP751,
       SSL_CURVE_P521_SIKEP751,
-    },
-  },
-  {
-    "babybear:p256_babybear",
-    {
-      SSL_CURVE_BABYBEAR,
-      SSL_CURVE_P256_BABYBEAR,
-    },
-  },
-  {
-    "mamabear:p384_mamabear",
-    {
-      SSL_CURVE_MAMABEAR,
-      SSL_CURVE_P384_MAMABEAR,
-    },
-  },
-  {
-    "papabear:p521_papabear",
-    {
-      SSL_CURVE_PAPABEAR,
-      SSL_CURVE_P521_PAPABEAR,
-    },
-  },
-  {
-    "babybearephem:p256_babybearephem",
-    {
-      SSL_CURVE_BABYBEAREPHEM,
-      SSL_CURVE_P256_BABYBEAREPHEM,
-    },
-  },
-  {
-    "mamabearephem:p384_mamabearephem",
-    {
-      SSL_CURVE_MAMABEAREPHEM,
-      SSL_CURVE_P384_MAMABEAREPHEM,
-    },
-  },
-  {
-    "papabearephem:p521_papabearephem",
-    {
-      SSL_CURVE_PAPABEAREPHEM,
-      SSL_CURVE_P521_PAPABEAREPHEM,
     },
   },
   {
@@ -4445,10 +4389,6 @@ TEST(SSLTest, SignatureAlgorithmProperties) {
             SSL_get_signature_algorithm_key_type(SSL_SIGN_FALCON512));
   EXPECT_EQ(EVP_PKEY_FALCON1024,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_FALCON1024));
-  EXPECT_EQ(EVP_PKEY_MQDSS3148,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_MQDSS3148));
-  EXPECT_EQ(EVP_PKEY_MQDSS3164,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_MQDSS3164));
   EXPECT_EQ(EVP_PKEY_PICNICL1FS,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_PICNICL1FS));
   EXPECT_EQ(EVP_PKEY_PICNICL1UR,
@@ -4461,10 +4401,6 @@ TEST(SSLTest, SignatureAlgorithmProperties) {
             SSL_get_signature_algorithm_key_type(SSL_SIGN_PICNIC3L3));
   EXPECT_EQ(EVP_PKEY_PICNIC3L5,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_PICNIC3L5));
-  EXPECT_EQ(EVP_PKEY_QTESLAPI,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_QTESLAPI));
-  EXPECT_EQ(EVP_PKEY_QTESLAPIII,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_QTESLAPIII));
   EXPECT_EQ(EVP_PKEY_RAINBOWIACLASSIC,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_RAINBOWIACLASSIC));
   EXPECT_EQ(EVP_PKEY_RAINBOWIACYCLIC,
@@ -4863,16 +4799,12 @@ TEST(SSLTest, SigAlgs) {
       {{NID_sha384, EVP_PKEY_DILITHIUM4}, true, {SSL_SIGN_DILITHIUM4}},
       {{NID_sha256, EVP_PKEY_FALCON512}, true, {SSL_SIGN_FALCON512}},
       {{NID_sha512, EVP_PKEY_FALCON1024}, true, {SSL_SIGN_FALCON1024}},
-      {{NID_sha256, EVP_PKEY_MQDSS3148}, true, {SSL_SIGN_MQDSS3148}},
-      {{NID_sha384, EVP_PKEY_MQDSS3164}, true, {SSL_SIGN_MQDSS3164}},
       {{NID_sha256, EVP_PKEY_PICNICL1FS}, true, {SSL_SIGN_PICNICL1FS}},
       {{NID_sha256, EVP_PKEY_PICNICL1UR}, true, {SSL_SIGN_PICNICL1UR}},
       {{NID_sha256, EVP_PKEY_PICNICL1FULL}, true, {SSL_SIGN_PICNICL1FULL}},
       {{NID_sha256, EVP_PKEY_PICNIC3L1}, true, {SSL_SIGN_PICNIC3L1}},
       {{NID_sha384, EVP_PKEY_PICNIC3L3}, true, {SSL_SIGN_PICNIC3L3}},
       {{NID_sha512, EVP_PKEY_PICNIC3L5}, true, {SSL_SIGN_PICNIC3L5}},
-      {{NID_sha256, EVP_PKEY_QTESLAPI}, true, {SSL_SIGN_QTESLAPI}},
-      {{NID_sha384, EVP_PKEY_QTESLAPIII}, true, {SSL_SIGN_QTESLAPIII}},
       {{NID_sha256, EVP_PKEY_RAINBOWIACLASSIC}, true, {SSL_SIGN_RAINBOWIACLASSIC}},
       {{NID_sha256, EVP_PKEY_RAINBOWIACYCLIC}, true, {SSL_SIGN_RAINBOWIACYCLIC}},
       {{NID_sha256, EVP_PKEY_RAINBOWIACYCLICCOMPRESSED}, true, {SSL_SIGN_RAINBOWIACYCLICCOMPRESSED}},
@@ -4981,16 +4913,12 @@ TEST(SSLTest, SigAlgsList) {
       {"dilithium4", true, {SSL_SIGN_DILITHIUM4}},
       {"falcon512", true, {SSL_SIGN_FALCON512}},
       {"falcon1024", true, {SSL_SIGN_FALCON1024}},
-      {"mqdss3148", true, {SSL_SIGN_MQDSS3148}},
-      {"mqdss3164", true, {SSL_SIGN_MQDSS3164}},
       {"picnicl1fs", true, {SSL_SIGN_PICNICL1FS}},
       {"picnicl1ur", true, {SSL_SIGN_PICNICL1UR}},
       {"picnicl1full", true, {SSL_SIGN_PICNICL1FULL}},
       {"picnic3l1", true, {SSL_SIGN_PICNIC3L1}},
       {"picnic3l3", true, {SSL_SIGN_PICNIC3L3}},
       {"picnic3l5", true, {SSL_SIGN_PICNIC3L5}},
-      {"qteslapi", true, {SSL_SIGN_QTESLAPI}},
-      {"qteslapiii", true, {SSL_SIGN_QTESLAPIII}},
       {"rainbowIaclassic", true, {SSL_SIGN_RAINBOWIACLASSIC}},
       {"rainbowIacyclic", true, {SSL_SIGN_RAINBOWIACYCLIC}},
       {"rainbowIacycliccompressed", true, {SSL_SIGN_RAINBOWIACYCLICCOMPRESSED}},

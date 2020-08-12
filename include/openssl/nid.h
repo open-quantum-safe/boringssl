@@ -4277,16 +4277,6 @@ extern "C" {
 #define NID_picnicl1fs 969
 #define OBJ_picnicl1fs 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 1L, 1L
 
-#define SN_qteslapi "qteslapi"
-#define LN_qteslapi "qteslapi"
-#define NID_qteslapi 971
-#define OBJ_qteslapi 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 2L, 10L
-
-#define SN_qteslapiii "qteslapiii"
-#define LN_qteslapiii "qteslapiii"
-#define NID_qteslapiii 972
-#define OBJ_qteslapiii 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 2L, 20L
-
 #define SN_oqs_kem_default "oqs_kem_default"
 #define NID_oqs_kem_default 973
 
@@ -4388,18 +4378,6 @@ extern "C" {
 #define SN_p521_kyber90s1024 "p521_kyber90s1024"
 #define NID_p521_kyber90s1024 1008
 
-#define SN_newhope512cca "newhope512cca"
-#define NID_newhope512cca 1009
-
-#define SN_p256_newhope512cca "p256_newhope512cca"
-#define NID_p256_newhope512cca 1010
-
-#define SN_newhope1024cca "newhope1024cca"
-#define NID_newhope1024cca 1011
-
-#define SN_p521_newhope1024cca "p521_newhope1024cca"
-#define NID_p521_newhope1024cca 1012
-
 #define SN_ntru_hps2048509 "ntru_hps2048509"
 #define NID_ntru_hps2048509 1013
 
@@ -4487,42 +4465,6 @@ extern "C" {
 #define SN_p521_sikep751 "p521_sikep751"
 #define NID_p521_sikep751 1042
 
-#define SN_babybear "babybear"
-#define NID_babybear 1043
-
-#define SN_p256_babybear "p256_babybear"
-#define NID_p256_babybear 1044
-
-#define SN_mamabear "mamabear"
-#define NID_mamabear 1045
-
-#define SN_p384_mamabear "p384_mamabear"
-#define NID_p384_mamabear 1046
-
-#define SN_papabear "papabear"
-#define NID_papabear 1047
-
-#define SN_p521_papabear "p521_papabear"
-#define NID_p521_papabear 1048
-
-#define SN_babybearephem "babybearephem"
-#define NID_babybearephem 1049
-
-#define SN_p256_babybearephem "p256_babybearephem"
-#define NID_p256_babybearephem 1050
-
-#define SN_mamabearephem "mamabearephem"
-#define NID_mamabearephem 1051
-
-#define SN_p384_mamabearephem "p384_mamabearephem"
-#define NID_p384_mamabearephem 1052
-
-#define SN_papabearephem "papabearephem"
-#define NID_papabearephem 1053
-
-#define SN_p521_papabearephem "p521_papabearephem"
-#define NID_p521_papabearephem 1054
-
 #define SN_falcon512 "falcon512"
 #define LN_falcon512 "falcon512"
 #define NID_falcon512 1055
@@ -4532,16 +4474,6 @@ extern "C" {
 #define LN_falcon1024 "falcon1024"
 #define NID_falcon1024 1056
 #define OBJ_falcon1024 1L, 3L, 9999L, 3L, 4L
-
-#define SN_mqdss3148 "mqdss3148"
-#define LN_mqdss3148 "mqdss3148"
-#define NID_mqdss3148 1057
-#define OBJ_mqdss3148 1L, 3L, 9999L, 4L, 1L
-
-#define SN_mqdss3164 "mqdss3164"
-#define LN_mqdss3164 "mqdss3164"
-#define NID_mqdss3164 1058
-#define OBJ_mqdss3164 1L, 3L, 9999L, 4L, 4L
 
 #define SN_picnicl1ur "picnicl1ur"
 #define LN_picnicl1ur "picnicl1ur"

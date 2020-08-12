@@ -1392,10 +1392,6 @@ secg-scheme 14 3 : dhSinglePass-cofactorDH-sha512kdf-scheme
  : p384_kyber90s768
  : kyber90s1024
  : p521_kyber90s1024
- : newhope512cca
- : p256_newhope512cca
- : newhope1024cca
- : p521_newhope1024cca
  : ntru_hps2048509
  : p256_ntru_hps2048509
  : ntru_hps2048677
@@ -1426,18 +1422,6 @@ secg-scheme 14 3 : dhSinglePass-cofactorDH-sha512kdf-scheme
  : p384_sikep610
  : sikep751
  : p521_sikep751
- : babybear
- : p256_babybear
- : mamabear
- : p384_mamabear
- : papabear
- : p521_papabear
- : babybearephem
- : p256_babybearephem
- : mamabearephem
- : p384_mamabearephem
- : papabearephem
- : p521_papabearephem
  : hqc128_1_cca2
  : p256_hqc128_1_cca2
  : hqc192_1_cca2
@@ -1459,16 +1443,12 @@ secg-scheme 14 3 : dhSinglePass-cofactorDH-sha512kdf-scheme
 1 3 6 1 4 1 2 267 6 6 5 : dilithium4 : dilithium4
 1 3 9999 3 1 : falcon512 : falcon512
 1 3 9999 3 4 : falcon1024 : falcon1024
-1 3 9999 4 1 : mqdss3148 : mqdss3148
-1 3 9999 4 4 : mqdss3164 : mqdss3164
 1 3 6 1 4 1 311 89 2 1 1 : picnicl1fs : picnicl1fs
 1 3 6 1 4 1 311 89 2 1 4 : picnicl1ur : picnicl1ur
 1 3 6 1 4 1 311 89 2 1 7 : picnicl1full : picnicl1full
 1 3 6 1 4 1 311 89 2 1 21 : picnic3l1 : picnic3l1
 1 3 6 1 4 1 311 89 2 1 24 : picnic3l3 : picnic3l3
 1 3 6 1 4 1 311 89 2 1 26 : picnic3l5 : picnic3l5
-1 3 6 1 4 1 311 89 2 2 10 : qteslapi : qteslapi
-1 3 6 1 4 1 311 89 2 2 20 : qteslapiii : qteslapiii
 1 3 9999 5 1 1 : rainbowIaclassic : rainbowIaclassic
 1 3 9999 5 1 4 : rainbowIacyclic : rainbowIacyclic
 1 3 9999 5 1 7 : rainbowIacycliccompressed : rainbowIacycliccompressed

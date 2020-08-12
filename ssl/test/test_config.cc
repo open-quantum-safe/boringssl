@@ -1744,18 +1744,6 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
         case SSL_CURVE_P521_KYBER90S1024:
           nids.push_back(NID_p521_kyber90s1024);
           break;
-        case SSL_CURVE_NEWHOPE512CCA:
-          nids.push_back(NID_newhope512cca);
-          break;
-        case SSL_CURVE_P256_NEWHOPE512CCA:
-          nids.push_back(NID_p256_newhope512cca);
-          break;
-        case SSL_CURVE_NEWHOPE1024CCA:
-          nids.push_back(NID_newhope1024cca);
-          break;
-        case SSL_CURVE_P521_NEWHOPE1024CCA:
-          nids.push_back(NID_p521_newhope1024cca);
-          break;
         case SSL_CURVE_NTRU_HPS2048509:
           nids.push_back(NID_ntru_hps2048509);
           break;
@@ -1846,42 +1834,6 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
         case SSL_CURVE_P521_SIKEP751:
           nids.push_back(NID_p521_sikep751);
           break;
-        case SSL_CURVE_BABYBEAR:
-          nids.push_back(NID_babybear);
-          break;
-        case SSL_CURVE_P256_BABYBEAR:
-          nids.push_back(NID_p256_babybear);
-          break;
-        case SSL_CURVE_MAMABEAR:
-          nids.push_back(NID_mamabear);
-          break;
-        case SSL_CURVE_P384_MAMABEAR:
-          nids.push_back(NID_p384_mamabear);
-          break;
-        case SSL_CURVE_PAPABEAR:
-          nids.push_back(NID_papabear);
-          break;
-        case SSL_CURVE_P521_PAPABEAR:
-          nids.push_back(NID_p521_papabear);
-          break;
-        case SSL_CURVE_BABYBEAREPHEM:
-          nids.push_back(NID_babybearephem);
-          break;
-        case SSL_CURVE_P256_BABYBEAREPHEM:
-          nids.push_back(NID_p256_babybearephem);
-          break;
-        case SSL_CURVE_MAMABEAREPHEM:
-          nids.push_back(NID_mamabearephem);
-          break;
-        case SSL_CURVE_P384_MAMABEAREPHEM:
-          nids.push_back(NID_p384_mamabearephem);
-          break;
-        case SSL_CURVE_PAPABEAREPHEM:
-          nids.push_back(NID_papabearephem);
-          break;
-        case SSL_CURVE_P521_PAPABEAREPHEM:
-          nids.push_back(NID_p521_papabearephem);
-          break;
         case SSL_CURVE_HQC128_1_CCA2:
           nids.push_back(NID_hqc128_1_cca2);
           break;
@@ -1947,8 +1899,6 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
         NID_kyber90s512, NID_p256_kyber90s512,
         NID_kyber90s768, NID_p384_kyber90s768,
         NID_kyber90s1024, NID_p521_kyber90s1024,
-        NID_newhope512cca, NID_p256_newhope512cca,
-        NID_newhope1024cca, NID_p521_newhope1024cca,
         NID_ntru_hps2048509, NID_p256_ntru_hps2048509,
         NID_ntru_hps2048677, NID_p384_ntru_hps2048677,
         NID_ntru_hps4096821, NID_p521_ntru_hps4096821,
@@ -1964,12 +1914,6 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
         NID_sikep503, NID_p256_sikep503,
         NID_sikep610, NID_p384_sikep610,
         NID_sikep751, NID_p521_sikep751,
-        NID_babybear, NID_p256_babybear,
-        NID_mamabear, NID_p384_mamabear,
-        NID_papabear, NID_p521_papabear,
-        NID_babybearephem, NID_p256_babybearephem,
-        NID_mamabearephem, NID_p384_mamabearephem,
-        NID_papabearephem, NID_p521_papabearephem,
         NID_hqc128_1_cca2, NID_p256_hqc128_1_cca2,
         NID_hqc192_1_cca2, NID_p384_hqc192_1_cca2,
         NID_hqc192_2_cca2, NID_p384_hqc192_2_cca2,

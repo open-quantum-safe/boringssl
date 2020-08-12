@@ -90,17 +90,6 @@ kems:
     mix_with: [{'name': 'p521', 'mix_nid':'0x2F2B', 'nid':'SSL_CURVE_SECP521R1'}]
     oqs_meth: 'OQS_KEM_alg_kyber_1024_90s'
   -
-    name: 'newhope512cca'
-    nid: '0x0212'
-    mix_with: [{'name': 'p256', 'mix_nid':'0x2F12', 'nid':'SSL_CURVE_SECP256R1'}]
-    use_as_default_with: 'p256'
-    oqs_meth: 'OQS_KEM_alg_newhope_512cca'
-  -
-    name: 'newhope1024cca'
-    nid: '0x0213'
-    mix_with: [{'name': 'p521', 'mix_nid':'0x2F13', 'nid':'SSL_CURVE_SECP521R1'}]
-    oqs_meth: 'OQS_KEM_alg_newhope_1024cca'
-  -
     name: 'ntru_hps2048509'
     nid: '0x0214'
     mix_with: [{'name': 'p256', 'mix_nid':'0x2F14', 'nid':'SSL_CURVE_SECP256R1'}]
@@ -180,37 +169,6 @@ kems:
     mix_with: [{'name': 'p521', 'mix_nid':'0x2F22', 'nid':'SSL_CURVE_SECP521R1'}]
     oqs_meth: 'OQS_KEM_alg_sike_p751'
   -
-    name: 'babybear'
-    nid: '0x022C'
-    mix_with: [{'name': 'p256', 'mix_nid':'0x2F2C', 'nid':'SSL_CURVE_SECP256R1'}]
-    use_as_default_with: 'p256'
-    oqs_meth: 'OQS_KEM_alg_threebears_babybear'
-  -
-    name: 'mamabear'
-    nid: '0x022D'
-    mix_with: [{'name': 'p384', 'mix_nid':'0x2F2D', 'nid':'SSL_CURVE_SECP384R1'}]
-    oqs_meth: 'OQS_KEM_alg_threebears_mamabear'
-  -
-    name: 'papabear'
-    nid: '0x022E'
-    mix_with: [{'name': 'p521', 'mix_nid':'0x2F2E', 'nid':'SSL_CURVE_SECP521R1'}]
-    oqs_meth: 'OQS_KEM_alg_threebears_papabear'
-  -
-    name: 'babybearephem'
-    nid: '0x022F'
-    mix_with: [{'name': 'p256', 'mix_nid':'0x2F2F', 'nid':'SSL_CURVE_SECP256R1'}]
-    oqs_meth: 'OQS_KEM_alg_threebears_babybear_ephem'
-  -
-    name: 'mamabearephem'
-    nid: '0x0230'
-    mix_with: [{'name': 'p384', 'mix_nid':'0x2F30', 'nid':'SSL_CURVE_SECP384R1'}]
-    oqs_meth: 'OQS_KEM_alg_threebears_mamabear_ephem'
-  -
-    name: 'papabearephem'
-    nid: '0x0231'
-    mix_with: [{'name': 'p521', 'mix_nid':'0x2F31', 'nid':'SSL_CURVE_SECP521R1'}]
-    oqs_meth: 'OQS_KEM_alg_threebears_papabear_ephem'
-  -
     name: 'hqc128_1_cca2'
     nid: '0x0232'
     mix_with: [{'name': 'p256', 'mix_nid':'0x2F32', 'nid':'SSL_CURVE_SECP256R1'}]
@@ -287,20 +245,6 @@ sigs:
     code_point: '0xfe0e'
     claimed_security_level: '5'
   -
-    name: 'mqdss3148'
-    oid: "1 3 9999 4 1"
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x04, 0x01'
-    oqs_meth: 'OQS_SIG_alg_mqdss_31_48'
-    code_point: '0xfe10'
-    claimed_security_level: '1'
-  -
-    name: 'mqdss3164'
-    oid: "1 3 9999 4 4"
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x04, 0x04'
-    oqs_meth: 'OQS_SIG_alg_mqdss_31_64'
-    code_point: '0xfe13'
-    claimed_security_level: '3'
-  -
     name: 'picnicl1fs'
     oid: '1 3 6 1 4 1 311 89 2 1 1'
     oid_encoded: '0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x59, 0x02, 0x01, 0x01'
@@ -342,20 +286,6 @@ sigs:
     oqs_meth: "OQS_SIG_alg_picnic3_L5"
     code_point: '0xfe20'
     claimed_security_level: '5'
-  -
-    name: 'qteslapi'
-    oid: '1 3 6 1 4 1 311 89 2 2 10'
-    oid_encoded: '0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x59, 0x02, 0x02, 0x0A'
-    oqs_meth: 'OQS_SIG_alg_qTesla_p_I'
-    code_point: '0xfe22'
-    claimed_security_level: '1'
-  -
-    name: 'qteslapiii'
-    oid: '1 3 6 1 4 1 311 89 2 2 20'
-    oid_encoded: '0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x59, 0x02, 0x02, 0x14'
-    oqs_meth: 'OQS_SIG_alg_qTesla_p_III'
-    code_point: '0xfe25'
-    claimed_security_level: '3'
   -
     name: 'rainbowIaclassic'
     oid: '1 3 9999 5 1 1'

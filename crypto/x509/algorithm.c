@@ -92,16 +92,12 @@ int x509_digest_sign_algorithm(EVP_MD_CTX *ctx, X509_ALGOR *algor) {
       pkey_id == EVP_PKEY_DILITHIUM4 ||
       pkey_id == EVP_PKEY_FALCON512 ||
       pkey_id == EVP_PKEY_FALCON1024 ||
-      pkey_id == EVP_PKEY_MQDSS3148 ||
-      pkey_id == EVP_PKEY_MQDSS3164 ||
       pkey_id == EVP_PKEY_PICNICL1FS ||
       pkey_id == EVP_PKEY_PICNICL1UR ||
       pkey_id == EVP_PKEY_PICNICL1FULL ||
       pkey_id == EVP_PKEY_PICNIC3L1 ||
       pkey_id == EVP_PKEY_PICNIC3L3 ||
       pkey_id == EVP_PKEY_PICNIC3L5 ||
-      pkey_id == EVP_PKEY_QTESLAPI ||
-      pkey_id == EVP_PKEY_QTESLAPIII ||
       pkey_id == EVP_PKEY_RAINBOWIACLASSIC ||
       pkey_id == EVP_PKEY_RAINBOWIACYCLIC ||
       pkey_id == EVP_PKEY_RAINBOWIACYCLICCOMPRESSED ||

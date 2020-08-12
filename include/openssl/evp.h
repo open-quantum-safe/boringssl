@@ -185,16 +185,12 @@ OPENSSL_EXPORT EC_KEY *EVP_PKEY_get1_EC_KEY(const EVP_PKEY *pkey);
 #define EVP_PKEY_DILITHIUM4 NID_dilithium4
 #define EVP_PKEY_FALCON512 NID_falcon512
 #define EVP_PKEY_FALCON1024 NID_falcon1024
-#define EVP_PKEY_MQDSS3148 NID_mqdss3148
-#define EVP_PKEY_MQDSS3164 NID_mqdss3164
 #define EVP_PKEY_PICNICL1FS NID_picnicl1fs
 #define EVP_PKEY_PICNICL1UR NID_picnicl1ur
 #define EVP_PKEY_PICNICL1FULL NID_picnicl1full
 #define EVP_PKEY_PICNIC3L1 NID_picnic3l1
 #define EVP_PKEY_PICNIC3L3 NID_picnic3l3
 #define EVP_PKEY_PICNIC3L5 NID_picnic3l5
-#define EVP_PKEY_QTESLAPI NID_qteslapi
-#define EVP_PKEY_QTESLAPIII NID_qteslapiii
 #define EVP_PKEY_RAINBOWIACLASSIC NID_rainbowIaclassic
 #define EVP_PKEY_RAINBOWIACYCLIC NID_rainbowIacyclic
 #define EVP_PKEY_RAINBOWIACYCLICCOMPRESSED NID_rainbowIacycliccompressed
