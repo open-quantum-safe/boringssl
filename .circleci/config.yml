@@ -1,6 +1,9 @@
-version: 2
+version: 2.1
 
-# TODO: Add psutil to CI images.
+parameters:
+  run_downstream_tests:
+    type: boolean
+    default: false
 
 # CircleCI doesn't handle large file sets properly for local builds
 # https://github.com/CircleCI-Public/circleci-cli/issues/281#issuecomment-472808051
@@ -12,57 +15,62 @@ localCheckout: &localCheckout
     git ls-files -z | xargs -0 -s 2090860 tar -c | tar -x -C ${PROJECT_PATH}
     cp -a /tmp/_circleci_local_build_repo/.git ${PROJECT_PATH}
 
-.boringssl_job: &boringssljob
-  docker:
-    - image: ${IMAGE}
-  steps:
-    - checkout # change this from "checkout" to "*localCheckout" when running CircleCI locally
-    - run:
-        name: Clone liboqs
-        command: git clone --branch master --single-branch --depth 1 https://github.com/open-quantum-safe/liboqs.git
-    - run:
-        name: Build liboqs
-        command: .circleci/git_no_checkin_in_last_day.sh || (cd liboqs && mkdir build && cd build && cmake .. -G"Ninja" -DBUILD_SHARED_LIBS=${LIBOQS_SHARED} -DOQS_USE_OPENSSL=OFF -DOQS_BUILD_ONLY_LIB=ON -DCMAKE_INSTALL_PREFIX=../../oqs && ninja install)
-    - run:
-        name: Build BoringSSL
-        command: .circleci/git_no_checkin_in_last_day.sh || (mkdir build && cd build && cmake .. -G"Ninja" -DBUILD_SHARED_LIBS=${BORINGSSL_SHARED} -DLIBOQS_SHARED=${LIBOQS_SHARED} && ninja -j15)
-    - run:
-        name: Run BoringSSL tests
-        command: .circleci/git_no_checkin_in_last_day.sh || ninja -C build run_tests
-    - run:
-        name: Run OQS connection tests
-        command: .circleci/git_no_checkin_in_last_day.sh || ninja -C build run_full_oqs_tests
-    - store_test_results: # Note that this command will fail when running CircleCI locally, that is expected behaviour
-        path: oqs-test/tmp/test-results
-
 jobs:
-  ubuntu_bionic-static_oqs-static_bssl:
-    <<: *boringssljob
-    environment:
-      IMAGE: openquantumsafe/ci-ubuntu-bionic-x86_64:latest
-      LIBOQS_SHARED: OFF
-      BORINGSSL_SHARED: OFF
-  ubuntu_bionic-shared_oqs-shared_bssl:
-    <<: *boringssljob
-    environment:
-      IMAGE: openquantumsafe/ci-ubuntu-bionic-x86_64:latest
-      LIBOQS_SHARED: ON
-      BORINGSSL_SHARED: ON
+    ubuntu_bionic:
+      description: A template for running BoringSSL tests on x64 Ubuntu Bionic Docker VMs
+      parameters:
+        LIBOQS_SHARED:
+          description: "Build liboqs as a shared library."
+          type: boolean
+          default: false
+        BORINGSSL_SHARED:
+          description: "Build BoringSSL as a shared library."
+          type: boolean
+          default: false
+      docker:
+        - image: openquantumsafe/ci-ubuntu-bionic-x86_64:latest
+      steps:
+        - checkout # change this from "checkout" to "*localCheckout" when running CircleCI locally
+        - run:
+            name: Clone liboqs
+            command: git clone --branch master --single-branch --depth 1 https://github.com/open-quantum-safe/liboqs.git
+        - run:
+            name: Build liboqs
+            command: mkdir build && cd build && cmake .. -G"Ninja" -DBUILD_SHARED_LIBS=<< parameters.LIBOQS_SHARED >> -DOQS_USE_OPENSSL=OFF -DOQS_BUILD_ONLY_LIB=ON -DCMAKE_INSTALL_PREFIX=../../oqs && ninja install
+            working_directory: liboqs
+        - run:
+            name: Configure BoringSSL
+            command: mkdir build && cd build && source ~/.bashrc && cmake -GNinja -DBUILD_SHARED_LIBS=<< parameters.BORINGSSL_SHARED >> -DLIBOQS_SHARED=<< parameters.LIBOQS_SHARED >> .. && cmake -LA ..
+        - run:
+            name: Build BoringSSL
+            # More build processes exhaust memory on CircleCI
+            command: ninja -j15
+            working_directory: build
+        - run:
+            name: Run BoringSSL tests
+            command: ninja run_tests
+            working_directory: build
+        - run:
+            name: Run OQS connection tests
+            command: ninja run_full_oqs_tests
+            working_directory: build
+        - store_test_results: # Note that this command will fail when running CircleCI locally, that is expected behaviour
+            path: oqs-test/tmp/test-results
 
 workflows:
-  version: 2
+  version: 2.1
   build:
+    when:
+      # Run jobs when it's a development branch/PR (and therefore not master) OR
+      # when a new commit in liboqs-master explicitly triggers CI on master
+      or:
+        - not:
+            equal: [ master, << pipeline.git.branch >> ]
+        - equal: [ true, << pipeline.parameters.run_downstream_tests >> ]
     jobs:
-      - ubuntu_bionic-static_oqs-static_bssl
-      - ubuntu_bionic-shared_oqs-shared_bssl
-  nightly:
-    triggers:
-      - schedule:
-          cron: "0 3 * * *"
-          filters:
-            branches:
-              only:
-                - master
-    jobs:
-      - ubuntu_bionic-static_oqs-static_bssl
-      - ubuntu_bionic-shared_oqs-shared_bssl
+      - ubuntu_bionic:
+          name: static_oqs-static_bssl
+      - ubuntu_bionic:
+          name: shared_oqs-shared_bssl
+          LIBOQS_SHARED: true
+          BORINGSSL_SHARED: true
