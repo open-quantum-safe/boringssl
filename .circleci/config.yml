@@ -56,11 +56,8 @@ jobs:
             command: ninja run_tests
             working_directory: build
         - run:
-            name: Run OQS connection tests
-            command: ninja run_full_oqs_tests
-            working_directory: build
-        - store_test_results: # Note that this command will fail when running CircleCI locally, that is expected behaviour
-            path: oqs-test/tmp/test-results
+            name: Check that we have the bssl server and client syntax right
+            command: python3 oqs_try_handshake.py
 
 workflows:
   version: 2.1

@@ -104,7 +104,7 @@ We regularly test the fork on Ubuntu 18.04 and above. Support for other platform
 On **Ubuntu**, you need to install the following packages:
 
 ```
-sudo apt install cmake gcc ninja libunwind-dev pkg-config python3 python3-pytest python3-psutil python3-pytest-xdist
+sudo apt install cmake gcc ninja libunwind-dev pkg-config python3 python3-psutil
 ```
 
 You will also need the latest version of the toolchain for the Go programming language, available [here](https://golang.org/dl/)
@@ -120,7 +120,7 @@ git clone --branch master https://github.com/open-quantum-safe/boringssl.git <BO
 The following instructions will download and build liboqs, then install it to `<BORINGSSL_DIR>/oqs`.
 
 ```
-git clone --branch 0.3.0 --single-branch --depth 1 https://github.com/open-quantum-safe/liboqs.git
+git clone --branch 0.4.0 --single-branch --depth 1 https://github.com/open-quantum-safe/liboqs.git
 cd liboqs
 mkdir build && cd build
 cmake -G"Ninja" -DCMAKE_INSTALL_PREFIX=<BORINGSSL_DIR>/oqs -DOQS_USE_OPENSSL=OFF ..
@@ -146,10 +146,7 @@ The fork can also be built with shared libraries, to do so, run `cmake -DBUILD_S
 
 #### Step 3: Run tests
 
-To execute the white-box and black-box tests that come with BoringSSL, execute `ninja run_tests` from the `build` directory. These exclude the OQS key-exchange and digital signature algorithms, which can be tested using `ninja run_basic_oqs_tests` and `ninja run_full_oqs_tests`:
-
-- `ninja run_basic_oqs_tests` first tests all key-exchanges with the signature set to `oqs_sigdefault`, and then tests all signatures with the key-exchange algorithm set to `oqs_kemdefault`.
-- `ninja run_full_oqs_tests` tests all possible combinations of OQS key-exchange and signature schemes.
+To execute the white-box and black-box tests that come with BoringSSL as well the tests for OQS key-exchange and digital signature algorithms, execute `ninja run_tests` from the `build` directory.
 
 ### Running
 
@@ -171,7 +168,9 @@ In another terminal window, you can run a TLS client requesting one of the suppo
 tool/bssl client -curves <KEX> -connect localhost:4433
 ```
 
-where `<KEX>` = one of the quantum-safe or hybrid key exchange algorithms listed in the [Supported Algorithms](#supported-algorithms) section above.
+where `<KEX>` is one of the quantum-safe or hybrid key exchange algorithms listed in the [Supported Algorithms](#supported-algorithms) section above.
+
+You can also simply run `python3 oqs_try_handshake.py`, which will pick a random key-exchange and signature algorithm and will attempt a handshake between the TLS server and client with the chosen algorithms.
 
 ## Team
 

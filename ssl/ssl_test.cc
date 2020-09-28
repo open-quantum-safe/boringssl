@@ -6826,5 +6826,229 @@ TEST(SSLTest, CopyWithoutEarlyData) {
   EXPECT_EQ(session2.get(), session3.get());
 }
 
+// OQS note: The following test suite just runs sanity-checks, i.e.,
+// it ensures a basic handshake succeeds using OQS key-exchange and
+// signature algorithms.
+struct TLSGroup {
+  int nid;
+  uint16_t group_id;
+};
+
+static const TLSGroup kOQSGroups[] = {
+///// OQS_TEMPLATE_FRAGMENT_LIST_ALL_OQS_KEMS_START
+    {NID_oqs_kem_default, SSL_CURVE_OQS_KEM_DEFAULT},
+    {NID_bike1l1cpa, SSL_CURVE_BIKE1L1CPA},
+    {NID_bike1l3cpa, SSL_CURVE_BIKE1L3CPA},
+    {NID_bike1l1fo, SSL_CURVE_BIKE1L1FO},
+    {NID_bike1l3fo, SSL_CURVE_BIKE1L3FO},
+    {NID_frodo640aes, SSL_CURVE_FRODO640AES},
+    {NID_frodo640shake, SSL_CURVE_FRODO640SHAKE},
+    {NID_frodo976aes, SSL_CURVE_FRODO976AES},
+    {NID_frodo976shake, SSL_CURVE_FRODO976SHAKE},
+    {NID_frodo1344aes, SSL_CURVE_FRODO1344AES},
+    {NID_frodo1344shake, SSL_CURVE_FRODO1344SHAKE},
+    {NID_kyber512, SSL_CURVE_KYBER512},
+    {NID_kyber768, SSL_CURVE_KYBER768},
+    {NID_kyber1024, SSL_CURVE_KYBER1024},
+    {NID_kyber90s512, SSL_CURVE_KYBER90S512},
+    {NID_kyber90s768, SSL_CURVE_KYBER90S768},
+    {NID_kyber90s1024, SSL_CURVE_KYBER90S1024},
+    {NID_ntru_hps2048509, SSL_CURVE_NTRU_HPS2048509},
+    {NID_ntru_hps2048677, SSL_CURVE_NTRU_HPS2048677},
+    {NID_ntru_hps4096821, SSL_CURVE_NTRU_HPS4096821},
+    {NID_ntru_hrss701, SSL_CURVE_NTRU_HRSS701},
+    {NID_lightsaber, SSL_CURVE_LIGHTSABER},
+    {NID_saber, SSL_CURVE_SABER},
+    {NID_firesaber, SSL_CURVE_FIRESABER},
+    {NID_sidhp434, SSL_CURVE_SIDHP434},
+    {NID_sidhp503, SSL_CURVE_SIDHP503},
+    {NID_sidhp610, SSL_CURVE_SIDHP610},
+    {NID_sidhp751, SSL_CURVE_SIDHP751},
+    {NID_sikep434, SSL_CURVE_SIKEP434},
+    {NID_sikep503, SSL_CURVE_SIKEP503},
+    {NID_sikep610, SSL_CURVE_SIKEP610},
+    {NID_sikep751, SSL_CURVE_SIKEP751},
+    {NID_hqc128_1_cca2, SSL_CURVE_HQC128_1_CCA2},
+    {NID_hqc192_1_cca2, SSL_CURVE_HQC192_1_CCA2},
+    {NID_hqc192_2_cca2, SSL_CURVE_HQC192_2_CCA2},
+    {NID_hqc256_1_cca2, SSL_CURVE_HQC256_1_CCA2},
+    {NID_hqc256_2_cca2, SSL_CURVE_HQC256_2_CCA2},
+    {NID_hqc256_3_cca2, SSL_CURVE_HQC256_3_CCA2},
+///// OQS_TEMPLATE_FRAGMENT_LIST_ALL_OQS_KEMS_END
+};
+
+class OQSHandshakeTest : public ::testing::TestWithParam<int> {
+ protected:
+  OQSHandshakeTest(): sig_nid_(GetParam()) {
+    UniquePtr<EVP_PKEY> pkey(EVP_PKEY_new());
+
+    EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new_id(sig_nid_, NULL);
+
+    EVP_PKEY_keygen_init(ctx);
+
+    EVP_PKEY *pkey_ptr = pkey.get();
+    EVP_PKEY_keygen(ctx, &pkey_ptr);
+
+    UniquePtr<X509> cert(X509_new());
+    uint32_t serial;
+    RAND_bytes(reinterpret_cast<uint8_t*>(&serial), sizeof(serial));
+    ASN1_INTEGER_set(X509_get_serialNumber(cert.get()), serial >> 1);
+    X509_gmtime_adj(X509_get_notBefore(cert.get()), 0);
+    X509_gmtime_adj(X509_get_notAfter(cert.get()), 60 * 60 * 24 * 365);
+
+    X509_NAME* subject = X509_get_subject_name(cert.get());
+    X509_NAME_add_entry_by_txt(subject, "C", MBSTRING_ASC,
+                               reinterpret_cast<const uint8_t *>("US"), -1, -1,
+                               0);
+    X509_NAME_add_entry_by_txt(subject, "O", MBSTRING_ASC,
+                               reinterpret_cast<const uint8_t *>("BoringSSL"), -1,
+                               -1, 0);
+    X509_set_issuer_name(cert.get(), subject);
+
+    X509_set_pubkey(cert.get(), pkey.get());
+    X509_sign(cert.get(), pkey.get(), EVP_sha256());
+
+    key_ = UpRef(pkey);
+    cert_ = UpRef(cert);
+  }
+
+  void SetUp() {
+    bssl::UniquePtr<SSL_CTX> client_ctx(SSL_CTX_new(TLS_method()));
+    ASSERT_TRUE(client_ctx);
+    ASSERT_EQ(1, SSL_CTX_set_min_proto_version(client_ctx.get(), TLS1_3_VERSION));
+    ASSERT_EQ(1, SSL_CTX_set_max_proto_version(client_ctx.get(), TLS1_3_VERSION));
+
+    bssl::UniquePtr<SSL_CTX> server_ctx(SSL_CTX_new(TLS_method()));
+    ASSERT_TRUE(server_ctx);
+    ASSERT_EQ(1, SSL_CTX_set_min_proto_version(server_ctx.get(), TLS1_3_VERSION));
+    ASSERT_EQ(1, SSL_CTX_set_max_proto_version(server_ctx.get(), TLS1_3_VERSION));
+
+    ASSERT_TRUE(cert_);
+    ASSERT_TRUE(SSL_CTX_use_certificate(server_ctx.get(), cert_.get()));
+    ASSERT_TRUE(key_);
+    ASSERT_TRUE(SSL_CTX_use_PrivateKey(server_ctx.get(), key_.get()));
+
+    client_ctx_ = UpRef(client_ctx);
+    server_ctx_ = UpRef(server_ctx);
+  }
+
+  bool ResetConnection() {
+    bssl::UniquePtr<SSL> client(SSL_new(client_ctx_.get()));
+    bssl::UniquePtr<SSL> server(SSL_new(server_ctx_.get()));
+    if (!client || !server) {
+      return false;
+    }
+
+    SSL_set_connect_state(client.get());
+    SSL_set_accept_state(server.get());
+
+    BIO *bio1, *bio2;
+    if (!BIO_new_bio_pair(&bio1, 0, &bio2, 0)) {
+      return false;
+    }
+    // SSL_set_bio takes ownership.
+    SSL_set_bio(client.get(), bio1, bio1);
+    SSL_set_bio(server.get(), bio2, bio2);
+
+    client_ = std::move(client);
+    server_ = std::move(server);
+    return true;
+  }
+
+  bssl::UniquePtr<SSL> client_, server_;
+  bssl::UniquePtr<SSL_CTX> server_ctx_, client_ctx_;
+  bssl::UniquePtr<X509> cert_;
+  bssl::UniquePtr<EVP_PKEY> key_;
+  const int sig_nid_;
+};
+
+INSTANTIATE_TEST_SUITE_P(WithSignatureNIDs, OQSHandshakeTest,
+                         testing::Values(
+///// OQS_TEMPLATE_FRAGMENT_LIST_ALL_OQS_SIGS_START
+                            NID_oqs_sig_default,
+                            NID_dilithium2,
+                            NID_dilithium3,
+                            NID_dilithium4,
+                            NID_falcon512,
+                            NID_falcon1024,
+                            NID_picnicl1fs,
+                            NID_picnicl1ur,
+                            NID_picnicl1full,
+                            NID_picnic3l1,
+                            NID_picnic3l3,
+                            NID_picnic3l5,
+                            NID_rainbowIaclassic,
+                            NID_rainbowIacyclic,
+                            NID_rainbowIacycliccompressed,
+                            NID_rainbowIIIcclassic,
+                            NID_rainbowIIIccyclic,
+                            NID_rainbowIIIccycliccompressed,
+                            NID_rainbowVcclassic,
+                            NID_rainbowVccyclic,
+                            NID_rainbowVccycliccompressed,
+                            NID_sphincsharaka128frobust,
+                            NID_sphincsharaka128fsimple,
+                            NID_sphincsharaka128srobust,
+                            NID_sphincsharaka128ssimple,
+                            NID_sphincsharaka192frobust,
+                            NID_sphincsharaka192fsimple,
+                            NID_sphincsharaka192srobust,
+                            NID_sphincsharaka192ssimple,
+                            NID_sphincsharaka256frobust,
+                            NID_sphincsharaka256fsimple,
+                            NID_sphincsharaka256srobust,
+                            NID_sphincsharaka256ssimple,
+                            NID_sphincssha256128frobust,
+                            NID_sphincssha256128fsimple,
+                            NID_sphincssha256128srobust,
+                            NID_sphincssha256128ssimple,
+                            NID_sphincssha256192frobust,
+                            NID_sphincssha256192fsimple,
+                            NID_sphincssha256192srobust,
+                            NID_sphincssha256192ssimple,
+                            NID_sphincssha256256frobust,
+                            NID_sphincssha256256fsimple,
+                            NID_sphincssha256256srobust,
+                            NID_sphincssha256256ssimple,
+                            NID_sphincsshake256128frobust,
+                            NID_sphincsshake256128fsimple,
+                            NID_sphincsshake256128srobust,
+                            NID_sphincsshake256128ssimple,
+                            NID_sphincsshake256192frobust,
+                            NID_sphincsshake256192fsimple,
+                            NID_sphincsshake256192srobust,
+                            NID_sphincsshake256192ssimple,
+                            NID_sphincsshake256256frobust,
+                            NID_sphincsshake256256fsimple,
+                            NID_sphincsshake256256srobust,
+                            NID_sphincsshake256256ssimple
+///// OQS_TEMPLATE_FRAGMENT_LIST_ALL_OQS_SIGS_END
+                         ));
+
+TEST_P(OQSHandshakeTest, AllKemSignatureTests) {
+  for (const TLSGroup &group: kOQSGroups) {
+    // Set up the client and server state.
+    ASSERT_TRUE(ResetConnection());
+
+    ASSERT_TRUE(SSL_set1_curves(client_.get(), &group.nid, 1));
+
+      // Execute the handshake
+    ASSERT_TRUE(CompleteHandshakes(client_.get(), server_.get()));
+
+    // Ensure handshake went as expected for the client
+    ASSERT_EQ(SSL_version(client_.get()), TLS1_3_VERSION);
+
+    uint16_t peer_sigalg =
+       SSL_get_peer_signature_algorithm(client_.get());
+    ASSERT_EQ(sig_nid_, SSL_get_signature_algorithm_key_type(peer_sigalg));
+
+    bssl::UniquePtr<X509> actual_server_cert(SSL_get_peer_certificate(client_.get()));
+    ASSERT_TRUE(actual_server_cert);
+    ASSERT_EQ(X509_cmp(cert_.get(), actual_server_cert.get()), 0);
+
+    ASSERT_EQ(group.group_id, SSL_get_curve_id(client_.get()));
+  }
+}
+
 }  // namespace
 BSSL_NAMESPACE_END

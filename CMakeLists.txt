@@ -644,17 +644,3 @@ add_custom_target(
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     DEPENDS all_tests bssl_shim handshaker
     ${MAYBE_USES_TERMINAL})
-
-add_custom_target(
-    run_basic_oqs_tests
-    COMMAND python3 -m pytest --verbose test_tls_basic.py --bssl-shim=$<TARGET_FILE:bssl_shim> --bssl=$<TARGET_FILE:bssl> --numprocesses=auto
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/oqs_test
-    DEPENDS all_tests bssl_shim
-    ${MAYBE_USES_TERMINAL})
-
-add_custom_target(
-    run_full_oqs_tests
-    COMMAND python3 -m pytest --verbose test_tls_full.py --bssl-shim=$<TARGET_FILE:bssl_shim> --bssl=$<TARGET_FILE:bssl> --numprocesses=auto
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/oqs_test
-    DEPENDS all_tests bssl_shim
-    ${MAYBE_USES_TERMINAL})

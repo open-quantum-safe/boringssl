@@ -110,7 +110,8 @@ static bool LoadOCSPResponse(SSL_CTX *ctx, const char *filename) {
 }
 
 static bssl::UniquePtr<EVP_PKEY> MakeKeyPairForSelfSignedCert(int sig_alg_nid) {
-  // TODO: Add RSA 3072, Ed25519 (if needed)
+  // OQS note: We have modified this function to include support
+  // for our desired algorithms.
   bssl::UniquePtr<EVP_PKEY> evp_pkey(EVP_PKEY_new());
   if(sig_alg_nid == NID_secp224r1 ||
      sig_alg_nid == NID_X9_62_prime256v1 ||

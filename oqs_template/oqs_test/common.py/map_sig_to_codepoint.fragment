@@ -1,4 +1,0 @@
-{% for sig in config['sigs'] %}
-        '{{ sig['name'] }}': '{{ sig['code_point']|int(base=16) }}',
-{%- endfor %}
-
