@@ -1,10 +1,5 @@
 version: 2.1
 
-exclude_master: &exclude_master
-  filters:
-    branches:
-      ignore: master
-
 parameters:
   run_downstream_tests:
     type: boolean
@@ -34,6 +29,9 @@ jobs:
           default: false
       docker:
         - image: openquantumsafe/ci-ubuntu-bionic-x86_64:latest
+          auth:
+            username: $DOCKER_LOGIN
+            password: $DOCKER_PASSWORD
       steps:
         - checkout # change this from "checkout" to "*localCheckout" when running CircleCI locally
         - run:
@@ -64,11 +62,11 @@ workflows:
   build:
     jobs:
       - ubuntu_bionic:
-          <<: *exclude_master
           name: static_oqs-static_bssl
+          context: openquantumsafe
       - ubuntu_bionic:
-          <<: *exclude_master
           name: shared_oqs-shared_bssl
+          context: openquantumsafe
           LIBOQS_SHARED: true
           BORINGSSL_SHARED: true
   liboqs-commit:
@@ -78,7 +76,9 @@ workflows:
     jobs:
       - ubuntu_bionic:
           name: static_oqs-static_bssl
+          context: openquantumsafe
       - ubuntu_bionic:
           name: shared_oqs-shared_bssl
+          context: openquantumsafe
           LIBOQS_SHARED: true
           BORINGSSL_SHARED: true
