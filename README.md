@@ -104,7 +104,7 @@ We regularly test the fork on Ubuntu 18.04 and above. Support for other platform
 On **Ubuntu**, you need to install the following packages:
 
 ```
-sudo apt install cmake gcc ninja libunwind-dev pkg-config python3 python3-psutil
+sudo apt install cmake gcc ninja-build libunwind-dev pkg-config python3 python3-psutil
 ```
 
 You will also need the latest version of the toolchain for the Go programming language, available [here](https://golang.org/dl/)
