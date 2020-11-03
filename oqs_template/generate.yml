@@ -198,6 +198,37 @@ kems:
     nid: '0x0237'
     mix_with: [{'name': 'p521', 'mix_nid':'0x2F37', 'nid':'SSL_CURVE_SECP521R1'}]
     oqs_meth: 'OQS_KEM_alg_hqc_256_3_cca2'
+  -
+    name: 'ntrulpr653'
+    nid: '0x0238'
+    mix_with: [{'name': 'p256', 'mix_nid':'0x2F38', 'nid':'SSL_CURVE_SECP256R1'}]
+    oqs_meth: 'OQS_KEM_alg_ntruprime_ntrulpr653'
+  -
+    name: 'ntrulpr761'
+    nid: '0x0239'
+    mix_with: [{'name': 'p384', 'mix_nid':'0x2F39', 'nid':'SSL_CURVE_SECP384R1'}]
+    oqs_meth: 'OQS_KEM_alg_ntruprime_ntrulpr761'
+  -
+    name: 'ntrulpr857'
+    nid: '0x023A'
+    mix_with: [{'name': 'p384', 'mix_nid':'0x2F3A', 'nid':'SSL_CURVE_SECP384R1'}]
+    oqs_meth: 'OQS_KEM_alg_ntruprime_ntrulpr857'
+  -
+    name: 'sntrup653'
+    nid: '0x023B'
+    mix_with: [{'name': 'p256', 'mix_nid':'0x2F3B', 'nid':'SSL_CURVE_SECP256R1'}]
+    oqs_meth: 'OQS_KEM_alg_ntruprime_sntrup653'
+  -
+    name: 'sntrup761'
+    nid: '0x023C'
+    mix_with: [{'name': 'p384', 'mix_nid':'0x2F3C', 'nid':'SSL_CURVE_SECP384R1'}]
+    oqs_meth: 'OQS_KEM_alg_ntruprime_sntrup761'
+  -
+    name: 'sntrup857'
+    nid: '0x023D'
+    mix_with: [{'name': 'p384', 'mix_nid':'0x2F3D', 'nid':'SSL_CURVE_SECP384R1'}]
+    oqs_meth: 'OQS_KEM_alg_ntruprime_sntrup857'
+
 
 # N.B: Code points and OIDs must match those used
 # in OQS-OpenSSL 1.1.1 for interoperability.

@@ -685,6 +685,48 @@ static const CurveTest kCurveTests[] = {
       SSL_CURVE_P521_HQC256_3_CCA2,
     },
   },
+  {
+    "ntrulpr653:p256_ntrulpr653",
+    {
+      SSL_CURVE_NTRULPR653,
+      SSL_CURVE_P256_NTRULPR653,
+    },
+  },
+  {
+    "ntrulpr761:p384_ntrulpr761",
+    {
+      SSL_CURVE_NTRULPR761,
+      SSL_CURVE_P384_NTRULPR761,
+    },
+  },
+  {
+    "ntrulpr857:p384_ntrulpr857",
+    {
+      SSL_CURVE_NTRULPR857,
+      SSL_CURVE_P384_NTRULPR857,
+    },
+  },
+  {
+    "sntrup653:p256_sntrup653",
+    {
+      SSL_CURVE_SNTRUP653,
+      SSL_CURVE_P256_SNTRUP653,
+    },
+  },
+  {
+    "sntrup761:p384_sntrup761",
+    {
+      SSL_CURVE_SNTRUP761,
+      SSL_CURVE_P384_SNTRUP761,
+    },
+  },
+  {
+    "sntrup857:p384_sntrup857",
+    {
+      SSL_CURVE_SNTRUP857,
+      SSL_CURVE_P384_SNTRUP857,
+    },
+  },
 ///// OQS_TEMPLATE_FRAGMENT_ADD_CURVETEST_END
 };
 
@@ -6874,6 +6916,12 @@ static const TLSGroup kOQSGroups[] = {
     {NID_hqc256_1_cca2, SSL_CURVE_HQC256_1_CCA2},
     {NID_hqc256_2_cca2, SSL_CURVE_HQC256_2_CCA2},
     {NID_hqc256_3_cca2, SSL_CURVE_HQC256_3_CCA2},
+    {NID_ntrulpr653, SSL_CURVE_NTRULPR653},
+    {NID_ntrulpr761, SSL_CURVE_NTRULPR761},
+    {NID_ntrulpr857, SSL_CURVE_NTRULPR857},
+    {NID_sntrup653, SSL_CURVE_SNTRUP653},
+    {NID_sntrup761, SSL_CURVE_SNTRUP761},
+    {NID_sntrup857, SSL_CURVE_SNTRUP857},
 ///// OQS_TEMPLATE_FRAGMENT_LIST_ALL_OQS_KEMS_END
 };
 

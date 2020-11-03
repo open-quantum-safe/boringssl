@@ -68,6 +68,7 @@ The following quantum-safe algorithms from liboqs are supported (assuming they h
 - **FrodoKEM**: `frodo640aes`, `frodo640shake`, `frodo976aes`, `frodo976shake`, `frodo1344aes`, `frodo1344shake`
 - **HQC**: `hqc128_1_cca2`, `hqc192_1_cca2`, `hqc192_2_cca2`, `hqc256_1_cca2`, `hqc256_2_cca2`, `hqc256_3_cca2`
 - **NTRU**: `ntru_hps2048509`, `ntru_hps2048677`, `ntru_hps4096821`, `ntru_hrss701`
+- **NTRU-Prime**: `ntrulpr653`, `ntrulpr761`, `ntrulpr857`, `sntrup653`, `sntrup761`, `sntrup857`
 - **SABER**: `lightsaber`, `saber`, `firesaber`
 - **SIDH**: `sidhp434`, `sidhp503`, `sidhp610`, `sidhp751`
 - **SIKE**: `sikep434`, `sikep503`, `sikep610`, `sikep751`

@@ -737,7 +737,19 @@ class CipherScorer {
                               group_id != SSL_CURVE_HQC256_2_CCA2 &&
                               group_id != SSL_CURVE_P521_HQC256_2_CCA2 &&
                               group_id != SSL_CURVE_HQC256_3_CCA2 &&
-                              group_id != SSL_CURVE_P521_HQC256_3_CCA2
+                              group_id != SSL_CURVE_P521_HQC256_3_CCA2 &&
+                              group_id != SSL_CURVE_NTRULPR653 &&
+                              group_id != SSL_CURVE_P256_NTRULPR653 &&
+                              group_id != SSL_CURVE_NTRULPR761 &&
+                              group_id != SSL_CURVE_P384_NTRULPR761 &&
+                              group_id != SSL_CURVE_NTRULPR857 &&
+                              group_id != SSL_CURVE_P384_NTRULPR857 &&
+                              group_id != SSL_CURVE_SNTRUP653 &&
+                              group_id != SSL_CURVE_P256_SNTRUP653 &&
+                              group_id != SSL_CURVE_SNTRUP761 &&
+                              group_id != SSL_CURVE_P384_SNTRUP761 &&
+                              group_id != SSL_CURVE_SNTRUP857 &&
+                              group_id != SSL_CURVE_P384_SNTRUP857
 ///// OQS_TEMPLATE_FRAGMENT_LIST_CURVES_END
                               ) {}
 

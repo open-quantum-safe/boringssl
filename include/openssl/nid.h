@@ -4764,6 +4764,42 @@ extern "C" {
 #define SN_p521_hqc256_3_cca2 "p521_hqc256_3_cca2"
 #define NID_p521_hqc256_3_cca2 1123
 
+#define SN_ntrulpr653 "ntrulpr653"
+#define NID_ntrulpr653 1124
+
+#define SN_p256_ntrulpr653 "p256_ntrulpr653"
+#define NID_p256_ntrulpr653 1125
+
+#define SN_ntrulpr761 "ntrulpr761"
+#define NID_ntrulpr761 1126
+
+#define SN_p384_ntrulpr761 "p384_ntrulpr761"
+#define NID_p384_ntrulpr761 1127
+
+#define SN_ntrulpr857 "ntrulpr857"
+#define NID_ntrulpr857 1128
+
+#define SN_p384_ntrulpr857 "p384_ntrulpr857"
+#define NID_p384_ntrulpr857 1129
+
+#define SN_sntrup653 "sntrup653"
+#define NID_sntrup653 1130
+
+#define SN_p256_sntrup653 "p256_sntrup653"
+#define NID_p256_sntrup653 1131
+
+#define SN_sntrup761 "sntrup761"
+#define NID_sntrup761 1132
+
+#define SN_p384_sntrup761 "p384_sntrup761"
+#define NID_p384_sntrup761 1133
+
+#define SN_sntrup857 "sntrup857"
+#define NID_sntrup857 1134
+
+#define SN_p384_sntrup857 "p384_sntrup857"
+#define NID_p384_sntrup857 1135
+
 
 #if defined(__cplusplus)
 } /* extern C */

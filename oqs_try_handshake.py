@@ -50,6 +50,12 @@ kexs = [
         'hqc256_1_cca2',
         'hqc256_2_cca2',
         'hqc256_3_cca2',
+        'ntrulpr653',
+        'ntrulpr761',
+        'ntrulpr857',
+        'sntrup653',
+        'sntrup761',
+        'sntrup857',
 ##### OQS_TEMPLATE_FRAGMENT_LIST_ALL_KEMS_END
 ]
 
@@ -125,8 +131,8 @@ def try_handshake(bssl):
                               stderr=subprocess.STDOUT)
 
     # The server should (hopefully?) start
-    # in 5 seconds.
-    time.sleep(5)
+    # in 10 seconds.
+    time.sleep(10)
     server_port = psutil.Process(server.pid).connections()[0].laddr.port
 
     # Try to connect to it with the client
