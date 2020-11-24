@@ -427,34 +427,6 @@ static const CurveTest kCurveTests[] = {
     },
   },
   {
-    "bike1l1cpa:p256_bike1l1cpa",
-    {
-      SSL_CURVE_BIKE1L1CPA,
-      SSL_CURVE_P256_BIKE1L1CPA,
-    },
-  },
-  {
-    "bike1l3cpa:p384_bike1l3cpa",
-    {
-      SSL_CURVE_BIKE1L3CPA,
-      SSL_CURVE_P384_BIKE1L3CPA,
-    },
-  },
-  {
-    "bike1l1fo:p256_bike1l1fo",
-    {
-      SSL_CURVE_BIKE1L1FO,
-      SSL_CURVE_P256_BIKE1L1FO,
-    },
-  },
-  {
-    "bike1l3fo:p384_bike1l3fo",
-    {
-      SSL_CURVE_BIKE1L3FO,
-      SSL_CURVE_P384_BIKE1L3FO,
-    },
-  },
-  {
     "frodo640aes:p256_frodo640aes",
     {
       SSL_CURVE_FRODO640AES,
@@ -497,6 +469,20 @@ static const CurveTest kCurveTests[] = {
     },
   },
   {
+    "bike1l1cpa:p256_bike1l1cpa",
+    {
+      SSL_CURVE_BIKE1L1CPA,
+      SSL_CURVE_P256_BIKE1L1CPA,
+    },
+  },
+  {
+    "bike1l3cpa:p384_bike1l3cpa",
+    {
+      SSL_CURVE_BIKE1L3CPA,
+      SSL_CURVE_P384_BIKE1L3CPA,
+    },
+  },
+  {
     "kyber512:p256_kyber512",
     {
       SSL_CURVE_KYBER512,
@@ -515,27 +501,6 @@ static const CurveTest kCurveTests[] = {
     {
       SSL_CURVE_KYBER1024,
       SSL_CURVE_P521_KYBER1024,
-    },
-  },
-  {
-    "kyber90s512:p256_kyber90s512",
-    {
-      SSL_CURVE_KYBER90S512,
-      SSL_CURVE_P256_KYBER90S512,
-    },
-  },
-  {
-    "kyber90s768:p384_kyber90s768",
-    {
-      SSL_CURVE_KYBER90S768,
-      SSL_CURVE_P384_KYBER90S768,
-    },
-  },
-  {
-    "kyber90s1024:p521_kyber90s1024",
-    {
-      SSL_CURVE_KYBER90S1024,
-      SSL_CURVE_P521_KYBER90S1024,
     },
   },
   {
@@ -644,45 +609,59 @@ static const CurveTest kCurveTests[] = {
     },
   },
   {
-    "hqc128_1_cca2:p256_hqc128_1_cca2",
+    "bike1l1fo:p256_bike1l1fo",
     {
-      SSL_CURVE_HQC128_1_CCA2,
-      SSL_CURVE_P256_HQC128_1_CCA2,
+      SSL_CURVE_BIKE1L1FO,
+      SSL_CURVE_P256_BIKE1L1FO,
     },
   },
   {
-    "hqc192_1_cca2:p384_hqc192_1_cca2",
+    "bike1l3fo:p384_bike1l3fo",
     {
-      SSL_CURVE_HQC192_1_CCA2,
-      SSL_CURVE_P384_HQC192_1_CCA2,
+      SSL_CURVE_BIKE1L3FO,
+      SSL_CURVE_P384_BIKE1L3FO,
     },
   },
   {
-    "hqc192_2_cca2:p384_hqc192_2_cca2",
+    "kyber90s512:p256_kyber90s512",
     {
-      SSL_CURVE_HQC192_2_CCA2,
-      SSL_CURVE_P384_HQC192_2_CCA2,
+      SSL_CURVE_KYBER90S512,
+      SSL_CURVE_P256_KYBER90S512,
     },
   },
   {
-    "hqc256_1_cca2:p521_hqc256_1_cca2",
+    "kyber90s768:p384_kyber90s768",
     {
-      SSL_CURVE_HQC256_1_CCA2,
-      SSL_CURVE_P521_HQC256_1_CCA2,
+      SSL_CURVE_KYBER90S768,
+      SSL_CURVE_P384_KYBER90S768,
     },
   },
   {
-    "hqc256_2_cca2:p521_hqc256_2_cca2",
+    "kyber90s1024:p521_kyber90s1024",
     {
-      SSL_CURVE_HQC256_2_CCA2,
-      SSL_CURVE_P521_HQC256_2_CCA2,
+      SSL_CURVE_KYBER90S1024,
+      SSL_CURVE_P521_KYBER90S1024,
     },
   },
   {
-    "hqc256_3_cca2:p521_hqc256_3_cca2",
+    "hqc128:p256_hqc128",
     {
-      SSL_CURVE_HQC256_3_CCA2,
-      SSL_CURVE_P521_HQC256_3_CCA2,
+      SSL_CURVE_HQC128,
+      SSL_CURVE_P256_HQC128,
+    },
+  },
+  {
+    "hqc192:p384_hqc192",
+    {
+      SSL_CURVE_HQC192,
+      SSL_CURVE_P384_HQC192,
+    },
+  },
+  {
+    "hqc256:p521_hqc256",
+    {
+      SSL_CURVE_HQC256,
+      SSL_CURVE_P521_HQC256,
     },
   },
   {
@@ -6879,22 +6858,17 @@ struct TLSGroup {
 static const TLSGroup kOQSGroups[] = {
 ///// OQS_TEMPLATE_FRAGMENT_LIST_ALL_OQS_KEMS_START
     {NID_oqs_kem_default, SSL_CURVE_OQS_KEM_DEFAULT},
-    {NID_bike1l1cpa, SSL_CURVE_BIKE1L1CPA},
-    {NID_bike1l3cpa, SSL_CURVE_BIKE1L3CPA},
-    {NID_bike1l1fo, SSL_CURVE_BIKE1L1FO},
-    {NID_bike1l3fo, SSL_CURVE_BIKE1L3FO},
     {NID_frodo640aes, SSL_CURVE_FRODO640AES},
     {NID_frodo640shake, SSL_CURVE_FRODO640SHAKE},
     {NID_frodo976aes, SSL_CURVE_FRODO976AES},
     {NID_frodo976shake, SSL_CURVE_FRODO976SHAKE},
     {NID_frodo1344aes, SSL_CURVE_FRODO1344AES},
     {NID_frodo1344shake, SSL_CURVE_FRODO1344SHAKE},
+    {NID_bike1l1cpa, SSL_CURVE_BIKE1L1CPA},
+    {NID_bike1l3cpa, SSL_CURVE_BIKE1L3CPA},
     {NID_kyber512, SSL_CURVE_KYBER512},
     {NID_kyber768, SSL_CURVE_KYBER768},
     {NID_kyber1024, SSL_CURVE_KYBER1024},
-    {NID_kyber90s512, SSL_CURVE_KYBER90S512},
-    {NID_kyber90s768, SSL_CURVE_KYBER90S768},
-    {NID_kyber90s1024, SSL_CURVE_KYBER90S1024},
     {NID_ntru_hps2048509, SSL_CURVE_NTRU_HPS2048509},
     {NID_ntru_hps2048677, SSL_CURVE_NTRU_HPS2048677},
     {NID_ntru_hps4096821, SSL_CURVE_NTRU_HPS4096821},
@@ -6910,12 +6884,14 @@ static const TLSGroup kOQSGroups[] = {
     {NID_sikep503, SSL_CURVE_SIKEP503},
     {NID_sikep610, SSL_CURVE_SIKEP610},
     {NID_sikep751, SSL_CURVE_SIKEP751},
-    {NID_hqc128_1_cca2, SSL_CURVE_HQC128_1_CCA2},
-    {NID_hqc192_1_cca2, SSL_CURVE_HQC192_1_CCA2},
-    {NID_hqc192_2_cca2, SSL_CURVE_HQC192_2_CCA2},
-    {NID_hqc256_1_cca2, SSL_CURVE_HQC256_1_CCA2},
-    {NID_hqc256_2_cca2, SSL_CURVE_HQC256_2_CCA2},
-    {NID_hqc256_3_cca2, SSL_CURVE_HQC256_3_CCA2},
+    {NID_bike1l1fo, SSL_CURVE_BIKE1L1FO},
+    {NID_bike1l3fo, SSL_CURVE_BIKE1L3FO},
+    {NID_kyber90s512, SSL_CURVE_KYBER90S512},
+    {NID_kyber90s768, SSL_CURVE_KYBER90S768},
+    {NID_kyber90s1024, SSL_CURVE_KYBER90S1024},
+    {NID_hqc128, SSL_CURVE_HQC128},
+    {NID_hqc192, SSL_CURVE_HQC192},
+    {NID_hqc256, SSL_CURVE_HQC256},
     {NID_ntrulpr653, SSL_CURVE_NTRULPR653},
     {NID_ntrulpr761, SSL_CURVE_NTRULPR761},
     {NID_ntrulpr857, SSL_CURVE_NTRULPR857},

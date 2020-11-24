@@ -1360,14 +1360,6 @@ secg-scheme 14 3 : dhSinglePass-cofactorDH-sha512kdf-scheme
 ###### OQS_TEMPLATE_FRAGMENT_DEF_NIDS_START
  : oqs_kem_default
  : p256_oqs_kem_default
- : bike1l1cpa
- : p256_bike1l1cpa
- : bike1l3cpa
- : p384_bike1l3cpa
- : bike1l1fo
- : p256_bike1l1fo
- : bike1l3fo
- : p384_bike1l3fo
  : frodo640aes
  : p256_frodo640aes
  : frodo640shake
@@ -1380,18 +1372,16 @@ secg-scheme 14 3 : dhSinglePass-cofactorDH-sha512kdf-scheme
  : p521_frodo1344aes
  : frodo1344shake
  : p521_frodo1344shake
+ : bike1l1cpa
+ : p256_bike1l1cpa
+ : bike1l3cpa
+ : p384_bike1l3cpa
  : kyber512
  : p256_kyber512
  : kyber768
  : p384_kyber768
  : kyber1024
  : p521_kyber1024
- : kyber90s512
- : p256_kyber90s512
- : kyber90s768
- : p384_kyber90s768
- : kyber90s1024
- : p521_kyber90s1024
  : ntru_hps2048509
  : p256_ntru_hps2048509
  : ntru_hps2048677
@@ -1422,18 +1412,22 @@ secg-scheme 14 3 : dhSinglePass-cofactorDH-sha512kdf-scheme
  : p384_sikep610
  : sikep751
  : p521_sikep751
- : hqc128_1_cca2
- : p256_hqc128_1_cca2
- : hqc192_1_cca2
- : p384_hqc192_1_cca2
- : hqc192_2_cca2
- : p384_hqc192_2_cca2
- : hqc256_1_cca2
- : p521_hqc256_1_cca2
- : hqc256_2_cca2
- : p521_hqc256_2_cca2
- : hqc256_3_cca2
- : p521_hqc256_3_cca2
+ : bike1l1fo
+ : p256_bike1l1fo
+ : bike1l3fo
+ : p384_bike1l3fo
+ : kyber90s512
+ : p256_kyber90s512
+ : kyber90s768
+ : p384_kyber90s768
+ : kyber90s1024
+ : p521_kyber90s1024
+ : hqc128
+ : p256_hqc128
+ : hqc192
+ : p384_hqc192
+ : hqc256
+ : p521_hqc256
  : ntrulpr653
  : p256_ntrulpr653
  : ntrulpr761
