@@ -98,15 +98,15 @@ int x509_digest_sign_algorithm(EVP_MD_CTX *ctx, X509_ALGOR *algor) {
       pkey_id == EVP_PKEY_PICNIC3L1 ||
       pkey_id == EVP_PKEY_PICNIC3L3 ||
       pkey_id == EVP_PKEY_PICNIC3L5 ||
-      pkey_id == EVP_PKEY_RAINBOWIACLASSIC ||
-      pkey_id == EVP_PKEY_RAINBOWIACYCLIC ||
-      pkey_id == EVP_PKEY_RAINBOWIACYCLICCOMPRESSED ||
-      pkey_id == EVP_PKEY_RAINBOWIIICCLASSIC ||
-      pkey_id == EVP_PKEY_RAINBOWIIICCYCLIC ||
-      pkey_id == EVP_PKEY_RAINBOWIIICCYCLICCOMPRESSED ||
-      pkey_id == EVP_PKEY_RAINBOWVCCLASSIC ||
-      pkey_id == EVP_PKEY_RAINBOWVCCYCLIC ||
-      pkey_id == EVP_PKEY_RAINBOWVCCYCLICCOMPRESSED ||
+      pkey_id == EVP_PKEY_RAINBOWICLASSIC ||
+      pkey_id == EVP_PKEY_RAINBOWICIRCUMZENITHAL ||
+      pkey_id == EVP_PKEY_RAINBOWICOMPRESSED ||
+      pkey_id == EVP_PKEY_RAINBOWIIICLASSIC ||
+      pkey_id == EVP_PKEY_RAINBOWIIICIRCUMZENITHAL ||
+      pkey_id == EVP_PKEY_RAINBOWIIICOMPRESSED ||
+      pkey_id == EVP_PKEY_RAINBOWVCLASSIC ||
+      pkey_id == EVP_PKEY_RAINBOWVCIRCUMZENITHAL ||
+      pkey_id == EVP_PKEY_RAINBOWVCOMPRESSED ||
       pkey_id == EVP_PKEY_SPHINCSHARAKA128FROBUST ||
       pkey_id == EVP_PKEY_SPHINCSHARAKA128FSIMPLE ||
       pkey_id == EVP_PKEY_SPHINCSHARAKA128SROBUST ||

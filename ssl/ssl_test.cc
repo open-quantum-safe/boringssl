@@ -4422,24 +4422,24 @@ TEST(SSLTest, SignatureAlgorithmProperties) {
             SSL_get_signature_algorithm_key_type(SSL_SIGN_PICNIC3L3));
   EXPECT_EQ(EVP_PKEY_PICNIC3L5,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_PICNIC3L5));
-  EXPECT_EQ(EVP_PKEY_RAINBOWIACLASSIC,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_RAINBOWIACLASSIC));
-  EXPECT_EQ(EVP_PKEY_RAINBOWIACYCLIC,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_RAINBOWIACYCLIC));
-  EXPECT_EQ(EVP_PKEY_RAINBOWIACYCLICCOMPRESSED,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_RAINBOWIACYCLICCOMPRESSED));
-  EXPECT_EQ(EVP_PKEY_RAINBOWIIICCLASSIC,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_RAINBOWIIICCLASSIC));
-  EXPECT_EQ(EVP_PKEY_RAINBOWIIICCYCLIC,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_RAINBOWIIICCYCLIC));
-  EXPECT_EQ(EVP_PKEY_RAINBOWIIICCYCLICCOMPRESSED,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_RAINBOWIIICCYCLICCOMPRESSED));
-  EXPECT_EQ(EVP_PKEY_RAINBOWVCCLASSIC,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_RAINBOWVCCLASSIC));
-  EXPECT_EQ(EVP_PKEY_RAINBOWVCCYCLIC,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_RAINBOWVCCYCLIC));
-  EXPECT_EQ(EVP_PKEY_RAINBOWVCCYCLICCOMPRESSED,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_RAINBOWVCCYCLICCOMPRESSED));
+  EXPECT_EQ(EVP_PKEY_RAINBOWICLASSIC,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_RAINBOWICLASSIC));
+  EXPECT_EQ(EVP_PKEY_RAINBOWICIRCUMZENITHAL,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_RAINBOWICIRCUMZENITHAL));
+  EXPECT_EQ(EVP_PKEY_RAINBOWICOMPRESSED,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_RAINBOWICOMPRESSED));
+  EXPECT_EQ(EVP_PKEY_RAINBOWIIICLASSIC,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_RAINBOWIIICLASSIC));
+  EXPECT_EQ(EVP_PKEY_RAINBOWIIICIRCUMZENITHAL,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_RAINBOWIIICIRCUMZENITHAL));
+  EXPECT_EQ(EVP_PKEY_RAINBOWIIICOMPRESSED,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_RAINBOWIIICOMPRESSED));
+  EXPECT_EQ(EVP_PKEY_RAINBOWVCLASSIC,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_RAINBOWVCLASSIC));
+  EXPECT_EQ(EVP_PKEY_RAINBOWVCIRCUMZENITHAL,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_RAINBOWVCIRCUMZENITHAL));
+  EXPECT_EQ(EVP_PKEY_RAINBOWVCOMPRESSED,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_RAINBOWVCOMPRESSED));
   EXPECT_EQ(EVP_PKEY_SPHINCSHARAKA128FROBUST,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSHARAKA128FROBUST));
   EXPECT_EQ(EVP_PKEY_SPHINCSHARAKA128FSIMPLE,
@@ -4826,15 +4826,15 @@ TEST(SSLTest, SigAlgs) {
       {{NID_sha256, EVP_PKEY_PICNIC3L1}, true, {SSL_SIGN_PICNIC3L1}},
       {{NID_sha384, EVP_PKEY_PICNIC3L3}, true, {SSL_SIGN_PICNIC3L3}},
       {{NID_sha512, EVP_PKEY_PICNIC3L5}, true, {SSL_SIGN_PICNIC3L5}},
-      {{NID_sha256, EVP_PKEY_RAINBOWIACLASSIC}, true, {SSL_SIGN_RAINBOWIACLASSIC}},
-      {{NID_sha256, EVP_PKEY_RAINBOWIACYCLIC}, true, {SSL_SIGN_RAINBOWIACYCLIC}},
-      {{NID_sha256, EVP_PKEY_RAINBOWIACYCLICCOMPRESSED}, true, {SSL_SIGN_RAINBOWIACYCLICCOMPRESSED}},
-      {{NID_sha384, EVP_PKEY_RAINBOWIIICCLASSIC}, true, {SSL_SIGN_RAINBOWIIICCLASSIC}},
-      {{NID_sha384, EVP_PKEY_RAINBOWIIICCYCLIC}, true, {SSL_SIGN_RAINBOWIIICCYCLIC}},
-      {{NID_sha384, EVP_PKEY_RAINBOWIIICCYCLICCOMPRESSED}, true, {SSL_SIGN_RAINBOWIIICCYCLICCOMPRESSED}},
-      {{NID_sha512, EVP_PKEY_RAINBOWVCCLASSIC}, true, {SSL_SIGN_RAINBOWVCCLASSIC}},
-      {{NID_sha512, EVP_PKEY_RAINBOWVCCYCLIC}, true, {SSL_SIGN_RAINBOWVCCYCLIC}},
-      {{NID_sha512, EVP_PKEY_RAINBOWVCCYCLICCOMPRESSED}, true, {SSL_SIGN_RAINBOWVCCYCLICCOMPRESSED}},
+      {{NID_sha256, EVP_PKEY_RAINBOWICLASSIC}, true, {SSL_SIGN_RAINBOWICLASSIC}},
+      {{NID_sha256, EVP_PKEY_RAINBOWICIRCUMZENITHAL}, true, {SSL_SIGN_RAINBOWICIRCUMZENITHAL}},
+      {{NID_sha256, EVP_PKEY_RAINBOWICOMPRESSED}, true, {SSL_SIGN_RAINBOWICOMPRESSED}},
+      {{NID_sha384, EVP_PKEY_RAINBOWIIICLASSIC}, true, {SSL_SIGN_RAINBOWIIICLASSIC}},
+      {{NID_sha384, EVP_PKEY_RAINBOWIIICIRCUMZENITHAL}, true, {SSL_SIGN_RAINBOWIIICIRCUMZENITHAL}},
+      {{NID_sha384, EVP_PKEY_RAINBOWIIICOMPRESSED}, true, {SSL_SIGN_RAINBOWIIICOMPRESSED}},
+      {{NID_sha512, EVP_PKEY_RAINBOWVCLASSIC}, true, {SSL_SIGN_RAINBOWVCLASSIC}},
+      {{NID_sha512, EVP_PKEY_RAINBOWVCIRCUMZENITHAL}, true, {SSL_SIGN_RAINBOWVCIRCUMZENITHAL}},
+      {{NID_sha512, EVP_PKEY_RAINBOWVCOMPRESSED}, true, {SSL_SIGN_RAINBOWVCOMPRESSED}},
       {{NID_sha256, EVP_PKEY_SPHINCSHARAKA128FROBUST}, true, {SSL_SIGN_SPHINCSHARAKA128FROBUST}},
       {{NID_sha256, EVP_PKEY_SPHINCSHARAKA128FSIMPLE}, true, {SSL_SIGN_SPHINCSHARAKA128FSIMPLE}},
       {{NID_sha256, EVP_PKEY_SPHINCSHARAKA128SROBUST}, true, {SSL_SIGN_SPHINCSHARAKA128SROBUST}},
@@ -4940,15 +4940,15 @@ TEST(SSLTest, SigAlgsList) {
       {"picnic3l1", true, {SSL_SIGN_PICNIC3L1}},
       {"picnic3l3", true, {SSL_SIGN_PICNIC3L3}},
       {"picnic3l5", true, {SSL_SIGN_PICNIC3L5}},
-      {"rainbowIaclassic", true, {SSL_SIGN_RAINBOWIACLASSIC}},
-      {"rainbowIacyclic", true, {SSL_SIGN_RAINBOWIACYCLIC}},
-      {"rainbowIacycliccompressed", true, {SSL_SIGN_RAINBOWIACYCLICCOMPRESSED}},
-      {"rainbowIIIcclassic", true, {SSL_SIGN_RAINBOWIIICCLASSIC}},
-      {"rainbowIIIccyclic", true, {SSL_SIGN_RAINBOWIIICCYCLIC}},
-      {"rainbowIIIccycliccompressed", true, {SSL_SIGN_RAINBOWIIICCYCLICCOMPRESSED}},
-      {"rainbowVcclassic", true, {SSL_SIGN_RAINBOWVCCLASSIC}},
-      {"rainbowVccyclic", true, {SSL_SIGN_RAINBOWVCCYCLIC}},
-      {"rainbowVccycliccompressed", true, {SSL_SIGN_RAINBOWVCCYCLICCOMPRESSED}},
+      {"rainbowIclassic", true, {SSL_SIGN_RAINBOWICLASSIC}},
+      {"rainbowIcircumzenithal", true, {SSL_SIGN_RAINBOWICIRCUMZENITHAL}},
+      {"rainbowIcompressed", true, {SSL_SIGN_RAINBOWICOMPRESSED}},
+      {"rainbowIIIclassic", true, {SSL_SIGN_RAINBOWIIICLASSIC}},
+      {"rainbowIIIcircumzenithal", true, {SSL_SIGN_RAINBOWIIICIRCUMZENITHAL}},
+      {"rainbowIIIcompressed", true, {SSL_SIGN_RAINBOWIIICOMPRESSED}},
+      {"rainbowVclassic", true, {SSL_SIGN_RAINBOWVCLASSIC}},
+      {"rainbowVcircumzenithal", true, {SSL_SIGN_RAINBOWVCIRCUMZENITHAL}},
+      {"rainbowVcompressed", true, {SSL_SIGN_RAINBOWVCOMPRESSED}},
       {"sphincsharaka128frobust", true, {SSL_SIGN_SPHINCSHARAKA128FROBUST}},
       {"sphincsharaka128fsimple", true, {SSL_SIGN_SPHINCSHARAKA128FSIMPLE}},
       {"sphincsharaka128srobust", true, {SSL_SIGN_SPHINCSHARAKA128SROBUST}},
@@ -7001,15 +7001,15 @@ INSTANTIATE_TEST_SUITE_P(WithSignatureNIDs, OQSHandshakeTest,
                             NID_picnic3l1,
                             NID_picnic3l3,
                             NID_picnic3l5,
-                            NID_rainbowIaclassic,
-                            NID_rainbowIacyclic,
-                            NID_rainbowIacycliccompressed,
-                            NID_rainbowIIIcclassic,
-                            NID_rainbowIIIccyclic,
-                            NID_rainbowIIIccycliccompressed,
-                            NID_rainbowVcclassic,
-                            NID_rainbowVccyclic,
-                            NID_rainbowVccycliccompressed,
+                            NID_rainbowIclassic,
+                            NID_rainbowIcircumzenithal,
+                            NID_rainbowIcompressed,
+                            NID_rainbowIIIclassic,
+                            NID_rainbowIIIcircumzenithal,
+                            NID_rainbowIIIcompressed,
+                            NID_rainbowVclassic,
+                            NID_rainbowVcircumzenithal,
+                            NID_rainbowVcompressed,
                             NID_sphincsharaka128frobust,
                             NID_sphincsharaka128fsimple,
                             NID_sphincsharaka128srobust,

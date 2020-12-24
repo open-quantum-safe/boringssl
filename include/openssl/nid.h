@@ -4557,51 +4557,6 @@ extern "C" {
 #define NID_picnic3l5 1152
 #define OBJ_picnic3l5 1L, 3L, 6L, 1L, 4L, 1L, 311L, 89L, 2L, 1L, 26L
 
-#define SN_rainbowIaclassic "rainbowIaclassic"
-#define LN_rainbowIaclassic "rainbowIaclassic"
-#define NID_rainbowIaclassic 1153
-#define OBJ_rainbowIaclassic 1L, 3L, 9999L, 5L, 1L, 1L
-
-#define SN_rainbowIacyclic "rainbowIacyclic"
-#define LN_rainbowIacyclic "rainbowIacyclic"
-#define NID_rainbowIacyclic 1154
-#define OBJ_rainbowIacyclic 1L, 3L, 9999L, 5L, 1L, 4L
-
-#define SN_rainbowIacycliccompressed "rainbowIacycliccompressed"
-#define LN_rainbowIacycliccompressed "rainbowIacycliccompressed"
-#define NID_rainbowIacycliccompressed 1155
-#define OBJ_rainbowIacycliccompressed 1L, 3L, 9999L, 5L, 1L, 7L
-
-#define SN_rainbowIIIcclassic "rainbowIIIcclassic"
-#define LN_rainbowIIIcclassic "rainbowIIIcclassic"
-#define NID_rainbowIIIcclassic 1156
-#define OBJ_rainbowIIIcclassic 1L, 3L, 9999L, 5L, 2L, 1L
-
-#define SN_rainbowIIIccyclic "rainbowIIIccyclic"
-#define LN_rainbowIIIccyclic "rainbowIIIccyclic"
-#define NID_rainbowIIIccyclic 1157
-#define OBJ_rainbowIIIccyclic 1L, 3L, 9999L, 5L, 2L, 3L
-
-#define SN_rainbowIIIccycliccompressed "rainbowIIIccycliccompressed"
-#define LN_rainbowIIIccycliccompressed "rainbowIIIccycliccompressed"
-#define NID_rainbowIIIccycliccompressed 1158
-#define OBJ_rainbowIIIccycliccompressed 1L, 3L, 9999L, 5L, 2L, 5L
-
-#define SN_rainbowVcclassic "rainbowVcclassic"
-#define LN_rainbowVcclassic "rainbowVcclassic"
-#define NID_rainbowVcclassic 1159
-#define OBJ_rainbowVcclassic 1L, 3L, 9999L, 5L, 3L, 1L
-
-#define SN_rainbowVccyclic "rainbowVccyclic"
-#define LN_rainbowVccyclic "rainbowVccyclic"
-#define NID_rainbowVccyclic 1160
-#define OBJ_rainbowVccyclic 1L, 3L, 9999L, 5L, 3L, 3L
-
-#define SN_rainbowVccycliccompressed "rainbowVccycliccompressed"
-#define LN_rainbowVccycliccompressed "rainbowVccycliccompressed"
-#define NID_rainbowVccycliccompressed 1161
-#define OBJ_rainbowVccycliccompressed 1L, 3L, 9999L, 5L, 3L, 5L
-
 #define SN_sphincsharaka128frobust "sphincsharaka128frobust"
 #define LN_sphincsharaka128frobust "sphincsharaka128frobust"
 #define NID_sphincsharaka128frobust 1162
@@ -4781,6 +4736,51 @@ extern "C" {
 #define LN_sphincsshake256256ssimple "sphincsshake256256ssimple"
 #define NID_sphincsshake256256ssimple 1197
 #define OBJ_sphincsshake256256ssimple 1L, 3L, 9999L, 6L, 9L, 7L
+
+#define SN_rainbowIclassic "rainbowIclassic"
+#define LN_rainbowIclassic "rainbowIclassic"
+#define NID_rainbowIclassic 1198
+#define OBJ_rainbowIclassic 1L, 3L, 9999L, 5L, 1L, 1L
+
+#define SN_rainbowIcircumzenithal "rainbowIcircumzenithal"
+#define LN_rainbowIcircumzenithal "rainbowIcircumzenithal"
+#define NID_rainbowIcircumzenithal 1199
+#define OBJ_rainbowIcircumzenithal 1L, 3L, 9999L, 5L, 1L, 4L
+
+#define SN_rainbowIcompressed "rainbowIcompressed"
+#define LN_rainbowIcompressed "rainbowIcompressed"
+#define NID_rainbowIcompressed 1200
+#define OBJ_rainbowIcompressed 1L, 3L, 9999L, 5L, 1L, 7L
+
+#define SN_rainbowIIIclassic "rainbowIIIclassic"
+#define LN_rainbowIIIclassic "rainbowIIIclassic"
+#define NID_rainbowIIIclassic 1201
+#define OBJ_rainbowIIIclassic 1L, 3L, 9999L, 5L, 2L, 1L
+
+#define SN_rainbowIIIcircumzenithal "rainbowIIIcircumzenithal"
+#define LN_rainbowIIIcircumzenithal "rainbowIIIcircumzenithal"
+#define NID_rainbowIIIcircumzenithal 1202
+#define OBJ_rainbowIIIcircumzenithal 1L, 3L, 9999L, 5L, 2L, 3L
+
+#define SN_rainbowIIIcompressed "rainbowIIIcompressed"
+#define LN_rainbowIIIcompressed "rainbowIIIcompressed"
+#define NID_rainbowIIIcompressed 1203
+#define OBJ_rainbowIIIcompressed 1L, 3L, 9999L, 5L, 2L, 5L
+
+#define SN_rainbowVclassic "rainbowVclassic"
+#define LN_rainbowVclassic "rainbowVclassic"
+#define NID_rainbowVclassic 1204
+#define OBJ_rainbowVclassic 1L, 3L, 9999L, 5L, 3L, 1L
+
+#define SN_rainbowVcircumzenithal "rainbowVcircumzenithal"
+#define LN_rainbowVcircumzenithal "rainbowVcircumzenithal"
+#define NID_rainbowVcircumzenithal 1205
+#define OBJ_rainbowVcircumzenithal 1L, 3L, 9999L, 5L, 3L, 3L
+
+#define SN_rainbowVcompressed "rainbowVcompressed"
+#define LN_rainbowVcompressed "rainbowVcompressed"
+#define NID_rainbowVcompressed 1206
+#define OBJ_rainbowVcompressed 1L, 3L, 9999L, 5L, 3L, 5L
 
 
 #if defined(__cplusplus)

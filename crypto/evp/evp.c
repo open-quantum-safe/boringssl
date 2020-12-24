@@ -235,24 +235,24 @@ static const EVP_PKEY_ASN1_METHOD *evp_pkey_asn1_find(int nid) {
       return &picnic3l3_asn1_meth;
     case EVP_PKEY_PICNIC3L5:
       return &picnic3l5_asn1_meth;
-    case EVP_PKEY_RAINBOWIACLASSIC:
-      return &rainbowIaclassic_asn1_meth;
-    case EVP_PKEY_RAINBOWIACYCLIC:
-      return &rainbowIacyclic_asn1_meth;
-    case EVP_PKEY_RAINBOWIACYCLICCOMPRESSED:
-      return &rainbowIacycliccompressed_asn1_meth;
-    case EVP_PKEY_RAINBOWIIICCLASSIC:
-      return &rainbowIIIcclassic_asn1_meth;
-    case EVP_PKEY_RAINBOWIIICCYCLIC:
-      return &rainbowIIIccyclic_asn1_meth;
-    case EVP_PKEY_RAINBOWIIICCYCLICCOMPRESSED:
-      return &rainbowIIIccycliccompressed_asn1_meth;
-    case EVP_PKEY_RAINBOWVCCLASSIC:
-      return &rainbowVcclassic_asn1_meth;
-    case EVP_PKEY_RAINBOWVCCYCLIC:
-      return &rainbowVccyclic_asn1_meth;
-    case EVP_PKEY_RAINBOWVCCYCLICCOMPRESSED:
-      return &rainbowVccycliccompressed_asn1_meth;
+    case EVP_PKEY_RAINBOWICLASSIC:
+      return &rainbowIclassic_asn1_meth;
+    case EVP_PKEY_RAINBOWICIRCUMZENITHAL:
+      return &rainbowIcircumzenithal_asn1_meth;
+    case EVP_PKEY_RAINBOWICOMPRESSED:
+      return &rainbowIcompressed_asn1_meth;
+    case EVP_PKEY_RAINBOWIIICLASSIC:
+      return &rainbowIIIclassic_asn1_meth;
+    case EVP_PKEY_RAINBOWIIICIRCUMZENITHAL:
+      return &rainbowIIIcircumzenithal_asn1_meth;
+    case EVP_PKEY_RAINBOWIIICOMPRESSED:
+      return &rainbowIIIcompressed_asn1_meth;
+    case EVP_PKEY_RAINBOWVCLASSIC:
+      return &rainbowVclassic_asn1_meth;
+    case EVP_PKEY_RAINBOWVCIRCUMZENITHAL:
+      return &rainbowVcircumzenithal_asn1_meth;
+    case EVP_PKEY_RAINBOWVCOMPRESSED:
+      return &rainbowVcompressed_asn1_meth;
     case EVP_PKEY_SPHINCSHARAKA128FROBUST:
       return &sphincsharaka128frobust_asn1_meth;
     case EVP_PKEY_SPHINCSHARAKA128FSIMPLE:
