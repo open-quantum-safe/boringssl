@@ -67,7 +67,7 @@ The following quantum-safe algorithms from liboqs are supported (assuming they h
 - **BIKE**: `bike1l1cpa`, `bike1l3cpa`, `bike1l1fo`, `bike1l3fo`
 - **CRYSTALS-Kyber**: `kyber512`, `kyber768`, `kyber1024`, `kyber90s512`, `kyber90s768`, `kyber90s1024`
 - **FrodoKEM**: `frodo640aes`, `frodo640shake`, `frodo976aes`, `frodo976shake`, `frodo1344aes`, `frodo1344shake`
-- **HQC**: `hqc128`, `hqc192`, `hqc256`
+- **HQC**: `hqc128`, `hqc192`, `hqc256`†
 - **NTRU**: `ntru_hps2048509`, `ntru_hps2048677`, `ntru_hps4096821`, `ntru_hrss701`
 - **NTRU-Prime**: `ntrulpr653`, `ntrulpr761`, `ntrulpr857`, `sntrup653`, `sntrup761`, `sntrup857`
 - **SABER**: `lightsaber`, `saber`, `firesaber`
@@ -80,6 +80,10 @@ For each `<KEX>` listed above, the following hybrid algorithms are made availabl
 - If `<KEX>` has L1 security, the method `p256_<KEX>` is available, which combines `<KEX>` with ECDH using NIST's P256 curve
 - If `<KEX>` has L3 security, the method `p384_<KEX>` is available, which combines `<KEX>` with ECDH using NIST's P384 curve
 - If `<KEX>` has L5 security, the method `p521_<KEX>` is available, which combines `<KEX>` with ECDH using NIST's P521 curve
+
+For example, since `kyber768` claims L3 security, the hybrid `p384_kyber768` is available.
+
+Note that algorithms marked with a dagger (†) have large stack usage and may cause failures when run on threads or in constrained environments.
 
 #### Signatures
 
