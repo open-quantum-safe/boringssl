@@ -20,23 +20,25 @@ def file_put_contents(filename, s, encoding=None):
     with open(filename, mode='w', encoding=encoding) as fh:
         fh.write(s)
 
-def populate(filename, config, delimiter, overwrite=False):
+def populate(filename, config, delimiter):
     fragments = glob.glob(os.path.join('oqs_template', filename, '*.fragment'))
-    if overwrite == True:
-        source_file = os.path.join('oqs_template', filename, os.path.basename(filename)+ '.base')
-        contents = file_get_contents(source_file)
-    else:
-        contents = file_get_contents(filename)
+    contents = file_get_contents(filename)
+
     for fragment in fragments:
         identifier = os.path.splitext(os.path.basename(fragment))[0]
-        identifier_start = '{} OQS_TEMPLATE_FRAGMENT_{}_START'.format(delimiter, identifier.upper())
+
+        if filename == 'README.md':
+            identifier_start = '{} OQS_TEMPLATE_FRAGMENT_{}_START -->'.format(delimiter, identifier.upper())
+        else:
+            identifier_start = '{} OQS_TEMPLATE_FRAGMENT_{}_START'.format(delimiter, identifier.upper())
+
         identifier_end = '{} OQS_TEMPLATE_FRAGMENT_{}_END'.format(delimiter, identifier.upper())
+
         preamble = contents[:contents.find(identifier_start)]
         postamble = contents[contents.find(identifier_end):]
-        if overwrite == True:
-            contents = preamble + Jinja2.get_template(fragment).render({'config': config}) + postamble.replace(identifier_end + '\n', '')
-        else:
-            contents = preamble + identifier_start + Jinja2.get_template(fragment).render({'config': config}) + postamble
+
+        contents = preamble + identifier_start + Jinja2.get_template(fragment).render({'config': config}) + postamble
+
     file_put_contents(filename, contents)
 
 def load_config():
@@ -69,3 +71,5 @@ populate('ssl/ssl_test.cc', config, '/////')
 populate('ssl/t1_lib.cc', config, '/////')
 populate('include/openssl/ssl.h', config, '/////')
 populate('oqs_try_handshake.py', config, '#####')
+
+populate('README.md', config, '<!---')

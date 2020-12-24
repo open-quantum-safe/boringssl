@@ -7,208 +7,248 @@ kems:
     mix_with: [{'name': 'p256', 'mix_nid':'0x2FFF', 'nid':'SSL_CURVE_SECP256R1'}]
     oqs_meth: 'OQS_KEM_alg_default'
   -
+    family: 'FrodoKEM'
     name: 'frodo640aes'
     nid: '0x0200'
     mix_with: [{'name': 'p256', 'mix_nid':'0x2F00', 'nid':'SSL_CURVE_SECP256R1'}]
     use_as_default_with: 'p256'
     oqs_meth: 'OQS_KEM_alg_frodokem_640_aes'
   -
+    family: 'FrodoKEM'
     name: 'frodo640shake'
     nid: '0x0201'
     mix_with: [{'name': 'p256', 'mix_nid':'0x2F01', 'nid':'SSL_CURVE_SECP256R1'}]
     oqs_meth: 'OQS_KEM_alg_frodokem_640_shake'
   -
+    family: 'FrodoKEM'
     name: 'frodo976aes'
     nid: '0x0202'
     mix_with: [{'name': 'p384', 'mix_nid':'0x2F02', 'nid':'SSL_CURVE_SECP384R1'}]
     oqs_meth: 'OQS_KEM_alg_frodokem_976_aes'
   -
+    family: 'FrodoKEM'
     name: 'frodo976shake'
     nid: '0x0203'
     mix_with: [{'name': 'p384', 'mix_nid':'0x2F03', 'nid':'SSL_CURVE_SECP384R1'}]
     oqs_meth: 'OQS_KEM_alg_frodokem_976_shake'
   -
+    family: 'FrodoKEM'
     name: 'frodo1344aes'
     nid: '0x0204'
     mix_with: [{'name': 'p521', 'mix_nid':'0x2F04', 'nid':'SSL_CURVE_SECP521R1'}]
     oqs_meth: 'OQS_KEM_alg_frodokem_1344_aes'
   -
+    family: 'FrodoKEM'
     name: 'frodo1344shake'
     nid: '0x0205'
     mix_with: [{'name': 'p521', 'mix_nid':'0x2F05', 'nid':'SSL_CURVE_SECP521R1'}]
     oqs_meth: 'OQS_KEM_alg_frodokem_1344_shake'
   -
+    family: 'BIKE'
     name: 'bike1l1cpa'
     nid: '0x0206'
     mix_with: [{'name': 'p256', 'mix_nid':'0x2F06', 'nid':'SSL_CURVE_SECP256R1'}]
     use_as_default_with: 'p256'
     oqs_meth: 'OQS_KEM_alg_bike1_l1_cpa'
   -
+    family: 'BIKE'
     name: 'bike1l3cpa'
     nid: '0x0207'
     mix_with: [{'name': 'p384', 'mix_nid':'0x2F07', 'nid':'SSL_CURVE_SECP384R1'}]
     oqs_meth: 'OQS_KEM_alg_bike1_l3_cpa'
   -
+    family: 'CRYSTALS-Kyber'
     name: 'kyber512'
     nid: '0x020F'
     mix_with: [{'name': 'p256', 'mix_nid':'0x2F0F', 'nid':'SSL_CURVE_SECP256R1'}]
     oqs_meth: 'OQS_KEM_alg_kyber_512'
   -
+    family: 'CRYSTALS-Kyber'
     name: 'kyber768'
     nid: '0x0210'
     mix_with: [{'name': 'p384', 'mix_nid':'0x2F10', 'nid':'SSL_CURVE_SECP384R1'}]
     oqs_meth: 'OQS_KEM_alg_kyber_768'
   -
+    family: 'CRYSTALS-Kyber'
     name: 'kyber1024'
     nid: '0x0211'
     mix_with: [{'name': 'p521', 'mix_nid':'0x2F11', 'nid':'SSL_CURVE_SECP521R1'}]
     oqs_meth: 'OQS_KEM_alg_kyber_1024'
   -
+    family: 'NTRU'
     name: 'ntru_hps2048509'
     nid: '0x0214'
     mix_with: [{'name': 'p256', 'mix_nid':'0x2F14', 'nid':'SSL_CURVE_SECP256R1'}]
     use_as_default_with: 'p256'
     oqs_meth: 'OQS_KEM_alg_ntru_hps2048509'
   -
+    family: 'NTRU'
     name: 'ntru_hps2048677'
     nid: '0x0215'
     mix_with: [{'name': 'p384', 'mix_nid':'0x2F15', 'nid':'SSL_CURVE_SECP384R1'}]
     oqs_meth: 'OQS_KEM_alg_ntru_hps2048677'
   -
+    family: 'NTRU'
     name: 'ntru_hps4096821'
     nid: '0x0216'
     mix_with: [{'name': 'p521', 'mix_nid':'0x2F16', 'nid':'SSL_CURVE_SECP521R1'}]
     oqs_meth: 'OQS_KEM_alg_ntru_hps4096821'
   -
+    family: 'NTRU'
     name: 'ntru_hrss701'
     nid: '0x0217'
     mix_with: [{'name': 'p384', 'mix_nid':'0x2F17', 'nid':'SSL_CURVE_SECP384R1'}]
     oqs_meth: 'OQS_KEM_alg_ntru_hrss701'
   -
+    family: 'SABER'
     name: 'lightsaber'
     nid: '0x0218'
     mix_with: [{'name': 'p256', 'mix_nid':'0x2F18', 'nid':'SSL_CURVE_SECP256R1'}]
     use_as_default_with: 'p256'
     oqs_meth: 'OQS_KEM_alg_saber_lightsaber'
   -
+    family: 'SABER'
     name: 'saber'
     nid: '0x0219'
     mix_with: [{'name': 'p384', 'mix_nid':'0x2F19', 'nid':'SSL_CURVE_SECP384R1'}]
     oqs_meth: 'OQS_KEM_alg_saber_saber'
   -
+    family: 'SABER'
     name: 'firesaber'
     nid: '0x021A'
     mix_with: [{'name': 'p521', 'mix_nid':'0x2F1A', 'nid':'SSL_CURVE_SECP521R1'}]
     oqs_meth: 'OQS_KEM_alg_saber_firesaber'
   -
+    family: 'SIDH'
     name: 'sidhp434'
     nid: '0x021B'
     mix_with: [{'name': 'p256', 'mix_nid':'0x2F1B', 'nid':'SSL_CURVE_SECP256R1'}]
     use_as_default_with: 'p256'
     oqs_meth: 'OQS_KEM_alg_sidh_p434'
   -
+    family: 'SIDH'
     name: 'sidhp503'
     nid: '0x021C'
     mix_with: [{'name': 'p256', 'mix_nid':'0x2F1C', 'nid':'SSL_CURVE_SECP256R1'}]
     oqs_meth: 'OQS_KEM_alg_sidh_p503'
   -
+    family: 'SIDH'
     name: 'sidhp610'
     nid: '0x021D'
     mix_with: [{'name': 'p384', 'mix_nid':'0x2F1D', 'nid':'SSL_CURVE_SECP384R1'}]
     oqs_meth: 'OQS_KEM_alg_sidh_p610'
   -
+    family: 'SIDH'
     name: 'sidhp751'
     nid: '0x021E'
     mix_with: [{'name': 'p521', 'mix_nid':'0x2F1E', 'nid':'SSL_CURVE_SECP521R1'}]
     oqs_meth: 'OQS_KEM_alg_sidh_p751'
   -
+    family: 'SIKE'
     name: 'sikep434'
     nid: '0x021F'
     mix_with: [{'name': 'p256', 'mix_nid':'0x2F1F', 'nid':'SSL_CURVE_SECP256R1'}]
     use_as_default_with: 'p256'
     oqs_meth: 'OQS_KEM_alg_sike_p434'
   -
+    family: 'SIKE'
     name: 'sikep503'
     nid: '0x0220'
     mix_with: [{'name': 'p256', 'mix_nid':'0x2F20', 'nid':'SSL_CURVE_SECP256R1'}]
     oqs_meth: 'OQS_KEM_alg_sike_p503'
   -
+    family: 'SIKE'
     name: 'sikep610'
     nid: '0x0221'
     mix_with: [{'name': 'p384', 'mix_nid':'0x2F21', 'nid':'SSL_CURVE_SECP384R1'}]
     oqs_meth: 'OQS_KEM_alg_sike_p610'
   -
+    family: 'SIKE'
     name: 'sikep751'
     nid: '0x0222'
     mix_with: [{'name': 'p521', 'mix_nid':'0x2F22', 'nid':'SSL_CURVE_SECP521R1'}]
     oqs_meth: 'OQS_KEM_alg_sike_p751'
   -
+    family: 'BIKE'
     name: 'bike1l1fo'
     nid: '0x0223'
     mix_with: [{'name': 'p256', 'mix_nid':'0x2F23', 'nid':'SSL_CURVE_SECP256R1'}]
     oqs_meth: 'OQS_KEM_alg_bike1_l1_fo'
   -
+    family: 'BIKE'
     name: 'bike1l3fo'
     nid: '0x0224'
     mix_with: [{'name': 'p384', 'mix_nid':'0x2F24', 'nid':'SSL_CURVE_SECP384R1'}]
     oqs_meth: 'OQS_KEM_alg_bike1_l3_fo'
   -
+    family: 'CRYSTALS-Kyber'
     name: 'kyber90s512'
     nid: '0x0229'
     mix_with: [{'name': 'p256', 'mix_nid':'0x2F29', 'nid':'SSL_CURVE_SECP256R1'}]
     use_as_default_with: 'p256'
     oqs_meth: 'OQS_KEM_alg_kyber_512_90s'
   -
+    family: 'CRYSTALS-Kyber'
     name: 'kyber90s768'
     nid: '0x022A'
     mix_with: [{'name': 'p384', 'mix_nid':'0x2F2A', 'nid':'SSL_CURVE_SECP384R1'}]
     oqs_meth: 'OQS_KEM_alg_kyber_768_90s'
   -
+    family: 'CRYSTALS-Kyber'
     name: 'kyber90s1024'
     nid: '0x022B'
     mix_with: [{'name': 'p521', 'mix_nid':'0x2F2B', 'nid':'SSL_CURVE_SECP521R1'}]
     oqs_meth: 'OQS_KEM_alg_kyber_1024_90s'
   -
+    family: 'HQC'
     name: 'hqc128'
     nid: '0x022C'
     mix_with: [{'name': 'p256', 'mix_nid':'0x2F2C', 'nid':'SSL_CURVE_SECP256R1'}]
     oqs_meth: 'OQS_KEM_alg_hqc_128'
   -
+    family: 'HQC'
     name: 'hqc192'
     nid: '0x022D'
     mix_with: [{'name': 'p384', 'mix_nid':'0x2F2D', 'nid':'SSL_CURVE_SECP384R1'}]
     oqs_meth: 'OQS_KEM_alg_hqc_192'
   -
+    family: 'HQC'
     name: 'hqc256'
     nid: '0x022E'
     mix_with: [{'name': 'p521', 'mix_nid':'0x2F2E', 'nid':'SSL_CURVE_SECP521R1'}]
     oqs_meth: 'OQS_KEM_alg_hqc_256'
   -
+    family: 'NTRU-Prime'
     name: 'ntrulpr653'
     nid: '0x022F'
     mix_with: [{'name': 'p256', 'mix_nid':'0x2F2F', 'nid':'SSL_CURVE_SECP256R1'}]
     oqs_meth: 'OQS_KEM_alg_ntruprime_ntrulpr653'
   -
+    family: 'NTRU-Prime'
     name: 'ntrulpr761'
     nid: '0x0230'
     mix_with: [{'name': 'p384', 'mix_nid':'0x2F30', 'nid':'SSL_CURVE_SECP384R1'}]
     oqs_meth: 'OQS_KEM_alg_ntruprime_ntrulpr761'
   -
+    family: 'NTRU-Prime'
     name: 'ntrulpr857'
     nid: '0x0231'
     mix_with: [{'name': 'p384', 'mix_nid':'0x2F31', 'nid':'SSL_CURVE_SECP384R1'}]
     oqs_meth: 'OQS_KEM_alg_ntruprime_ntrulpr857'
   -
+    family: 'NTRU-Prime'
     name: 'sntrup653'
     nid: '0x0232'
     mix_with: [{'name': 'p256', 'mix_nid':'0x2F32', 'nid':'SSL_CURVE_SECP256R1'}]
     oqs_meth: 'OQS_KEM_alg_ntruprime_sntrup653'
   -
+    family: 'NTRU-Prime'
     name: 'sntrup761'
     nid: '0x0233'
     mix_with: [{'name': 'p384', 'mix_nid':'0x2F33', 'nid':'SSL_CURVE_SECP384R1'}]
     oqs_meth: 'OQS_KEM_alg_ntruprime_sntrup761'
   -
+    family: 'NTRU-Prime'
     name: 'sntrup857'
     nid: '0x0234'
     mix_with: [{'name': 'p384', 'mix_nid':'0x2F34', 'nid':'SSL_CURVE_SECP384R1'}]
@@ -226,6 +266,7 @@ sigs:
     code_point: '0xfe00'
     claimed_security_level: '1'
   -
+    family: 'CRYSTALS-DILITHIUM'
     name: 'dilithium2'
     oid: "1 3 6 1 4 1 2 267 6 4 3"
     oid_encoded: '0x2B, 0x06, 0x01, 0x04, 0x01, 0x02, 0x82, 0x0B, 0x06, 0x04, 0x03'
@@ -233,6 +274,7 @@ sigs:
     code_point: '0xfe03'
     claimed_security_level: '1'
   -
+    family: 'CRYSTALS-DILITHIUM'
     name: 'dilithium3'
     oid: "1 3 6 1 4 1 2 267 6 5 4"
     oid_encoded: '0x2B, 0x06, 0x01, 0x04, 0x01, 0x02, 0x82, 0x0B, 0x06, 0x05, 0x04'
@@ -240,6 +282,7 @@ sigs:
     code_point: '0xfe06'
     claimed_security_level: '2'
   -
+    family: 'CRYSTALS-DILITHIUM'
     name: 'dilithium4'
     oid: "1 3 6 1 4 1 2 267 6 6 5"
     oid_encoded: '0x2B, 0x06, 0x01, 0x04, 0x01, 0x02, 0x82, 0x0B, 0x06, 0x06, 0x05'
@@ -247,6 +290,7 @@ sigs:
     code_point: '0xfe09'
     claimed_security_level: '3'
   -
+    family: 'Falcon'
     name: 'falcon512'
     oid: "1 3 9999 3 1"
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x03, 0x01'
@@ -254,6 +298,7 @@ sigs:
     code_point: '0xfe0b'
     claimed_security_level: '1'
   -
+    family: 'Falcon'
     name: 'falcon1024'
     oid: "1 3 9999 3 4"
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x03, 0x04'
@@ -261,6 +306,7 @@ sigs:
     code_point: '0xfe0e'
     claimed_security_level: '5'
   -
+    family: 'Picnic'
     name: 'picnicl1fs'
     oid: '1 3 6 1 4 1 311 89 2 1 1'
     oid_encoded: '0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x59, 0x02, 0x01, 0x01'
@@ -268,6 +314,7 @@ sigs:
     code_point: '0xfe15'
     claimed_security_level: '1'
   -
+    family: 'Picnic'
     name: 'picnicl1ur'
     oid: '1 3 6 1 4 1 311 89 2 1 4'
     oid_encoded: '0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x59, 0x02, 0x01, 0x04'
@@ -275,6 +322,7 @@ sigs:
     code_point: '0xfe18'
     claimed_security_level: '1'
   -
+    family: 'Picnic'
     name: 'picnicl1full'
     oid: '1 3 6 1 4 1 311 89 2 1 7'
     oid_encoded: '0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x59, 0x02, 0x01, 0x07'
@@ -282,6 +330,7 @@ sigs:
     code_point: '0xfe96'
     claimed_security_level: '1'
   -
+    family: 'Picnic'
     name: 'picnic3l1'
     oid: "1 3 6 1 4 1 311 89 2 1 21"
     oid_encoded: '0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x59, 0x02, 0x01, 0x15'
@@ -289,6 +338,7 @@ sigs:
     code_point: '0xfe1b'
     claimed_security_level: '1'
   -
+    family: 'Picnic'
     name: 'picnic3l3'
     oid: "1 3 6 1 4 1 311 89 2 1 24"
     oid_encoded: '0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x59, 0x02, 0x01, 0x18'
@@ -296,6 +346,7 @@ sigs:
     code_point: '0xfe1e'
     claimed_security_level: '3'
   -
+    family: 'Picnic'
     name: 'picnic3l5'
     oid: "1 3 6 1 4 1 311 89 2 1 26"
     oid_encoded: '0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x59, 0x02, 0x01, 0x1a'
@@ -303,6 +354,7 @@ sigs:
     code_point: '0xfe20'
     claimed_security_level: '5'
   -
+    family: 'Rainbow'
     name: 'rainbowIclassic'
     oid: '1 3 9999 5 1 1'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x05, 0x01, 0x01'
@@ -310,6 +362,7 @@ sigs:
     code_point: '0xfe27'
     claimed_security_level: '1'
   -
+    family: 'Rainbow'
     name: 'rainbowIcircumzenithal'
     oid: '1 3 9999 5 1 4'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x05, 0x01, 0x04'
@@ -317,6 +370,7 @@ sigs:
     code_point: '0xfe30'
     claimed_security_level: '1'
   -
+    family: 'Rainbow'
     name: 'rainbowIcompressed'
     oid: '1 3 9999 5 1 7'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x05, 0x01, 0x07'
@@ -324,6 +378,7 @@ sigs:
     code_point: '0xfe33'
     claimed_security_level: '1'
   -
+    family: 'Rainbow'
     name: 'rainbowIIIclassic'
     oid: '1 3 9999 5 2 1'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x05, 0x02, 0x01'
@@ -331,6 +386,7 @@ sigs:
     code_point: '0xfe36'
     claimed_security_level: '3'
   -
+    family: 'Rainbow'
     name: 'rainbowIIIcircumzenithal'
     oid: '1 3 9999 5 2 3'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x05, 0x02, 0x03'
@@ -338,6 +394,7 @@ sigs:
     code_point: '0xfe38'
     claimed_security_level: '3'
   -
+    family: 'Rainbow'
     name: 'rainbowIIIcompressed'
     oid: '1 3 9999 5 2 5'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x05, 0x02, 0x05'
@@ -345,6 +402,7 @@ sigs:
     code_point: '0xfe3a'
     claimed_security_level: '3'
   -
+    family: 'Rainbow'
     name: 'rainbowVclassic'
     oid: '1 3 9999 5 3 1'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x05, 0x03, 0x01'
@@ -352,6 +410,7 @@ sigs:
     code_point: '0xfe3c'
     claimed_security_level: '5'
   -
+    family: 'Rainbow'
     name: 'rainbowVcircumzenithal'
     oid: '1 3 9999 5 3 3'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x05, 0x03, 0x03'
@@ -359,6 +418,7 @@ sigs:
     code_point: '0xfe3e'
     claimed_security_level: '5'
   -
+    family: 'Rainbow'
     name: 'rainbowVcompressed'
     oid: '1 3 9999 5 3 5'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x05, 0x03, 0x05'
@@ -366,6 +426,7 @@ sigs:
     code_point: '0xfe40'
     claimed_security_level: '5'
   -
+    family: 'SPHINCS-Haraka'
     name: 'sphincsharaka128frobust'
     oid: '1 3 9999 6 1 1'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x01, 0x01'
@@ -373,6 +434,7 @@ sigs:
     code_point: '0xfe42'
     claimed_security_level: '1'
   -
+    family: 'SPHINCS-Haraka'
     name: 'sphincsharaka128fsimple'
     oid: '1 3 9999 6 1 4'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x01, 0x04'
@@ -380,6 +442,7 @@ sigs:
     code_point: '0xfe45'
     claimed_security_level: '1'
   -
+    family: 'SPHINCS-Haraka'
     name: 'sphincsharaka128srobust'
     oid: '1 3 9999 6 1 7'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x01, 0x07'
@@ -387,6 +450,7 @@ sigs:
     code_point: '0xfe48'
     claimed_security_level: '1'
   -
+    family: 'SPHINCS-Haraka'
     name: 'sphincsharaka128ssimple'
     oid: '1 3 9999 6 1 10'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x01, 0x0A'
@@ -394,6 +458,7 @@ sigs:
     code_point: '0xfe4b'
     claimed_security_level: '1'
   -
+    family: 'SPHINCS-Haraka'
     name: 'sphincsharaka192frobust'
     oid: '1 3 9999 6 2 1'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x02, 0x01'
@@ -401,6 +466,7 @@ sigs:
     code_point: '0xfe4e'
     claimed_security_level: '3'
   -
+    family: 'SPHINCS-Haraka'
     name: 'sphincsharaka192fsimple'
     oid: '1 3 9999 6 2 3'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x02, 0x03'
@@ -408,6 +474,7 @@ sigs:
     code_point: '0xfe50'
     claimed_security_level: '3'
   -
+    family: 'SPHINCS-Haraka'
     name: 'sphincsharaka192srobust'
     oid: '1 3 9999 6 2 5'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x02, 0x05'
@@ -415,6 +482,7 @@ sigs:
     code_point: '0xfe52'
     claimed_security_level: '3'
   -
+    family: 'SPHINCS-Haraka'
     name: 'sphincsharaka192ssimple'
     oid: '1 3 9999 6 2 7'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x02, 0x07'
@@ -422,6 +490,7 @@ sigs:
     code_point: '0xfe54'
     claimed_security_level: '3'
   -
+    family: 'SPHINCS-Haraka'
     name: 'sphincsharaka256frobust'
     oid: '1 3 9999 6 3 1'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x03, 0x01'
@@ -429,6 +498,7 @@ sigs:
     code_point: '0xfe56'
     claimed_security_level: '5'
   -
+    family: 'SPHINCS-Haraka'
     name: 'sphincsharaka256fsimple'
     oid: '1 3 9999 6 3 3'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x03, 0x03'
@@ -436,6 +506,7 @@ sigs:
     code_point: '0xfe58'
     claimed_security_level: '5'
   -
+    family: 'SPHINCS-Haraka'
     name: 'sphincsharaka256srobust'
     oid: '1 3 9999 6 3 5'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x03, 0x05'
@@ -443,6 +514,7 @@ sigs:
     code_point: '0xfe5a'
     claimed_security_level: '5'
   -
+    family: 'SPHINCS-Haraka'
     name: 'sphincsharaka256ssimple'
     oid: '1 3 9999 6 3 7'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x03, 0x07'
@@ -450,6 +522,7 @@ sigs:
     code_point: '0xfe5c'
     claimed_security_level: '5'
   -
+    family: 'SPHINCS-SHA256'
     name: 'sphincssha256128frobust'
     oid: '1 3 9999 6 4 1'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x04, 0x01'
@@ -457,6 +530,7 @@ sigs:
     code_point: '0xfe5e'
     claimed_security_level: '1'
   -
+    family: 'SPHINCS-SHA256'
     name: 'sphincssha256128fsimple'
     oid: '1 3 9999 6 4 4'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x04, 0x04'
@@ -464,6 +538,7 @@ sigs:
     code_point: '0xfe61'
     claimed_security_level: '1'
   -
+    family: 'SPHINCS-SHA256'
     name: 'sphincssha256128srobust'
     oid: '1 3 9999 6 4 7'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x04, 0x07'
@@ -471,6 +546,7 @@ sigs:
     code_point: '0xfe64'
     claimed_security_level: '1'
   -
+    family: 'SPHINCS-SHA256'
     name: 'sphincssha256128ssimple'
     oid: '1 3 9999 6 4 10'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x04, 0x0A'
@@ -478,6 +554,7 @@ sigs:
     code_point: '0xfe67'
     claimed_security_level: '1'
   -
+    family: 'SPHINCS-SHA256'
     name: 'sphincssha256192frobust'
     oid: '1 3 9999 6 5 1'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x05, 0x01'
@@ -485,6 +562,7 @@ sigs:
     code_point: '0xfe6a'
     claimed_security_level: '3'
   -
+    family: 'SPHINCS-SHA256'
     name: 'sphincssha256192fsimple'
     oid: '1 3 9999 6 5 3'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x05, 0x03'
@@ -492,6 +570,7 @@ sigs:
     code_point: '0xfe6c'
     claimed_security_level: '3'
   -
+    family: 'SPHINCS-SHA256'
     name: 'sphincssha256192srobust'
     oid: '1 3 9999 6 5 5'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x05, 0x05'
@@ -499,6 +578,7 @@ sigs:
     code_point: '0xfe6e'
     claimed_security_level: '3'
   -
+    family: 'SPHINCS-SHA256'
     name: 'sphincssha256192ssimple'
     oid: '1 3 9999 6 5 7'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x05, 0x07'
@@ -506,6 +586,7 @@ sigs:
     code_point: '0xfe70'
     claimed_security_level: '3'
   -
+    family: 'SPHINCS-SHA256'
     name: 'sphincssha256256frobust'
     oid: '1 3 9999 6 6 1'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x06, 0x01'
@@ -513,6 +594,7 @@ sigs:
     code_point: '0xfe72'
     claimed_security_level: '5'
   -
+    family: 'SPHINCS-SHA256'
     name: 'sphincssha256256fsimple'
     oid: '1 3 9999 6 6 3'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x06, 0x03'
@@ -520,6 +602,7 @@ sigs:
     code_point: '0xfe74'
     claimed_security_level: '5'
   -
+    family: 'SPHINCS-SHA256'
     name: 'sphincssha256256srobust'
     oid: '1 3 9999 6 6 5'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x06, 0x05'
@@ -527,6 +610,7 @@ sigs:
     code_point: '0xfe76'
     claimed_security_level: '5'
   -
+    family: 'SPHINCS-SHA256'
     name: 'sphincssha256256ssimple'
     oid: '1 3 9999 6 6 7'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x06, 0x07'
@@ -534,6 +618,7 @@ sigs:
     code_point: '0xfe78'
     claimed_security_level: '5'
   -
+    family: 'SPHINCS-SHAKE256'
     name: 'sphincsshake256128frobust'
     oid: '1 3 9999 6 7 1'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x07, 0x01'
@@ -541,6 +626,7 @@ sigs:
     code_point: '0xfe7a'
     claimed_security_level: '1'
   -
+    family: 'SPHINCS-SHAKE256'
     name: 'sphincsshake256128fsimple'
     oid: '1 3 9999 6 7 4'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x07, 0x04'
@@ -548,6 +634,7 @@ sigs:
     code_point: '0xfe7d'
     claimed_security_level: '1'
   -
+    family: 'SPHINCS-SHAKE256'
     name: 'sphincsshake256128srobust'
     oid: '1 3 9999 6 7 7'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x07, 0x07'
@@ -555,6 +642,7 @@ sigs:
     code_point: '0xfe80'
     claimed_security_level: '1'
   -
+    family: 'SPHINCS-SHAKE256'
     name: 'sphincsshake256128ssimple'
     oid: '1 3 9999 6 7 10'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x07, 0x0A'
@@ -562,6 +650,7 @@ sigs:
     code_point: '0xfe83'
     claimed_security_level: '1'
   -
+    family: 'SPHINCS-SHAKE256'
     name: 'sphincsshake256192frobust'
     oid: '1 3 9999 6 8 1'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x08, 0x01'
@@ -569,6 +658,7 @@ sigs:
     code_point: '0xfe86'
     claimed_security_level: '3'
   -
+    family: 'SPHINCS-SHAKE256'
     name: 'sphincsshake256192fsimple'
     oid: '1 3 9999 6 8 3'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x08, 0x03'
@@ -576,6 +666,7 @@ sigs:
     code_point: '0xfe88'
     claimed_security_level: '3'
   -
+    family: 'SPHINCS-SHAKE256'
     name: 'sphincsshake256192srobust'
     oid: '1 3 9999 6 8 5'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x08, 0x05'
@@ -583,6 +674,7 @@ sigs:
     code_point: '0xfe8a'
     claimed_security_level: '3'
   -
+    family: 'SPHINCS-SHAKE256'
     name: 'sphincsshake256192ssimple'
     oid: '1 3 9999 6 8 7'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x08, 0x07'
@@ -590,6 +682,7 @@ sigs:
     code_point: '0xfe8c'
     claimed_security_level: '3'
   -
+    family: 'SPHINCS-SHAKE256'
     name: 'sphincsshake256256frobust'
     oid: '1 3 9999 6 9 1'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x09, 0x01'
@@ -597,6 +690,7 @@ sigs:
     code_point: '0xfe8e'
     claimed_security_level: '5'
   -
+    family: 'SPHINCS-SHAKE256'
     name: 'sphincsshake256256fsimple'
     oid: '1 3 9999 6 9 3'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x09, 0x03'
@@ -604,6 +698,7 @@ sigs:
     code_point: '0xfe90'
     claimed_security_level: '5'
   -
+    family: 'SPHINCS-SHAKE256'
     name: 'sphincsshake256256srobust'
     oid: '1 3 9999 6 9 5'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x09, 0x05'
@@ -611,6 +706,7 @@ sigs:
     code_point: '0xfe92'
     claimed_security_level: '5'
   -
+    family: 'SPHINCS-SHAKE256'
     name: 'sphincsshake256256ssimple'
     oid: '1 3 9999 6 9 7'
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x09, 0x07'
