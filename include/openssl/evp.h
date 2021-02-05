@@ -182,7 +182,10 @@ OPENSSL_EXPORT EC_KEY *EVP_PKEY_get1_EC_KEY(const EVP_PKEY *pkey);
 #define EVP_PKEY_OQS_SIG_DEFAULT NID_oqs_sig_default
 #define EVP_PKEY_DILITHIUM2 NID_dilithium2
 #define EVP_PKEY_DILITHIUM3 NID_dilithium3
-#define EVP_PKEY_DILITHIUM4 NID_dilithium4
+#define EVP_PKEY_DILITHIUM5 NID_dilithium5
+#define EVP_PKEY_DILITHIUM2_AES NID_dilithium2_aes
+#define EVP_PKEY_DILITHIUM3_AES NID_dilithium3_aes
+#define EVP_PKEY_DILITHIUM5_AES NID_dilithium5_aes
 #define EVP_PKEY_FALCON512 NID_falcon512
 #define EVP_PKEY_FALCON1024 NID_falcon1024
 #define EVP_PKEY_PICNICL1FS NID_picnicl1fs

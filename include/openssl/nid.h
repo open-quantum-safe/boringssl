@@ -4260,7 +4260,7 @@ extern "C" {
 #define SN_dilithium2 "dilithium2"
 #define LN_dilithium2 "dilithium2"
 #define NID_dilithium2 966
-#define OBJ_dilithium2 1L, 3L, 6L, 1L, 4L, 1L, 2L, 267L, 6L, 4L, 3L
+#define OBJ_dilithium2 1L, 3L, 6L, 1L, 4L, 1L, 2L, 267L, 7L, 4L, 4L
 
 #define SN_oqs_kem_default "oqs_kem_default"
 #define NID_oqs_kem_default 973
@@ -4510,12 +4510,7 @@ extern "C" {
 #define SN_dilithium3 "dilithium3"
 #define LN_dilithium3 "dilithium3"
 #define NID_dilithium3 1143
-#define OBJ_dilithium3 1L, 3L, 6L, 1L, 4L, 1L, 2L, 267L, 6L, 5L, 4L
-
-#define SN_dilithium4 "dilithium4"
-#define LN_dilithium4 "dilithium4"
-#define NID_dilithium4 1144
-#define OBJ_dilithium4 1L, 3L, 6L, 1L, 4L, 1L, 2L, 267L, 6L, 6L, 5L
+#define OBJ_dilithium3 1L, 3L, 6L, 1L, 4L, 1L, 2L, 267L, 7L, 6L, 5L
 
 #define SN_falcon512 "falcon512"
 #define LN_falcon512 "falcon512"
@@ -4781,6 +4776,26 @@ extern "C" {
 #define LN_rainbowVcompressed "rainbowVcompressed"
 #define NID_rainbowVcompressed 1206
 #define OBJ_rainbowVcompressed 1L, 3L, 9999L, 5L, 3L, 5L
+
+#define SN_dilithium5 "dilithium5"
+#define LN_dilithium5 "dilithium5"
+#define NID_dilithium5 1207
+#define OBJ_dilithium5 1L, 3L, 6L, 1L, 4L, 1L, 2L, 267L, 7L, 8L, 7L
+
+#define SN_dilithium2_aes "dilithium2_aes"
+#define LN_dilithium2_aes "dilithium2_aes"
+#define NID_dilithium2_aes 1208
+#define OBJ_dilithium2_aes 1L, 3L, 6L, 1L, 4L, 1L, 2L, 267L, 11L, 4L, 4L
+
+#define SN_dilithium3_aes "dilithium3_aes"
+#define LN_dilithium3_aes "dilithium3_aes"
+#define NID_dilithium3_aes 1209
+#define OBJ_dilithium3_aes 1L, 3L, 6L, 1L, 4L, 1L, 2L, 267L, 11L, 6L, 5L
+
+#define SN_dilithium5_aes "dilithium5_aes"
+#define LN_dilithium5_aes "dilithium5_aes"
+#define NID_dilithium5_aes 1210
+#define OBJ_dilithium5_aes 1L, 3L, 6L, 1L, 4L, 1L, 2L, 267L, 11L, 8L, 7L
 
 
 #if defined(__cplusplus)

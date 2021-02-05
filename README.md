@@ -91,7 +91,7 @@ The following quantum-safe digital signature algorithms from liboqs are supporte
 
 - `oqs_sig_default` (see [here](https://github.com/open-quantum-safe/boringssl/wiki/Using-liboqs-algorithms-not-in-the-fork#oqsdefault) for what this denotes)
 <!--- OQS_TEMPLATE_FRAGMENT_LIST_SIGS_START -->
-- **CRYSTALS-DILITHIUM**: `dilithium2`, `dilithium3`, `dilithium4`
+- **CRYSTALS-DILITHIUM**: `dilithium2`, `dilithium3`, `dilithium5`, `dilithium2_aes`, `dilithium3_aes`, `dilithium5_aes`
 - **Falcon**: `falcon512`, `falcon1024`
 - **Picnic**: `picnicl1fs`, `picnicl1ur`, `picnicl1full`, `picnic3l1`, `picnic3l3`, `picnic3l5`
 - **Rainbow**: `rainbowIclassic`, `rainbowIcircumzenithal`, `rainbowIcompressed`, `rainbowIIIclassic`, `rainbowIIIcircumzenithal`, `rainbowIIIcompressed`, `rainbowVclassic`, `rainbowVcircumzenithal`, `rainbowVcompressed`

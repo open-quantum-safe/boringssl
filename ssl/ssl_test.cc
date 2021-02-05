@@ -4404,8 +4404,14 @@ TEST(SSLTest, SignatureAlgorithmProperties) {
             SSL_get_signature_algorithm_key_type(SSL_SIGN_DILITHIUM2));
   EXPECT_EQ(EVP_PKEY_DILITHIUM3,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_DILITHIUM3));
-  EXPECT_EQ(EVP_PKEY_DILITHIUM4,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_DILITHIUM4));
+  EXPECT_EQ(EVP_PKEY_DILITHIUM5,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_DILITHIUM5));
+  EXPECT_EQ(EVP_PKEY_DILITHIUM2_AES,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_DILITHIUM2_AES));
+  EXPECT_EQ(EVP_PKEY_DILITHIUM3_AES,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_DILITHIUM3_AES));
+  EXPECT_EQ(EVP_PKEY_DILITHIUM5_AES,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_DILITHIUM5_AES));
   EXPECT_EQ(EVP_PKEY_FALCON512,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_FALCON512));
   EXPECT_EQ(EVP_PKEY_FALCON1024,
@@ -4816,8 +4822,11 @@ TEST(SSLTest, SigAlgs) {
 ///// OQS_TEMPLATE_FRAGMENT_ADD_SIG_ALG_EQ_TESTS_START
       {{NID_sha256, EVP_PKEY_OQS_SIG_DEFAULT}, true, {SSL_SIGN_OQS_SIG_DEFAULT}},
       {{NID_sha256, EVP_PKEY_DILITHIUM2}, true, {SSL_SIGN_DILITHIUM2}},
-      {{NID_sha256, EVP_PKEY_DILITHIUM3}, true, {SSL_SIGN_DILITHIUM3}},
-      {{NID_sha384, EVP_PKEY_DILITHIUM4}, true, {SSL_SIGN_DILITHIUM4}},
+      {{NID_sha384, EVP_PKEY_DILITHIUM3}, true, {SSL_SIGN_DILITHIUM3}},
+      {{NID_sha512, EVP_PKEY_DILITHIUM5}, true, {SSL_SIGN_DILITHIUM5}},
+      {{NID_sha256, EVP_PKEY_DILITHIUM2_AES}, true, {SSL_SIGN_DILITHIUM2_AES}},
+      {{NID_sha384, EVP_PKEY_DILITHIUM3_AES}, true, {SSL_SIGN_DILITHIUM3_AES}},
+      {{NID_sha512, EVP_PKEY_DILITHIUM5_AES}, true, {SSL_SIGN_DILITHIUM5_AES}},
       {{NID_sha256, EVP_PKEY_FALCON512}, true, {SSL_SIGN_FALCON512}},
       {{NID_sha512, EVP_PKEY_FALCON1024}, true, {SSL_SIGN_FALCON1024}},
       {{NID_sha256, EVP_PKEY_PICNICL1FS}, true, {SSL_SIGN_PICNICL1FS}},
@@ -4931,7 +4940,10 @@ TEST(SSLTest, SigAlgsList) {
       {"oqs_sig_default", true, {SSL_SIGN_OQS_SIG_DEFAULT}},
       {"dilithium2", true, {SSL_SIGN_DILITHIUM2}},
       {"dilithium3", true, {SSL_SIGN_DILITHIUM3}},
-      {"dilithium4", true, {SSL_SIGN_DILITHIUM4}},
+      {"dilithium5", true, {SSL_SIGN_DILITHIUM5}},
+      {"dilithium2_aes", true, {SSL_SIGN_DILITHIUM2_AES}},
+      {"dilithium3_aes", true, {SSL_SIGN_DILITHIUM3_AES}},
+      {"dilithium5_aes", true, {SSL_SIGN_DILITHIUM5_AES}},
       {"falcon512", true, {SSL_SIGN_FALCON512}},
       {"falcon1024", true, {SSL_SIGN_FALCON1024}},
       {"picnicl1fs", true, {SSL_SIGN_PICNICL1FS}},
@@ -6992,7 +7004,10 @@ INSTANTIATE_TEST_SUITE_P(WithSignatureNIDs, OQSHandshakeTest,
                             NID_oqs_sig_default,
                             NID_dilithium2,
                             NID_dilithium3,
-                            NID_dilithium4,
+                            NID_dilithium5,
+                            NID_dilithium2_aes,
+                            NID_dilithium3_aes,
+                            NID_dilithium5_aes,
                             NID_falcon512,
                             NID_falcon1024,
                             NID_picnicl1fs,

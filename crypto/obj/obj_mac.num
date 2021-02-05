@@ -1036,7 +1036,6 @@ hqc256		1140
 p521_hqc256		1141
 oqs_sig_default		1142
 dilithium3		1143
-dilithium4		1144
 falcon512		1145
 falcon1024		1146
 picnicl1fs		1147
@@ -1090,3 +1089,7 @@ rainbowIIIcompressed		1203
 rainbowVclassic		1204
 rainbowVcircumzenithal		1205
 rainbowVcompressed		1206
+dilithium5		1207
+dilithium2_aes		1208
+dilithium3_aes		1209
+dilithium5_aes		1210

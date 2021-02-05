@@ -1444,9 +1444,12 @@ secg-scheme 14 3 : dhSinglePass-cofactorDH-sha512kdf-scheme
 
 ##### OQS_TEMPLATE_FRAGMENT_ASSIGN_OIDS_START
 1 3 9999 1 1 : oqs_sig_default : oqs_sig_default
-1 3 6 1 4 1 2 267 6 4 3 : dilithium2 : dilithium2
-1 3 6 1 4 1 2 267 6 5 4 : dilithium3 : dilithium3
-1 3 6 1 4 1 2 267 6 6 5 : dilithium4 : dilithium4
+1 3 6 1 4 1 2 267 7 4 4 : dilithium2 : dilithium2
+1 3 6 1 4 1 2 267 7 6 5 : dilithium3 : dilithium3
+1 3 6 1 4 1 2 267 7 8 7 : dilithium5 : dilithium5
+1 3 6 1 4 1 2 267 11 4 4 : dilithium2_aes : dilithium2_aes
+1 3 6 1 4 1 2 267 11 6 5 : dilithium3_aes : dilithium3_aes
+1 3 6 1 4 1 2 267 11 8 7 : dilithium5_aes : dilithium5_aes
 1 3 9999 3 1 : falcon512 : falcon512
 1 3 9999 3 4 : falcon1024 : falcon1024
 1 3 6 1 4 1 311 89 2 1 1 : picnicl1fs : picnicl1fs

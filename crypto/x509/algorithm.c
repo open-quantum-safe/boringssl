@@ -89,7 +89,10 @@ int x509_digest_sign_algorithm(EVP_MD_CTX *ctx, X509_ALGOR *algor) {
       pkey_id == EVP_PKEY_OQS_SIG_DEFAULT ||
       pkey_id == EVP_PKEY_DILITHIUM2 ||
       pkey_id == EVP_PKEY_DILITHIUM3 ||
-      pkey_id == EVP_PKEY_DILITHIUM4 ||
+      pkey_id == EVP_PKEY_DILITHIUM5 ||
+      pkey_id == EVP_PKEY_DILITHIUM2_AES ||
+      pkey_id == EVP_PKEY_DILITHIUM3_AES ||
+      pkey_id == EVP_PKEY_DILITHIUM5_AES ||
       pkey_id == EVP_PKEY_FALCON512 ||
       pkey_id == EVP_PKEY_FALCON1024 ||
       pkey_id == EVP_PKEY_PICNICL1FS ||
