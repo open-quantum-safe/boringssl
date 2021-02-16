@@ -4735,47 +4735,47 @@ extern "C" {
 #define SN_rainbowIclassic "rainbowIclassic"
 #define LN_rainbowIclassic "rainbowIclassic"
 #define NID_rainbowIclassic 1198
-#define OBJ_rainbowIclassic 1L, 3L, 9999L, 5L, 1L, 1L
+#define OBJ_rainbowIclassic 1L, 3L, 9999L, 5L, 1L, 1L, 1L
 
 #define SN_rainbowIcircumzenithal "rainbowIcircumzenithal"
 #define LN_rainbowIcircumzenithal "rainbowIcircumzenithal"
 #define NID_rainbowIcircumzenithal 1199
-#define OBJ_rainbowIcircumzenithal 1L, 3L, 9999L, 5L, 1L, 4L
+#define OBJ_rainbowIcircumzenithal 1L, 3L, 9999L, 5L, 1L, 4L, 1L
 
 #define SN_rainbowIcompressed "rainbowIcompressed"
 #define LN_rainbowIcompressed "rainbowIcompressed"
 #define NID_rainbowIcompressed 1200
-#define OBJ_rainbowIcompressed 1L, 3L, 9999L, 5L, 1L, 7L
+#define OBJ_rainbowIcompressed 1L, 3L, 9999L, 5L, 1L, 7L, 1L
 
 #define SN_rainbowIIIclassic "rainbowIIIclassic"
 #define LN_rainbowIIIclassic "rainbowIIIclassic"
 #define NID_rainbowIIIclassic 1201
-#define OBJ_rainbowIIIclassic 1L, 3L, 9999L, 5L, 2L, 1L
+#define OBJ_rainbowIIIclassic 1L, 3L, 9999L, 5L, 2L, 1L, 1L
 
 #define SN_rainbowIIIcircumzenithal "rainbowIIIcircumzenithal"
 #define LN_rainbowIIIcircumzenithal "rainbowIIIcircumzenithal"
 #define NID_rainbowIIIcircumzenithal 1202
-#define OBJ_rainbowIIIcircumzenithal 1L, 3L, 9999L, 5L, 2L, 3L
+#define OBJ_rainbowIIIcircumzenithal 1L, 3L, 9999L, 5L, 2L, 3L, 1L
 
 #define SN_rainbowIIIcompressed "rainbowIIIcompressed"
 #define LN_rainbowIIIcompressed "rainbowIIIcompressed"
 #define NID_rainbowIIIcompressed 1203
-#define OBJ_rainbowIIIcompressed 1L, 3L, 9999L, 5L, 2L, 5L
+#define OBJ_rainbowIIIcompressed 1L, 3L, 9999L, 5L, 2L, 5L, 1L
 
 #define SN_rainbowVclassic "rainbowVclassic"
 #define LN_rainbowVclassic "rainbowVclassic"
 #define NID_rainbowVclassic 1204
-#define OBJ_rainbowVclassic 1L, 3L, 9999L, 5L, 3L, 1L
+#define OBJ_rainbowVclassic 1L, 3L, 9999L, 5L, 3L, 1L, 1L
 
 #define SN_rainbowVcircumzenithal "rainbowVcircumzenithal"
 #define LN_rainbowVcircumzenithal "rainbowVcircumzenithal"
 #define NID_rainbowVcircumzenithal 1205
-#define OBJ_rainbowVcircumzenithal 1L, 3L, 9999L, 5L, 3L, 3L
+#define OBJ_rainbowVcircumzenithal 1L, 3L, 9999L, 5L, 3L, 3L, 1L
 
 #define SN_rainbowVcompressed "rainbowVcompressed"
 #define LN_rainbowVcompressed "rainbowVcompressed"
 #define NID_rainbowVcompressed 1206
-#define OBJ_rainbowVcompressed 1L, 3L, 9999L, 5L, 3L, 5L
+#define OBJ_rainbowVcompressed 1L, 3L, 9999L, 5L, 3L, 5L, 1L
 
 #define SN_dilithium5 "dilithium5"
 #define LN_dilithium5 "dilithium5"
