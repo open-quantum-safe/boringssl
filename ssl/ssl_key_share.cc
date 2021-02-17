@@ -317,6 +317,14 @@ class OQSKeyShare : public SSLKeyShare {
 
   uint16_t GroupID() const override { return group_id_; }
 
+  size_t length_public_key() {
+    return kex_alg_->length_public_key;
+  }
+
+  size_t length_ciphertext() {
+    return kex_alg_->length_ciphertext;
+  }
+
   // Client sends its public key to server
   bool Offer(CBB *out) override {
     Array<uint8_t> public_key;
@@ -409,19 +417,20 @@ class OQSKeyShare : public SSLKeyShare {
 
 // Class for key-exchange using a classical key-exchange
 // algorithm in hybrid mode with OQS supplied post-quantum
-// algorithms. Following https://tools.ietf.org/html/draft-stebila-tls-hybrid-design-03#section-3.2,
+// algorithms. Following https://tools.ietf.org/html/draft-ietf-tls-hybrid-design-01#section-3.2
 // hybrid messages are encoded as follows:
-// classical_len (16 bits) | classical_artifact | pq_len (16 bits) | pq_artifact
+// classical_artifact | pq_artifact
 class ClassicalWithOQSKeyShare : public SSLKeyShare {
  public:
-  ClassicalWithOQSKeyShare(uint16_t group_id, uint16_t classical_group_id, const char *oqs_meth) : group_id_(group_id) {
-    classical_kex_ = SSLKeyShare::Create(classical_group_id);
-    pq_kex_ = MakeUnique<OQSKeyShare>(0, oqs_meth); //We don't need pq_kex_->GroupID()
-  }
+  ClassicalWithOQSKeyShare(uint16_t group_id, uint16_t classical_group_id, const char *oqs_meth) : group_id_(group_id), classical_group_id_(classical_group_id), oqs_meth_(oqs_meth) {}
 
   uint16_t GroupID() const override { return group_id_; }
 
   bool Offer(CBB *out) override {
+    if (!initCheck()) {
+        return false;
+    }
+
     ScopedCBB classical_offer;
     ScopedCBB pq_offer;
 
@@ -439,9 +448,7 @@ class ClassicalWithOQSKeyShare : public SSLKeyShare {
       return false;
     }
 
-    if (!CBB_add_u16(out, CBB_len(classical_offer.get())) ||
-        !CBB_add_bytes(out, CBB_data(classical_offer.get()), CBB_len(classical_offer.get())) ||
-        !CBB_add_u16(out, CBB_len(pq_offer.get())) ||
+    if (!CBB_add_bytes(out, CBB_data(classical_offer.get()), CBB_len(classical_offer.get())) ||
         !CBB_add_bytes(out, CBB_data(pq_offer.get()), CBB_len(pq_offer.get()))) {
       OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
       return false;
@@ -452,32 +459,31 @@ class ClassicalWithOQSKeyShare : public SSLKeyShare {
 
   bool Accept(CBB *out_public_key, Array<uint8_t> *out_secret,
               uint8_t *out_alert, Span<const uint8_t> peer_key) override {
-    uint16_t peer_classical_public_key_size = (peer_key[0] << 8) | peer_key[1];
+    if (!initCheck()) {
+        return false;
+    }
+
     Array<uint8_t> out_classical_secret;
     ScopedCBB out_classical_public_key;
 
-    uint16_t peer_pq_public_key_size = (peer_key[2 + peer_classical_public_key_size] << 8) |
-                                        peer_key[2 + peer_classical_public_key_size + 1];
     Array<uint8_t> out_pq_secret;
     ScopedCBB out_pq_ciphertext;
 
     ScopedCBB out_secret_cbb;
 
-    if (!CBB_init(out_classical_public_key.get(), 0) ||
-        !classical_kex_->Accept(out_classical_public_key.get(), &out_classical_secret, out_alert, peer_key.subspan(2, peer_classical_public_key_size)) ||
+    if (!CBB_init(out_classical_public_key.get(), classical_pub_size_) ||
+        !classical_kex_->Accept(out_classical_public_key.get(), &out_classical_secret, out_alert, peer_key.subspan(0, classical_pub_size_)) ||
         !CBB_flush(out_classical_public_key.get())) {
       return false;
     }
 
     if (!CBB_init(out_pq_ciphertext.get(), 0) ||
-        !pq_kex_->Accept(out_pq_ciphertext.get(), &out_pq_secret, out_alert, peer_key.subspan(2 + peer_classical_public_key_size + 2, peer_pq_public_key_size)) ||
+        !pq_kex_->Accept(out_pq_ciphertext.get(), &out_pq_secret, out_alert, peer_key.subspan(classical_pub_size_, pq_kex_->length_public_key())) ||
         !CBB_flush(out_pq_ciphertext.get())) {
       return false;
     }
 
-    if (!CBB_add_u16(out_public_key, CBB_len(out_classical_public_key.get())) ||
-        !CBB_add_bytes(out_public_key, CBB_data(out_classical_public_key.get()), CBB_len(out_classical_public_key.get())) ||
-        !CBB_add_u16(out_public_key, CBB_len(out_pq_ciphertext.get())) ||
+    if (!CBB_add_bytes(out_public_key, CBB_data(out_classical_public_key.get()), CBB_len(out_classical_public_key.get())) ||
         !CBB_add_bytes(out_public_key, CBB_data(out_pq_ciphertext.get()), CBB_len(out_pq_ciphertext.get()))) {
       OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
       return false;
@@ -496,20 +502,20 @@ class ClassicalWithOQSKeyShare : public SSLKeyShare {
 
   bool Finish(Array<uint8_t> *out_secret, uint8_t *out_alert,
               Span<const uint8_t> peer_key) override {
+    if (!initCheck()) {
+        return false;
+    }
+
     ScopedCBB out_secret_cbb;
 
-    uint16_t peer_classical_public_key_size = (peer_key[0] << 8) | peer_key[1];
     Array<uint8_t> out_classical_secret;
-
-    uint16_t peer_pq_ciphertext_size = (peer_key[2 + peer_classical_public_key_size] << 8) |
-                                        peer_key[2 + peer_classical_public_key_size + 1];
     Array<uint8_t> out_pq_secret;
 
-    if (!classical_kex_->Finish(&out_classical_secret, out_alert, peer_key.subspan(2, peer_classical_public_key_size))) {
+    if (!classical_kex_->Finish(&out_classical_secret, out_alert, peer_key.subspan(0, classical_pub_size_))) {
       return false;
     }
 
-    if (!pq_kex_->Finish(&out_pq_secret, out_alert, peer_key.subspan(2 + peer_classical_public_key_size + 2, peer_pq_ciphertext_size))) {
+    if (!pq_kex_->Finish(&out_pq_secret, out_alert, peer_key.subspan(classical_pub_size_, pq_kex_->length_ciphertext()))) {
       return false;
     }
 
@@ -525,8 +531,47 @@ class ClassicalWithOQSKeyShare : public SSLKeyShare {
 
  private:
   uint16_t group_id_;
-  UniquePtr<SSLKeyShare> classical_kex_;
-  UniquePtr<OQSKeyShare> pq_kex_;
+  uint16_t classical_group_id_;
+  const char *oqs_meth_;
+
+  UniquePtr<SSLKeyShare> classical_kex_ = nullptr;
+  size_t classical_pub_size_ = 0;
+
+  UniquePtr<OQSKeyShare> pq_kex_ = nullptr;
+
+  bool initCheck() {
+    if (!classical_kex_) {
+        classical_kex_ = SSLKeyShare::Create(classical_group_id_);
+        if (!classical_kex_) {
+            OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
+            return false;
+        }
+    }
+    if (!pq_kex_) {
+        pq_kex_ = MakeUnique<OQSKeyShare>(0, oqs_meth_); //We don't need pq_kex_->GroupID()
+        if (!pq_kex_) {
+            OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
+            return false;
+        }
+    }
+    if (!classical_pub_size_) {
+        // TODO(oqs): This is hacky, but seems like the easiest way to go from
+        // classical group ID -> classical public key size.
+        UniquePtr<SSLKeyShare> tmp_kex = SSLKeyShare::Create(classical_group_id_);
+        ScopedCBB tmp;
+        if (!CBB_init(tmp.get(), 0) ||
+            !tmp_kex->Offer(tmp.get()) ||
+            !CBB_flush(tmp.get())) {
+          OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
+          return false;
+        }
+        classical_pub_size_ = CBB_len(tmp.get());
+        if(!classical_pub_size_) {
+            return false;
+        }
+    }
+    return true;
+  }
 };
 
 CONSTEXPR_ARRAY NamedGroup kNamedGroups[] = {
