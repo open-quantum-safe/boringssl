@@ -18,7 +18,7 @@ localCheckout: &localCheckout
     cp -a /tmp/_circleci_local_build_repo/.git ${PROJECT_PATH}
 
 jobs:
-  ubuntu_bionic:
+  ubuntu_build:
     description: A template for running BoringSSL tests on x64 Ubuntu Bionic Docker VMs
     parameters:
       LIBOQS_SHARED:
@@ -30,7 +30,7 @@ jobs:
         type: boolean
         default: false
     docker:
-      - image: openquantumsafe/ci-ubuntu-bionic-x86_64:latest
+      - image: openquantumsafe/ci-ubuntu-focal-x86_64:latest
         auth:
           username: $DOCKER_LOGIN
           password: $DOCKER_PASSWORD
@@ -63,10 +63,10 @@ workflows:
   version: 2.1
   build:
     jobs:
-      - ubuntu_bionic:
+      - ubuntu_build:
           name: static_oqs-static_bssl
           context: openquantumsafe
-      - ubuntu_bionic:
+      - ubuntu_build:
           name: shared_oqs-shared_bssl
           context: openquantumsafe
           LIBOQS_SHARED: true
