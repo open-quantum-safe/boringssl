@@ -2,5 +2,12 @@
 #define EVP_PKEY_{{ sig['name']|upper }} NID_{{ sig['name'] }}
 {%- endfor %}
 
-#define IS_OQS_PKEY(pkey_id) ( (pkey_id >= NID_{{ (config['sigs']|first)['name'] }}) && (pkey_id <= NID_{{ (config['sigs']|last)['name'] }}) )
+#define IS_OQS_PKEY(pkey_id) ( \
+{%- for sig in config['sigs'] %}
+   (pkey_id == NID_{{ sig['name'] }}) || \
+{%- endfor -%}
+{% for kem in config['kems'] %}
+   (pkey_id == NID_{{ kem['name'] }}) || \
+{%- endfor %}
+0 )
 
