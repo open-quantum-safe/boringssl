@@ -179,7 +179,7 @@ tool/bssl client -curves <KEX> -connect localhost:4433
 
 where `<KEX>` is one of the quantum-safe or hybrid key exchange algorithms listed in the [Supported Algorithms](#supported-algorithms) section above.
 
-You can also simply run `python3 oqs_try_handshake.py`, which will pick a random key-exchange and signature algorithm and will attempt a handshake between the TLS server and client with the chosen algorithms.
+You can also simply run `python3 oqs_scripts/oqs_try_handshake.py`, which will pick a random key-exchange and signature algorithm and will attempt a handshake between the TLS server and client with the chosen algorithms.
 
 ## Team
 

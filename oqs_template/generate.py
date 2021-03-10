@@ -70,6 +70,6 @@ populate('crypto/obj/objects.txt', config, '#####')
 populate('ssl/ssl_test.cc', config, '/////')
 populate('ssl/t1_lib.cc', config, '/////')
 populate('include/openssl/ssl.h', config, '/////')
-populate('oqs_try_handshake.py', config, '#####')
+populate('oqs_scripts/oqs_try_handshake.py', config, '#####')
 
 populate('README.md', config, '<!---')
