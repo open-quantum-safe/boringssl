@@ -57,7 +57,7 @@ jobs:
           working_directory: build
       - run:
           name: Check that we have the bssl server and client syntax right
-          command: python3 oqs_scripts/oqs_try_handshake.py
+          command: python3 oqs_scripts/try_handshake.py
 
 workflows:
   version: 2.1
