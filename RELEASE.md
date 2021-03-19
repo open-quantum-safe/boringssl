@@ -20,9 +20,6 @@ What's New
 
 This is the third snapshot release of OQS-BoringSSL.  It is based on BoringSSL commit [78b3337a10a7f7b3495b6cb8140a74e265290898](https://github.com/google/boringssl/commit/78b3337).
 
-- Uses the updated NIST Round 2 submissions added to liboqs 0.4.0, as described in the [liboqs release notes](https://github.com/open-quantum-safe/liboqs/blob/main/RELEASE.md).
-
-Deprecations
-------------
-
-As a result of NIST's announcement of Round 3 of the Post-Quantum Cryptography Standardization Project, this is the last release of OQS-BoringSSL that contain algorithms from Round 2 that are not Round 3 finalists or alternate candidates. Those algorithms will be removed in the next release. The algorithms in question are: NewHope, ThreeBears, MQDSS, and qTesla. These algorithms are considered deprecated within OQS-BoringSSL will receive no updates after this release.
+- Removes algorithms from NIST PQC Round 2 that did not advance to Round 3: NewHope, ThreeBears, MQDSS, qTesla.
+- Updates algorithms to those use in liboqs 0.5.0, as described in the [liboqs release notes](https://github.com/open-quantum-safe/liboqs/blob/main/RELEASE.md).
+- Change format of hybrid key exchange in TLS 1.3 to follow https://tools.ietf.org/html/draft-ietf-tls-hybrid-design-01
