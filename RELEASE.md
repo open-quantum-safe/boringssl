@@ -21,5 +21,11 @@ What's New
 This is the third snapshot release of OQS-BoringSSL.  It is based on BoringSSL commit [78b3337a10a7f7b3495b6cb8140a74e265290898](https://github.com/google/boringssl/commit/78b3337).
 
 - Removes algorithms from NIST PQC Round 2 that did not advance to Round 3: NewHope, ThreeBears, MQDSS, qTesla.
-- Updates algorithms to those use in liboqs 0.5.0, as described in the [liboqs release notes](https://github.com/open-quantum-safe/liboqs/blob/main/RELEASE.md).
+- Updates algorithms to those used in liboqs 0.5.0, as described in the [liboqs release notes](https://github.com/open-quantum-safe/liboqs/blob/main/RELEASE.md).
 - Change format of hybrid key exchange in TLS 1.3 to follow https://tools.ietf.org/html/draft-ietf-tls-hybrid-design-01
+
+Previous release notes
+----------------------
+
+- [OQS-BoringSSL snapshot 2020-08](https://github.com/open-quantum-safe/boringssl/releases/tag/OQS-BoringSSL-snapshot-2020-08) aligned with liboqs 0.4.0 (August 11, 2020)
+- [OQS-BoringSSL snapshot 2020-07](https://github.com/open-quantum-safe/boringssl/releases/tag/OQS-BoringSSL-snapshot-2020-07) aligned with liboqs 0.3.0 (July 10, 2020)
