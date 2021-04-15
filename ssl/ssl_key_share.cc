@@ -33,6 +33,7 @@
 #include "../crypto/internal.h"
 
 #include <oqs/oqs.h>
+#include <iostream>
 
 BSSL_NAMESPACE_BEGIN
 
@@ -312,29 +313,29 @@ class OQSKeyShare : public SSLKeyShare {
   // and return nullptr if not. It is easier to handle
   // the error in there as opposed to in this constructor.
   OQSKeyShare(uint16_t group_id, const char *oqs_meth) : group_id_(group_id) {
-    kex_alg_ = OQS_KEM_new(oqs_meth);
+    oqs_kex_ = OQS_KEM_new(oqs_meth);
   }
 
   uint16_t GroupID() const override { return group_id_; }
 
   size_t length_public_key() {
-    return kex_alg_->length_public_key;
+    return oqs_kex_->length_public_key;
   }
 
   size_t length_ciphertext() {
-    return kex_alg_->length_ciphertext;
+    return oqs_kex_->length_ciphertext;
   }
 
   // Client sends its public key to server
   bool Offer(CBB *out) override {
     Array<uint8_t> public_key;
 
-    if (!public_key.Init(kex_alg_->length_public_key) ||
-        !private_key_.Init(kex_alg_->length_secret_key)) {
+    if (!public_key.Init(oqs_kex_->length_public_key) ||
+        !private_key_.Init(oqs_kex_->length_secret_key)) {
       OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
       return false;
     }
-    if (OQS_KEM_keypair(kex_alg_, public_key.data(), private_key_.data()) != OQS_SUCCESS) {
+    if (OQS_KEM_keypair(oqs_kex_, public_key.data(), private_key_.data()) != OQS_SUCCESS) {
       OPENSSL_PUT_ERROR(SSL, SSL_R_PRIVATE_KEY_OPERATION_FAILED);
       return false;
     }
@@ -353,25 +354,25 @@ class OQSKeyShare : public SSLKeyShare {
     Array<uint8_t> shared_secret;
     Array<uint8_t> ciphertext;
 
-    if (peer_key.size() != kex_alg_->length_public_key) {
+    if (peer_key.size() != oqs_kex_->length_public_key) {
       *out_alert = SSL_AD_DECODE_ERROR;
       OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_ECPOINT);
       return false;
     }
 
-    if (!shared_secret.Init(kex_alg_->length_shared_secret) ||
-        !ciphertext.Init(kex_alg_->length_ciphertext)) {
+    if (!shared_secret.Init(oqs_kex_->length_shared_secret) ||
+        !ciphertext.Init(oqs_kex_->length_ciphertext)) {
       OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
       return false;
     }
 
-    if (OQS_KEM_encaps(kex_alg_, ciphertext.data(), shared_secret.data(), peer_key.data()) != OQS_SUCCESS) {
+    if (OQS_KEM_encaps(oqs_kex_, ciphertext.data(), shared_secret.data(), peer_key.data()) != OQS_SUCCESS) {
       *out_alert = SSL_AD_DECODE_ERROR;
       OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_ECPOINT);
       return false;
     }
 
-    if (!CBB_add_bytes(out_public_key, ciphertext.data(), kex_alg_->length_ciphertext)) {
+    if (!CBB_add_bytes(out_public_key, ciphertext.data(), oqs_kex_->length_ciphertext)) {
       return false;
     }
 
@@ -386,18 +387,18 @@ class OQSKeyShare : public SSLKeyShare {
               Span<const uint8_t> peer_key) override {
     Array<uint8_t> shared_secret;
 
-    if (peer_key.size() != kex_alg_->length_ciphertext) {
+    if (peer_key.size() != oqs_kex_->length_ciphertext) {
       *out_alert = SSL_AD_DECODE_ERROR;
       OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_ECPOINT);
       return false;
     }
 
-    if (!shared_secret.Init(kex_alg_->length_shared_secret)) {
+    if (!shared_secret.Init(oqs_kex_->length_shared_secret)) {
       OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
       return false;
     }
 
-    if (OQS_KEM_decaps(kex_alg_, shared_secret.data(), peer_key.data(), private_key_.data()) != OQS_SUCCESS) {
+    if (OQS_KEM_decaps(oqs_kex_, shared_secret.data(), peer_key.data(), private_key_.data()) != OQS_SUCCESS) {
       *out_alert = SSL_AD_DECODE_ERROR;
       OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_ECPOINT);
       return false;
@@ -408,10 +409,14 @@ class OQSKeyShare : public SSLKeyShare {
     return true;
   }
 
+  ~OQSKeyShare() {
+      OQS_KEM_free(oqs_kex_);
+  }
+
  private:
   uint16_t group_id_;
 
-  OQS_KEM *kex_alg_;
+  OQS_KEM *oqs_kex_;
   Array<uint8_t> private_key_;
 };
 

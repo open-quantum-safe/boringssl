@@ -1,4 +1,4 @@
-{%- for kem in config['kems'] %}
+{%- for kem in config['kems'] if kem['family'] != 'HQC' %}
     {NID_{{ kem['name'] }}, SSL_CURVE_{{ kem['name']|upper }}},
     {%- for classical_alg in kem['mix_with'] %}
     {NID_{{ classical_alg['name'] }}_{{ kem['name'] }}, SSL_CURVE_{{ classical_alg['name']|upper }}_{{ kem['name']|upper }}},
