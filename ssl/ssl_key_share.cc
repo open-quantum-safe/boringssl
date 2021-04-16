@@ -33,7 +33,6 @@
 #include "../crypto/internal.h"
 
 #include <oqs/oqs.h>
-#include <iostream>
 
 BSSL_NAMESPACE_BEGIN
 
