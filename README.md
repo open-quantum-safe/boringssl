@@ -121,7 +121,7 @@ You will also need the latest version of the toolchain for the Go programming la
 Then, get the source code for this fork (`<BORINGSSL_DIR>` is a directory of your choosing):
 
 ```
-git clone --branch main https://github.com/open-quantum-safe/boringssl.git <BORINGSSL_DIR>
+git clone --branch master https://github.com/open-quantum-safe/boringssl.git <BORINGSSL_DIR>
 ```
 
 #### Step 1: Build and install liboqs
