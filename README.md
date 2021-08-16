@@ -98,6 +98,8 @@ The following quantum-safe digital signature algorithms from liboqs are supporte
 - **SPHINCS-SHAKE256**: `sphincsshake256128frobust`, `sphincsshake256128fsimple`, `sphincsshake256128srobust`, `sphincsshake256128ssimple`, `sphincsshake256192frobust`, `sphincsshake256192fsimple`, `sphincsshake256192srobust`, `sphincsshake256192ssimple`, `sphincsshake256256frobust`, `sphincsshake256256fsimple`, `sphincsshake256256srobust`, `sphincsshake256256ssimple`
 <!--- OQS_TEMPLATE_FRAGMENT_LIST_SIGS_END -->
 
+No hybrid signature algorithms are currently implemented. If those are needed for a project please use [OQS-OpenSSL](https://github.com/open-quantum-safe/openssl) which supports them out of the box, or implement them and create a pull request, or [create an issue](https://github.com/open-quantum-safe/boringssl/issues).
+
 ## Quickstart
 
 We regularly test the fork on Ubuntu 18.04 and above. Support for other platforms and operating systems, as well as for old versions of GCC (< 8) and Clang (< 8), is not guaranteed.
