@@ -27,7 +27,7 @@ Both liboqs and this fork are part of the **Open Quantum Safe (OQS) project**, w
 
 ## Status
 
-This fork is built on top of [commit 78b3337a10a7f7b3495b6cb8140a74e265290898](https://github.com/open-quantum-safe/boringssl/commit/78b3337a10a7f7b3495b6cb8140a74e265290898), and adds:
+This fork is built on top of [commit 519c2986c73c23461b130ad19b93fd7d081353d5](https://github.com/open-quantum-safe/boringssl/commit/519c2986c73c23461b130ad19b93fd7d081353d5), and adds:
 
 - quantum-safe key exchange to TLS 1.3
 - hybrid (quantum-safe + elliptic curve) key exchange to TLS 1.3
@@ -52,11 +52,11 @@ Some of the KEMs provided in liboqs do provide IND-CCA security; others do not (
 
 Furthermore, the BoringSSL project does not guarantee API or ABI stability; this fork is maintained primarily to enable the use of quantum-safe cryptography in the [Chromium](https://www.chromium.org/) web browser, which relies on BoringSSL's TLS implementation.
 
-The fork is currently based on commit hash `78b3337a10a7f7b3495b6cb8140a74e265290898` which has been verified to work with Chromium tag `85.0.4161.2`. If we do decide to update BoringSSL, we will do so to the most recent commit that is supported by the desired tag at which we would like Chromium to be. **We consequently also cannot guarantee API or ABI stability for this fork.**
+The fork is currently based on commit hash `519c2986c73c23461b130ad19b93fd7d081353d5` which has been verified to work with Chromium tag `94.0.4602.0`. If we do decide to update BoringSSL, we will do so to the most recent commit that is supported by the desired tag at which we would like Chromium to be. **We consequently also cannot guarantee API or ABI stability for this fork.**
 
 ### Supported Algorithms
 
-If an algorithm is provided by liboqs but is not listed below, it might still be possible to use it in the fork through [either one of two ways](https://github.com/open-quantum-safe/boringssl/wiki/Using-liboqs-algorithms-not-in-the-fork).
+If an algorithm is provided by liboqs but is not listed below, it might still be possible to use it in the fork through the build mechanism described [here](https://github.com/open-quantum-safe/boringssl/wiki/Using-liboqs-algorithms-not-in-the-fork).
 
 #### Key Exchange
 
