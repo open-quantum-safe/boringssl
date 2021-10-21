@@ -604,7 +604,10 @@ else()
     set(LIBOQS ${LIBOQS_DIR}/lib/liboqs.a)
 endif()
 if(NOT EXISTS ${LIBOQS})
-  message(FATAL_ERROR "This fork requires liboqs.")
+    set(LIBOQS ${LIBOQS_DIR}/lib/oqs.lib)
+endif()
+if(NOT EXISTS ${LIBOQS})
+    message(FATAL_ERROR "This fork requires liboqs.")
 endif()
 # CircleCI reports
 # "getrandom: Operation not permitted"
