@@ -128,8 +128,7 @@ const (
 	extensionChannelID                  uint16 = 30032  // not IANA assigned
 	extensionDelegatedCredentials       uint16 = 0x22   // draft-ietf-tls-subcerts-06
 	extensionDuplicate                  uint16 = 0xffff // not IANA assigned
-	extensionEncryptedClientHello       uint16 = 0xfe0a // not IANA assigned
-	extensionECHIsInner                 uint16 = 0xda09 // not IANA assigned
+	extensionEncryptedClientHello       uint16 = 0xfe0d // not IANA assigned
 	extensionECHOuterExtensions         uint16 = 0xfd00 // not IANA assigned
 )
 
@@ -176,7 +175,7 @@ const (
 	CertTypeRSAFixedDH = 3 // A certificate containing a static DH key
 	CertTypeDSSFixedDH = 4 // A certificate containing a static DH key
 
-	// See RFC4492 sections 3 and 5.5.
+	// See RFC 4492 sections 3 and 5.5.
 	CertTypeECDSASign      = 64 // A certificate containing an ECDSA-capable public key, signed with ECDSA.
 	CertTypeRSAFixedECDH   = 65 // A certificate containing an ECDH-capable public key, signed with RSA.
 	CertTypeECDSAFixedECDH = 66 // A certificate containing an ECDH-capable public key, signed with ECDSA.
@@ -242,6 +241,9 @@ const (
 	keyUpdateNotRequested = 0
 	keyUpdateRequested    = 1
 )
+
+// draft-ietf-tls-esni-13, sections 7.2 and 7.2.1.
+const echAcceptConfirmationLength = 8
 
 // ConnectionState records basic TLS details about the connection.
 type ConnectionState struct {
@@ -869,39 +871,52 @@ type ProtocolBugs struct {
 	// retry configs.
 	SendECHRetryConfigs []byte
 
-	// SendECHRetryConfigsInTLS12ServerHello, if true, causes the ECH server to
-	// send retry configs in the TLS 1.2 ServerHello.
-	SendECHRetryConfigsInTLS12ServerHello bool
+	// AlwaysSendECHRetryConfigs, if true, causes the ECH server to send retry
+	// configs unconditionally, including in the TLS 1.2 ServerHello.
+	AlwaysSendECHRetryConfigs bool
 
-	// SendInvalidECHIsInner, if not empty, causes the client to send the
-	// specified byte string in the ech_is_inner extension.
-	SendInvalidECHIsInner []byte
+	// AlwaysSendECHHelloRetryRequest, if true, causes the ECH server to send
+	// the ECH HelloRetryRequest extension unconditionally.
+	AlwaysSendECHHelloRetryRequest bool
 
-	// OmitECHIsInner, if true, causes the client to omit the ech_is_inner
+	// SendInvalidECHInner, if not empty, causes the client to send the
+	// specified byte string after the type field in ClientHelloInner
+	// encrypted_client_hello extension.
+	SendInvalidECHInner []byte
+
+	// OmitECHInner, if true, causes the client to omit the encrypted_client_hello
 	// extension on the ClientHelloInner message.
-	OmitECHIsInner bool
+	OmitECHInner bool
 
-	// OmitSecondECHIsInner, if true, causes the client to omit the ech_is_inner
-	// extension on the second ClientHelloInner message.
-	OmitSecondECHIsInner bool
+	// OmitSecondECHInner, if true, causes the client to omit the
+	// encrypted_client_hello extension on the second ClientHelloInner message.
+	OmitSecondECHInner bool
 
-	// AlwaysSendECHIsInner, if true, causes the client to send the
-	// ech_is_inner extension on all ClientHello messages. The server is then
-	// expected to unconditionally confirm the extension when negotiating
-	// TLS 1.3 or later.
-	AlwaysSendECHIsInner bool
+	// OmitServerHelloECHConfirmation, if true, causes the server to omit the
+	// ECH confirmation in the ServerHello.
+	OmitServerHelloECHConfirmation bool
+
+	// AlwaysSendECHInner, if true, causes the client to send an inner
+	// encrypted_client_hello extension on all ClientHello messages. The server
+	// is then expected to unconditionally confirm the extension when
+	// negotiating TLS 1.3 or later.
+	AlwaysSendECHInner bool
 
 	// TruncateClientECHEnc, if true, causes the client to send a shortened
 	// ClientECH.enc value in its encrypted_client_hello extension.
 	TruncateClientECHEnc bool
 
+	// ClientECHPadding is the number of bytes of padding to add to the client
+	// ECH payload.
+	ClientECHPadding int
+
+	// BadClientECHPadding, if true, causes the client ECH padding to contain a
+	// non-zero byte.
+	BadClientECHPadding bool
+
 	// OfferSessionInClientHelloOuter, if true, causes the client to offer
 	// sessions in ClientHelloOuter.
 	OfferSessionInClientHelloOuter bool
-
-	// FirstExtensionInClientHelloOuter, if non-zero, causes the client to place
-	// the specified extension first in ClientHelloOuter.
-	FirstExtensionInClientHelloOuter uint16
 
 	// OnlyCompressSecondClientHelloInner, if true, causes the client to
 	// only apply outer_extensions to the second ClientHello.
@@ -940,6 +955,11 @@ type ProtocolBugs struct {
 	// ExpectECHOuterExtensions is a list of extension IDs which the server
 	// will require to be omitted in ech_outer_extensions.
 	ExpectECHUncompressedExtensions []uint16
+
+	// ECHOuterExtensionOrder, if not nil, is an extension order to apply to
+	// ClientHelloOuter, instead of ordering the |ECHOuterExtensions| to match
+	// in both ClientHellos.
+	ECHOuterExtensionOrder []uint16
 
 	// UseInnerSessionWithClientHelloOuter, if true, causes the server to
 	// handshake with ClientHelloOuter, but resume the session from
@@ -1010,6 +1030,10 @@ type ProtocolBugs struct {
 	// ID as a resumption. (A client which sends empty session ID is
 	// normally expected to look ahead for ChangeCipherSpec.)
 	EmptyTicketSessionID bool
+
+	// NewSessionIDLength, if non-zero is the length of the session ID to use
+	// when issung new sessions.
+	NewSessionIDLength int
 
 	// SendClientHelloSessionID, if not nil, is the session ID sent in the
 	// ClientHello.

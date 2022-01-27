@@ -39,6 +39,7 @@
 #include <openssl/ssl.h>
 #include <openssl/rand.h>
 #include <openssl/x509.h>
+#include <openssl/x509v3.h>
 
 #include "internal.h"
 #include "../crypto/internal.h"
@@ -1803,6 +1804,8 @@ static bool CreateClientAndServer(bssl::UniquePtr<SSL> *out_client,
 struct ClientConfig {
   SSL_SESSION *session = nullptr;
   std::string servername;
+  std::string verify_hostname;
+  unsigned hostflags = 0;
   bool early_data = false;
 };
 
@@ -1824,6 +1827,12 @@ static bool ConnectClientAndServer(bssl::UniquePtr<SSL> *out_client,
   if (!config.servername.empty() &&
       !SSL_set_tlsext_host_name(client.get(), config.servername.c_str())) {
     return false;
+  }
+  if (!config.verify_hostname.empty()) {
+    if (!SSL_set1_host(client.get(), config.verify_hostname.c_str())) {
+      return false;
+    }
+    SSL_set_hostflags(client.get(), config.hostflags);
   }
 
   SSL_set_shed_handshake_config(client.get(), shed_handshake_config);
@@ -1980,8 +1989,8 @@ bool MakeECHConfig(std::vector<uint8_t> *out,
       return false;
     }
   }
-  if (!CBB_add_u16(&contents, params.max_name_len) ||
-      !CBB_add_u16_length_prefixed(&contents, &child) ||
+  if (!CBB_add_u8(&contents, params.max_name_len) ||
+      !CBB_add_u8_length_prefixed(&contents, &child) ||
       !CBB_add_bytes(
           &child, reinterpret_cast<const uint8_t *>(params.public_name.data()),
           params.public_name.size()) ||
@@ -2040,9 +2049,9 @@ TEST(SSLTest, MarshalECHConfig) {
 
   static const uint8_t kECHConfig[] = {
       // version
-      0xfe, 0x0a,
+      0xfe, 0x0d,
       // length
-      0x00, 0x43,
+      0x00, 0x41,
       // contents.config_id
       0x01,
       // contents.kem_id
@@ -2054,10 +2063,10 @@ TEST(SSLTest, MarshalECHConfig) {
       // contents.cipher_suites
       0x00, 0x08, 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x00, 0x03,
       // contents.maximum_name_length
-      0x00, 0x10,
+      0x10,
       // contents.public_name
-      0x00, 0x0e, 0x70, 0x75, 0x62, 0x6c, 0x69, 0x63, 0x2e, 0x65, 0x78, 0x61,
-      0x6d, 0x70, 0x6c, 0x65,
+      0x0e, 0x70, 0x75, 0x62, 0x6c, 0x69, 0x63, 0x2e, 0x65, 0x78, 0x61, 0x6d,
+      0x70, 0x6c, 0x65,
       // contents.extensions
       0x00, 0x00};
   uint8_t *ech_config;
@@ -2374,20 +2383,26 @@ TEST(SSLTest, ECHPadding) {
   EXPECT_EQ(client_hello_len, client_hello_len_baseline);
   EXPECT_EQ(ech_len, ech_len_baseline);
 
-  size_t client_hello_len_129, ech_len_129;
-  ASSERT_TRUE(GetECHLength(ctx.get(), &client_hello_len_129, &ech_len_129, 128,
-                           std::string(129, 'a').c_str()));
-  // The padding calculation should not pad beyond the maximum.
-  EXPECT_GT(ech_len_129, ech_len_baseline);
+  // Name lengths above the maximum do not get named-based padding, but the
+  // overall input is padded to a multiple of 32.
+  size_t client_hello_len_baseline2, ech_len_baseline2;
+  ASSERT_TRUE(GetECHLength(ctx.get(), &client_hello_len_baseline2,
+                           &ech_len_baseline2, 128,
+                           std::string(128 + 32, 'a').c_str()));
+  EXPECT_EQ(ech_len_baseline2, ech_len_baseline + 32);
+  // The ClientHello lengths may match if we are still under the threshold for
+  // padding extension.
+  EXPECT_GE(client_hello_len_baseline2, client_hello_len_baseline);
 
-  // If the SNI exceeds the maximum name length, we apply some generic padding,
-  // so close name lengths still match.
-  for (size_t name_len : {129, 130, 131, 132}) {
+  for (size_t name_len = 128 + 1; name_len < 128 + 32; name_len++) {
     SCOPED_TRACE(name_len);
     ASSERT_TRUE(GetECHLength(ctx.get(), &client_hello_len, &ech_len, 128,
                              std::string(name_len, 'a').c_str()));
-    EXPECT_EQ(client_hello_len, client_hello_len_129);
-    EXPECT_EQ(ech_len, ech_len_129);
+    EXPECT_TRUE(ech_len == ech_len_baseline || ech_len == ech_len_baseline2)
+        << ech_len;
+    EXPECT_TRUE(client_hello_len == client_hello_len_baseline ||
+                client_hello_len == client_hello_len_baseline2)
+        << client_hello_len;
   }
 }
 
@@ -2418,44 +2433,39 @@ TEST(SSLTest, ECHPublicName) {
   EXPECT_FALSE(ssl_is_valid_ech_public_name(str_to_span(
       "abcdefhijklmnopqrstuvwxyz-ABCDEFGHIJKLMNOPQRSTUVWXYZ-01234567899")));
 
-  // Inputs that parse as IPv4 addresses are rejected.
+  // Inputs with trailing numeric components are rejected.
   EXPECT_FALSE(ssl_is_valid_ech_public_name(str_to_span("127.0.0.1")));
-  EXPECT_FALSE(ssl_is_valid_ech_public_name(str_to_span("0177.0.0.01")));
-  EXPECT_FALSE(
-      ssl_is_valid_ech_public_name(str_to_span("0x7f.0x.0x.0x00000001")));
-  EXPECT_FALSE(
-      ssl_is_valid_ech_public_name(str_to_span("0XAB.0XCD.0XEF.0X01")));
-  EXPECT_FALSE(ssl_is_valid_ech_public_name(str_to_span("0.0.0.0")));
-  EXPECT_FALSE(ssl_is_valid_ech_public_name(str_to_span("255.255.255.255")));
-  // Out-of-bounds or overflowing components are not IP addresses.
-  EXPECT_TRUE(ssl_is_valid_ech_public_name(str_to_span("256.255.255.255")));
-  EXPECT_TRUE(ssl_is_valid_ech_public_name(str_to_span("255.0x100.255.255")));
-  EXPECT_TRUE(ssl_is_valid_ech_public_name(str_to_span("255.255.255.0400")));
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(str_to_span("example.1")));
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(str_to_span("example.01")));
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(str_to_span("example.0x01")));
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(str_to_span("example.0X01")));
+  // Leading zeros and values that overflow |uint32_t| are still rejected.
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(
+      str_to_span("example.123456789000000000000000")));
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(
+      str_to_span("example.012345678900000000000000")));
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(
+      str_to_span("example.0x123456789abcdefABCDEF0")));
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(
+      str_to_span("example.0x0123456789abcdefABCDEF")));
+  // Adding a non-digit or non-hex character makes it a valid DNS name again.
+  // Single-component numbers are rejected.
   EXPECT_TRUE(ssl_is_valid_ech_public_name(
-      str_to_span("255.255.255.0x100000000")));
-  // Invalid characters for the base are not IP addresses.
-  EXPECT_TRUE(ssl_is_valid_ech_public_name(str_to_span("12a.0.0.1")));
-  EXPECT_TRUE(ssl_is_valid_ech_public_name(str_to_span("0xg.0.0.1")));
-  EXPECT_TRUE(ssl_is_valid_ech_public_name(str_to_span("08.0.0.1")));
-  // Trailing components can be merged into a single component.
-  EXPECT_FALSE(ssl_is_valid_ech_public_name(str_to_span("127.0.1")));
-  EXPECT_FALSE(ssl_is_valid_ech_public_name(str_to_span("127.1")));
-  EXPECT_FALSE(ssl_is_valid_ech_public_name(str_to_span("2130706433")));
-  EXPECT_FALSE(ssl_is_valid_ech_public_name(str_to_span("0x7f000001")));
-  // Merged components must respect their limits.
-  EXPECT_FALSE(ssl_is_valid_ech_public_name(str_to_span("0.0.0.0xff")));
-  EXPECT_FALSE(ssl_is_valid_ech_public_name(str_to_span("0.0.0xffff")));
-  EXPECT_FALSE(ssl_is_valid_ech_public_name(str_to_span("0.0xffffff")));
-  EXPECT_FALSE(ssl_is_valid_ech_public_name(str_to_span("0xffffffff")));
-  EXPECT_TRUE(ssl_is_valid_ech_public_name(str_to_span("0.0.0.0x100")));
-  EXPECT_TRUE(ssl_is_valid_ech_public_name(str_to_span("0.0.0x10000")));
-  EXPECT_TRUE(ssl_is_valid_ech_public_name(str_to_span("0.0x1000000")));
-  EXPECT_TRUE(ssl_is_valid_ech_public_name(str_to_span("0x100000000")));
-  // Correctly handle overflow in decimal and octal.
-  EXPECT_FALSE(ssl_is_valid_ech_public_name(str_to_span("037777777777")));
-  EXPECT_TRUE(ssl_is_valid_ech_public_name(str_to_span("040000000000")));
-  EXPECT_FALSE(ssl_is_valid_ech_public_name(str_to_span("4294967295")));
-  EXPECT_TRUE(ssl_is_valid_ech_public_name(str_to_span("4294967296")));
+      str_to_span("example.1234567890a")));
+  EXPECT_TRUE(ssl_is_valid_ech_public_name(
+      str_to_span("example.01234567890a")));
+  EXPECT_TRUE(ssl_is_valid_ech_public_name(
+      str_to_span("example.0x123456789abcdefg")));
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(str_to_span("1")));
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(str_to_span("01")));
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(str_to_span("0x01")));
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(str_to_span("0X01")));
+  // Numbers with trailing dots are rejected. (They are already rejected by the
+  // LDH label rules, but the WHATWG URL parser additionally rejects them.)
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(str_to_span("1.")));
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(str_to_span("01.")));
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(str_to_span("0x01.")));
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(str_to_span("0X01.")));
 }
 
 // When using the built-in verifier, test that |SSL_get0_ech_name_override| is
@@ -3963,10 +3973,15 @@ TEST(SSLTest, SetVersion) {
   ASSERT_TRUE(ctx);
 
   // Set valid TLS versions.
-  EXPECT_TRUE(SSL_CTX_set_max_proto_version(ctx.get(), TLS1_VERSION));
-  EXPECT_TRUE(SSL_CTX_set_max_proto_version(ctx.get(), TLS1_1_VERSION));
-  EXPECT_TRUE(SSL_CTX_set_min_proto_version(ctx.get(), TLS1_VERSION));
-  EXPECT_TRUE(SSL_CTX_set_min_proto_version(ctx.get(), TLS1_1_VERSION));
+  for (const auto &vers : kAllVersions) {
+    SCOPED_TRACE(vers.name);
+    if (vers.ssl_method == VersionParam::is_tls) {
+      EXPECT_TRUE(SSL_CTX_set_max_proto_version(ctx.get(), vers.version));
+      EXPECT_EQ(SSL_CTX_get_max_proto_version(ctx.get()), vers.version);
+      EXPECT_TRUE(SSL_CTX_set_min_proto_version(ctx.get(), vers.version));
+      EXPECT_EQ(SSL_CTX_get_min_proto_version(ctx.get()), vers.version);
+    }
+  }
 
   // Invalid TLS versions are rejected.
   EXPECT_FALSE(SSL_CTX_set_max_proto_version(ctx.get(), DTLS1_VERSION));
@@ -3982,21 +3997,24 @@ TEST(SSLTest, SetVersion) {
   EXPECT_TRUE(SSL_CTX_set_min_proto_version(ctx.get(), 0));
   EXPECT_EQ(TLS1_VERSION, SSL_CTX_get_min_proto_version(ctx.get()));
 
-  // TLS 1.3 is available, but not by default.
-  EXPECT_TRUE(SSL_CTX_set_max_proto_version(ctx.get(), TLS1_3_VERSION));
-  EXPECT_EQ(TLS1_3_VERSION, SSL_CTX_get_max_proto_version(ctx.get()));
-
   // SSL 3.0 is not available.
   EXPECT_FALSE(SSL_CTX_set_min_proto_version(ctx.get(), SSL3_VERSION));
 
   ctx.reset(SSL_CTX_new(DTLS_method()));
   ASSERT_TRUE(ctx);
 
-  EXPECT_TRUE(SSL_CTX_set_max_proto_version(ctx.get(), DTLS1_VERSION));
-  EXPECT_TRUE(SSL_CTX_set_max_proto_version(ctx.get(), DTLS1_2_VERSION));
-  EXPECT_TRUE(SSL_CTX_set_min_proto_version(ctx.get(), DTLS1_VERSION));
-  EXPECT_TRUE(SSL_CTX_set_min_proto_version(ctx.get(), DTLS1_2_VERSION));
+  // Set valid DTLS versions.
+  for (const auto &vers : kAllVersions) {
+    SCOPED_TRACE(vers.name);
+    if (vers.ssl_method == VersionParam::is_dtls) {
+      EXPECT_TRUE(SSL_CTX_set_max_proto_version(ctx.get(), vers.version));
+      EXPECT_EQ(SSL_CTX_get_max_proto_version(ctx.get()), vers.version);
+      EXPECT_TRUE(SSL_CTX_set_min_proto_version(ctx.get(), vers.version));
+      EXPECT_EQ(SSL_CTX_get_min_proto_version(ctx.get()), vers.version);
+    }
+  }
 
+  // Invalid DTLS versions are rejected.
   EXPECT_FALSE(SSL_CTX_set_max_proto_version(ctx.get(), TLS1_VERSION));
   EXPECT_FALSE(SSL_CTX_set_max_proto_version(ctx.get(), 0xfefe /* DTLS 1.1 */));
   EXPECT_FALSE(SSL_CTX_set_max_proto_version(ctx.get(), 0xfffe /* DTLS 0.1 */));
@@ -4006,6 +4024,7 @@ TEST(SSLTest, SetVersion) {
   EXPECT_FALSE(SSL_CTX_set_min_proto_version(ctx.get(), 0xfffe /* DTLS 0.1 */));
   EXPECT_FALSE(SSL_CTX_set_min_proto_version(ctx.get(), 0x1234));
 
+  // Zero is the default version.
   EXPECT_TRUE(SSL_CTX_set_max_proto_version(ctx.get(), 0));
   EXPECT_EQ(DTLS1_2_VERSION, SSL_CTX_get_max_proto_version(ctx.get()));
   EXPECT_TRUE(SSL_CTX_set_min_proto_version(ctx.get(), 0));
@@ -4987,7 +5006,7 @@ std::string TicketAEADMethodParamToString(
     }
   }
   char retry_count[256];
-  snprintf(retry_count, sizeof(retry_count), "%d", std::get<1>(params.param));
+  snprintf(retry_count, sizeof(retry_count), "%u", std::get<1>(params.param));
   ret += "_";
   ret += retry_count;
   ret += "Retries_";
@@ -5268,23 +5287,43 @@ TEST_P(SSLVersionTest, SSLPending) {
 
   ASSERT_TRUE(Connect());
   EXPECT_EQ(0, SSL_pending(client_.get()));
+  EXPECT_EQ(0, SSL_has_pending(client_.get()));
 
   ASSERT_EQ(5, SSL_write(server_.get(), "hello", 5));
   ASSERT_EQ(5, SSL_write(server_.get(), "world", 5));
   EXPECT_EQ(0, SSL_pending(client_.get()));
+  EXPECT_EQ(0, SSL_has_pending(client_.get()));
 
   char buf[10];
   ASSERT_EQ(1, SSL_peek(client_.get(), buf, 1));
   EXPECT_EQ(5, SSL_pending(client_.get()));
+  EXPECT_EQ(1, SSL_has_pending(client_.get()));
 
   ASSERT_EQ(1, SSL_read(client_.get(), buf, 1));
   EXPECT_EQ(4, SSL_pending(client_.get()));
+  EXPECT_EQ(1, SSL_has_pending(client_.get()));
 
   ASSERT_EQ(4, SSL_read(client_.get(), buf, 10));
   EXPECT_EQ(0, SSL_pending(client_.get()));
+  if (is_dtls()) {
+    // In DTLS, the two records would have been read as a single datagram and
+    // buffered inside |client_|. Thus, |SSL_has_pending| should return true.
+    //
+    // This test is slightly unrealistic. It relies on |ConnectClientAndServer|
+    // using a |BIO| pair, which does not preserve datagram boundaries. Reading
+    // 1 byte, then 4 bytes, from the first record also relies on
+    // https://crbug.com/boringssl/65. But it does test the codepaths. When
+    // fixing either of these bugs, this test may need to be redone.
+    EXPECT_EQ(1, SSL_has_pending(client_.get()));
+  } else {
+    // In TLS, we do not overread, so |SSL_has_pending| should report no data is
+    // buffered.
+    EXPECT_EQ(0, SSL_has_pending(client_.get()));
+  }
 
   ASSERT_EQ(2, SSL_read(client_.get(), buf, 2));
   EXPECT_EQ(3, SSL_pending(client_.get()));
+  EXPECT_EQ(1, SSL_has_pending(client_.get()));
 }
 
 // Test that post-handshake tickets consumed by |SSL_shutdown| are ignored.
@@ -5539,7 +5578,7 @@ TEST(SSLTest, Handoff) {
 
   SSL_CTX_set_session_cache_mode(client_ctx.get(), SSL_SESS_CACHE_CLIENT);
   SSL_CTX_sess_set_new_cb(client_ctx.get(), SaveLastSession);
-  SSL_CTX_set_handoff_mode(server_ctx.get(), 1);
+  SSL_CTX_set_handoff_mode(server_ctx.get(), true);
   uint8_t keys[48];
   SSL_CTX_get_tlsext_ticket_keys(server_ctx.get(), &keys, sizeof(keys));
   SSL_CTX_set_tlsext_ticket_keys(handshaker_ctx.get(), &keys, sizeof(keys));
@@ -5644,7 +5683,7 @@ TEST(SSLTest, HandoffDeclined) {
   ASSERT_TRUE(client_ctx);
   ASSERT_TRUE(server_ctx);
 
-  SSL_CTX_set_handoff_mode(server_ctx.get(), 1);
+  SSL_CTX_set_handoff_mode(server_ctx.get(), true);
   ASSERT_TRUE(SSL_CTX_set_max_proto_version(server_ctx.get(), TLS1_2_VERSION));
 
   bssl::UniquePtr<SSL> client, server;
@@ -8792,6 +8831,108 @@ TEST(SSLTest, PermuteExtensions) {
       }
       EXPECT_TRUE(passed) << "Extensions were not permuted";
     }
+  }
+}
+
+TEST(SSLTest, HostMatching) {
+  static const char kCertPEM[] = R"(
+-----BEGIN CERTIFICATE-----
+MIIB9jCCAZ2gAwIBAgIQeudG9R61BOxUvWkeVhU5DTAKBggqhkjOPQQDAjApMRAw
+DgYDVQQKEwdBY21lIENvMRUwEwYDVQQDEwxleGFtcGxlMy5jb20wHhcNMjExMjA2
+MjA1NjU2WhcNMjIxMjA2MjA1NjU2WjApMRAwDgYDVQQKEwdBY21lIENvMRUwEwYD
+VQQDEwxleGFtcGxlMy5jb20wWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAAS7l2VO
+Bl2TjVm9WfGk24+hMbVFUNB+RVHWbCvFvNZAoWiIJ2z34RLGInyZvCZ8xLAvsuaW
+ULDDaoeDl1M0t4Hmo4GmMIGjMA4GA1UdDwEB/wQEAwIChDATBgNVHSUEDDAKBggr
+BgEFBQcDATAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBTTJWurcc1t+VPQBko3
+Gsw6cbcWSTBMBgNVHREERTBDggxleGFtcGxlMS5jb22CDGV4YW1wbGUyLmNvbYIP
+YSouZXhhbXBsZTQuY29tgg4qLmV4YW1wbGU1LmNvbYcEAQIDBDAKBggqhkjOPQQD
+AgNHADBEAiAAv0ljHJGrgyzZDkG6XvNZ5ewxRfnXcZuD0Y7E4giCZgIgNK1qjilu
+5DyVbfKeeJhOCtGxqE1dWLXyJBnoRomSYBY=
+-----END CERTIFICATE-----
+)";
+  bssl::UniquePtr<X509> cert(CertFromPEM(kCertPEM));
+  ASSERT_TRUE(cert);
+  static const char kCertNoSANsPEM[] = R"(
+-----BEGIN CERTIFICATE-----
+MIIBqzCCAVGgAwIBAgIQeudG9R61BOxUvWkeVhU5DTAKBggqhkjOPQQDAjArMRIw
+EAYDVQQKEwlBY21lIENvIDIxFTATBgNVBAMTDGV4YW1wbGUzLmNvbTAeFw0yMTEy
+MDYyMDU2NTZaFw0yMjEyMDYyMDU2NTZaMCsxEjAQBgNVBAoTCUFjbWUgQ28gMjEV
+MBMGA1UEAxMMZXhhbXBsZTMuY29tMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE
+u5dlTgZdk41ZvVnxpNuPoTG1RVDQfkVR1mwrxbzWQKFoiCds9+ESxiJ8mbwmfMSw
+L7LmllCww2qHg5dTNLeB5qNXMFUwDgYDVR0PAQH/BAQDAgKEMBMGA1UdJQQMMAoG
+CCsGAQUFBwMBMA8GA1UdEwEB/wQFMAMBAf8wHQYDVR0OBBYEFNMla6txzW35U9AG
+SjcazDpxtxZJMAoGCCqGSM49BAMCA0gAMEUCIG3YWGWtpVhbcGV7wFKQwTfmvwHW
+pw4qCFZlool4hCwsAiEA+2fc6NfSbNpFEtQkDOMJW2ANiScAVEmImNqPfb2klz4=
+-----END CERTIFICATE-----
+)";
+  bssl::UniquePtr<X509> cert_no_sans(CertFromPEM(kCertNoSANsPEM));
+  ASSERT_TRUE(cert_no_sans);
+
+  static const char kKeyPEM[] = R"(
+-----BEGIN PRIVATE KEY-----
+MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQghsaSZhUzZAcQlLyJ
+MDuy7WPdyqNsAX9rmEP650LF/q2hRANCAAS7l2VOBl2TjVm9WfGk24+hMbVFUNB+
+RVHWbCvFvNZAoWiIJ2z34RLGInyZvCZ8xLAvsuaWULDDaoeDl1M0t4Hm
+-----END PRIVATE KEY-----
+)";
+  bssl::UniquePtr<EVP_PKEY> key(KeyFromPEM(kKeyPEM));
+  ASSERT_TRUE(key);
+
+  bssl::UniquePtr<SSL_CTX> client_ctx(SSL_CTX_new(TLS_method()));
+  ASSERT_TRUE(client_ctx);
+  ASSERT_TRUE(X509_STORE_add_cert(SSL_CTX_get_cert_store(client_ctx.get()),
+                                  cert.get()));
+  ASSERT_TRUE(X509_STORE_add_cert(SSL_CTX_get_cert_store(client_ctx.get()),
+                                  cert_no_sans.get()));
+  SSL_CTX_set_verify(client_ctx.get(),
+                     SSL_VERIFY_PEER | SSL_VERIFY_FAIL_IF_NO_PEER_CERT,
+                     nullptr);
+
+  struct TestCase {
+    X509 *cert;
+    std::string hostname;
+    unsigned flags;
+    bool should_match;
+  };
+  std::vector<TestCase> kTests = {
+      // These two names are present as SANs in the certificate.
+      {cert.get(), "example1.com", 0, true},
+      {cert.get(), "example2.com", 0, true},
+      // This is the CN of the certificate, but that shouldn't matter if a SAN
+      // extension is present.
+      {cert.get(), "example3.com", 0, false},
+      // If the SAN is not present, we, for now, look for DNS names in the CN.
+      {cert_no_sans.get(), "example3.com", 0, true},
+      // ... but this can be turned off.
+      {cert_no_sans.get(), "example3.com", X509_CHECK_FLAG_NEVER_CHECK_SUBJECT,
+       false},
+      // a*.example4.com is a SAN, but is invalid.
+      {cert.get(), "abc.example4.com", 0, false},
+      // *.example5.com is a SAN in the certificate, which is a normal and valid
+      // wildcard.
+      {cert.get(), "abc.example5.com", 0, true},
+      // This name is not present.
+      {cert.get(), "notexample1.com", 0, false},
+      // The IPv4 address 1.2.3.4 is a SAN, but that shouldn't match against a
+      // hostname that happens to be its textual representation.
+      {cert.get(), "1.2.3.4", 0, false},
+  };
+
+  for (const TestCase &test : kTests) {
+    SCOPED_TRACE(test.hostname);
+
+    bssl::UniquePtr<SSL_CTX> server_ctx(SSL_CTX_new(TLS_method()));
+    ASSERT_TRUE(server_ctx);
+    ASSERT_TRUE(SSL_CTX_use_certificate(server_ctx.get(), test.cert));
+    ASSERT_TRUE(SSL_CTX_use_PrivateKey(server_ctx.get(), key.get()));
+
+    ClientConfig config;
+    bssl::UniquePtr<SSL> client, server;
+    config.verify_hostname = test.hostname;
+    config.hostflags = test.flags;
+    EXPECT_EQ(test.should_match,
+              ConnectClientAndServer(&client, &server, client_ctx.get(),
+                                     server_ctx.get(), config));
   }
 }
 

@@ -23,7 +23,6 @@
 #endif
 
 #include <openssl/chacha.h>
-#include <openssl/cpu.h>
 #include <openssl/mem.h>
 #include <openssl/type_check.h>
 
@@ -356,7 +355,7 @@ void RAND_bytes_with_additional_data(uint8_t *out, size_t out_len,
     int used_cpu;
     rand_get_seed(state, seed, &used_cpu);
 
-    uint8_t personalization[CTR_DRBG_ENTROPY_LEN];
+    uint8_t personalization[CTR_DRBG_ENTROPY_LEN] = {0};
     size_t personalization_len = 0;
 #if defined(OPENSSL_URANDOM)
     // If we used RDRAND, also opportunistically read from the system. This

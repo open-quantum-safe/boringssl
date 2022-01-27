@@ -30,7 +30,7 @@
 #include "../internal.h"
 
 
-// This file implements draft-irtf-cfrg-hpke-08.
+// This file implements draft-irtf-cfrg-hpke-12.
 
 #define MAX_SEED_LEN X25519_PRIVATE_KEY_LEN
 #define MAX_SHARED_SECRET_LEN SHA256_DIGEST_LENGTH
@@ -115,7 +115,7 @@ static int hpke_labeled_expand(const EVP_MD *hkdf_md, uint8_t *out_key,
 // KEM implementations.
 
 // dhkem_extract_and_expand implements the ExtractAndExpand operation in the
-// DHKEM construction. See section 4.1 of draft-irtf-cfrg-hpke-08.
+// DHKEM construction. See section 4.1 of draft-irtf-cfrg-hpke-12.
 static int dhkem_extract_and_expand(uint16_t kem_id, const EVP_MD *hkdf_md,
                                     uint8_t *out_key, size_t out_len,
                                     const uint8_t *dh, size_t dh_len,
@@ -233,6 +233,23 @@ void EVP_HPKE_KEY_zero(EVP_HPKE_KEY *key) {
 void EVP_HPKE_KEY_cleanup(EVP_HPKE_KEY *key) {
   // Nothing to clean up for now, but we may introduce a cleanup process in the
   // future.
+}
+
+EVP_HPKE_KEY *EVP_HPKE_KEY_new(void) {
+  EVP_HPKE_KEY *key = OPENSSL_malloc(sizeof(EVP_HPKE_KEY));
+  if (key == NULL) {
+    OPENSSL_PUT_ERROR(EVP, ERR_R_MALLOC_FAILURE);
+    return NULL;
+  }
+  EVP_HPKE_KEY_zero(key);
+  return key;
+}
+
+void EVP_HPKE_KEY_free(EVP_HPKE_KEY *key) {
+  if (key != NULL) {
+    EVP_HPKE_KEY_cleanup(key);
+    OPENSSL_free(key);
+  }
 }
 
 int EVP_HPKE_KEY_copy(EVP_HPKE_KEY *dst, const EVP_HPKE_KEY *src) {
@@ -429,6 +446,23 @@ void EVP_HPKE_CTX_zero(EVP_HPKE_CTX *ctx) {
 
 void EVP_HPKE_CTX_cleanup(EVP_HPKE_CTX *ctx) {
   EVP_AEAD_CTX_cleanup(&ctx->aead_ctx);
+}
+
+EVP_HPKE_CTX *EVP_HPKE_CTX_new(void) {
+  EVP_HPKE_CTX *ctx = OPENSSL_malloc(sizeof(EVP_HPKE_CTX));
+  if (ctx == NULL) {
+    OPENSSL_PUT_ERROR(EVP, ERR_R_MALLOC_FAILURE);
+    return NULL;
+  }
+  EVP_HPKE_CTX_zero(ctx);
+  return ctx;
+}
+
+void EVP_HPKE_CTX_free(EVP_HPKE_CTX *ctx) {
+  if (ctx != NULL) {
+    EVP_HPKE_CTX_cleanup(ctx);
+    OPENSSL_free(ctx);
+  }
 }
 
 int EVP_HPKE_CTX_setup_sender(EVP_HPKE_CTX *ctx, uint8_t *out_enc,

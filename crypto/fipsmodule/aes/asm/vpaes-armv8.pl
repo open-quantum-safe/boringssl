@@ -1153,8 +1153,8 @@ vpaes_cbc_encrypt:
 	st1	{v0.16b}, [$ivec]	// write ivec
 
 	ldp	x29,x30,[sp],#16
-	AARCH64_VALIDATE_LINK_REGISTER
 .Lcbc_abort:
+	AARCH64_VALIDATE_LINK_REGISTER
 	ret
 .size	vpaes_cbc_encrypt,.-vpaes_cbc_encrypt
 
@@ -1382,4 +1382,4 @@ ___
 
 print $code;
 
-close STDOUT or die "error closing STDOUT";
+close STDOUT or die "error closing STDOUT: $!";

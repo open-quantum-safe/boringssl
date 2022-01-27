@@ -126,8 +126,7 @@ BSSL_NAMESPACE_BEGIN
 
 SSL_HANDSHAKE::SSL_HANDSHAKE(SSL *ssl_arg)
     : ssl(ssl_arg),
-      ech_present(false),
-      ech_is_inner_present(false),
+      ech_is_inner(false),
       ech_authenticated_reject(false),
       scts_requested(false),
       handshake_finalized(false),
@@ -270,12 +269,15 @@ bool ssl_hash_message(SSL_HANDSHAKE *hs, const SSLMessage &msg) {
 }
 
 bool ssl_parse_extensions(const CBS *cbs, uint8_t *out_alert,
-                          Span<const SSL_EXTENSION_TYPE> ext_types,
+                          std::initializer_list<SSLExtension *> extensions,
                           bool ignore_unknown) {
   // Reset everything.
-  for (const SSL_EXTENSION_TYPE &ext_type : ext_types) {
-    *ext_type.out_present = false;
-    CBS_init(ext_type.out_data, nullptr, 0);
+  for (SSLExtension *ext : extensions) {
+    ext->present = false;
+    CBS_init(&ext->data, nullptr, 0);
+    if (!ext->allowed) {
+      assert(!ignore_unknown);
+    }
   }
 
   CBS copy = *cbs;
@@ -289,10 +291,10 @@ bool ssl_parse_extensions(const CBS *cbs, uint8_t *out_alert,
       return false;
     }
 
-    const SSL_EXTENSION_TYPE *found = nullptr;
-    for (const SSL_EXTENSION_TYPE &ext_type : ext_types) {
-      if (type == ext_type.type) {
-        found = &ext_type;
+    SSLExtension *found = nullptr;
+    for (SSLExtension *ext : extensions) {
+      if (type == ext->type && ext->allowed) {
+        found = ext;
         break;
       }
     }
@@ -307,14 +309,14 @@ bool ssl_parse_extensions(const CBS *cbs, uint8_t *out_alert,
     }
 
     // Duplicate ext_types are forbidden.
-    if (*found->out_present) {
+    if (found->present) {
       OPENSSL_PUT_ERROR(SSL, SSL_R_DUPLICATE_EXTENSION);
       *out_alert = SSL_AD_ILLEGAL_PARAMETER;
       return false;
     }
 
-    *found->out_present = 1;
-    *found->out_data = data;
+    found->present = true;
+    found->data = data;
   }
 
   return true;
@@ -528,20 +530,20 @@ bool ssl_send_finished(SSL_HANDSHAKE *hs) {
   size_t finished_len;
   if (!hs->transcript.GetFinishedMAC(finished, &finished_len, session,
                                      ssl->server)) {
-    return 0;
+    return false;
   }
 
   // Log the master secret, if logging is enabled.
   if (!ssl_log_secret(ssl, "CLIENT_RANDOM",
                       MakeConstSpan(session->secret, session->secret_length))) {
-    return 0;
+    return false;
   }
 
   // Copy the Finished so we can use it for renegotiation checks.
   if (finished_len > sizeof(ssl->s3->previous_client_finished) ||
       finished_len > sizeof(ssl->s3->previous_server_finished)) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
-    return 0;
+    return false;
   }
 
   if (ssl->server) {
@@ -558,10 +560,10 @@ bool ssl_send_finished(SSL_HANDSHAKE *hs) {
       !CBB_add_bytes(&body, finished, finished_len) ||
       !ssl_add_message_cbb(ssl, cbb.get())) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
-    return 0;
+    return false;
   }
 
-  return 1;
+  return true;
 }
 
 bool ssl_output_cert_chain(SSL_HANDSHAKE *hs) {

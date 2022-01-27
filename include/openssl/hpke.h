@@ -30,7 +30,7 @@ extern "C" {
 // Hybrid Public Key Encryption (HPKE) enables a sender to encrypt messages to a
 // receiver with a public key.
 //
-// See https://tools.ietf.org/html/draft-irtf-cfrg-hpke-08.
+// See https://tools.ietf.org/html/draft-irtf-cfrg-hpke-12.
 
 
 // Parameters.
@@ -92,6 +92,17 @@ OPENSSL_EXPORT void EVP_HPKE_KEY_zero(EVP_HPKE_KEY *key);
 
 // EVP_HPKE_KEY_cleanup releases memory referenced by |key|.
 OPENSSL_EXPORT void EVP_HPKE_KEY_cleanup(EVP_HPKE_KEY *key);
+
+// EVP_HPKE_KEY_new returns a newly-allocated |EVP_HPKE_KEY|, or NULL on error.
+// The caller must call |EVP_HPKE_KEY_free| on the result to release it.
+//
+// This is a convenience function for callers that need a heap-allocated
+// |EVP_HPKE_KEY|.
+OPENSSL_EXPORT EVP_HPKE_KEY *EVP_HPKE_KEY_new(void);
+
+// EVP_HPKE_KEY_free releases memory associated with |key|, which must have been
+// created with |EVP_HPKE_KEY_new|.
+OPENSSL_EXPORT void EVP_HPKE_KEY_free(EVP_HPKE_KEY *key);
 
 // EVP_HPKE_KEY_copy sets |dst| to a copy of |src|. It returns one on success
 // and zero on error. On success, the caller must call |EVP_HPKE_KEY_cleanup| to
@@ -159,6 +170,17 @@ OPENSSL_EXPORT void EVP_HPKE_CTX_zero(EVP_HPKE_CTX *ctx);
 // been initialized with |EVP_HPKE_CTX_zero| or one of the
 // |EVP_HPKE_CTX_setup_*| functions.
 OPENSSL_EXPORT void EVP_HPKE_CTX_cleanup(EVP_HPKE_CTX *ctx);
+
+// EVP_HPKE_CTX_new returns a newly-allocated |EVP_HPKE_CTX|, or NULL on error.
+// The caller must call |EVP_HPKE_CTX_free| on the result to release it.
+//
+// This is a convenience function for callers that need a heap-allocated
+// |EVP_HPKE_CTX|.
+OPENSSL_EXPORT EVP_HPKE_CTX *EVP_HPKE_CTX_new(void);
+
+// EVP_HPKE_CTX_free releases memory associated with |ctx|, which must have been
+// created with |EVP_HPKE_CTX_new|.
+OPENSSL_EXPORT void EVP_HPKE_CTX_free(EVP_HPKE_CTX *ctx);
 
 // EVP_HPKE_MAX_ENC_LENGTH is the maximum length of "enc", the encapsulated
 // shared secret, for all supported KEMs in this library.
@@ -316,6 +338,9 @@ using ScopedEVP_HPKE_CTX =
 using ScopedEVP_HPKE_KEY =
     internal::StackAllocated<EVP_HPKE_KEY, void, EVP_HPKE_KEY_zero,
                              EVP_HPKE_KEY_cleanup>;
+
+BORINGSSL_MAKE_DELETER(EVP_HPKE_CTX, EVP_HPKE_CTX_free)
+BORINGSSL_MAKE_DELETER(EVP_HPKE_KEY, EVP_HPKE_KEY_free)
 
 BSSL_NAMESPACE_END
 
