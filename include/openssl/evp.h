@@ -314,14 +314,6 @@ OPENSSL_EXPORT EC_KEY *EVP_PKEY_get1_EC_KEY(const EVP_PKEY *pkey);
    (pkey_id == NID_lightsaber) || \
    (pkey_id == NID_saber) || \
    (pkey_id == NID_firesaber) || \
-   (pkey_id == NID_sidhp434) || \
-   (pkey_id == NID_sidhp503) || \
-   (pkey_id == NID_sidhp610) || \
-   (pkey_id == NID_sidhp751) || \
-   (pkey_id == NID_sikep434) || \
-   (pkey_id == NID_sikep503) || \
-   (pkey_id == NID_sikep610) || \
-   (pkey_id == NID_sikep751) || \
    (pkey_id == NID_kyber90s512) || \
    (pkey_id == NID_kyber90s768) || \
    (pkey_id == NID_kyber90s1024) || \

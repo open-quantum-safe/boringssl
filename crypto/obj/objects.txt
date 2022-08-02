@@ -1398,22 +1398,6 @@ secg-scheme 14 3 : dhSinglePass-cofactorDH-sha512kdf-scheme
  : p384_saber
  : firesaber
  : p521_firesaber
- : sidhp434
- : p256_sidhp434
- : sidhp503
- : p256_sidhp503
- : sidhp610
- : p384_sidhp610
- : sidhp751
- : p521_sidhp751
- : sikep434
- : p256_sikep434
- : sikep503
- : p256_sikep503
- : sikep610
- : p384_sikep610
- : sikep751
- : p521_sikep751
  : kyber90s512
  : p256_kyber90s512
  : kyber90s768

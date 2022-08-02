@@ -564,62 +564,6 @@ static const CurveTest kCurveTests[] = {
     },
   },
   {
-    "sidhp434:p256_sidhp434",
-    {
-      SSL_CURVE_SIDHP434,
-      SSL_CURVE_P256_SIDHP434,
-    },
-  },
-  {
-    "sidhp503:p256_sidhp503",
-    {
-      SSL_CURVE_SIDHP503,
-      SSL_CURVE_P256_SIDHP503,
-    },
-  },
-  {
-    "sidhp610:p384_sidhp610",
-    {
-      SSL_CURVE_SIDHP610,
-      SSL_CURVE_P384_SIDHP610,
-    },
-  },
-  {
-    "sidhp751:p521_sidhp751",
-    {
-      SSL_CURVE_SIDHP751,
-      SSL_CURVE_P521_SIDHP751,
-    },
-  },
-  {
-    "sikep434:p256_sikep434",
-    {
-      SSL_CURVE_SIKEP434,
-      SSL_CURVE_P256_SIKEP434,
-    },
-  },
-  {
-    "sikep503:p256_sikep503",
-    {
-      SSL_CURVE_SIKEP503,
-      SSL_CURVE_P256_SIKEP503,
-    },
-  },
-  {
-    "sikep610:p384_sikep610",
-    {
-      SSL_CURVE_SIKEP610,
-      SSL_CURVE_P384_SIKEP610,
-    },
-  },
-  {
-    "sikep751:p521_sikep751",
-    {
-      SSL_CURVE_SIKEP751,
-      SSL_CURVE_P521_SIKEP751,
-    },
-  },
-  {
     "kyber90s512:p256_kyber90s512",
     {
       SSL_CURVE_KYBER90S512,
@@ -8167,22 +8111,6 @@ static const TLSGroup kOQSGroups[] = {
     {NID_p384_saber, SSL_CURVE_P384_SABER},
     {NID_firesaber, SSL_CURVE_FIRESABER},
     {NID_p521_firesaber, SSL_CURVE_P521_FIRESABER},
-    {NID_sidhp434, SSL_CURVE_SIDHP434},
-    {NID_p256_sidhp434, SSL_CURVE_P256_SIDHP434},
-    {NID_sidhp503, SSL_CURVE_SIDHP503},
-    {NID_p256_sidhp503, SSL_CURVE_P256_SIDHP503},
-    {NID_sidhp610, SSL_CURVE_SIDHP610},
-    {NID_p384_sidhp610, SSL_CURVE_P384_SIDHP610},
-    {NID_sidhp751, SSL_CURVE_SIDHP751},
-    {NID_p521_sidhp751, SSL_CURVE_P521_SIDHP751},
-    {NID_sikep434, SSL_CURVE_SIKEP434},
-    {NID_p256_sikep434, SSL_CURVE_P256_SIKEP434},
-    {NID_sikep503, SSL_CURVE_SIKEP503},
-    {NID_p256_sikep503, SSL_CURVE_P256_SIKEP503},
-    {NID_sikep610, SSL_CURVE_SIKEP610},
-    {NID_p384_sikep610, SSL_CURVE_P384_SIKEP610},
-    {NID_sikep751, SSL_CURVE_SIKEP751},
-    {NID_p521_sikep751, SSL_CURVE_P521_SIKEP751},
     {NID_kyber90s512, SSL_CURVE_KYBER90S512},
     {NID_p256_kyber90s512, SSL_CURVE_P256_KYBER90S512},
     {NID_kyber90s768, SSL_CURVE_KYBER90S768},

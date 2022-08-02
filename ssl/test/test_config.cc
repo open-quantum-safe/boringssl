@@ -2021,54 +2021,6 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
         case SSL_CURVE_P521_FIRESABER:
           nids.push_back(NID_p521_firesaber);
           break;
-        case SSL_CURVE_SIDHP434:
-          nids.push_back(NID_sidhp434);
-          break;
-        case SSL_CURVE_P256_SIDHP434:
-          nids.push_back(NID_p256_sidhp434);
-          break;
-        case SSL_CURVE_SIDHP503:
-          nids.push_back(NID_sidhp503);
-          break;
-        case SSL_CURVE_P256_SIDHP503:
-          nids.push_back(NID_p256_sidhp503);
-          break;
-        case SSL_CURVE_SIDHP610:
-          nids.push_back(NID_sidhp610);
-          break;
-        case SSL_CURVE_P384_SIDHP610:
-          nids.push_back(NID_p384_sidhp610);
-          break;
-        case SSL_CURVE_SIDHP751:
-          nids.push_back(NID_sidhp751);
-          break;
-        case SSL_CURVE_P521_SIDHP751:
-          nids.push_back(NID_p521_sidhp751);
-          break;
-        case SSL_CURVE_SIKEP434:
-          nids.push_back(NID_sikep434);
-          break;
-        case SSL_CURVE_P256_SIKEP434:
-          nids.push_back(NID_p256_sikep434);
-          break;
-        case SSL_CURVE_SIKEP503:
-          nids.push_back(NID_sikep503);
-          break;
-        case SSL_CURVE_P256_SIKEP503:
-          nids.push_back(NID_p256_sikep503);
-          break;
-        case SSL_CURVE_SIKEP610:
-          nids.push_back(NID_sikep610);
-          break;
-        case SSL_CURVE_P384_SIKEP610:
-          nids.push_back(NID_p384_sikep610);
-          break;
-        case SSL_CURVE_SIKEP751:
-          nids.push_back(NID_sikep751);
-          break;
-        case SSL_CURVE_P521_SIKEP751:
-          nids.push_back(NID_p521_sikep751);
-          break;
         case SSL_CURVE_KYBER90S512:
           nids.push_back(NID_kyber90s512);
           break;
@@ -2186,14 +2138,6 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
         NID_lightsaber, NID_p256_lightsaber,
         NID_saber, NID_p384_saber,
         NID_firesaber, NID_p521_firesaber,
-        NID_sidhp434, NID_p256_sidhp434,
-        NID_sidhp503, NID_p256_sidhp503,
-        NID_sidhp610, NID_p384_sidhp610,
-        NID_sidhp751, NID_p521_sidhp751,
-        NID_sikep434, NID_p256_sikep434,
-        NID_sikep503, NID_p256_sikep503,
-        NID_sikep610, NID_p384_sikep610,
-        NID_sikep751, NID_p521_sikep751,
         NID_kyber90s512, NID_p256_kyber90s512,
         NID_kyber90s768, NID_p384_kyber90s768,
         NID_kyber90s1024, NID_p521_kyber90s1024,

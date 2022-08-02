@@ -617,22 +617,6 @@ CONSTEXPR_ARRAY NamedGroup kNamedGroups[] = {
     {NID_p384_saber, SSL_CURVE_P384_SABER, "p384_saber", "p384_saber"},
     {NID_firesaber, SSL_CURVE_FIRESABER, "firesaber", "firesaber"},
     {NID_p521_firesaber, SSL_CURVE_P521_FIRESABER, "p521_firesaber", "p521_firesaber"},
-    {NID_sidhp434, SSL_CURVE_SIDHP434, "sidhp434", "sidhp434"},
-    {NID_p256_sidhp434, SSL_CURVE_P256_SIDHP434, "p256_sidhp434", "p256_sidhp434"},
-    {NID_sidhp503, SSL_CURVE_SIDHP503, "sidhp503", "sidhp503"},
-    {NID_p256_sidhp503, SSL_CURVE_P256_SIDHP503, "p256_sidhp503", "p256_sidhp503"},
-    {NID_sidhp610, SSL_CURVE_SIDHP610, "sidhp610", "sidhp610"},
-    {NID_p384_sidhp610, SSL_CURVE_P384_SIDHP610, "p384_sidhp610", "p384_sidhp610"},
-    {NID_sidhp751, SSL_CURVE_SIDHP751, "sidhp751", "sidhp751"},
-    {NID_p521_sidhp751, SSL_CURVE_P521_SIDHP751, "p521_sidhp751", "p521_sidhp751"},
-    {NID_sikep434, SSL_CURVE_SIKEP434, "sikep434", "sikep434"},
-    {NID_p256_sikep434, SSL_CURVE_P256_SIKEP434, "p256_sikep434", "p256_sikep434"},
-    {NID_sikep503, SSL_CURVE_SIKEP503, "sikep503", "sikep503"},
-    {NID_p256_sikep503, SSL_CURVE_P256_SIKEP503, "p256_sikep503", "p256_sikep503"},
-    {NID_sikep610, SSL_CURVE_SIKEP610, "sikep610", "sikep610"},
-    {NID_p384_sikep610, SSL_CURVE_P384_SIKEP610, "p384_sikep610", "p384_sikep610"},
-    {NID_sikep751, SSL_CURVE_SIKEP751, "sikep751", "sikep751"},
-    {NID_p521_sikep751, SSL_CURVE_P521_SIKEP751, "p521_sikep751", "p521_sikep751"},
     {NID_kyber90s512, SSL_CURVE_KYBER90S512, "kyber90s512", "kyber90s512"},
     {NID_p256_kyber90s512, SSL_CURVE_P256_KYBER90S512, "p256_kyber90s512", "p256_kyber90s512"},
     {NID_kyber90s768, SSL_CURVE_KYBER90S768, "kyber90s768", "kyber90s768"},
@@ -887,86 +871,6 @@ UniquePtr<SSLKeyShare> SSLKeyShare::Create(uint16_t group_id) {
     case SSL_CURVE_P521_FIRESABER:
       if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_saber_firesaber))
           return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P521_FIRESABER, SSL_CURVE_SECP521R1, OQS_KEM_alg_saber_firesaber));
-      else
-          return nullptr;
-    case SSL_CURVE_SIDHP434:
-      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_sidh_p434))
-          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_SIDHP434, OQS_KEM_alg_sidh_p434));
-      else
-          return nullptr;
-    case SSL_CURVE_P256_SIDHP434:
-      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_sidh_p434))
-          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P256_SIDHP434, SSL_CURVE_SECP256R1, OQS_KEM_alg_sidh_p434));
-      else
-          return nullptr;
-    case SSL_CURVE_SIDHP503:
-      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_sidh_p503))
-          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_SIDHP503, OQS_KEM_alg_sidh_p503));
-      else
-          return nullptr;
-    case SSL_CURVE_P256_SIDHP503:
-      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_sidh_p503))
-          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P256_SIDHP503, SSL_CURVE_SECP256R1, OQS_KEM_alg_sidh_p503));
-      else
-          return nullptr;
-    case SSL_CURVE_SIDHP610:
-      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_sidh_p610))
-          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_SIDHP610, OQS_KEM_alg_sidh_p610));
-      else
-          return nullptr;
-    case SSL_CURVE_P384_SIDHP610:
-      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_sidh_p610))
-          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P384_SIDHP610, SSL_CURVE_SECP384R1, OQS_KEM_alg_sidh_p610));
-      else
-          return nullptr;
-    case SSL_CURVE_SIDHP751:
-      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_sidh_p751))
-          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_SIDHP751, OQS_KEM_alg_sidh_p751));
-      else
-          return nullptr;
-    case SSL_CURVE_P521_SIDHP751:
-      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_sidh_p751))
-          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P521_SIDHP751, SSL_CURVE_SECP521R1, OQS_KEM_alg_sidh_p751));
-      else
-          return nullptr;
-    case SSL_CURVE_SIKEP434:
-      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_sike_p434))
-          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_SIKEP434, OQS_KEM_alg_sike_p434));
-      else
-          return nullptr;
-    case SSL_CURVE_P256_SIKEP434:
-      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_sike_p434))
-          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P256_SIKEP434, SSL_CURVE_SECP256R1, OQS_KEM_alg_sike_p434));
-      else
-          return nullptr;
-    case SSL_CURVE_SIKEP503:
-      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_sike_p503))
-          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_SIKEP503, OQS_KEM_alg_sike_p503));
-      else
-          return nullptr;
-    case SSL_CURVE_P256_SIKEP503:
-      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_sike_p503))
-          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P256_SIKEP503, SSL_CURVE_SECP256R1, OQS_KEM_alg_sike_p503));
-      else
-          return nullptr;
-    case SSL_CURVE_SIKEP610:
-      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_sike_p610))
-          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_SIKEP610, OQS_KEM_alg_sike_p610));
-      else
-          return nullptr;
-    case SSL_CURVE_P384_SIKEP610:
-      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_sike_p610))
-          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P384_SIKEP610, SSL_CURVE_SECP384R1, OQS_KEM_alg_sike_p610));
-      else
-          return nullptr;
-    case SSL_CURVE_SIKEP751:
-      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_sike_p751))
-          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_SIKEP751, OQS_KEM_alg_sike_p751));
-      else
-          return nullptr;
-    case SSL_CURVE_P521_SIKEP751:
-      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_sike_p751))
-          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P521_SIKEP751, SSL_CURVE_SECP521R1, OQS_KEM_alg_sike_p751));
       else
           return nullptr;
     case SSL_CURVE_KYBER90S512:
