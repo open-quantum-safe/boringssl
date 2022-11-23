@@ -93,7 +93,6 @@ static int eckey_pub_decode(EVP_PKEY *out, CBS *params, CBS *key) {
   // See RFC 5480, section 2.
 
   // The parameters are a named curve.
-  EC_POINT *point = NULL;
   EC_KEY *eckey = NULL;
   EC_GROUP *group = EC_KEY_parse_curve_name(params);
   if (group == NULL || CBS_len(params) != 0) {
@@ -102,25 +101,18 @@ static int eckey_pub_decode(EVP_PKEY *out, CBS *params, CBS *key) {
   }
 
   eckey = EC_KEY_new();
-  if (eckey == NULL || !EC_KEY_set_group(eckey, group)) {
-    goto err;
-  }
-
-  point = EC_POINT_new(group);
-  if (point == NULL ||
-      !EC_POINT_oct2point(group, point, CBS_data(key), CBS_len(key), NULL) ||
-      !EC_KEY_set_public_key(eckey, point)) {
+  if (eckey == NULL || //
+      !EC_KEY_set_group(eckey, group) ||
+      !EC_KEY_oct2key(eckey, CBS_data(key), CBS_len(key), NULL)) {
     goto err;
   }
 
   EC_GROUP_free(group);
-  EC_POINT_free(point);
   EVP_PKEY_assign_EC_KEY(out, eckey);
   return 1;
 
 err:
   EC_GROUP_free(group);
-  EC_POINT_free(point);
   EC_KEY_free(eckey);
   return 0;
 }
@@ -188,6 +180,28 @@ static int eckey_priv_encode(CBB *out, const EVP_PKEY *key) {
   return 1;
 }
 
+static int eckey_set1_tls_encodedpoint(EVP_PKEY *pkey, const uint8_t *in,
+                                       size_t len) {
+  EC_KEY *ec_key = pkey->pkey.ec;
+  if (ec_key == NULL) {
+    OPENSSL_PUT_ERROR(EVP, EVP_R_NO_KEY_SET);
+    return 0;
+  }
+
+  return EC_KEY_oct2key(ec_key, in, len, NULL);
+}
+
+static size_t eckey_get1_tls_encodedpoint(const EVP_PKEY *pkey,
+                                          uint8_t **out_ptr) {
+  const EC_KEY *ec_key = pkey->pkey.ec;
+  if (ec_key == NULL) {
+    OPENSSL_PUT_ERROR(EVP, EVP_R_NO_KEY_SET);
+    return 0;
+  }
+
+  return EC_KEY_key2buf(ec_key, POINT_CONVERSION_UNCOMPRESSED, out_ptr, NULL);
+}
+
 // OQS note: We have renamed this from "int_ec_size"
 // to "size_t_ec_size"
 static size_t size_t_ec_size(const EVP_PKEY *pkey) {
@@ -204,16 +218,37 @@ static int ec_bits(const EVP_PKEY *pkey) {
 }
 
 static int ec_missing_parameters(const EVP_PKEY *pkey) {
-  return EC_KEY_get0_group(pkey->pkey.ec) == NULL;
+  return pkey->pkey.ec == NULL || EC_KEY_get0_group(pkey->pkey.ec) == NULL;
 }
 
 static int ec_copy_parameters(EVP_PKEY *to, const EVP_PKEY *from) {
-  return EC_KEY_set_group(to->pkey.ec, EC_KEY_get0_group(from->pkey.ec));
+  if (from->pkey.ec == NULL) {
+    OPENSSL_PUT_ERROR(EVP, EVP_R_NO_KEY_SET);
+    return 0;
+  }
+  const EC_GROUP *group = EC_KEY_get0_group(from->pkey.ec);
+  if (group == NULL) {
+    OPENSSL_PUT_ERROR(EVP, EVP_R_MISSING_PARAMETERS);
+    return 0;
+  }
+  if (to->pkey.ec == NULL) {
+    to->pkey.ec = EC_KEY_new();
+    if (to->pkey.ec == NULL) {
+      return 0;
+    }
+  }
+  return EC_KEY_set_group(to->pkey.ec, group);
 }
 
 static int ec_cmp_parameters(const EVP_PKEY *a, const EVP_PKEY *b) {
+  if (a->pkey.ec == NULL || b->pkey.ec == NULL) {
+    return -2;
+  }
   const EC_GROUP *group_a = EC_KEY_get0_group(a->pkey.ec),
                  *group_b = EC_KEY_get0_group(b->pkey.ec);
+  if (group_a == NULL || group_b == NULL) {
+    return -2;
+  }
   if (EC_GROUP_cmp(group_a, group_b, NULL) != 0) {
     // mismatch
     return 0;
@@ -228,30 +263,35 @@ static int eckey_opaque(const EVP_PKEY *pkey) {
 }
 
 const EVP_PKEY_ASN1_METHOD ec_asn1_meth = {
-  EVP_PKEY_EC,
-  // 1.2.840.10045.2.1
-  {0x2a, 0x86, 0x48, 0xce, 0x3d, 0x02, 0x01}, 7,
+    EVP_PKEY_EC,
+    // 1.2.840.10045.2.1
+    {0x2a, 0x86, 0x48, 0xce, 0x3d, 0x02, 0x01},
+    7,
 
-  eckey_pub_decode,
-  eckey_pub_encode,
-  eckey_pub_cmp,
+    &ec_pkey_meth,
 
-  eckey_priv_decode,
-  eckey_priv_encode,
+    eckey_pub_decode,
+    eckey_pub_encode,
+    eckey_pub_cmp,
 
-  NULL /* set_priv_raw */,
-  NULL /* set_pub_raw */,
-  NULL /* get_priv_raw */,
-  NULL /* get_pub_raw */,
+    eckey_priv_decode,
+    eckey_priv_encode,
 
-  eckey_opaque,
+    /*set_priv_raw=*/NULL,
+    /*set_pub_raw=*/NULL,
+    /*get_priv_raw=*/NULL,
+    /*get_pub_raw=*/NULL,
+    eckey_set1_tls_encodedpoint,
+    eckey_get1_tls_encodedpoint,
 
-  size_t_ec_size,
-  ec_bits,
+    eckey_opaque,
 
-  ec_missing_parameters,
-  ec_copy_parameters,
-  ec_cmp_parameters,
+    size_t_ec_size,
+    ec_bits,
 
-  int_ec_free,
+    ec_missing_parameters,
+    ec_copy_parameters,
+    ec_cmp_parameters,
+
+    int_ec_free,
 };

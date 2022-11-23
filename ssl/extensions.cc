@@ -309,8 +309,7 @@ bool ssl_parse_client_hello_with_trailing_data(const SSL *ssl, CBS *cbs,
   // Skip past DTLS cookie
   if (SSL_is_dtls(out->ssl)) {
     CBS cookie;
-    if (!CBS_get_u8_length_prefixed(cbs, &cookie) ||
-        CBS_len(&cookie) > DTLS1_COOKIE_LENGTH) {
+    if (!CBS_get_u8_length_prefixed(cbs, &cookie)) {
       return false;
     }
   }
@@ -1532,10 +1531,12 @@ static bool ext_npn_parse_serverhello(SSL_HANDSHAKE *hs, uint8_t *out_alert,
     }
   }
 
+  // |orig_len| fits in |unsigned| because TLS extensions use 16-bit lengths.
   uint8_t *selected;
   uint8_t selected_len;
   if (ssl->ctx->next_proto_select_cb(
-          ssl, &selected, &selected_len, orig_contents, orig_len,
+          ssl, &selected, &selected_len, orig_contents,
+          static_cast<unsigned>(orig_len),
           ssl->ctx->next_proto_select_cb_arg) != SSL_TLSEXT_ERR_OK ||
       !ssl->s3->next_proto_negotiated.CopyFrom(
           MakeConstSpan(selected, selected_len))) {
@@ -1848,11 +1849,14 @@ bool ssl_negotiate_alpn(SSL_HANDSHAKE *hs, uint8_t *out_alert,
     return false;
   }
 
+  // |protocol_name_list| fits in |unsigned| because TLS extensions use 16-bit
+  // lengths.
   const uint8_t *selected;
   uint8_t selected_len;
   int ret = ssl->ctx->alpn_select_cb(
       ssl, &selected, &selected_len, CBS_data(&protocol_name_list),
-      CBS_len(&protocol_name_list), ssl->ctx->alpn_select_cb_arg);
+      static_cast<unsigned>(CBS_len(&protocol_name_list)),
+      ssl->ctx->alpn_select_cb_arg);
   // ALPN is required when QUIC is used.
   if (ssl->quic_method &&
       (ret == SSL_TLSEXT_ERR_NOACK || ret == SSL_TLSEXT_ERR_ALERT_WARNING)) {
@@ -4259,6 +4263,16 @@ enum ssl_ticket_aead_result_t ssl_process_ticket(
                                                       : ssl_ticket_aead_error;
   } else if (is_psk && hints && !hs->hints_requested && hints->ignore_psk) {
     result = ssl_ticket_aead_ignore_ticket;
+  } else if (!is_psk && hints && !hs->hints_requested &&
+             !hints->decrypted_ticket.empty()) {
+    if (plaintext.CopyFrom(hints->decrypted_ticket)) {
+      result = ssl_ticket_aead_success;
+      *out_renew_ticket = hints->renew_ticket;
+    } else {
+      result = ssl_ticket_aead_error;
+    }
+  } else if (!is_psk && hints && !hs->hints_requested && hints->ignore_ticket) {
+    result = ssl_ticket_aead_ignore_ticket;
   } else if (ssl->session_ctx->ticket_aead_method != NULL) {
     result = ssl_decrypt_ticket_with_method(hs, &plaintext, out_renew_ticket,
                                             ticket);
@@ -4277,12 +4291,24 @@ enum ssl_ticket_aead_result_t ssl_process_ticket(
     }
   }
 
-  if (is_psk && hints && hs->hints_requested) {
+  if (hints && hs->hints_requested) {
     if (result == ssl_ticket_aead_ignore_ticket) {
-      hints->ignore_psk = true;
-    } else if (result == ssl_ticket_aead_success &&
-               !hints->decrypted_psk.CopyFrom(plaintext)) {
-      return ssl_ticket_aead_error;
+      if (is_psk) {
+        hints->ignore_psk = true;
+      } else {
+        hints->ignore_ticket = true;
+      }
+    } else if (result == ssl_ticket_aead_success) {
+      if (is_psk) {
+        if (!hints->decrypted_psk.CopyFrom(plaintext)) {
+          return ssl_ticket_aead_error;
+        }
+      } else {
+        if (!hints->decrypted_ticket.CopyFrom(plaintext)) {
+          return ssl_ticket_aead_error;
+        }
+        hints->renew_ticket = *out_renew_ticket;
+      }
     }
   }
 

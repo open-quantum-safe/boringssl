@@ -1357,6 +1357,8 @@ secg-scheme 14 3 : dhSinglePass-cofactorDH-sha512kdf-scheme
  : KxANY : kx-any
  : AuthANY : auth-any
 
+ : HKDF : hkdf
+
 ###### OQS_TEMPLATE_FRAGMENT_DEF_NIDS_START
  : frodo640aes
  : p256_frodo640aes
@@ -1486,3 +1488,4 @@ secg-scheme 14 3 : dhSinglePass-cofactorDH-sha512kdf-scheme
 1 3 9999 6 9 5 : sphincsshake256256srobust : sphincsshake256256srobust
 1 3 9999 6 9 7 : sphincsshake256256ssimple : sphincsshake256256ssimple
 ##### OQS_TEMPLATE_FRAGMENT_ASSIGN_OIDS_END
+

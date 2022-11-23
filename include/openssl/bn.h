@@ -205,6 +205,10 @@ OPENSSL_EXPORT unsigned BN_num_bits(const BIGNUM *bn);
 
 // BN_num_bytes returns the minimum number of bytes needed to represent the
 // absolute value of |bn|.
+//
+// While |size_t| is the preferred type for byte counts, callers can assume that
+// |BIGNUM|s are bounded such that this value, and its corresponding bit count,
+// will always fit in |int|.
 OPENSSL_EXPORT unsigned BN_num_bytes(const BIGNUM *bn);
 
 // BN_zero sets |bn| to zero.
@@ -584,9 +588,14 @@ OPENSSL_EXPORT int BN_mod_lshift1_quick(BIGNUM *r, const BIGNUM *a,
                                         const BIGNUM *m);
 
 // BN_mod_sqrt returns a newly-allocated |BIGNUM|, r, such that
-// r^2 == a (mod p). |p| must be a prime. It returns NULL on error or if |a| is
-// not a square mod |p|. In the latter case, it will add |BN_R_NOT_A_SQUARE| to
-// the error queue.
+// r^2 == a (mod p). It returns NULL on error or if |a| is not a square mod |p|.
+// In the latter case, it will add |BN_R_NOT_A_SQUARE| to the error queue.
+// If |a| is a square and |p| > 2, there are two possible square roots. This
+// function may return either and may even select one non-deterministically.
+//
+// This function only works if |p| is a prime. If |p| is composite, it may fail
+// or return an arbitrary value. Callers should not pass attacker-controlled
+// values of |p|.
 OPENSSL_EXPORT BIGNUM *BN_mod_sqrt(BIGNUM *in, const BIGNUM *a, const BIGNUM *p,
                                    BN_CTX *ctx);
 
@@ -675,6 +684,9 @@ OPENSSL_EXPORT void BN_GENCB_set(BN_GENCB *callback,
 // BN_GENCB_call calls |callback|, if not NULL, and returns the return value of
 // the callback, or 1 if |callback| is NULL.
 OPENSSL_EXPORT int BN_GENCB_call(BN_GENCB *callback, int event, int n);
+
+// BN_GENCB_get_arg returns |callback->arg|.
+OPENSSL_EXPORT void *BN_GENCB_get_arg(const BN_GENCB *callback);
 
 // BN_generate_prime_ex sets |ret| to a prime number of |bits| length. If safe
 // is non-zero then the prime will be such that (ret-1)/2 is also a prime.
@@ -958,6 +970,9 @@ OPENSSL_EXPORT int BN_bn2binpad(const BIGNUM *in, uint8_t *out, int len);
 // instead. (This defaults to the |_for_validation| value in order to be
 // conservative.)
 #define BN_prime_checks BN_prime_checks_for_validation
+
+// BN_secure_new calls |BN_new|.
+OPENSSL_EXPORT BIGNUM *BN_secure_new(void);
 
 
 // Private functions

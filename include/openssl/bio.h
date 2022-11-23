@@ -328,7 +328,7 @@ OPENSSL_EXPORT int BIO_printf(BIO *bio, const char *format, ...)
 OPENSSL_EXPORT int BIO_indent(BIO *bio, unsigned indent, unsigned max_indent);
 
 // BIO_hexdump writes a hex dump of |data| to |bio|. Each line will be indented
-// by |indent| spaces.
+// by |indent| spaces. It returns one on success and zero otherwise.
 OPENSSL_EXPORT int BIO_hexdump(BIO *bio, const uint8_t *data, size_t len,
                                unsigned indent);
 
@@ -383,7 +383,7 @@ OPENSSL_EXPORT const BIO_METHOD *BIO_s_mem(void);
 //
 // If |len| is negative, then |buf| is treated as a NUL-terminated string, but
 // don't depend on this in new code.
-OPENSSL_EXPORT BIO *BIO_new_mem_buf(const void *buf, int len);
+OPENSSL_EXPORT BIO *BIO_new_mem_buf(const void *buf, ossl_ssize_t len);
 
 // BIO_mem_contents sets |*out_contents| to point to the current contents of
 // |bio| and |*out_len| to contain the length of that data. It returns one on

@@ -122,6 +122,7 @@ if(ARCH STREQUAL "aarch64")
 
     chacha/chacha-armv8.${ASM_EXT}
     test/trampoline-armv8.${ASM_EXT}
+    cipher_extra/chacha20_poly1305_armv8.${ASM_EXT}
   )
 endif()
 
@@ -160,6 +161,7 @@ perlasm(chacha/chacha-x86.${ASM_EXT} chacha/asm/chacha-x86.pl)
 perlasm(chacha/chacha-x86_64.${ASM_EXT} chacha/asm/chacha-x86_64.pl)
 perlasm(cipher_extra/aes128gcmsiv-x86_64.${ASM_EXT} cipher_extra/asm/aes128gcmsiv-x86_64.pl)
 perlasm(cipher_extra/chacha20_poly1305_x86_64.${ASM_EXT} cipher_extra/asm/chacha20_poly1305_x86_64.pl)
+perlasm(cipher_extra/chacha20_poly1305_armv8.${ASM_EXT} cipher_extra/asm/chacha20_poly1305_armv8.pl)
 perlasm(test/trampoline-armv4.${ASM_EXT} test/asm/trampoline-armv4.pl)
 perlasm(test/trampoline-armv8.${ASM_EXT} test/asm/trampoline-armv8.pl)
 perlasm(test/trampoline-ppc.${ASM_EXT} test/asm/trampoline-ppc.pl)
@@ -204,7 +206,6 @@ add_library(
   asn1/a_bool.c
   asn1/a_d2i_fp.c
   asn1/a_dup.c
-  asn1/a_enum.c
   asn1/a_gentm.c
   asn1/a_i2d_fp.c
   asn1/a_int.c
@@ -217,7 +218,6 @@ add_library(
   asn1/a_time.c
   asn1/a_type.c
   asn1/a_utctm.c
-  asn1/a_utf8.c
   asn1/asn1_lib.c
   asn1/asn1_par.c
   asn1/asn_pack.c
@@ -229,7 +229,7 @@ add_library(
   asn1/tasn_new.c
   asn1/tasn_typ.c
   asn1/tasn_utl.c
-  asn1/time_support.c
+  asn1/posix_time.c
   base64/base64.c
   bio/bio.c
   bio/bio_mem.c
@@ -253,21 +253,22 @@ add_library(
   chacha/chacha.c
   cipher_extra/cipher_extra.c
   cipher_extra/derive_key.c
-  cipher_extra/e_aesccm.c
   cipher_extra/e_aesctrhmac.c
   cipher_extra/e_aesgcmsiv.c
   cipher_extra/e_chacha20poly1305.c
+  cipher_extra/e_des.c
   cipher_extra/e_null.c
   cipher_extra/e_rc2.c
   cipher_extra/e_rc4.c
   cipher_extra/e_tls.c
   cipher_extra/tls_cbc.c
-  cmac/cmac.c
   conf/conf.c
   cpu_aarch64_apple.c
+  cpu_aarch64_freebsd.c
   cpu_aarch64_fuchsia.c
   cpu_aarch64_linux.c
   cpu_aarch64_win.c
+  cpu_arm_freebsd.c
   cpu_arm_linux.c
   cpu_arm.c
   cpu_intel.c
@@ -275,6 +276,7 @@ add_library(
   crypto.c
   curve25519/curve25519.c
   curve25519/spake25519.c
+  des/des.c
   dh_extra/params.c
   dh_extra/dh_asn1.c
   digest_extra/digest_extra.c
@@ -288,7 +290,6 @@ add_library(
   err/err.c
   err_data.c
   engine/engine.c
-  evp/digestsign.c
   evp/evp.c
   evp/evp_asn1.c
   evp/evp_ctx.c
@@ -297,6 +298,7 @@ add_library(
   evp/p_ec_asn1.c
   evp/p_ed25519.c
   evp/p_ed25519_asn1.c
+  evp/p_hkdf.c
   evp/p_rsa.c
   evp/p_rsa_asn1.c
   evp/p_x25519.c
@@ -402,7 +404,6 @@ add_library(
   x509/x_x509a.c
   x509v3/pcy_cache.c
   x509v3/pcy_data.c
-  x509v3/pcy_lib.c
   x509v3/pcy_map.c
   x509v3/pcy_node.c
   x509v3/pcy_tree.c
@@ -437,19 +438,25 @@ add_library(
   ${CRYPTO_ARCH_SOURCES}
   ${CRYPTO_FIPS_OBJECTS}
 )
+target_include_directories(crypto INTERFACE
+ $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+ $<INSTALL_INTERFACE:include>
+)
+install(TARGETS crypto EXPORT OpenSSLTargets
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+set_property(TARGET crypto PROPERTY EXPORT_NAME Crypto)
 
 if(FIPS_SHARED)
-  set(EXTRA_INJECT_HASH_ARGS)
-  if(ANDROID)
-    set(EXTRA_INJECT_HASH_ARGS "-sha256")
-  endif()
   # Rewrite libcrypto.so to inject the correct module hash value. This assumes
   # UNIX-style library naming, but we only support FIPS mode on Linux anyway.
   add_custom_command(
     TARGET crypto POST_BUILD
     COMMAND ${GO_EXECUTABLE} run
     ${CMAKE_CURRENT_SOURCE_DIR}/../util/fipstools/inject_hash/inject_hash.go
-    -o libcrypto.so -in-object libcrypto.so ${EXTRA_INJECT_HASH_ARGS}
+    -o libcrypto.so -in-object libcrypto.so
     # The DEPENDS argument to a POST_BUILD rule appears to be ignored. Thus
     # go_executable isn't used (as it doesn't get built), but we list this
     # dependency anyway in case it starts working in some CMake version.
@@ -466,8 +473,13 @@ endif()
 
 SET_TARGET_PROPERTIES(crypto PROPERTIES LINKER_LANGUAGE C)
 
-if(NOT WIN32 AND NOT ANDROID)
-  target_link_libraries(crypto pthread)
+if(WIN32)
+  target_link_libraries(crypto ws2_32)
+endif()
+
+if(NOT ANDROID)
+  find_package(Threads REQUIRED)
+  target_link_libraries(crypto Threads::Threads)
 endif()
 
 # Every target depends on crypto, so we add libcxx as a dependency here to
@@ -504,7 +516,6 @@ add_executable(
   chacha/chacha_test.cc
   cipher_extra/aead_test.cc
   cipher_extra/cipher_test.cc
-  cmac/cmac_test.cc
   compiler_test.cc
   conf/conf_test.cc
   constant_time_test.cc
@@ -524,13 +535,15 @@ add_executable(
   evp/scrypt_test.cc
   fipsmodule/aes/aes_test.cc
   fipsmodule/bn/bn_test.cc
+  fipsmodule/cmac/cmac_test.cc
   fipsmodule/ec/ec_test.cc
-  fipsmodule/ec/p256-x86_64_test.cc
+  fipsmodule/ec/p256-nistz_test.cc
   fipsmodule/ecdsa/ecdsa_test.cc
   fipsmodule/md5/md5_test.cc
   fipsmodule/modes/gcm_test.cc
   fipsmodule/rand/ctrdrbg_test.cc
   fipsmodule/rand/fork_detect_test.cc
+  fipsmodule/service_indicator/service_indicator_test.cc
   fipsmodule/sha/sha_test.cc
   hkdf/hkdf_test.cc
   hpke/hpke_test.cc
