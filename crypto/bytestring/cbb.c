@@ -373,15 +373,6 @@ int CBB_add_zeros(CBB *cbb, size_t len) {
   return 1;
 }
 
-int CBB_add_zeros(CBB *cbb, size_t len) {
-  uint8_t *out;
-  if (!CBB_add_space(cbb, &out, len)) {
-    return 0;
-  }
-  OPENSSL_memset(out, 0, len);
-  return 1;
-}
-
 int CBB_add_space(CBB *cbb, uint8_t **out_data, size_t len) {
   if (!CBB_flush(cbb) ||
       !cbb_buffer_add(cbb_get_base(cbb), out_data, len)) {

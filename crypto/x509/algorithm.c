@@ -62,6 +62,8 @@
 #include <openssl/evp.h>
 #include <openssl/obj.h>
 
+#include <oqs/oqs.h>
+
 #include "internal.h"
 
 // Restrict the digests that are allowed in X509 certificates

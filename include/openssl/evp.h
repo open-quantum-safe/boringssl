@@ -180,6 +180,157 @@ OPENSSL_EXPORT EC_KEY *EVP_PKEY_get1_EC_KEY(const EVP_PKEY *pkey);
 #define EVP_PKEY_ED25519 NID_ED25519
 #define EVP_PKEY_X25519 NID_X25519
 #define EVP_PKEY_HKDF NID_hkdf
+///// OQS_TEMPLATE_FRAGMENT_DEFINE_EVP_PKEYS_START
+#define EVP_PKEY_DILITHIUM2 NID_dilithium2
+#define EVP_PKEY_DILITHIUM3 NID_dilithium3
+#define EVP_PKEY_DILITHIUM5 NID_dilithium5
+#define EVP_PKEY_DILITHIUM2_AES NID_dilithium2_aes
+#define EVP_PKEY_DILITHIUM3_AES NID_dilithium3_aes
+#define EVP_PKEY_DILITHIUM5_AES NID_dilithium5_aes
+#define EVP_PKEY_FALCON512 NID_falcon512
+#define EVP_PKEY_FALCON1024 NID_falcon1024
+#define EVP_PKEY_PICNICL1FS NID_picnicl1fs
+#define EVP_PKEY_PICNICL1UR NID_picnicl1ur
+#define EVP_PKEY_PICNICL1FULL NID_picnicl1full
+#define EVP_PKEY_PICNIC3L1 NID_picnic3l1
+#define EVP_PKEY_PICNIC3L3 NID_picnic3l3
+#define EVP_PKEY_PICNIC3L5 NID_picnic3l5
+#define EVP_PKEY_RAINBOWIIICLASSIC NID_rainbowIIIclassic
+#define EVP_PKEY_RAINBOWIIICIRCUMZENITHAL NID_rainbowIIIcircumzenithal
+#define EVP_PKEY_RAINBOWIIICOMPRESSED NID_rainbowIIIcompressed
+#define EVP_PKEY_RAINBOWVCLASSIC NID_rainbowVclassic
+#define EVP_PKEY_RAINBOWVCIRCUMZENITHAL NID_rainbowVcircumzenithal
+#define EVP_PKEY_RAINBOWVCOMPRESSED NID_rainbowVcompressed
+#define EVP_PKEY_SPHINCSHARAKA128FROBUST NID_sphincsharaka128frobust
+#define EVP_PKEY_SPHINCSHARAKA128FSIMPLE NID_sphincsharaka128fsimple
+#define EVP_PKEY_SPHINCSHARAKA128SROBUST NID_sphincsharaka128srobust
+#define EVP_PKEY_SPHINCSHARAKA128SSIMPLE NID_sphincsharaka128ssimple
+#define EVP_PKEY_SPHINCSHARAKA192FROBUST NID_sphincsharaka192frobust
+#define EVP_PKEY_SPHINCSHARAKA192FSIMPLE NID_sphincsharaka192fsimple
+#define EVP_PKEY_SPHINCSHARAKA192SROBUST NID_sphincsharaka192srobust
+#define EVP_PKEY_SPHINCSHARAKA192SSIMPLE NID_sphincsharaka192ssimple
+#define EVP_PKEY_SPHINCSHARAKA256FROBUST NID_sphincsharaka256frobust
+#define EVP_PKEY_SPHINCSHARAKA256FSIMPLE NID_sphincsharaka256fsimple
+#define EVP_PKEY_SPHINCSHARAKA256SROBUST NID_sphincsharaka256srobust
+#define EVP_PKEY_SPHINCSHARAKA256SSIMPLE NID_sphincsharaka256ssimple
+#define EVP_PKEY_SPHINCSSHA256128FROBUST NID_sphincssha256128frobust
+#define EVP_PKEY_SPHINCSSHA256128FSIMPLE NID_sphincssha256128fsimple
+#define EVP_PKEY_SPHINCSSHA256128SROBUST NID_sphincssha256128srobust
+#define EVP_PKEY_SPHINCSSHA256128SSIMPLE NID_sphincssha256128ssimple
+#define EVP_PKEY_SPHINCSSHA256192FROBUST NID_sphincssha256192frobust
+#define EVP_PKEY_SPHINCSSHA256192FSIMPLE NID_sphincssha256192fsimple
+#define EVP_PKEY_SPHINCSSHA256192SROBUST NID_sphincssha256192srobust
+#define EVP_PKEY_SPHINCSSHA256192SSIMPLE NID_sphincssha256192ssimple
+#define EVP_PKEY_SPHINCSSHA256256FROBUST NID_sphincssha256256frobust
+#define EVP_PKEY_SPHINCSSHA256256FSIMPLE NID_sphincssha256256fsimple
+#define EVP_PKEY_SPHINCSSHA256256SROBUST NID_sphincssha256256srobust
+#define EVP_PKEY_SPHINCSSHA256256SSIMPLE NID_sphincssha256256ssimple
+#define EVP_PKEY_SPHINCSSHAKE256128FROBUST NID_sphincsshake256128frobust
+#define EVP_PKEY_SPHINCSSHAKE256128FSIMPLE NID_sphincsshake256128fsimple
+#define EVP_PKEY_SPHINCSSHAKE256128SROBUST NID_sphincsshake256128srobust
+#define EVP_PKEY_SPHINCSSHAKE256128SSIMPLE NID_sphincsshake256128ssimple
+#define EVP_PKEY_SPHINCSSHAKE256192FROBUST NID_sphincsshake256192frobust
+#define EVP_PKEY_SPHINCSSHAKE256192FSIMPLE NID_sphincsshake256192fsimple
+#define EVP_PKEY_SPHINCSSHAKE256192SROBUST NID_sphincsshake256192srobust
+#define EVP_PKEY_SPHINCSSHAKE256192SSIMPLE NID_sphincsshake256192ssimple
+#define EVP_PKEY_SPHINCSSHAKE256256FROBUST NID_sphincsshake256256frobust
+#define EVP_PKEY_SPHINCSSHAKE256256FSIMPLE NID_sphincsshake256256fsimple
+#define EVP_PKEY_SPHINCSSHAKE256256SROBUST NID_sphincsshake256256srobust
+#define EVP_PKEY_SPHINCSSHAKE256256SSIMPLE NID_sphincsshake256256ssimple
+
+#define IS_OQS_PKEY(pkey_id) ( \
+   (pkey_id == NID_dilithium2) || \
+   (pkey_id == NID_dilithium3) || \
+   (pkey_id == NID_dilithium5) || \
+   (pkey_id == NID_dilithium2_aes) || \
+   (pkey_id == NID_dilithium3_aes) || \
+   (pkey_id == NID_dilithium5_aes) || \
+   (pkey_id == NID_falcon512) || \
+   (pkey_id == NID_falcon1024) || \
+   (pkey_id == NID_picnicl1fs) || \
+   (pkey_id == NID_picnicl1ur) || \
+   (pkey_id == NID_picnicl1full) || \
+   (pkey_id == NID_picnic3l1) || \
+   (pkey_id == NID_picnic3l3) || \
+   (pkey_id == NID_picnic3l5) || \
+   (pkey_id == NID_rainbowIIIclassic) || \
+   (pkey_id == NID_rainbowIIIcircumzenithal) || \
+   (pkey_id == NID_rainbowIIIcompressed) || \
+   (pkey_id == NID_rainbowVclassic) || \
+   (pkey_id == NID_rainbowVcircumzenithal) || \
+   (pkey_id == NID_rainbowVcompressed) || \
+   (pkey_id == NID_sphincsharaka128frobust) || \
+   (pkey_id == NID_sphincsharaka128fsimple) || \
+   (pkey_id == NID_sphincsharaka128srobust) || \
+   (pkey_id == NID_sphincsharaka128ssimple) || \
+   (pkey_id == NID_sphincsharaka192frobust) || \
+   (pkey_id == NID_sphincsharaka192fsimple) || \
+   (pkey_id == NID_sphincsharaka192srobust) || \
+   (pkey_id == NID_sphincsharaka192ssimple) || \
+   (pkey_id == NID_sphincsharaka256frobust) || \
+   (pkey_id == NID_sphincsharaka256fsimple) || \
+   (pkey_id == NID_sphincsharaka256srobust) || \
+   (pkey_id == NID_sphincsharaka256ssimple) || \
+   (pkey_id == NID_sphincssha256128frobust) || \
+   (pkey_id == NID_sphincssha256128fsimple) || \
+   (pkey_id == NID_sphincssha256128srobust) || \
+   (pkey_id == NID_sphincssha256128ssimple) || \
+   (pkey_id == NID_sphincssha256192frobust) || \
+   (pkey_id == NID_sphincssha256192fsimple) || \
+   (pkey_id == NID_sphincssha256192srobust) || \
+   (pkey_id == NID_sphincssha256192ssimple) || \
+   (pkey_id == NID_sphincssha256256frobust) || \
+   (pkey_id == NID_sphincssha256256fsimple) || \
+   (pkey_id == NID_sphincssha256256srobust) || \
+   (pkey_id == NID_sphincssha256256ssimple) || \
+   (pkey_id == NID_sphincsshake256128frobust) || \
+   (pkey_id == NID_sphincsshake256128fsimple) || \
+   (pkey_id == NID_sphincsshake256128srobust) || \
+   (pkey_id == NID_sphincsshake256128ssimple) || \
+   (pkey_id == NID_sphincsshake256192frobust) || \
+   (pkey_id == NID_sphincsshake256192fsimple) || \
+   (pkey_id == NID_sphincsshake256192srobust) || \
+   (pkey_id == NID_sphincsshake256192ssimple) || \
+   (pkey_id == NID_sphincsshake256256frobust) || \
+   (pkey_id == NID_sphincsshake256256fsimple) || \
+   (pkey_id == NID_sphincsshake256256srobust) || \
+   (pkey_id == NID_sphincsshake256256ssimple) || \
+   (pkey_id == NID_frodo640aes) || \
+   (pkey_id == NID_frodo640shake) || \
+   (pkey_id == NID_frodo976aes) || \
+   (pkey_id == NID_frodo976shake) || \
+   (pkey_id == NID_frodo1344aes) || \
+   (pkey_id == NID_frodo1344shake) || \
+   (pkey_id == NID_bikel1) || \
+   (pkey_id == NID_bikel3) || \
+   (pkey_id == NID_kyber512) || \
+   (pkey_id == NID_kyber768) || \
+   (pkey_id == NID_kyber1024) || \
+   (pkey_id == NID_ntru_hps2048509) || \
+   (pkey_id == NID_ntru_hps2048677) || \
+   (pkey_id == NID_ntru_hps4096821) || \
+   (pkey_id == NID_ntru_hps40961229) || \
+   (pkey_id == NID_ntru_hrss701) || \
+   (pkey_id == NID_ntru_hrss1373) || \
+   (pkey_id == NID_lightsaber) || \
+   (pkey_id == NID_saber) || \
+   (pkey_id == NID_firesaber) || \
+   (pkey_id == NID_kyber90s512) || \
+   (pkey_id == NID_kyber90s768) || \
+   (pkey_id == NID_kyber90s1024) || \
+   (pkey_id == NID_hqc128) || \
+   (pkey_id == NID_hqc192) || \
+   (pkey_id == NID_hqc256) || \
+   (pkey_id == NID_ntrulpr653) || \
+   (pkey_id == NID_ntrulpr761) || \
+   (pkey_id == NID_ntrulpr857) || \
+   (pkey_id == NID_ntrulpr1277) || \
+   (pkey_id == NID_sntrup653) || \
+   (pkey_id == NID_sntrup761) || \
+   (pkey_id == NID_sntrup857) || \
+   (pkey_id == NID_sntrup1277) || \
+0 )
+///// OQS_TEMPLATE_FRAGMENT_DEFINE_EVP_PKEYS_END
 
 // EVP_PKEY_assign sets the underlying key of |pkey| to |key|, which must be of
 // the given type. It returns one if successful or zero if the |type| argument

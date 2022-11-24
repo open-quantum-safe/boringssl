@@ -68,6 +68,7 @@
 #include "internal.h"
 #include "../crypto/internal.h"
 
+#include "../crypto/evp/p_oqs.c"
 
 BSSL_NAMESPACE_BEGIN
 

@@ -25,7 +25,7 @@ static int pkey_oqs_copy(EVP_PKEY_CTX *dst, EVP_PKEY_CTX *src) { return 1; }
 
 #define DEFINE_PKEY_KEYGEN(ALG, OQS_METH, ALG_PKEY)                     \
 static int ALG##_pkey_keygen(EVP_PKEY_CTX *ctx, EVP_PKEY *pkey) {       \
-  OQS_KEY *key = OPENSSL_malloc(sizeof(OQS_KEY));                       \
+  OQS_KEY *key = (OQS_KEY*)(OPENSSL_malloc(sizeof(OQS_KEY)));                       \
   if (!key) {                                                           \
     OPENSSL_PUT_ERROR(EVP, ERR_R_MALLOC_FAILURE);                       \
     return 0;                                                           \
@@ -42,14 +42,14 @@ static int ALG##_pkey_keygen(EVP_PKEY_CTX *ctx, EVP_PKEY *pkey) {       \
     return 0;                                                           \
   }                                                                     \
                                                                         \
-  key->priv = malloc(key->ctx->length_secret_key);                      \
+  key->priv = (uint8_t*)(malloc(key->ctx->length_secret_key));                      \
   if(!key->priv)                                                        \
   {                                                                     \
     OPENSSL_PUT_ERROR(EVP, ERR_R_MALLOC_FAILURE);                       \
     return 0;                                                           \
   }                                                                     \
                                                                         \
-  key->pub = malloc(key->ctx->length_public_key);                       \
+  key->pub = (uint8_t*)(malloc(key->ctx->length_public_key));                       \
   if(!key->pub)                                                         \
   {                                                                     \
     OPENSSL_PUT_ERROR(EVP, ERR_R_MALLOC_FAILURE);                       \
@@ -70,7 +70,7 @@ static int ALG##_pkey_keygen(EVP_PKEY_CTX *ctx, EVP_PKEY *pkey) {       \
 static int pkey_oqs_sign_message(EVP_PKEY_CTX *ctx, uint8_t *sig,
                                  size_t *siglen, const uint8_t *tbs,
                                  size_t tbslen) {
-  OQS_KEY *key = ctx->pkey->pkey.ptr;
+  OQS_KEY *key = (OQS_KEY*)(ctx->pkey->pkey.ptr);
   if (!key->has_private) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_NOT_A_PRIVATE_KEY);
     return 0;
@@ -96,7 +96,7 @@ static int pkey_oqs_sign_message(EVP_PKEY_CTX *ctx, uint8_t *sig,
 static int pkey_oqs_verify_message(EVP_PKEY_CTX *ctx, const uint8_t *sig,
                                    size_t siglen, const uint8_t *tbs,
                                    size_t tbslen) {
-  OQS_KEY *key = ctx->pkey->pkey.ptr;
+  OQS_KEY *key = (OQS_KEY*)(ctx->pkey->pkey.ptr);
   if (siglen > key->ctx->length_signature ||
       OQS_SIG_verify(key->ctx, tbs, tbslen, sig, siglen, key->pub) != OQS_SUCCESS) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_INVALID_SIGNATURE);

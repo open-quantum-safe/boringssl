@@ -48,11 +48,11 @@ static void oqs_free(EVP_PKEY *pkey) {
       return 0;                                                             \
     }                                                                       \
                                                                             \
-    key->priv = malloc(key->ctx->length_secret_key);                        \
+    key->priv = (uint8_t*)(malloc(key->ctx->length_secret_key));                        \
     memcpy(key->priv, in, key->ctx->length_secret_key);                     \
     key->has_private = 1;                                                   \
                                                                             \
-    key->pub = malloc(key->ctx->length_public_key);                         \
+    key->pub = (uint8_t*)(malloc(key->ctx->length_public_key));                         \
     memcpy(key->pub, in + key->ctx->length_secret_key,                      \
            key->ctx->length_public_key);                                    \
                                                                             \
@@ -197,6 +197,7 @@ static size_t oqs_sig_size(const EVP_PKEY *pkey) {
       ALG_PKEY,                                         \
       {__VA_ARGS__},                                    \
       OID_LEN(__VA_ARGS__),                             \
+      NULL,                                             \
       ALG##_pub_decode,                                 \
       ALG##_pub_encode /* pub_encode */,                \
       oqs_pub_cmp,                                      \
@@ -206,6 +207,8 @@ static size_t oqs_sig_size(const EVP_PKEY *pkey) {
       ALG##_set_pub_raw,                                \
       ALG##_get_priv_raw,                               \
       NULL /* get_pub_raw */,                           \
+      NULL, \
+      NULL, \
       NULL /* pkey_opaque */,                           \
       oqs_sig_size,                                     \
       NULL /* pkey_bits */,                             \

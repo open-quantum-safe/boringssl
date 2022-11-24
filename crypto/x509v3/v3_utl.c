@@ -142,13 +142,6 @@ int X509V3_add_value(const char *name, const char *value,
                               /*omit_value=*/value == NULL, extlist);
 }
 
-int X509V3_add_value(const char *name, const char *value,
-                     STACK_OF(CONF_VALUE) **extlist)
-{
-    return x509V3_add_len_value(name, value, value != NULL ? strlen(value) : 0,
-                                /*omit_value=*/value == NULL, extlist);
-}
-
 int X509V3_add_value_uchar(const char *name, const unsigned char *value,
                            STACK_OF(CONF_VALUE) **extlist) {
   return X509V3_add_value(name, (const char *)value, extlist);
