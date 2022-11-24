@@ -67,6 +67,8 @@
 #include <openssl/rsa.h>
 #include <openssl/thread.h>
 
+#include <oqs/oqs.h>
+
 #include "internal.h"
 #include "../internal.h"
 
