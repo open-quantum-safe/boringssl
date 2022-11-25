@@ -543,27 +543,6 @@ static const CurveTest kCurveTests[] = {
     },
   },
   {
-    "lightsaber:p256_lightsaber",
-    {
-      SSL_CURVE_LIGHTSABER,
-      SSL_CURVE_P256_LIGHTSABER,
-    },
-  },
-  {
-    "saber:p384_saber",
-    {
-      SSL_CURVE_SABER,
-      SSL_CURVE_P384_SABER,
-    },
-  },
-  {
-    "firesaber:p521_firesaber",
-    {
-      SSL_CURVE_FIRESABER,
-      SSL_CURVE_P521_FIRESABER,
-    },
-  },
-  {
     "kyber90s512:p256_kyber90s512",
     {
       SSL_CURVE_KYBER90S512,
@@ -603,62 +582,6 @@ static const CurveTest kCurveTests[] = {
     {
       SSL_CURVE_HQC256,
       SSL_CURVE_P521_HQC256,
-    },
-  },
-  {
-    "ntrulpr653:p256_ntrulpr653",
-    {
-      SSL_CURVE_NTRULPR653,
-      SSL_CURVE_P256_NTRULPR653,
-    },
-  },
-  {
-    "ntrulpr761:p256_ntrulpr761",
-    {
-      SSL_CURVE_NTRULPR761,
-      SSL_CURVE_P256_NTRULPR761,
-    },
-  },
-  {
-    "ntrulpr857:p384_ntrulpr857",
-    {
-      SSL_CURVE_NTRULPR857,
-      SSL_CURVE_P384_NTRULPR857,
-    },
-  },
-  {
-    "ntrulpr1277:p521_ntrulpr1277",
-    {
-      SSL_CURVE_NTRULPR1277,
-      SSL_CURVE_P521_NTRULPR1277,
-    },
-  },
-  {
-    "sntrup653:p256_sntrup653",
-    {
-      SSL_CURVE_SNTRUP653,
-      SSL_CURVE_P256_SNTRUP653,
-    },
-  },
-  {
-    "sntrup761:p256_sntrup761",
-    {
-      SSL_CURVE_SNTRUP761,
-      SSL_CURVE_P256_SNTRUP761,
-    },
-  },
-  {
-    "sntrup857:p384_sntrup857",
-    {
-      SSL_CURVE_SNTRUP857,
-      SSL_CURVE_P384_SNTRUP857,
-    },
-  },
-  {
-    "sntrup1277:p521_sntrup1277",
-    {
-      SSL_CURVE_SNTRUP1277,
-      SSL_CURVE_P521_SNTRUP1277,
     },
   },
 ///// OQS_TEMPLATE_FRAGMENT_ADD_CURVETEST_END
@@ -5336,30 +5259,6 @@ TEST(SSLTest, SignatureAlgorithmProperties) {
             SSL_get_signature_algorithm_key_type(SSL_SIGN_FALCON512));
   EXPECT_EQ(EVP_PKEY_FALCON1024,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_FALCON1024));
-  EXPECT_EQ(EVP_PKEY_PICNICL1FS,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_PICNICL1FS));
-  EXPECT_EQ(EVP_PKEY_PICNICL1UR,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_PICNICL1UR));
-  EXPECT_EQ(EVP_PKEY_PICNICL1FULL,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_PICNICL1FULL));
-  EXPECT_EQ(EVP_PKEY_PICNIC3L1,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_PICNIC3L1));
-  EXPECT_EQ(EVP_PKEY_PICNIC3L3,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_PICNIC3L3));
-  EXPECT_EQ(EVP_PKEY_PICNIC3L5,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_PICNIC3L5));
-  EXPECT_EQ(EVP_PKEY_RAINBOWIIICLASSIC,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_RAINBOWIIICLASSIC));
-  EXPECT_EQ(EVP_PKEY_RAINBOWIIICIRCUMZENITHAL,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_RAINBOWIIICIRCUMZENITHAL));
-  EXPECT_EQ(EVP_PKEY_RAINBOWIIICOMPRESSED,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_RAINBOWIIICOMPRESSED));
-  EXPECT_EQ(EVP_PKEY_RAINBOWVCLASSIC,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_RAINBOWVCLASSIC));
-  EXPECT_EQ(EVP_PKEY_RAINBOWVCIRCUMZENITHAL,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_RAINBOWVCIRCUMZENITHAL));
-  EXPECT_EQ(EVP_PKEY_RAINBOWVCOMPRESSED,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_RAINBOWVCOMPRESSED));
   EXPECT_EQ(EVP_PKEY_SPHINCSHARAKA128FROBUST,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSHARAKA128FROBUST));
   EXPECT_EQ(EVP_PKEY_SPHINCSHARAKA128FSIMPLE,
@@ -5722,18 +5621,6 @@ TEST(SSLTest, SigAlgs) {
       {{NID_sha512, EVP_PKEY_DILITHIUM5_AES}, true, {SSL_SIGN_DILITHIUM5_AES}},
       {{NID_sha256, EVP_PKEY_FALCON512}, true, {SSL_SIGN_FALCON512}},
       {{NID_sha512, EVP_PKEY_FALCON1024}, true, {SSL_SIGN_FALCON1024}},
-      {{NID_sha256, EVP_PKEY_PICNICL1FS}, true, {SSL_SIGN_PICNICL1FS}},
-      {{NID_sha256, EVP_PKEY_PICNICL1UR}, true, {SSL_SIGN_PICNICL1UR}},
-      {{NID_sha256, EVP_PKEY_PICNICL1FULL}, true, {SSL_SIGN_PICNICL1FULL}},
-      {{NID_sha256, EVP_PKEY_PICNIC3L1}, true, {SSL_SIGN_PICNIC3L1}},
-      {{NID_sha384, EVP_PKEY_PICNIC3L3}, true, {SSL_SIGN_PICNIC3L3}},
-      {{NID_sha512, EVP_PKEY_PICNIC3L5}, true, {SSL_SIGN_PICNIC3L5}},
-      {{NID_sha384, EVP_PKEY_RAINBOWIIICLASSIC}, true, {SSL_SIGN_RAINBOWIIICLASSIC}},
-      {{NID_sha384, EVP_PKEY_RAINBOWIIICIRCUMZENITHAL}, true, {SSL_SIGN_RAINBOWIIICIRCUMZENITHAL}},
-      {{NID_sha384, EVP_PKEY_RAINBOWIIICOMPRESSED}, true, {SSL_SIGN_RAINBOWIIICOMPRESSED}},
-      {{NID_sha512, EVP_PKEY_RAINBOWVCLASSIC}, true, {SSL_SIGN_RAINBOWVCLASSIC}},
-      {{NID_sha512, EVP_PKEY_RAINBOWVCIRCUMZENITHAL}, true, {SSL_SIGN_RAINBOWVCIRCUMZENITHAL}},
-      {{NID_sha512, EVP_PKEY_RAINBOWVCOMPRESSED}, true, {SSL_SIGN_RAINBOWVCOMPRESSED}},
       {{NID_sha256, EVP_PKEY_SPHINCSHARAKA128FROBUST}, true, {SSL_SIGN_SPHINCSHARAKA128FROBUST}},
       {{NID_sha256, EVP_PKEY_SPHINCSHARAKA128FSIMPLE}, true, {SSL_SIGN_SPHINCSHARAKA128FSIMPLE}},
       {{NID_sha256, EVP_PKEY_SPHINCSHARAKA128SROBUST}, true, {SSL_SIGN_SPHINCSHARAKA128SROBUST}},
@@ -5835,18 +5722,6 @@ TEST(SSLTest, SigAlgsList) {
       {"dilithium5_aes", true, {SSL_SIGN_DILITHIUM5_AES}},
       {"falcon512", true, {SSL_SIGN_FALCON512}},
       {"falcon1024", true, {SSL_SIGN_FALCON1024}},
-      {"picnicl1fs", true, {SSL_SIGN_PICNICL1FS}},
-      {"picnicl1ur", true, {SSL_SIGN_PICNICL1UR}},
-      {"picnicl1full", true, {SSL_SIGN_PICNICL1FULL}},
-      {"picnic3l1", true, {SSL_SIGN_PICNIC3L1}},
-      {"picnic3l3", true, {SSL_SIGN_PICNIC3L3}},
-      {"picnic3l5", true, {SSL_SIGN_PICNIC3L5}},
-      {"rainbowIIIclassic", true, {SSL_SIGN_RAINBOWIIICLASSIC}},
-      {"rainbowIIIcircumzenithal", true, {SSL_SIGN_RAINBOWIIICIRCUMZENITHAL}},
-      {"rainbowIIIcompressed", true, {SSL_SIGN_RAINBOWIIICOMPRESSED}},
-      {"rainbowVclassic", true, {SSL_SIGN_RAINBOWVCLASSIC}},
-      {"rainbowVcircumzenithal", true, {SSL_SIGN_RAINBOWVCIRCUMZENITHAL}},
-      {"rainbowVcompressed", true, {SSL_SIGN_RAINBOWVCOMPRESSED}},
       {"sphincsharaka128frobust", true, {SSL_SIGN_SPHINCSHARAKA128FROBUST}},
       {"sphincsharaka128fsimple", true, {SSL_SIGN_SPHINCSHARAKA128FSIMPLE}},
       {"sphincsharaka128srobust", true, {SSL_SIGN_SPHINCSHARAKA128SROBUST}},
@@ -8105,34 +7980,12 @@ static const TLSGroup kOQSGroups[] = {
     {NID_p384_ntru_hrss701, SSL_CURVE_P384_NTRU_HRSS701},
     {NID_ntru_hrss1373, SSL_CURVE_NTRU_HRSS1373},
     {NID_p521_ntru_hrss1373, SSL_CURVE_P521_NTRU_HRSS1373},
-    {NID_lightsaber, SSL_CURVE_LIGHTSABER},
-    {NID_p256_lightsaber, SSL_CURVE_P256_LIGHTSABER},
-    {NID_saber, SSL_CURVE_SABER},
-    {NID_p384_saber, SSL_CURVE_P384_SABER},
-    {NID_firesaber, SSL_CURVE_FIRESABER},
-    {NID_p521_firesaber, SSL_CURVE_P521_FIRESABER},
     {NID_kyber90s512, SSL_CURVE_KYBER90S512},
     {NID_p256_kyber90s512, SSL_CURVE_P256_KYBER90S512},
     {NID_kyber90s768, SSL_CURVE_KYBER90S768},
     {NID_p384_kyber90s768, SSL_CURVE_P384_KYBER90S768},
     {NID_kyber90s1024, SSL_CURVE_KYBER90S1024},
     {NID_p521_kyber90s1024, SSL_CURVE_P521_KYBER90S1024},
-    {NID_ntrulpr653, SSL_CURVE_NTRULPR653},
-    {NID_p256_ntrulpr653, SSL_CURVE_P256_NTRULPR653},
-    {NID_ntrulpr761, SSL_CURVE_NTRULPR761},
-    {NID_p256_ntrulpr761, SSL_CURVE_P256_NTRULPR761},
-    {NID_ntrulpr857, SSL_CURVE_NTRULPR857},
-    {NID_p384_ntrulpr857, SSL_CURVE_P384_NTRULPR857},
-    {NID_ntrulpr1277, SSL_CURVE_NTRULPR1277},
-    {NID_p521_ntrulpr1277, SSL_CURVE_P521_NTRULPR1277},
-    {NID_sntrup653, SSL_CURVE_SNTRUP653},
-    {NID_p256_sntrup653, SSL_CURVE_P256_SNTRUP653},
-    {NID_sntrup761, SSL_CURVE_SNTRUP761},
-    {NID_p256_sntrup761, SSL_CURVE_P256_SNTRUP761},
-    {NID_sntrup857, SSL_CURVE_SNTRUP857},
-    {NID_p384_sntrup857, SSL_CURVE_P384_SNTRUP857},
-    {NID_sntrup1277, SSL_CURVE_SNTRUP1277},
-    {NID_p521_sntrup1277, SSL_CURVE_P521_SNTRUP1277},
 ///// OQS_TEMPLATE_FRAGMENT_LIST_ALL_OQS_KEMS_END
 };
 
@@ -8232,18 +8085,6 @@ INSTANTIATE_TEST_SUITE_P(WithSignatureNIDs, OQSHandshakeTest,
                             NID_dilithium5_aes,
                             NID_falcon512,
                             NID_falcon1024,
-                            NID_picnicl1fs,
-                            NID_picnicl1ur,
-                            NID_picnicl1full,
-                            NID_picnic3l1,
-                            NID_picnic3l3,
-                            NID_picnic3l5,
-                            NID_rainbowIIIclassic,
-                            NID_rainbowIIIcircumzenithal,
-                            NID_rainbowIIIcompressed,
-                            NID_rainbowVclassic,
-                            NID_rainbowVcircumzenithal,
-                            NID_rainbowVcompressed,
                             NID_sphincsharaka128frobust,
                             NID_sphincsharaka128fsimple,
                             NID_sphincsharaka128srobust,

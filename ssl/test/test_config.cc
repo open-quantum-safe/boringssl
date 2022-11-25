@@ -2003,24 +2003,6 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
         case SSL_CURVE_P521_NTRU_HRSS1373:
           nids.push_back(NID_p521_ntru_hrss1373);
           break;
-        case SSL_CURVE_LIGHTSABER:
-          nids.push_back(NID_lightsaber);
-          break;
-        case SSL_CURVE_P256_LIGHTSABER:
-          nids.push_back(NID_p256_lightsaber);
-          break;
-        case SSL_CURVE_SABER:
-          nids.push_back(NID_saber);
-          break;
-        case SSL_CURVE_P384_SABER:
-          nids.push_back(NID_p384_saber);
-          break;
-        case SSL_CURVE_FIRESABER:
-          nids.push_back(NID_firesaber);
-          break;
-        case SSL_CURVE_P521_FIRESABER:
-          nids.push_back(NID_p521_firesaber);
-          break;
         case SSL_CURVE_KYBER90S512:
           nids.push_back(NID_kyber90s512);
           break;
@@ -2057,54 +2039,6 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
         case SSL_CURVE_P521_HQC256:
           nids.push_back(NID_p521_hqc256);
           break;
-        case SSL_CURVE_NTRULPR653:
-          nids.push_back(NID_ntrulpr653);
-          break;
-        case SSL_CURVE_P256_NTRULPR653:
-          nids.push_back(NID_p256_ntrulpr653);
-          break;
-        case SSL_CURVE_NTRULPR761:
-          nids.push_back(NID_ntrulpr761);
-          break;
-        case SSL_CURVE_P256_NTRULPR761:
-          nids.push_back(NID_p256_ntrulpr761);
-          break;
-        case SSL_CURVE_NTRULPR857:
-          nids.push_back(NID_ntrulpr857);
-          break;
-        case SSL_CURVE_P384_NTRULPR857:
-          nids.push_back(NID_p384_ntrulpr857);
-          break;
-        case SSL_CURVE_NTRULPR1277:
-          nids.push_back(NID_ntrulpr1277);
-          break;
-        case SSL_CURVE_P521_NTRULPR1277:
-          nids.push_back(NID_p521_ntrulpr1277);
-          break;
-        case SSL_CURVE_SNTRUP653:
-          nids.push_back(NID_sntrup653);
-          break;
-        case SSL_CURVE_P256_SNTRUP653:
-          nids.push_back(NID_p256_sntrup653);
-          break;
-        case SSL_CURVE_SNTRUP761:
-          nids.push_back(NID_sntrup761);
-          break;
-        case SSL_CURVE_P256_SNTRUP761:
-          nids.push_back(NID_p256_sntrup761);
-          break;
-        case SSL_CURVE_SNTRUP857:
-          nids.push_back(NID_sntrup857);
-          break;
-        case SSL_CURVE_P384_SNTRUP857:
-          nids.push_back(NID_p384_sntrup857);
-          break;
-        case SSL_CURVE_SNTRUP1277:
-          nids.push_back(NID_sntrup1277);
-          break;
-        case SSL_CURVE_P521_SNTRUP1277:
-          nids.push_back(NID_p521_sntrup1277);
-          break;
 ///// OQS_TEMPLATE_FRAGMENT_ADD_NIDS_END
       }
       if (!SSL_set1_curves(ssl.get(), &nids[0], nids.size())) {
@@ -2135,23 +2069,12 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
         NID_ntru_hps40961229, NID_p521_ntru_hps40961229,
         NID_ntru_hrss701, NID_p384_ntru_hrss701,
         NID_ntru_hrss1373, NID_p521_ntru_hrss1373,
-        NID_lightsaber, NID_p256_lightsaber,
-        NID_saber, NID_p384_saber,
-        NID_firesaber, NID_p521_firesaber,
         NID_kyber90s512, NID_p256_kyber90s512,
         NID_kyber90s768, NID_p384_kyber90s768,
         NID_kyber90s1024, NID_p521_kyber90s1024,
         NID_hqc128, NID_p256_hqc128,
         NID_hqc192, NID_p384_hqc192,
         NID_hqc256, NID_p521_hqc256,
-        NID_ntrulpr653, NID_p256_ntrulpr653,
-        NID_ntrulpr761, NID_p256_ntrulpr761,
-        NID_ntrulpr857, NID_p384_ntrulpr857,
-        NID_ntrulpr1277, NID_p521_ntrulpr1277,
-        NID_sntrup653, NID_p256_sntrup653,
-        NID_sntrup761, NID_p256_sntrup761,
-        NID_sntrup857, NID_p384_sntrup857,
-        NID_sntrup1277, NID_p521_sntrup1277,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_PQ_CURVEIDS_END
     };
     if (!SSL_set1_curves(ssl.get(), kAllCurves,

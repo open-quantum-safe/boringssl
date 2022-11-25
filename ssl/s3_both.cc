@@ -702,12 +702,6 @@ class CipherScorer {
                               group_id != SSL_CURVE_P384_NTRU_HRSS701 &&
                               group_id != SSL_CURVE_NTRU_HRSS1373 &&
                               group_id != SSL_CURVE_P521_NTRU_HRSS1373 &&
-                              group_id != SSL_CURVE_LIGHTSABER &&
-                              group_id != SSL_CURVE_P256_LIGHTSABER &&
-                              group_id != SSL_CURVE_SABER &&
-                              group_id != SSL_CURVE_P384_SABER &&
-                              group_id != SSL_CURVE_FIRESABER &&
-                              group_id != SSL_CURVE_P521_FIRESABER &&
                               group_id != SSL_CURVE_KYBER90S512 &&
                               group_id != SSL_CURVE_P256_KYBER90S512 &&
                               group_id != SSL_CURVE_KYBER90S768 &&
@@ -719,23 +713,7 @@ class CipherScorer {
                               group_id != SSL_CURVE_HQC192 &&
                               group_id != SSL_CURVE_P384_HQC192 &&
                               group_id != SSL_CURVE_HQC256 &&
-                              group_id != SSL_CURVE_P521_HQC256 &&
-                              group_id != SSL_CURVE_NTRULPR653 &&
-                              group_id != SSL_CURVE_P256_NTRULPR653 &&
-                              group_id != SSL_CURVE_NTRULPR761 &&
-                              group_id != SSL_CURVE_P256_NTRULPR761 &&
-                              group_id != SSL_CURVE_NTRULPR857 &&
-                              group_id != SSL_CURVE_P384_NTRULPR857 &&
-                              group_id != SSL_CURVE_NTRULPR1277 &&
-                              group_id != SSL_CURVE_P521_NTRULPR1277 &&
-                              group_id != SSL_CURVE_SNTRUP653 &&
-                              group_id != SSL_CURVE_P256_SNTRUP653 &&
-                              group_id != SSL_CURVE_SNTRUP761 &&
-                              group_id != SSL_CURVE_P256_SNTRUP761 &&
-                              group_id != SSL_CURVE_SNTRUP857 &&
-                              group_id != SSL_CURVE_P384_SNTRUP857 &&
-                              group_id != SSL_CURVE_SNTRUP1277 &&
-                              group_id != SSL_CURVE_P521_SNTRUP1277
+                              group_id != SSL_CURVE_P521_HQC256
 ///// OQS_TEMPLATE_FRAGMENT_LIST_CURVES_END
                               ) {}
 

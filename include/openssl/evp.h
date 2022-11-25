@@ -188,18 +188,6 @@ OPENSSL_EXPORT EC_KEY *EVP_PKEY_get1_EC_KEY(const EVP_PKEY *pkey);
 #define EVP_PKEY_DILITHIUM5_AES NID_dilithium5_aes
 #define EVP_PKEY_FALCON512 NID_falcon512
 #define EVP_PKEY_FALCON1024 NID_falcon1024
-#define EVP_PKEY_PICNICL1FS NID_picnicl1fs
-#define EVP_PKEY_PICNICL1UR NID_picnicl1ur
-#define EVP_PKEY_PICNICL1FULL NID_picnicl1full
-#define EVP_PKEY_PICNIC3L1 NID_picnic3l1
-#define EVP_PKEY_PICNIC3L3 NID_picnic3l3
-#define EVP_PKEY_PICNIC3L5 NID_picnic3l5
-#define EVP_PKEY_RAINBOWIIICLASSIC NID_rainbowIIIclassic
-#define EVP_PKEY_RAINBOWIIICIRCUMZENITHAL NID_rainbowIIIcircumzenithal
-#define EVP_PKEY_RAINBOWIIICOMPRESSED NID_rainbowIIIcompressed
-#define EVP_PKEY_RAINBOWVCLASSIC NID_rainbowVclassic
-#define EVP_PKEY_RAINBOWVCIRCUMZENITHAL NID_rainbowVcircumzenithal
-#define EVP_PKEY_RAINBOWVCOMPRESSED NID_rainbowVcompressed
 #define EVP_PKEY_SPHINCSHARAKA128FROBUST NID_sphincsharaka128frobust
 #define EVP_PKEY_SPHINCSHARAKA128FSIMPLE NID_sphincsharaka128fsimple
 #define EVP_PKEY_SPHINCSHARAKA128SROBUST NID_sphincsharaka128srobust
@@ -246,18 +234,6 @@ OPENSSL_EXPORT EC_KEY *EVP_PKEY_get1_EC_KEY(const EVP_PKEY *pkey);
    (pkey_id == NID_dilithium5_aes) || \
    (pkey_id == NID_falcon512) || \
    (pkey_id == NID_falcon1024) || \
-   (pkey_id == NID_picnicl1fs) || \
-   (pkey_id == NID_picnicl1ur) || \
-   (pkey_id == NID_picnicl1full) || \
-   (pkey_id == NID_picnic3l1) || \
-   (pkey_id == NID_picnic3l3) || \
-   (pkey_id == NID_picnic3l5) || \
-   (pkey_id == NID_rainbowIIIclassic) || \
-   (pkey_id == NID_rainbowIIIcircumzenithal) || \
-   (pkey_id == NID_rainbowIIIcompressed) || \
-   (pkey_id == NID_rainbowVclassic) || \
-   (pkey_id == NID_rainbowVcircumzenithal) || \
-   (pkey_id == NID_rainbowVcompressed) || \
    (pkey_id == NID_sphincsharaka128frobust) || \
    (pkey_id == NID_sphincsharaka128fsimple) || \
    (pkey_id == NID_sphincsharaka128srobust) || \
@@ -311,23 +287,12 @@ OPENSSL_EXPORT EC_KEY *EVP_PKEY_get1_EC_KEY(const EVP_PKEY *pkey);
    (pkey_id == NID_ntru_hps40961229) || \
    (pkey_id == NID_ntru_hrss701) || \
    (pkey_id == NID_ntru_hrss1373) || \
-   (pkey_id == NID_lightsaber) || \
-   (pkey_id == NID_saber) || \
-   (pkey_id == NID_firesaber) || \
    (pkey_id == NID_kyber90s512) || \
    (pkey_id == NID_kyber90s768) || \
    (pkey_id == NID_kyber90s1024) || \
    (pkey_id == NID_hqc128) || \
    (pkey_id == NID_hqc192) || \
    (pkey_id == NID_hqc256) || \
-   (pkey_id == NID_ntrulpr653) || \
-   (pkey_id == NID_ntrulpr761) || \
-   (pkey_id == NID_ntrulpr857) || \
-   (pkey_id == NID_ntrulpr1277) || \
-   (pkey_id == NID_sntrup653) || \
-   (pkey_id == NID_sntrup761) || \
-   (pkey_id == NID_sntrup857) || \
-   (pkey_id == NID_sntrup1277) || \
 0 )
 ///// OQS_TEMPLATE_FRAGMENT_DEFINE_EVP_PKEYS_END
 

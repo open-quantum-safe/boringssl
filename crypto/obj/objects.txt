@@ -1392,12 +1392,6 @@ secg-scheme 14 3 : dhSinglePass-cofactorDH-sha512kdf-scheme
  : p384_ntru_hrss701
  : ntru_hrss1373
  : p521_ntru_hrss1373
- : lightsaber
- : p256_lightsaber
- : saber
- : p384_saber
- : firesaber
- : p521_firesaber
  : kyber90s512
  : p256_kyber90s512
  : kyber90s768
@@ -1410,22 +1404,6 @@ secg-scheme 14 3 : dhSinglePass-cofactorDH-sha512kdf-scheme
  : p384_hqc192
  : hqc256
  : p521_hqc256
- : ntrulpr653
- : p256_ntrulpr653
- : ntrulpr761
- : p256_ntrulpr761
- : ntrulpr857
- : p384_ntrulpr857
- : ntrulpr1277
- : p521_ntrulpr1277
- : sntrup653
- : p256_sntrup653
- : sntrup761
- : p256_sntrup761
- : sntrup857
- : p384_sntrup857
- : sntrup1277
- : p521_sntrup1277
 ##### OQS_TEMPLATE_FRAGMENT_DEF_NIDS_END
 
 ##### OQS_TEMPLATE_FRAGMENT_ASSIGN_OIDS_START
@@ -1437,18 +1415,6 @@ secg-scheme 14 3 : dhSinglePass-cofactorDH-sha512kdf-scheme
 1 3 6 1 4 1 2 267 11 8 7 : dilithium5_aes : dilithium5_aes
 1 3 9999 3 1 : falcon512 : falcon512
 1 3 9999 3 4 : falcon1024 : falcon1024
-1 3 6 1 4 1 311 89 2 1 1 : picnicl1fs : picnicl1fs
-1 3 6 1 4 1 311 89 2 1 4 : picnicl1ur : picnicl1ur
-1 3 6 1 4 1 311 89 2 1 7 : picnicl1full : picnicl1full
-1 3 6 1 4 1 311 89 2 1 21 : picnic3l1 : picnic3l1
-1 3 6 1 4 1 311 89 2 1 24 : picnic3l3 : picnic3l3
-1 3 6 1 4 1 311 89 2 1 26 : picnic3l5 : picnic3l5
-1 3 9999 5 2 1 1 : rainbowIIIclassic : rainbowIIIclassic
-1 3 9999 5 2 3 1 : rainbowIIIcircumzenithal : rainbowIIIcircumzenithal
-1 3 9999 5 2 5 1 : rainbowIIIcompressed : rainbowIIIcompressed
-1 3 9999 5 3 1 1 : rainbowVclassic : rainbowVclassic
-1 3 9999 5 3 3 1 : rainbowVcircumzenithal : rainbowVcircumzenithal
-1 3 9999 5 3 5 1 : rainbowVcompressed : rainbowVcompressed
 1 3 9999 6 1 1 : sphincsharaka128frobust : sphincsharaka128frobust
 1 3 9999 6 1 4 : sphincsharaka128fsimple : sphincsharaka128fsimple
 1 3 9999 6 1 7 : sphincsharaka128srobust : sphincsharaka128srobust
