@@ -34,3 +34,6 @@ util/bot/yasm-win32.exe
 oqs/
 
 tags
+
+# macOS
+.DS_Store
