@@ -306,9 +306,8 @@ std::vector<Flag> SortedFlags() {
       BoolFlag("-renegotiate-explicit", &TestConfig::renegotiate_explicit),
       BoolFlag("-forbid-renegotiation-after-handshake",
                &TestConfig::forbid_renegotiation_after_handshake),
-      // TODO(guywald): Bring it back.
-      // BoolFlag("-enable-all-curves",
-      //          &TestConfig::enable_all_curves),
+      BoolFlag("-enable-all-curves",
+               &TestConfig::enable_all_curves),
       IntFlag("-expect-peer-signature-algorithm",
               &TestConfig::expect_peer_signature_algorithm),
       IntFlag("-expect-curve-id", &TestConfig::expect_curve_id),
@@ -2130,8 +2129,7 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
     }
   }
 
-  // TODO(guywald): Bring it back.
-  if (true) {
+  if (enable_all_curves) {
     static const int kAllCurves[] = {
         NID_secp224r1, NID_X9_62_prime256v1, NID_secp384r1,
         NID_secp521r1, NID_X25519,           NID_CECPQ2,
