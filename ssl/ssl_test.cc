@@ -501,48 +501,6 @@ static const CurveTest kCurveTests[] = {
     },
   },
   {
-    "ntru_hps2048509:p256_ntru_hps2048509",
-    {
-      SSL_CURVE_NTRU_HPS2048509,
-      SSL_CURVE_P256_NTRU_HPS2048509,
-    },
-  },
-  {
-    "ntru_hps2048677:p384_ntru_hps2048677",
-    {
-      SSL_CURVE_NTRU_HPS2048677,
-      SSL_CURVE_P384_NTRU_HPS2048677,
-    },
-  },
-  {
-    "ntru_hps4096821:p521_ntru_hps4096821",
-    {
-      SSL_CURVE_NTRU_HPS4096821,
-      SSL_CURVE_P521_NTRU_HPS4096821,
-    },
-  },
-  {
-    "ntru_hps40961229:p521_ntru_hps40961229",
-    {
-      SSL_CURVE_NTRU_HPS40961229,
-      SSL_CURVE_P521_NTRU_HPS40961229,
-    },
-  },
-  {
-    "ntru_hrss701:p384_ntru_hrss701",
-    {
-      SSL_CURVE_NTRU_HRSS701,
-      SSL_CURVE_P384_NTRU_HRSS701,
-    },
-  },
-  {
-    "ntru_hrss1373:p521_ntru_hrss1373",
-    {
-      SSL_CURVE_NTRU_HRSS1373,
-      SSL_CURVE_P521_NTRU_HRSS1373,
-    },
-  },
-  {
     "kyber90s512:p256_kyber90s512",
     {
       SSL_CURVE_KYBER90S512,
@@ -8021,18 +7979,6 @@ static const TLSGroup kOQSGroups[] = {
     {NID_p384_kyber768, SSL_CURVE_P384_KYBER768},
     {NID_kyber1024, SSL_CURVE_KYBER1024},
     {NID_p521_kyber1024, SSL_CURVE_P521_KYBER1024},
-    {NID_ntru_hps2048509, SSL_CURVE_NTRU_HPS2048509},
-    {NID_p256_ntru_hps2048509, SSL_CURVE_P256_NTRU_HPS2048509},
-    {NID_ntru_hps2048677, SSL_CURVE_NTRU_HPS2048677},
-    {NID_p384_ntru_hps2048677, SSL_CURVE_P384_NTRU_HPS2048677},
-    {NID_ntru_hps4096821, SSL_CURVE_NTRU_HPS4096821},
-    {NID_p521_ntru_hps4096821, SSL_CURVE_P521_NTRU_HPS4096821},
-    {NID_ntru_hps40961229, SSL_CURVE_NTRU_HPS40961229},
-    {NID_p521_ntru_hps40961229, SSL_CURVE_P521_NTRU_HPS40961229},
-    {NID_ntru_hrss701, SSL_CURVE_NTRU_HRSS701},
-    {NID_p384_ntru_hrss701, SSL_CURVE_P384_NTRU_HRSS701},
-    {NID_ntru_hrss1373, SSL_CURVE_NTRU_HRSS1373},
-    {NID_p521_ntru_hrss1373, SSL_CURVE_P521_NTRU_HRSS1373},
     {NID_kyber90s512, SSL_CURVE_KYBER90S512},
     {NID_p256_kyber90s512, SSL_CURVE_P256_KYBER90S512},
     {NID_kyber90s768, SSL_CURVE_KYBER90S768},

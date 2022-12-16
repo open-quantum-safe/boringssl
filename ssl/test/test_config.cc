@@ -1983,42 +1983,6 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
         case SSL_CURVE_P521_KYBER1024:
           nids.push_back(NID_p521_kyber1024);
           break;
-        case SSL_CURVE_NTRU_HPS2048509:
-          nids.push_back(NID_ntru_hps2048509);
-          break;
-        case SSL_CURVE_P256_NTRU_HPS2048509:
-          nids.push_back(NID_p256_ntru_hps2048509);
-          break;
-        case SSL_CURVE_NTRU_HPS2048677:
-          nids.push_back(NID_ntru_hps2048677);
-          break;
-        case SSL_CURVE_P384_NTRU_HPS2048677:
-          nids.push_back(NID_p384_ntru_hps2048677);
-          break;
-        case SSL_CURVE_NTRU_HPS4096821:
-          nids.push_back(NID_ntru_hps4096821);
-          break;
-        case SSL_CURVE_P521_NTRU_HPS4096821:
-          nids.push_back(NID_p521_ntru_hps4096821);
-          break;
-        case SSL_CURVE_NTRU_HPS40961229:
-          nids.push_back(NID_ntru_hps40961229);
-          break;
-        case SSL_CURVE_P521_NTRU_HPS40961229:
-          nids.push_back(NID_p521_ntru_hps40961229);
-          break;
-        case SSL_CURVE_NTRU_HRSS701:
-          nids.push_back(NID_ntru_hrss701);
-          break;
-        case SSL_CURVE_P384_NTRU_HRSS701:
-          nids.push_back(NID_p384_ntru_hrss701);
-          break;
-        case SSL_CURVE_NTRU_HRSS1373:
-          nids.push_back(NID_ntru_hrss1373);
-          break;
-        case SSL_CURVE_P521_NTRU_HRSS1373:
-          nids.push_back(NID_p521_ntru_hrss1373);
-          break;
         case SSL_CURVE_KYBER90S512:
           nids.push_back(NID_kyber90s512);
           break;
@@ -2079,12 +2043,6 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
         NID_kyber512, NID_p256_kyber512,
         NID_kyber768, NID_p384_kyber768,
         NID_kyber1024, NID_p521_kyber1024,
-        NID_ntru_hps2048509, NID_p256_ntru_hps2048509,
-        NID_ntru_hps2048677, NID_p384_ntru_hps2048677,
-        NID_ntru_hps4096821, NID_p521_ntru_hps4096821,
-        NID_ntru_hps40961229, NID_p521_ntru_hps40961229,
-        NID_ntru_hrss701, NID_p384_ntru_hrss701,
-        NID_ntru_hrss1373, NID_p521_ntru_hrss1373,
         NID_kyber90s512, NID_p256_kyber90s512,
         NID_kyber90s768, NID_p384_kyber90s768,
         NID_kyber90s1024, NID_p521_kyber90s1024,

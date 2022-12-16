@@ -599,18 +599,6 @@ constexpr NamedGroup kNamedGroups[] = {
     {NID_p384_kyber768, SSL_CURVE_P384_KYBER768, "p384_kyber768", "p384_kyber768"},
     {NID_kyber1024, SSL_CURVE_KYBER1024, "kyber1024", "kyber1024"},
     {NID_p521_kyber1024, SSL_CURVE_P521_KYBER1024, "p521_kyber1024", "p521_kyber1024"},
-    {NID_ntru_hps2048509, SSL_CURVE_NTRU_HPS2048509, "ntru_hps2048509", "ntru_hps2048509"},
-    {NID_p256_ntru_hps2048509, SSL_CURVE_P256_NTRU_HPS2048509, "p256_ntru_hps2048509", "p256_ntru_hps2048509"},
-    {NID_ntru_hps2048677, SSL_CURVE_NTRU_HPS2048677, "ntru_hps2048677", "ntru_hps2048677"},
-    {NID_p384_ntru_hps2048677, SSL_CURVE_P384_NTRU_HPS2048677, "p384_ntru_hps2048677", "p384_ntru_hps2048677"},
-    {NID_ntru_hps4096821, SSL_CURVE_NTRU_HPS4096821, "ntru_hps4096821", "ntru_hps4096821"},
-    {NID_p521_ntru_hps4096821, SSL_CURVE_P521_NTRU_HPS4096821, "p521_ntru_hps4096821", "p521_ntru_hps4096821"},
-    {NID_ntru_hps40961229, SSL_CURVE_NTRU_HPS40961229, "ntru_hps40961229", "ntru_hps40961229"},
-    {NID_p521_ntru_hps40961229, SSL_CURVE_P521_NTRU_HPS40961229, "p521_ntru_hps40961229", "p521_ntru_hps40961229"},
-    {NID_ntru_hrss701, SSL_CURVE_NTRU_HRSS701, "ntru_hrss701", "ntru_hrss701"},
-    {NID_p384_ntru_hrss701, SSL_CURVE_P384_NTRU_HRSS701, "p384_ntru_hrss701", "p384_ntru_hrss701"},
-    {NID_ntru_hrss1373, SSL_CURVE_NTRU_HRSS1373, "ntru_hrss1373", "ntru_hrss1373"},
-    {NID_p521_ntru_hrss1373, SSL_CURVE_P521_NTRU_HRSS1373, "p521_ntru_hrss1373", "p521_ntru_hrss1373"},
     {NID_kyber90s512, SSL_CURVE_KYBER90S512, "kyber90s512", "kyber90s512"},
     {NID_p256_kyber90s512, SSL_CURVE_P256_KYBER90S512, "p256_kyber90s512", "p256_kyber90s512"},
     {NID_kyber90s768, SSL_CURVE_KYBER90S768, "kyber90s768", "kyber90s768"},
@@ -759,66 +747,6 @@ UniquePtr<SSLKeyShare> SSLKeyShare::Create(uint16_t group_id) {
     case SSL_CURVE_P521_KYBER1024:
       if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_kyber_1024))
           return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P521_KYBER1024, SSL_CURVE_SECP521R1, OQS_KEM_alg_kyber_1024));
-      else
-          return nullptr;
-    case SSL_CURVE_NTRU_HPS2048509:
-      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_ntru_hps2048509))
-          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_NTRU_HPS2048509, OQS_KEM_alg_ntru_hps2048509));
-      else
-          return nullptr;
-    case SSL_CURVE_P256_NTRU_HPS2048509:
-      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_ntru_hps2048509))
-          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P256_NTRU_HPS2048509, SSL_CURVE_SECP256R1, OQS_KEM_alg_ntru_hps2048509));
-      else
-          return nullptr;
-    case SSL_CURVE_NTRU_HPS2048677:
-      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_ntru_hps2048677))
-          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_NTRU_HPS2048677, OQS_KEM_alg_ntru_hps2048677));
-      else
-          return nullptr;
-    case SSL_CURVE_P384_NTRU_HPS2048677:
-      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_ntru_hps2048677))
-          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P384_NTRU_HPS2048677, SSL_CURVE_SECP384R1, OQS_KEM_alg_ntru_hps2048677));
-      else
-          return nullptr;
-    case SSL_CURVE_NTRU_HPS4096821:
-      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_ntru_hps4096821))
-          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_NTRU_HPS4096821, OQS_KEM_alg_ntru_hps4096821));
-      else
-          return nullptr;
-    case SSL_CURVE_P521_NTRU_HPS4096821:
-      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_ntru_hps4096821))
-          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P521_NTRU_HPS4096821, SSL_CURVE_SECP521R1, OQS_KEM_alg_ntru_hps4096821));
-      else
-          return nullptr;
-    case SSL_CURVE_NTRU_HPS40961229:
-      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_ntru_hps40961229))
-          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_NTRU_HPS40961229, OQS_KEM_alg_ntru_hps40961229));
-      else
-          return nullptr;
-    case SSL_CURVE_P521_NTRU_HPS40961229:
-      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_ntru_hps40961229))
-          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P521_NTRU_HPS40961229, SSL_CURVE_SECP521R1, OQS_KEM_alg_ntru_hps40961229));
-      else
-          return nullptr;
-    case SSL_CURVE_NTRU_HRSS701:
-      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_ntru_hrss701))
-          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_NTRU_HRSS701, OQS_KEM_alg_ntru_hrss701));
-      else
-          return nullptr;
-    case SSL_CURVE_P384_NTRU_HRSS701:
-      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_ntru_hrss701))
-          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P384_NTRU_HRSS701, SSL_CURVE_SECP384R1, OQS_KEM_alg_ntru_hrss701));
-      else
-          return nullptr;
-    case SSL_CURVE_NTRU_HRSS1373:
-      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_ntru_hrss1373))
-          return UniquePtr<SSLKeyShare>(New<OQSKeyShare>(SSL_CURVE_NTRU_HRSS1373, OQS_KEM_alg_ntru_hrss1373));
-      else
-          return nullptr;
-    case SSL_CURVE_P521_NTRU_HRSS1373:
-      if(OQS_KEM_alg_is_enabled(OQS_KEM_alg_ntru_hrss1373))
-          return UniquePtr<SSLKeyShare>(New<ClassicalWithOQSKeyShare>(SSL_CURVE_P521_NTRU_HRSS1373, SSL_CURVE_SECP521R1, OQS_KEM_alg_ntru_hrss1373));
       else
           return nullptr;
     case SSL_CURVE_KYBER90S512:

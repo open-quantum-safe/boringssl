@@ -4332,30 +4332,6 @@ extern "C" {
 #define SN_p521_kyber90s1024 "p521_kyber90s1024"
 #define NID_p521_kyber90s1024 1008
 
-#define SN_ntru_hps2048509 "ntru_hps2048509"
-#define NID_ntru_hps2048509 1013
-
-#define SN_p256_ntru_hps2048509 "p256_ntru_hps2048509"
-#define NID_p256_ntru_hps2048509 1014
-
-#define SN_ntru_hps2048677 "ntru_hps2048677"
-#define NID_ntru_hps2048677 1015
-
-#define SN_p384_ntru_hps2048677 "p384_ntru_hps2048677"
-#define NID_p384_ntru_hps2048677 1016
-
-#define SN_ntru_hps4096821 "ntru_hps4096821"
-#define NID_ntru_hps4096821 1017
-
-#define SN_p521_ntru_hps4096821 "p521_ntru_hps4096821"
-#define NID_p521_ntru_hps4096821 1018
-
-#define SN_ntru_hrss701 "ntru_hrss701"
-#define NID_ntru_hrss701 1019
-
-#define SN_p384_ntru_hrss701 "p384_ntru_hrss701"
-#define NID_p384_ntru_hrss701 1107
-
 #define SN_hqc128 "hqc128"
 #define NID_hqc128 1136
 
@@ -4600,18 +4576,6 @@ extern "C" {
 
 #define SN_p384_bikel3 "p384_bikel3"
 #define NID_p384_bikel3 1214
-
-#define SN_ntru_hps40961229 "ntru_hps40961229"
-#define NID_ntru_hps40961229 1221
-
-#define SN_p521_ntru_hps40961229 "p521_ntru_hps40961229"
-#define NID_p521_ntru_hps40961229 1222
-
-#define SN_ntru_hrss1373 "ntru_hrss1373"
-#define NID_ntru_hrss1373 1223
-
-#define SN_p521_ntru_hrss1373 "p521_ntru_hrss1373"
-#define NID_p521_ntru_hrss1373 1224
 
 
 #if defined(__cplusplus)
