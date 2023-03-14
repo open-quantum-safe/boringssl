@@ -52,7 +52,7 @@ Some of the KEMs provided in liboqs do provide IND-CCA security; others do not (
 
 Furthermore, the BoringSSL project does not guarantee API or ABI stability; this fork is maintained primarily to enable the use of quantum-safe cryptography in the [Chromium](https://www.chromium.org/) web browser, which relies on BoringSSL's TLS implementation.
 
-The fork is currently based on commit hash `387f82054c8ffa7d2b9e31d908586fbd47f34039` which has been verified to work with Chromium tag `100.0.4856.2`. If we do decide to update BoringSSL, we will do so to the most recent commit that is supported by the desired tag at which we would like Chromium to be. **We consequently also cannot guarantee API or ABI stability for this fork.**
+The fork is currently based on commit hash `387f82054c8ffa7d2b9e31d908586fbd47f34039` which has been verified to work with Chromium tag `113.0.5649.0`. If we do decide to update BoringSSL, we will do so to the most recent commit that is supported by the desired tag at which we would like Chromium to be. **We consequently also cannot guarantee API or ABI stability for this fork.**
 
 ### Supported Algorithms
 
