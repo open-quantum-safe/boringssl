@@ -124,6 +124,9 @@ static bool apply_remote_features(SSL *ssl, CBS *in) {
     return false;
   }
   bssl::UniquePtr<STACK_OF(SSL_CIPHER)> supported(sk_SSL_CIPHER_new_null());
+  if (!supported) {
+    return false;
+  }
   while (CBS_len(&ciphers)) {
     uint16_t id;
     if (!CBS_get_u16(&ciphers, &id)) {
@@ -141,6 +144,9 @@ static bool apply_remote_features(SSL *ssl, CBS *in) {
       ssl->config->cipher_list ? ssl->config->cipher_list->ciphers.get()
                                : ssl->ctx->cipher_list->ciphers.get();
   bssl::UniquePtr<STACK_OF(SSL_CIPHER)> unsupported(sk_SSL_CIPHER_new_null());
+  if (!unsupported) {
+    return false;
+  }
   for (const SSL_CIPHER *configured_cipher : configured) {
     if (sk_SSL_CIPHER_find(supported.get(), nullptr, configured_cipher)) {
       continue;
@@ -151,7 +157,8 @@ static bool apply_remote_features(SSL *ssl, CBS *in) {
   }
   if (sk_SSL_CIPHER_num(unsupported.get()) && !ssl->config->cipher_list) {
     ssl->config->cipher_list = bssl::MakeUnique<SSLCipherPreferenceList>();
-    if (!ssl->config->cipher_list->Init(*ssl->ctx->cipher_list)) {
+    if (!ssl->config->cipher_list ||
+        !ssl->config->cipher_list->Init(*ssl->ctx->cipher_list)) {
       return false;
     }
   }
@@ -380,9 +387,14 @@ bool SSL_serialize_handback(const SSL *ssl, CBB *out) {
       !CBB_add_asn1(&seq, &key_share, CBS_ASN1_SEQUENCE)) {
     return false;
   }
-  if (type == handback_after_ecdhe &&
-      !s3->hs->key_shares[0]->Serialize(&key_share)) {
-    return false;
+  if (type == handback_after_ecdhe) {
+    CBB private_key;
+    if (!CBB_add_asn1_uint64(&key_share, s3->hs->key_shares[0]->GroupID()) ||
+        !CBB_add_asn1(&key_share, &private_key, CBS_ASN1_OCTETSTRING) ||
+        !s3->hs->key_shares[0]->SerializePrivateKey(&private_key) ||
+        !CBB_flush(&key_share)) {
+      return false;
+    }
   }
   if (type == handback_tls13) {
     early_data_t early_data;
@@ -488,6 +500,9 @@ bool SSL_apply_handback(SSL *ssl, Span<const uint8_t> handback) {
   }
 
   s3->hs = ssl_handshake_new(ssl);
+  if (!s3->hs) {
+    return false;
+  }
   SSL_HANDSHAKE *const hs = s3->hs.get();
   if (!session_reused || type == handback_tls13) {
     hs->new_session =
@@ -704,9 +719,19 @@ bool SSL_apply_handback(SSL *ssl, Span<const uint8_t> handback) {
   }
   s3->read_sequence = CRYPTO_load_u64_be(read_sequence);
   s3->write_sequence = CRYPTO_load_u64_be(write_sequence);
-  if (type == handback_after_ecdhe &&
-      (hs->key_shares[0] = SSLKeyShare::Create(&key_share)) == nullptr) {
-    return false;
+  if (type == handback_after_ecdhe) {
+    uint64_t group_id;
+    CBS private_key;
+    if (!CBS_get_asn1_uint64(&key_share, &group_id) ||  //
+        group_id > 0xffff ||
+        !CBS_get_asn1(&key_share, &private_key, CBS_ASN1_OCTETSTRING)) {
+      return false;
+    }
+    hs->key_shares[0] = SSLKeyShare::Create(group_id);
+    if (!hs->key_shares[0] ||
+        !hs->key_shares[0]->DeserializePrivateKey(&private_key)) {
+      return false;
+    }
   }
   return true;  // Trailing data allowed for extensibility.
 }
@@ -799,7 +824,7 @@ int SSL_request_handshake_hints(SSL *ssl, const uint8_t *client_hello,
 //
 // KeyShareHint ::= SEQUENCE {
 //     groupId                 INTEGER,
-//     publicKey               OCTET STRING,
+//     ciphertext              OCTET STRING,
 //     secret                  OCTET STRING,
 // }
 //
@@ -861,12 +886,12 @@ int SSL_serialize_handshake_hints(const SSL *ssl, CBB *out) {
     }
   }
 
-  if (hints->key_share_group_id != 0 && !hints->key_share_public_key.empty() &&
+  if (hints->key_share_group_id != 0 && !hints->key_share_ciphertext.empty() &&
       !hints->key_share_secret.empty()) {
     if (!CBB_add_asn1(&seq, &child, kKeyShareHintTag) ||
         !CBB_add_asn1_uint64(&child, hints->key_share_group_id) ||
-        !CBB_add_asn1_octet_string(&child, hints->key_share_public_key.data(),
-                                   hints->key_share_public_key.size()) ||
+        !CBB_add_asn1_octet_string(&child, hints->key_share_ciphertext.data(),
+                                   hints->key_share_ciphertext.size()) ||
         !CBB_add_asn1_octet_string(&child, hints->key_share_secret.data(),
                                    hints->key_share_secret.size())) {
       return 0;
@@ -1015,11 +1040,11 @@ int SSL_set_handshake_hints(SSL *ssl, const uint8_t *hints, size_t hints_len) {
 
   if (has_key_share) {
     uint64_t group_id;
-    CBS public_key, secret;
+    CBS ciphertext, secret;
     if (!CBS_get_asn1_uint64(&key_share, &group_id) ||  //
         group_id == 0 || group_id > 0xffff ||
-        !CBS_get_asn1(&key_share, &public_key, CBS_ASN1_OCTETSTRING) ||
-        !hints_obj->key_share_public_key.CopyFrom(public_key) ||
+        !CBS_get_asn1(&key_share, &ciphertext, CBS_ASN1_OCTETSTRING) ||
+        !hints_obj->key_share_ciphertext.CopyFrom(ciphertext) ||
         !CBS_get_asn1(&key_share, &secret, CBS_ASN1_OCTETSTRING) ||
         !hints_obj->key_share_secret.CopyFrom(secret)) {
       OPENSSL_PUT_ERROR(SSL, SSL_R_COULD_NOT_PARSE_HINTS);

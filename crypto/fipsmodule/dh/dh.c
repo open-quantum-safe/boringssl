@@ -75,7 +75,6 @@
 DH *DH_new(void) {
   DH *dh = OPENSSL_malloc(sizeof(DH));
   if (dh == NULL) {
-    OPENSSL_PUT_ERROR(DH, ERR_R_MALLOC_FAILURE);
     return NULL;
   }
 
@@ -178,6 +177,9 @@ int DH_set0_pqg(DH *dh, BIGNUM *p, BIGNUM *q, BIGNUM *g) {
     dh->g = g;
   }
 
+  // Invalidate the cached Montgomery parameters.
+  BN_MONT_CTX_free(dh->method_mont_p);
+  dh->method_mont_p = NULL;
   return 1;
 }
 

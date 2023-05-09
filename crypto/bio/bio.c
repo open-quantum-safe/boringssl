@@ -72,7 +72,6 @@
 BIO *BIO_new(const BIO_METHOD *method) {
   BIO *ret = OPENSSL_malloc(sizeof(BIO));
   if (ret == NULL) {
-    OPENSSL_PUT_ERROR(BIO, ERR_R_MALLOC_FAILURE);
     return NULL;
   }
 
@@ -202,7 +201,7 @@ int BIO_puts(BIO *bio, const char *in) {
 }
 
 int BIO_flush(BIO *bio) {
-  return BIO_ctrl(bio, BIO_CTRL_FLUSH, 0, NULL);
+  return (int)BIO_ctrl(bio, BIO_CTRL_FLUSH, 0, NULL);
 }
 
 long BIO_ctrl(BIO *bio, int cmd, long larg, void *parg) {
@@ -235,11 +234,11 @@ long BIO_int_ctrl(BIO *b, int cmd, long larg, int iarg) {
 }
 
 int BIO_reset(BIO *bio) {
-  return BIO_ctrl(bio, BIO_CTRL_RESET, 0, NULL);
+  return (int)BIO_ctrl(bio, BIO_CTRL_RESET, 0, NULL);
 }
 
 int BIO_eof(BIO *bio) {
-  return BIO_ctrl(bio, BIO_CTRL_EOF, 0, NULL);
+  return (int)BIO_ctrl(bio, BIO_CTRL_EOF, 0, NULL);
 }
 
 void BIO_set_flags(BIO *bio, int flags) {
@@ -339,7 +338,7 @@ size_t BIO_wpending(const BIO *bio) {
 }
 
 int BIO_set_close(BIO *bio, int close_flag) {
-  return BIO_ctrl(bio, BIO_CTRL_SET_CLOSE, close_flag, NULL);
+  return (int)BIO_ctrl(bio, BIO_CTRL_SET_CLOSE, close_flag, NULL);
 }
 
 OPENSSL_EXPORT size_t BIO_number_read(const BIO *bio) {
@@ -424,7 +423,7 @@ int BIO_indent(BIO *bio, unsigned indent, unsigned max_indent) {
 }
 
 static int print_bio(const char *str, size_t len, void *bio) {
-  return BIO_write((BIO *)bio, str, len);
+  return BIO_write_all((BIO *)bio, str, len);
 }
 
 void ERR_print_errors(BIO *bio) {
@@ -463,9 +462,11 @@ static int bio_read_all(BIO *bio, uint8_t **out, size_t *out_len,
       OPENSSL_free(*out);
       return 0;
     }
-    const size_t todo = len - done;
-    assert(todo < INT_MAX);
-    const int n = BIO_read(bio, *out + done, todo);
+    size_t todo = len - done;
+    if (todo > INT_MAX) {
+      todo = INT_MAX;
+    }
+    const int n = BIO_read(bio, *out + done, (int)todo);
     if (n == 0) {
       *out_len = done;
       return 1;
@@ -609,7 +610,6 @@ int BIO_read_asn1(BIO *bio, uint8_t **out, size_t *out_len, size_t max_len) {
 
   *out = OPENSSL_malloc(len);
   if (*out == NULL) {
-    OPENSSL_PUT_ERROR(ASN1, ERR_R_MALLOC_FAILURE);
     return 0;
   }
   OPENSSL_memcpy(*out, header, header_len);

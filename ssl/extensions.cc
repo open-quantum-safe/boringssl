@@ -132,6 +132,7 @@
 #include "../crypto/internal.h"
 #include "internal.h"
 
+
 BSSL_NAMESPACE_BEGIN
 
 static bool ssl_check_clienthello_tlsext(SSL_HANDSHAKE *hs);
@@ -204,9 +205,8 @@ static bool tls1_check_duplicate_extensions(const CBS *cbs) {
 }
 
 static bool is_post_quantum_group(uint16_t id) {
-  return id == SSL_CURVE_CECPQ2 ||
 ///// OQS_TEMPLATE_FRAGMENT_ADD_PQ_GROUPS_START
-         id == SSL_CURVE_FRODO640AES ||
+  return id == SSL_CURVE_FRODO640AES ||
          id == SSL_CURVE_P256_FRODO640AES ||
          id == SSL_CURVE_FRODO640SHAKE ||
          id == SSL_CURVE_P256_FRODO640SHAKE ||
@@ -346,7 +346,6 @@ static const uint16_t kDefaultGroups[] = {
     SSL_CURVE_P256_KYBER90S512,
 ///// OQS_TEMPLATE_FRAGMENT_ADD_DEFAULT_KEMS_END
 };
-
 // OQS note: since it would be too unwieldy to add the
 // group IDs and keyshares of all of liboqs's alogrithms
 // (and their corresponding hybrid variants) to the ClientHello,
@@ -435,8 +434,8 @@ bool tls1_get_shared_group(SSL_HANDSHAKE *hs, uint16_t *out_group_id) {
   for (uint16_t pref_group : pref) {
     for (uint16_t supp_group : supp) {
       if (pref_group == supp_group &&
-          // CECPQ2(b) doesn't fit in the u8-length-prefixed ECPoint field in
-          // TLS 1.2 and below.
+          // Post-quantum key agreements don't fit in the u8-length-prefixed
+          // ECPoint field in TLS 1.2 and below.
           (ssl_protocol_version(ssl) >= TLS1_3_VERSION ||
            !is_post_quantum_group(pref_group))) {
         *out_group_id = pref_group;
@@ -502,7 +501,7 @@ bool tls1_set_curves_list(Array<uint16_t> *out_group_ids, const char *curves) {
 bool tls1_check_group_id(const SSL_HANDSHAKE *hs, uint16_t group_id) {
   if (is_post_quantum_group(group_id) &&
       ssl_protocol_version(hs->ssl) < TLS1_3_VERSION) {
-    // CECPQ2(b) requires TLS 1.3.
+    // Post-quantum "groups" require TLS 1.3.
     return false;
   }
 
@@ -570,7 +569,6 @@ static const uint16_t kVerifySignatureAlgorithms[] = {
     SSL_SIGN_SPHINCSSHAKE256256SROBUST,
     SSL_SIGN_SPHINCSSHAKE256256SSIMPLE,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_VERIFY_SIG_ALGS_END
-
     SSL_SIGN_ECDSA_SECP256R1_SHA256,
     SSL_SIGN_RSA_PSS_RSAE_SHA256,
     SSL_SIGN_RSA_PKCS1_SHA256,
@@ -637,7 +635,6 @@ static const uint16_t kSignSignatureAlgorithms[] = {
     SSL_SIGN_SPHINCSSHAKE256256SROBUST,
     SSL_SIGN_SPHINCSSHAKE256256SSIMPLE,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_SIGN_SIG_ALGS_END
-
     SSL_SIGN_ED25519,
     SSL_SIGN_ECDSA_SECP256R1_SHA256,
     SSL_SIGN_RSA_PSS_RSAE_SHA256,
@@ -2489,11 +2486,13 @@ bool ssl_setup_key_shares(SSL_HANDSHAKE *hs, uint16_t override_group_id) {
 
     group_id = groups[0];
 
-    if (is_post_quantum_group(group_id) && groups.size() >= 2) {
-      // CECPQ2(b) is not sent as the only initial key share. We'll include the
-      // 2nd preference group too to avoid round-trips.
-      second_group_id = groups[1];
-      assert(second_group_id != group_id);
+    // We'll try to include one post-quantum and one classical initial key
+    // share.
+    for (size_t i = 1; i < groups.size() && second_group_id == 0; i++) {
+      if (is_post_quantum_group(group_id) != is_post_quantum_group(groups[i])) {
+        second_group_id = groups[i];
+        assert(second_group_id != group_id);
+      }
     }
   }
 
@@ -2502,7 +2501,7 @@ bool ssl_setup_key_shares(SSL_HANDSHAKE *hs, uint16_t override_group_id) {
   if (!hs->key_shares[0] ||  //
       !CBB_add_u16(cbb.get(), group_id) ||
       !CBB_add_u16_length_prefixed(cbb.get(), &key_exchange) ||
-      !hs->key_shares[0]->Offer(&key_exchange)) {
+      !hs->key_shares[0]->Generate(&key_exchange)) {
     return false;
   }
 
@@ -2511,7 +2510,7 @@ bool ssl_setup_key_shares(SSL_HANDSHAKE *hs, uint16_t override_group_id) {
     if (!hs->key_shares[1] ||  //
         !CBB_add_u16(cbb.get(), second_group_id) ||
         !CBB_add_u16_length_prefixed(cbb.get(), &key_exchange) ||
-        !hs->key_shares[1]->Offer(&key_exchange)) {
+        !hs->key_shares[1]->Generate(&key_exchange)) {
       return false;
     }
   }
@@ -2543,10 +2542,10 @@ static bool ext_key_share_add_clienthello(const SSL_HANDSHAKE *hs, CBB *out,
 bool ssl_ext_key_share_parse_serverhello(SSL_HANDSHAKE *hs,
                                          Array<uint8_t> *out_secret,
                                          uint8_t *out_alert, CBS *contents) {
-  CBS peer_key;
+  CBS ciphertext;
   uint16_t group_id;
   if (!CBS_get_u16(contents, &group_id) ||
-      !CBS_get_u16_length_prefixed(contents, &peer_key) ||
+      !CBS_get_u16_length_prefixed(contents, &ciphertext) ||
       CBS_len(contents) != 0) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_DECODE_ERROR);
     *out_alert = SSL_AD_DECODE_ERROR;
@@ -2563,7 +2562,7 @@ bool ssl_ext_key_share_parse_serverhello(SSL_HANDSHAKE *hs,
     key_share = hs->key_shares[1].get();
   }
 
-  if (!key_share->Finish(out_secret, out_alert, peer_key)) {
+  if (!key_share->Decap(out_secret, out_alert, ciphertext)) {
     *out_alert = SSL_AD_INTERNAL_ERROR;
     return false;
   }
@@ -2628,13 +2627,13 @@ bool ssl_ext_key_share_parse_clienthello(SSL_HANDSHAKE *hs, bool *out_found,
 }
 
 bool ssl_ext_key_share_add_serverhello(SSL_HANDSHAKE *hs, CBB *out) {
-  CBB kse_bytes, public_key;
+  CBB entry, ciphertext;
   if (!CBB_add_u16(out, TLSEXT_TYPE_key_share) ||
-      !CBB_add_u16_length_prefixed(out, &kse_bytes) ||
-      !CBB_add_u16(&kse_bytes, hs->new_session->group_id) ||
-      !CBB_add_u16_length_prefixed(&kse_bytes, &public_key) ||
-      !CBB_add_bytes(&public_key, hs->ecdh_public_key.data(),
-                     hs->ecdh_public_key.size()) ||
+      !CBB_add_u16_length_prefixed(out, &entry) ||
+      !CBB_add_u16(&entry, hs->new_session->group_id) ||
+      !CBB_add_u16_length_prefixed(&entry, &ciphertext) ||
+      !CBB_add_bytes(&ciphertext, hs->key_share_ciphertext.data(),
+                     hs->key_share_ciphertext.size()) ||
       !CBB_flush(out)) {
     return false;
   }
@@ -4124,7 +4123,6 @@ static enum ssl_ticket_aead_result_t ssl_decrypt_ticket_with_method(
     Span<const uint8_t> ticket) {
   Array<uint8_t> plaintext;
   if (!plaintext.Init(ticket.size())) {
-    OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
     return ssl_ticket_aead_error;
   }
 
@@ -4291,10 +4289,7 @@ bool tls1_choose_signature_algorithm(SSL_HANDSHAKE *hs, uint16_t *out) {
   Span<const uint16_t> peer_sigalgs = tls1_get_peer_verify_algorithms(hs);
 
   for (uint16_t sigalg : sigalgs) {
-    // SSL_SIGN_RSA_PKCS1_MD5_SHA1 is an internal value and should never be
-    // negotiated.
-    if (sigalg == SSL_SIGN_RSA_PKCS1_MD5_SHA1 ||
-        !ssl_private_key_supports_signature_algorithm(hs, sigalg)) {
+    if (!ssl_private_key_supports_signature_algorithm(hs, sigalg)) {
       continue;
     }
 

@@ -24,8 +24,8 @@
 #include "internal.h"
 
 static void oqs_free(EVP_PKEY *pkey) {
-  OPENSSL_free(pkey->pkey.ptr);
-  pkey->pkey.ptr = NULL;
+  OPENSSL_free(pkey->pkey);
+  pkey->pkey = NULL;
 }
 
 #define DEFINE_OQS_SET_PRIV_RAW(ALG, OQS_METH)                              \
@@ -57,7 +57,7 @@ static void oqs_free(EVP_PKEY *pkey) {
            key->ctx->length_public_key);                                    \
                                                                             \
     oqs_free(pkey);                                                         \
-    pkey->pkey.ptr = key;                                                   \
+    pkey->pkey = key;                                                   \
     return 1;                                                               \
   }
 
@@ -65,7 +65,7 @@ static void oqs_free(EVP_PKEY *pkey) {
 #define DEFINE_OQS_GET_PRIV_RAW(ALG, OQS_METH)                      \
   static int ALG##_get_priv_raw(const EVP_PKEY *pkey, uint8_t *out, \
                                 size_t *out_len) {                  \
-    OQS_KEY *key = pkey->pkey.ptr;                                  \
+    OQS_KEY *key = pkey->pkey;                                  \
     if (!key->has_private) {                                        \
       OPENSSL_PUT_ERROR(EVP, EVP_R_NOT_A_PRIVATE_KEY);              \
       return 0;                                                     \
@@ -131,7 +131,7 @@ static void oqs_free(EVP_PKEY *pkey) {
     key->has_private = 0;                                         \
                                                                   \
     oqs_free(pkey);                                               \
-    pkey->pkey.ptr = key;                                         \
+    pkey->pkey = key;                                         \
     return 1;                                                     \
   }
 
@@ -147,7 +147,7 @@ static void oqs_free(EVP_PKEY *pkey) {
 
 #define DEFINE_OQS_PUB_ENCODE(ALG)                                            \
   static int ALG##_pub_encode(CBB *out, const EVP_PKEY *pkey) {               \
-    const OQS_KEY *key = pkey->pkey.ptr;                                      \
+    const OQS_KEY *key = pkey->pkey;                                      \
                                                                               \
     /* See RFC 8410, section 4. */                                            \
     CBB spki, algorithm, oid, key_bitstring;                                  \
@@ -168,14 +168,14 @@ static void oqs_free(EVP_PKEY *pkey) {
   }
 
 static int oqs_pub_cmp(const EVP_PKEY *a, const EVP_PKEY *b) {
-  const OQS_KEY *a_key = a->pkey.ptr;
-  const OQS_KEY *b_key = b->pkey.ptr;
+  const OQS_KEY *a_key = a->pkey;
+  const OQS_KEY *b_key = b->pkey;
   return OPENSSL_memcmp(a_key->pub, b_key->pub,
                         a_key->ctx->length_public_key) == 0;
 }
 
 static size_t oqs_sig_size(const EVP_PKEY *pkey) {
-  const OQS_KEY *key = pkey->pkey.ptr;
+  const OQS_KEY *key = pkey->pkey;
   return key->ctx->length_signature;
 }
 

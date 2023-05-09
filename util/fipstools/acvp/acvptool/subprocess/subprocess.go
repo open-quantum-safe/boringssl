@@ -106,10 +106,11 @@ func NewWithIO(cmd *exec.Cmd, in io.WriteCloser, out io.ReadCloser) *Subprocess 
 		"ctrDRBG":           &drbg{"ctrDRBG", map[string]bool{"AES-128": true, "AES-192": true, "AES-256": true}},
 		"hmacDRBG":          &drbg{"hmacDRBG", map[string]bool{"SHA-1": true, "SHA2-224": true, "SHA2-256": true, "SHA2-384": true, "SHA2-512": true}},
 		"KDF":               &kdfPrimitive{},
-		"KAS-KDF":           &hkdf{},
+		"KDA":               &hkdf{},
+		"TLS-v1.2":          &tlsKDF{},
+		"TLS-v1.3":          &tls13{},
 		"CMAC-AES":          &keyedMACPrimitive{"CMAC-AES"},
 		"RSA":               &rsa{},
-		"kdf-components":    &tlsKDF{},
 		"KAS-ECC-SSC":       &kas{},
 		"KAS-FFC-SSC":       &kasDH{},
 	}
@@ -210,7 +211,7 @@ func (m *Subprocess) Config() ([]byte, error) {
 }
 
 // Process runs a set of test vectors and returns the result.
-func (m *Subprocess) Process(algorithm string, vectorSet []byte) (interface{}, error) {
+func (m *Subprocess) Process(algorithm string, vectorSet []byte) (any, error) {
 	prim, ok := m.primitives[algorithm]
 	if !ok {
 		return nil, fmt.Errorf("unknown algorithm %q", algorithm)
@@ -223,7 +224,7 @@ func (m *Subprocess) Process(algorithm string, vectorSet []byte) (interface{}, e
 }
 
 type primitive interface {
-	Process(vectorSet []byte, t Transactable) (interface{}, error)
+	Process(vectorSet []byte, t Transactable) (any, error)
 }
 
 func uint32le(n uint32) []byte {

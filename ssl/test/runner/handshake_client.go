@@ -33,7 +33,7 @@ type clientHandshakeState struct {
 	echHPKEContext *hpke.Context
 	suite          *cipherSuite
 	finishedHash   finishedHash
-	keyShares      map[CurveID]ecdhCurve
+	keyShares      map[CurveID]kemImplementation
 	masterSecret   []byte
 	session        *ClientSessionState
 	finishedBytes  []byte
@@ -98,7 +98,7 @@ func (c *Conn) clientHandshake() error {
 
 	hs := &clientHandshakeState{
 		c:         c,
-		keyShares: make(map[CurveID]ecdhCurve),
+		keyShares: make(map[CurveID]kemImplementation),
 	}
 
 	// Pick a session to resume.
@@ -643,11 +643,11 @@ func (hs *clientHandshakeState) createClientHello(innerHello *clientHelloMsg, ec
 				if !curvesToSend[curveID] {
 					continue
 				}
-				curve, ok := curveForCurveID(curveID, c.config)
+				kem, ok := kemForCurveID(curveID, c.config)
 				if !ok {
 					continue
 				}
-				publicKey, err := curve.offer(c.config.rand())
+				publicKey, err := kem.generate(c.config.rand())
 				if err != nil {
 					return nil, err
 				}
@@ -663,7 +663,7 @@ func (hs *clientHandshakeState) createClientHello(innerHello *clientHelloMsg, ec
 					group:       curveID,
 					keyExchange: publicKey,
 				})
-				hs.keyShares[curveID] = curve
+				hs.keyShares[curveID] = kem
 
 				if c.config.Bugs.DuplicateKeyShares {
 					hello.keyShares = append(hello.keyShares, hello.keyShares[len(hello.keyShares)-1])
@@ -925,7 +925,7 @@ func (hs *clientHandshakeState) encryptClientHello(hello, innerHello *clientHell
 	return nil
 }
 
-func (hs *clientHandshakeState) checkECHConfirmation(msg interface{}, hello *clientHelloMsg, finishedHash *finishedHash) bool {
+func (hs *clientHandshakeState) checkECHConfirmation(msg any, hello *clientHelloMsg, finishedHash *finishedHash) bool {
 	var offset int
 	var raw, label []byte
 	if hrr, ok := msg.(*helloRetryRequestMsg); ok {
@@ -950,7 +950,7 @@ func (hs *clientHandshakeState) checkECHConfirmation(msg interface{}, hello *cli
 	return bytes.Equal(confirmation, raw[offset:offset+echAcceptConfirmationLength])
 }
 
-func (hs *clientHandshakeState) doTLS13Handshake(msg interface{}) error {
+func (hs *clientHandshakeState) doTLS13Handshake(msg any) error {
 	c := hs.c
 
 	// The first message may be a ServerHello or HelloRetryRequest.
@@ -1122,7 +1122,7 @@ func (hs *clientHandshakeState) doTLS13Handshake(msg interface{}) error {
 	// Resolve ECDHE and compute the handshake secret.
 	ecdheSecret := zeroSecret
 	if !c.config.Bugs.MissingKeyShare && !c.config.Bugs.SecondClientHelloMissingKeyShare {
-		curve, ok := hs.keyShares[hs.serverHello.keyShare.group]
+		kem, ok := hs.keyShares[hs.serverHello.keyShare.group]
 		if !ok {
 			c.sendAlert(alertHandshakeFailure)
 			return errors.New("tls: server selected an unsupported group")
@@ -1130,7 +1130,7 @@ func (hs *clientHandshakeState) doTLS13Handshake(msg interface{}) error {
 		c.curveID = hs.serverHello.keyShare.group
 
 		var err error
-		ecdheSecret, err = curve.finish(hs.serverHello.keyShare.keyExchange)
+		ecdheSecret, err = kem.decap(hs.serverHello.keyShare.keyExchange)
 		if err != nil {
 			return err
 		}
@@ -1529,15 +1529,15 @@ func (hs *clientHandshakeState) applyHelloRetryRequest(helloRetryRequest *helloR
 			c.sendAlert(alertHandshakeFailure)
 			return errors.New("tls: received invalid HelloRetryRequest")
 		}
-		curve, ok := curveForCurveID(group, c.config)
+		kem, ok := kemForCurveID(group, c.config)
 		if !ok {
 			return errors.New("tls: Unable to get curve requested in HelloRetryRequest")
 		}
-		publicKey, err := curve.offer(c.config.rand())
+		publicKey, err := kem.generate(c.config.rand())
 		if err != nil {
 			return err
 		}
-		hs.keyShares[group] = curve
+		hs.keyShares[group] = kem
 		hello.keyShares = []keyShareEntry{{
 			group:       group,
 			keyExchange: publicKey,
@@ -1897,7 +1897,7 @@ func (hs *clientHandshakeState) establishKeys() error {
 
 	clientMAC, serverMAC, clientKey, serverKey, clientIV, serverIV :=
 		keysFromMasterSecret(c.vers, hs.suite, hs.masterSecret, hs.hello.random, hs.serverHello.random, hs.suite.macLen, hs.suite.keyLen, hs.suite.ivLen(c.vers))
-	var clientCipher, serverCipher interface{}
+	var clientCipher, serverCipher any
 	var clientHash, serverHash macFunction
 	if hs.suite.cipher != nil {
 		clientCipher = hs.suite.cipher(clientKey, clientIV, false /* not for reading */)

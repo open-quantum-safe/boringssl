@@ -200,7 +200,7 @@ static enum ssl_hs_wait_t do_read_hello_retry_request(SSL_HANDSHAKE *hs) {
       SSL_CIPHER_get_max_version(cipher) < ssl_protocol_version(ssl) ||
       !ssl_tls13_cipher_meets_policy(
           SSL_CIPHER_get_value(cipher),
-          ssl->config->only_fips_cipher_suites_in_tls13)) {
+          ssl->config->tls13_cipher_policy)) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_WRONG_CIPHER_RETURNED);
     ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_ILLEGAL_PARAMETER);
     return ssl_hs_error;
@@ -671,7 +671,6 @@ static enum ssl_hs_wait_t do_read_certificate_request(SSL_HANDSHAKE *hs) {
   } else {
     hs->ca_names.reset(sk_CRYPTO_BUFFER_new_null());
     if (!hs->ca_names) {
-      OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
       ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_INTERNAL_ERROR);
       return ssl_hs_error;
     }

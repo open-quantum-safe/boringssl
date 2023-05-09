@@ -439,7 +439,6 @@ static ssl_open_record_t read_v2_client_hello(SSL *ssl, size_t *out_consumed,
       // No session id.
       !CBB_add_u8(&hello_body, 0) ||
       !CBB_add_u16_length_prefixed(&hello_body, &cipher_suites)) {
-    OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
     return ssl_open_record_error;
   }
 
@@ -664,95 +663,72 @@ void tls_next_message(SSL *ssl) {
 // the client.
 class CipherScorer {
  public:
-  CipherScorer(uint16_t group_id)
-      : aes_is_fine_(EVP_has_aes_hardware()),
-        security_128_is_fine_(group_id != SSL_CURVE_CECPQ2 &&
-///// OQS_TEMPLATE_FRAGMENT_LIST_CURVES_START
-                              group_id != SSL_CURVE_FRODO640AES &&
-                              group_id != SSL_CURVE_P256_FRODO640AES &&
-                              group_id != SSL_CURVE_FRODO640SHAKE &&
-                              group_id != SSL_CURVE_P256_FRODO640SHAKE &&
-                              group_id != SSL_CURVE_FRODO976AES &&
-                              group_id != SSL_CURVE_P384_FRODO976AES &&
-                              group_id != SSL_CURVE_FRODO976SHAKE &&
-                              group_id != SSL_CURVE_P384_FRODO976SHAKE &&
-                              group_id != SSL_CURVE_FRODO1344AES &&
-                              group_id != SSL_CURVE_P521_FRODO1344AES &&
-                              group_id != SSL_CURVE_FRODO1344SHAKE &&
-                              group_id != SSL_CURVE_P521_FRODO1344SHAKE &&
-                              group_id != SSL_CURVE_BIKEL1 &&
-                              group_id != SSL_CURVE_P256_BIKEL1 &&
-                              group_id != SSL_CURVE_BIKEL3 &&
-                              group_id != SSL_CURVE_P384_BIKEL3 &&
-                              group_id != SSL_CURVE_KYBER512 &&
-                              group_id != SSL_CURVE_P256_KYBER512 &&
-                              group_id != SSL_CURVE_KYBER768 &&
-                              group_id != SSL_CURVE_P384_KYBER768 &&
-                              group_id != SSL_CURVE_KYBER1024 &&
-                              group_id != SSL_CURVE_P521_KYBER1024 &&
-                              group_id != SSL_CURVE_KYBER90S512 &&
-                              group_id != SSL_CURVE_P256_KYBER90S512 &&
-                              group_id != SSL_CURVE_KYBER90S768 &&
-                              group_id != SSL_CURVE_P384_KYBER90S768 &&
-                              group_id != SSL_CURVE_KYBER90S1024 &&
-                              group_id != SSL_CURVE_P521_KYBER90S1024 &&
-                              group_id != SSL_CURVE_HQC128 &&
-                              group_id != SSL_CURVE_P256_HQC128 &&
-                              group_id != SSL_CURVE_HQC192 &&
-                              group_id != SSL_CURVE_P384_HQC192 &&
-                              group_id != SSL_CURVE_HQC256 &&
-                              group_id != SSL_CURVE_P521_HQC256
-///// OQS_TEMPLATE_FRAGMENT_LIST_CURVES_END
-                              ) {}
+  CipherScorer(bool has_aes_hw) : aes_is_fine_(has_aes_hw) {}
 
-  typedef std::tuple<bool, bool, bool> Score;
+  typedef std::tuple<bool, bool> Score;
 
   // MinScore returns a |Score| that will compare less than the score of all
   // cipher suites.
   Score MinScore() const {
-    return Score(false, false, false);
+    return Score(false, false);
   }
 
   Score Evaluate(const SSL_CIPHER *a) const {
     return Score(
         // Something is always preferable to nothing.
         true,
-        // Either 128-bit is fine, or 256-bit is preferred.
-        security_128_is_fine_ || a->algorithm_enc != SSL_AES128GCM,
         // Either AES is fine, or else ChaCha20 is preferred.
         aes_is_fine_ || a->algorithm_enc == SSL_CHACHA20POLY1305);
   }
 
  private:
   const bool aes_is_fine_;
-  const bool security_128_is_fine_;
 };
 
-bool ssl_tls13_cipher_meets_policy(uint16_t cipher_id, bool only_fips) {
-  if (!only_fips) {
-    return true;
+bool ssl_tls13_cipher_meets_policy(uint16_t cipher_id,
+                                   enum ssl_compliance_policy_t policy) {
+  switch (policy) {
+    case ssl_compliance_policy_none:
+      return true;
+
+    case ssl_compliance_policy_fips_202205:
+      switch (cipher_id) {
+        case TLS1_3_CK_AES_128_GCM_SHA256 & 0xffff:
+        case TLS1_3_CK_AES_256_GCM_SHA384 & 0xffff:
+          return true;
+        case TLS1_3_CK_CHACHA20_POLY1305_SHA256 & 0xffff:
+          return false;
+        default:
+          assert(false);
+          return false;
+      }
+
+    case ssl_compliance_policy_wpa3_192_202304:
+      switch (cipher_id) {
+        case TLS1_3_CK_AES_256_GCM_SHA384 & 0xffff:
+          return true;
+        case TLS1_3_CK_AES_128_GCM_SHA256 & 0xffff:
+        case TLS1_3_CK_CHACHA20_POLY1305_SHA256 & 0xffff:
+          return false;
+        default:
+          assert(false);
+          return false;
+      }
   }
 
-  switch (cipher_id) {
-    case TLS1_3_CK_AES_128_GCM_SHA256 & 0xffff:
-    case TLS1_3_CK_AES_256_GCM_SHA384 & 0xffff:
-      return true;
-    case TLS1_3_CK_CHACHA20_POLY1305_SHA256 & 0xffff:
-      return false;
-    default:
-      assert(false);
-      return false;
-  }
+  assert(false);
+  return false;
 }
 
-const SSL_CIPHER *ssl_choose_tls13_cipher(CBS cipher_suites, uint16_t version,
-                                          uint16_t group_id, bool only_fips) {
+const SSL_CIPHER *ssl_choose_tls13_cipher(CBS cipher_suites, bool has_aes_hw,
+                                          uint16_t version, uint16_t group_id,
+                                          enum ssl_compliance_policy_t policy) {
   if (CBS_len(&cipher_suites) % 2 != 0) {
     return nullptr;
   }
 
   const SSL_CIPHER *best = nullptr;
-  CipherScorer scorer(group_id);
+  CipherScorer scorer(has_aes_hw);
   CipherScorer::Score best_score = scorer.MinScore();
 
   while (CBS_len(&cipher_suites) > 0) {
@@ -770,7 +746,7 @@ const SSL_CIPHER *ssl_choose_tls13_cipher(CBS cipher_suites, uint16_t version,
     }
 
     if (!ssl_tls13_cipher_meets_policy(SSL_CIPHER_get_protocol_id(candidate),
-                                       only_fips)) {
+                                       policy)) {
       continue;
     }
 
