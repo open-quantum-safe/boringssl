@@ -501,27 +501,6 @@ static const CurveTest kCurveTests[] = {
     },
   },
   {
-    "kyber90s512:p256_kyber90s512",
-    {
-      SSL_CURVE_KYBER90S512,
-      SSL_CURVE_P256_KYBER90S512,
-    },
-  },
-  {
-    "kyber90s768:p384_kyber90s768",
-    {
-      SSL_CURVE_KYBER90S768,
-      SSL_CURVE_P384_KYBER90S768,
-    },
-  },
-  {
-    "kyber90s1024:p521_kyber90s1024",
-    {
-      SSL_CURVE_KYBER90S1024,
-      SSL_CURVE_P521_KYBER90S1024,
-    },
-  },
-  {
     "hqc128:p256_hqc128",
     {
       SSL_CURVE_HQC128,
@@ -5203,88 +5182,34 @@ TEST(SSLTest, SignatureAlgorithmProperties) {
             SSL_get_signature_algorithm_key_type(SSL_SIGN_DILITHIUM3));
   EXPECT_EQ(EVP_PKEY_DILITHIUM5,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_DILITHIUM5));
-  EXPECT_EQ(EVP_PKEY_DILITHIUM2_AES,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_DILITHIUM2_AES));
-  EXPECT_EQ(EVP_PKEY_DILITHIUM3_AES,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_DILITHIUM3_AES));
-  EXPECT_EQ(EVP_PKEY_DILITHIUM5_AES,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_DILITHIUM5_AES));
   EXPECT_EQ(EVP_PKEY_FALCON512,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_FALCON512));
   EXPECT_EQ(EVP_PKEY_FALCON1024,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_FALCON1024));
-  EXPECT_EQ(EVP_PKEY_SPHINCSHARAKA128FROBUST,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSHARAKA128FROBUST));
-  EXPECT_EQ(EVP_PKEY_SPHINCSHARAKA128FSIMPLE,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSHARAKA128FSIMPLE));
-  EXPECT_EQ(EVP_PKEY_SPHINCSHARAKA128SROBUST,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSHARAKA128SROBUST));
-  EXPECT_EQ(EVP_PKEY_SPHINCSHARAKA128SSIMPLE,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSHARAKA128SSIMPLE));
-  EXPECT_EQ(EVP_PKEY_SPHINCSHARAKA192FROBUST,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSHARAKA192FROBUST));
-  EXPECT_EQ(EVP_PKEY_SPHINCSHARAKA192FSIMPLE,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSHARAKA192FSIMPLE));
-  EXPECT_EQ(EVP_PKEY_SPHINCSHARAKA192SROBUST,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSHARAKA192SROBUST));
-  EXPECT_EQ(EVP_PKEY_SPHINCSHARAKA192SSIMPLE,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSHARAKA192SSIMPLE));
-  EXPECT_EQ(EVP_PKEY_SPHINCSHARAKA256FROBUST,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSHARAKA256FROBUST));
-  EXPECT_EQ(EVP_PKEY_SPHINCSHARAKA256FSIMPLE,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSHARAKA256FSIMPLE));
-  EXPECT_EQ(EVP_PKEY_SPHINCSHARAKA256SROBUST,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSHARAKA256SROBUST));
-  EXPECT_EQ(EVP_PKEY_SPHINCSHARAKA256SSIMPLE,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSHARAKA256SSIMPLE));
-  EXPECT_EQ(EVP_PKEY_SPHINCSSHA256128FROBUST,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHA256128FROBUST));
-  EXPECT_EQ(EVP_PKEY_SPHINCSSHA256128FSIMPLE,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHA256128FSIMPLE));
-  EXPECT_EQ(EVP_PKEY_SPHINCSSHA256128SROBUST,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHA256128SROBUST));
-  EXPECT_EQ(EVP_PKEY_SPHINCSSHA256128SSIMPLE,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHA256128SSIMPLE));
-  EXPECT_EQ(EVP_PKEY_SPHINCSSHA256192FROBUST,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHA256192FROBUST));
-  EXPECT_EQ(EVP_PKEY_SPHINCSSHA256192FSIMPLE,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHA256192FSIMPLE));
-  EXPECT_EQ(EVP_PKEY_SPHINCSSHA256192SROBUST,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHA256192SROBUST));
-  EXPECT_EQ(EVP_PKEY_SPHINCSSHA256192SSIMPLE,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHA256192SSIMPLE));
-  EXPECT_EQ(EVP_PKEY_SPHINCSSHA256256FROBUST,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHA256256FROBUST));
-  EXPECT_EQ(EVP_PKEY_SPHINCSSHA256256FSIMPLE,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHA256256FSIMPLE));
-  EXPECT_EQ(EVP_PKEY_SPHINCSSHA256256SROBUST,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHA256256SROBUST));
-  EXPECT_EQ(EVP_PKEY_SPHINCSSHA256256SSIMPLE,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHA256256SSIMPLE));
-  EXPECT_EQ(EVP_PKEY_SPHINCSSHAKE256128FROBUST,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHAKE256128FROBUST));
-  EXPECT_EQ(EVP_PKEY_SPHINCSSHAKE256128FSIMPLE,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHAKE256128FSIMPLE));
-  EXPECT_EQ(EVP_PKEY_SPHINCSSHAKE256128SROBUST,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHAKE256128SROBUST));
-  EXPECT_EQ(EVP_PKEY_SPHINCSSHAKE256128SSIMPLE,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHAKE256128SSIMPLE));
-  EXPECT_EQ(EVP_PKEY_SPHINCSSHAKE256192FROBUST,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHAKE256192FROBUST));
-  EXPECT_EQ(EVP_PKEY_SPHINCSSHAKE256192FSIMPLE,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHAKE256192FSIMPLE));
-  EXPECT_EQ(EVP_PKEY_SPHINCSSHAKE256192SROBUST,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHAKE256192SROBUST));
-  EXPECT_EQ(EVP_PKEY_SPHINCSSHAKE256192SSIMPLE,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHAKE256192SSIMPLE));
-  EXPECT_EQ(EVP_PKEY_SPHINCSSHAKE256256FROBUST,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHAKE256256FROBUST));
-  EXPECT_EQ(EVP_PKEY_SPHINCSSHAKE256256FSIMPLE,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHAKE256256FSIMPLE));
-  EXPECT_EQ(EVP_PKEY_SPHINCSSHAKE256256SROBUST,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHAKE256256SROBUST));
-  EXPECT_EQ(EVP_PKEY_SPHINCSSHAKE256256SSIMPLE,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHAKE256256SSIMPLE));
+  EXPECT_EQ(EVP_PKEY_SPHINCSSHA2128FSIMPLE,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHA2128FSIMPLE));
+  EXPECT_EQ(EVP_PKEY_SPHINCSSHA2128SSIMPLE,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHA2128SSIMPLE));
+  EXPECT_EQ(EVP_PKEY_SPHINCSSHA2192FSIMPLE,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHA2192FSIMPLE));
+  EXPECT_EQ(EVP_PKEY_SPHINCSSHA2192SSIMPLE,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHA2192SSIMPLE));
+  EXPECT_EQ(EVP_PKEY_SPHINCSSHA2256FSIMPLE,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHA2256FSIMPLE));
+  EXPECT_EQ(EVP_PKEY_SPHINCSSHA2256SSIMPLE,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHA2256SSIMPLE));
+  EXPECT_EQ(EVP_PKEY_SPHINCSSHAKE128FSIMPLE,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHAKE128FSIMPLE));
+  EXPECT_EQ(EVP_PKEY_SPHINCSSHAKE128SSIMPLE,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHAKE128SSIMPLE));
+  EXPECT_EQ(EVP_PKEY_SPHINCSSHAKE192FSIMPLE,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHAKE192FSIMPLE));
+  EXPECT_EQ(EVP_PKEY_SPHINCSSHAKE192SSIMPLE,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHAKE192SSIMPLE));
+  EXPECT_EQ(EVP_PKEY_SPHINCSSHAKE256FSIMPLE,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHAKE256FSIMPLE));
+  EXPECT_EQ(EVP_PKEY_SPHINCSSHAKE256SSIMPLE,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHAKE256SSIMPLE));
 ///// OQS_TEMPLATE_FRAGMENT_ADD_SIG_ALG_PROP_TESTS_END
 }
 
@@ -5570,47 +5495,20 @@ TEST(SSLTest, SigAlgs) {
       {{NID_sha256, EVP_PKEY_DILITHIUM2}, true, {SSL_SIGN_DILITHIUM2}},
       {{NID_sha384, EVP_PKEY_DILITHIUM3}, true, {SSL_SIGN_DILITHIUM3}},
       {{NID_sha512, EVP_PKEY_DILITHIUM5}, true, {SSL_SIGN_DILITHIUM5}},
-      {{NID_sha256, EVP_PKEY_DILITHIUM2_AES}, true, {SSL_SIGN_DILITHIUM2_AES}},
-      {{NID_sha384, EVP_PKEY_DILITHIUM3_AES}, true, {SSL_SIGN_DILITHIUM3_AES}},
-      {{NID_sha512, EVP_PKEY_DILITHIUM5_AES}, true, {SSL_SIGN_DILITHIUM5_AES}},
       {{NID_sha256, EVP_PKEY_FALCON512}, true, {SSL_SIGN_FALCON512}},
       {{NID_sha512, EVP_PKEY_FALCON1024}, true, {SSL_SIGN_FALCON1024}},
-      {{NID_sha256, EVP_PKEY_SPHINCSHARAKA128FROBUST}, true, {SSL_SIGN_SPHINCSHARAKA128FROBUST}},
-      {{NID_sha256, EVP_PKEY_SPHINCSHARAKA128FSIMPLE}, true, {SSL_SIGN_SPHINCSHARAKA128FSIMPLE}},
-      {{NID_sha256, EVP_PKEY_SPHINCSHARAKA128SROBUST}, true, {SSL_SIGN_SPHINCSHARAKA128SROBUST}},
-      {{NID_sha256, EVP_PKEY_SPHINCSHARAKA128SSIMPLE}, true, {SSL_SIGN_SPHINCSHARAKA128SSIMPLE}},
-      {{NID_sha384, EVP_PKEY_SPHINCSHARAKA192FROBUST}, true, {SSL_SIGN_SPHINCSHARAKA192FROBUST}},
-      {{NID_sha384, EVP_PKEY_SPHINCSHARAKA192FSIMPLE}, true, {SSL_SIGN_SPHINCSHARAKA192FSIMPLE}},
-      {{NID_sha384, EVP_PKEY_SPHINCSHARAKA192SROBUST}, true, {SSL_SIGN_SPHINCSHARAKA192SROBUST}},
-      {{NID_sha384, EVP_PKEY_SPHINCSHARAKA192SSIMPLE}, true, {SSL_SIGN_SPHINCSHARAKA192SSIMPLE}},
-      {{NID_sha512, EVP_PKEY_SPHINCSHARAKA256FROBUST}, true, {SSL_SIGN_SPHINCSHARAKA256FROBUST}},
-      {{NID_sha512, EVP_PKEY_SPHINCSHARAKA256FSIMPLE}, true, {SSL_SIGN_SPHINCSHARAKA256FSIMPLE}},
-      {{NID_sha512, EVP_PKEY_SPHINCSHARAKA256SROBUST}, true, {SSL_SIGN_SPHINCSHARAKA256SROBUST}},
-      {{NID_sha512, EVP_PKEY_SPHINCSHARAKA256SSIMPLE}, true, {SSL_SIGN_SPHINCSHARAKA256SSIMPLE}},
-      {{NID_sha256, EVP_PKEY_SPHINCSSHA256128FROBUST}, true, {SSL_SIGN_SPHINCSSHA256128FROBUST}},
-      {{NID_sha256, EVP_PKEY_SPHINCSSHA256128FSIMPLE}, true, {SSL_SIGN_SPHINCSSHA256128FSIMPLE}},
-      {{NID_sha256, EVP_PKEY_SPHINCSSHA256128SROBUST}, true, {SSL_SIGN_SPHINCSSHA256128SROBUST}},
-      {{NID_sha256, EVP_PKEY_SPHINCSSHA256128SSIMPLE}, true, {SSL_SIGN_SPHINCSSHA256128SSIMPLE}},
-      {{NID_sha384, EVP_PKEY_SPHINCSSHA256192FROBUST}, true, {SSL_SIGN_SPHINCSSHA256192FROBUST}},
-      {{NID_sha384, EVP_PKEY_SPHINCSSHA256192FSIMPLE}, true, {SSL_SIGN_SPHINCSSHA256192FSIMPLE}},
-      {{NID_sha384, EVP_PKEY_SPHINCSSHA256192SROBUST}, true, {SSL_SIGN_SPHINCSSHA256192SROBUST}},
-      {{NID_sha384, EVP_PKEY_SPHINCSSHA256192SSIMPLE}, true, {SSL_SIGN_SPHINCSSHA256192SSIMPLE}},
-      {{NID_sha512, EVP_PKEY_SPHINCSSHA256256FROBUST}, true, {SSL_SIGN_SPHINCSSHA256256FROBUST}},
-      {{NID_sha512, EVP_PKEY_SPHINCSSHA256256FSIMPLE}, true, {SSL_SIGN_SPHINCSSHA256256FSIMPLE}},
-      {{NID_sha512, EVP_PKEY_SPHINCSSHA256256SROBUST}, true, {SSL_SIGN_SPHINCSSHA256256SROBUST}},
-      {{NID_sha512, EVP_PKEY_SPHINCSSHA256256SSIMPLE}, true, {SSL_SIGN_SPHINCSSHA256256SSIMPLE}},
-      {{NID_sha256, EVP_PKEY_SPHINCSSHAKE256128FROBUST}, true, {SSL_SIGN_SPHINCSSHAKE256128FROBUST}},
-      {{NID_sha256, EVP_PKEY_SPHINCSSHAKE256128FSIMPLE}, true, {SSL_SIGN_SPHINCSSHAKE256128FSIMPLE}},
-      {{NID_sha256, EVP_PKEY_SPHINCSSHAKE256128SROBUST}, true, {SSL_SIGN_SPHINCSSHAKE256128SROBUST}},
-      {{NID_sha256, EVP_PKEY_SPHINCSSHAKE256128SSIMPLE}, true, {SSL_SIGN_SPHINCSSHAKE256128SSIMPLE}},
-      {{NID_sha384, EVP_PKEY_SPHINCSSHAKE256192FROBUST}, true, {SSL_SIGN_SPHINCSSHAKE256192FROBUST}},
-      {{NID_sha384, EVP_PKEY_SPHINCSSHAKE256192FSIMPLE}, true, {SSL_SIGN_SPHINCSSHAKE256192FSIMPLE}},
-      {{NID_sha384, EVP_PKEY_SPHINCSSHAKE256192SROBUST}, true, {SSL_SIGN_SPHINCSSHAKE256192SROBUST}},
-      {{NID_sha384, EVP_PKEY_SPHINCSSHAKE256192SSIMPLE}, true, {SSL_SIGN_SPHINCSSHAKE256192SSIMPLE}},
-      {{NID_sha512, EVP_PKEY_SPHINCSSHAKE256256FROBUST}, true, {SSL_SIGN_SPHINCSSHAKE256256FROBUST}},
-      {{NID_sha512, EVP_PKEY_SPHINCSSHAKE256256FSIMPLE}, true, {SSL_SIGN_SPHINCSSHAKE256256FSIMPLE}},
-      {{NID_sha512, EVP_PKEY_SPHINCSSHAKE256256SROBUST}, true, {SSL_SIGN_SPHINCSSHAKE256256SROBUST}},
-      {{NID_sha512, EVP_PKEY_SPHINCSSHAKE256256SSIMPLE}, true, {SSL_SIGN_SPHINCSSHAKE256256SSIMPLE}},
+      {{NID_sha256, EVP_PKEY_SPHINCSSHA2128FSIMPLE}, true, {SSL_SIGN_SPHINCSSHA2128FSIMPLE}},
+      {{NID_sha256, EVP_PKEY_SPHINCSSHA2128SSIMPLE}, true, {SSL_SIGN_SPHINCSSHA2128SSIMPLE}},
+      {{NID_sha384, EVP_PKEY_SPHINCSSHA2192FSIMPLE}, true, {SSL_SIGN_SPHINCSSHA2192FSIMPLE}},
+      {{NID_sha384, EVP_PKEY_SPHINCSSHA2192SSIMPLE}, true, {SSL_SIGN_SPHINCSSHA2192SSIMPLE}},
+      {{NID_sha512, EVP_PKEY_SPHINCSSHA2256FSIMPLE}, true, {SSL_SIGN_SPHINCSSHA2256FSIMPLE}},
+      {{NID_sha512, EVP_PKEY_SPHINCSSHA2256SSIMPLE}, true, {SSL_SIGN_SPHINCSSHA2256SSIMPLE}},
+      {{NID_sha256, EVP_PKEY_SPHINCSSHAKE128FSIMPLE}, true, {SSL_SIGN_SPHINCSSHAKE128FSIMPLE}},
+      {{NID_sha256, EVP_PKEY_SPHINCSSHAKE128SSIMPLE}, true, {SSL_SIGN_SPHINCSSHAKE128SSIMPLE}},
+      {{NID_sha384, EVP_PKEY_SPHINCSSHAKE192FSIMPLE}, true, {SSL_SIGN_SPHINCSSHAKE192FSIMPLE}},
+      {{NID_sha384, EVP_PKEY_SPHINCSSHAKE192SSIMPLE}, true, {SSL_SIGN_SPHINCSSHAKE192SSIMPLE}},
+      {{NID_sha512, EVP_PKEY_SPHINCSSHAKE256FSIMPLE}, true, {SSL_SIGN_SPHINCSSHAKE256FSIMPLE}},
+      {{NID_sha512, EVP_PKEY_SPHINCSSHAKE256SSIMPLE}, true, {SSL_SIGN_SPHINCSSHAKE256SSIMPLE}},
 ///// OQS_TEMPLATE_FRAGMENT_ADD_SIG_ALG_EQ_TESTS_END
   };
 
@@ -5671,47 +5569,20 @@ TEST(SSLTest, SigAlgsList) {
       {"dilithium2", true, {SSL_SIGN_DILITHIUM2}},
       {"dilithium3", true, {SSL_SIGN_DILITHIUM3}},
       {"dilithium5", true, {SSL_SIGN_DILITHIUM5}},
-      {"dilithium2_aes", true, {SSL_SIGN_DILITHIUM2_AES}},
-      {"dilithium3_aes", true, {SSL_SIGN_DILITHIUM3_AES}},
-      {"dilithium5_aes", true, {SSL_SIGN_DILITHIUM5_AES}},
       {"falcon512", true, {SSL_SIGN_FALCON512}},
       {"falcon1024", true, {SSL_SIGN_FALCON1024}},
-      {"sphincsharaka128frobust", true, {SSL_SIGN_SPHINCSHARAKA128FROBUST}},
-      {"sphincsharaka128fsimple", true, {SSL_SIGN_SPHINCSHARAKA128FSIMPLE}},
-      {"sphincsharaka128srobust", true, {SSL_SIGN_SPHINCSHARAKA128SROBUST}},
-      {"sphincsharaka128ssimple", true, {SSL_SIGN_SPHINCSHARAKA128SSIMPLE}},
-      {"sphincsharaka192frobust", true, {SSL_SIGN_SPHINCSHARAKA192FROBUST}},
-      {"sphincsharaka192fsimple", true, {SSL_SIGN_SPHINCSHARAKA192FSIMPLE}},
-      {"sphincsharaka192srobust", true, {SSL_SIGN_SPHINCSHARAKA192SROBUST}},
-      {"sphincsharaka192ssimple", true, {SSL_SIGN_SPHINCSHARAKA192SSIMPLE}},
-      {"sphincsharaka256frobust", true, {SSL_SIGN_SPHINCSHARAKA256FROBUST}},
-      {"sphincsharaka256fsimple", true, {SSL_SIGN_SPHINCSHARAKA256FSIMPLE}},
-      {"sphincsharaka256srobust", true, {SSL_SIGN_SPHINCSHARAKA256SROBUST}},
-      {"sphincsharaka256ssimple", true, {SSL_SIGN_SPHINCSHARAKA256SSIMPLE}},
-      {"sphincssha256128frobust", true, {SSL_SIGN_SPHINCSSHA256128FROBUST}},
-      {"sphincssha256128fsimple", true, {SSL_SIGN_SPHINCSSHA256128FSIMPLE}},
-      {"sphincssha256128srobust", true, {SSL_SIGN_SPHINCSSHA256128SROBUST}},
-      {"sphincssha256128ssimple", true, {SSL_SIGN_SPHINCSSHA256128SSIMPLE}},
-      {"sphincssha256192frobust", true, {SSL_SIGN_SPHINCSSHA256192FROBUST}},
-      {"sphincssha256192fsimple", true, {SSL_SIGN_SPHINCSSHA256192FSIMPLE}},
-      {"sphincssha256192srobust", true, {SSL_SIGN_SPHINCSSHA256192SROBUST}},
-      {"sphincssha256192ssimple", true, {SSL_SIGN_SPHINCSSHA256192SSIMPLE}},
-      {"sphincssha256256frobust", true, {SSL_SIGN_SPHINCSSHA256256FROBUST}},
-      {"sphincssha256256fsimple", true, {SSL_SIGN_SPHINCSSHA256256FSIMPLE}},
-      {"sphincssha256256srobust", true, {SSL_SIGN_SPHINCSSHA256256SROBUST}},
-      {"sphincssha256256ssimple", true, {SSL_SIGN_SPHINCSSHA256256SSIMPLE}},
-      {"sphincsshake256128frobust", true, {SSL_SIGN_SPHINCSSHAKE256128FROBUST}},
-      {"sphincsshake256128fsimple", true, {SSL_SIGN_SPHINCSSHAKE256128FSIMPLE}},
-      {"sphincsshake256128srobust", true, {SSL_SIGN_SPHINCSSHAKE256128SROBUST}},
-      {"sphincsshake256128ssimple", true, {SSL_SIGN_SPHINCSSHAKE256128SSIMPLE}},
-      {"sphincsshake256192frobust", true, {SSL_SIGN_SPHINCSSHAKE256192FROBUST}},
-      {"sphincsshake256192fsimple", true, {SSL_SIGN_SPHINCSSHAKE256192FSIMPLE}},
-      {"sphincsshake256192srobust", true, {SSL_SIGN_SPHINCSSHAKE256192SROBUST}},
-      {"sphincsshake256192ssimple", true, {SSL_SIGN_SPHINCSSHAKE256192SSIMPLE}},
-      {"sphincsshake256256frobust", true, {SSL_SIGN_SPHINCSSHAKE256256FROBUST}},
-      {"sphincsshake256256fsimple", true, {SSL_SIGN_SPHINCSSHAKE256256FSIMPLE}},
-      {"sphincsshake256256srobust", true, {SSL_SIGN_SPHINCSSHAKE256256SROBUST}},
-      {"sphincsshake256256ssimple", true, {SSL_SIGN_SPHINCSSHAKE256256SSIMPLE}},
+      {"sphincssha2128fsimple", true, {SSL_SIGN_SPHINCSSHA2128FSIMPLE}},
+      {"sphincssha2128ssimple", true, {SSL_SIGN_SPHINCSSHA2128SSIMPLE}},
+      {"sphincssha2192fsimple", true, {SSL_SIGN_SPHINCSSHA2192FSIMPLE}},
+      {"sphincssha2192ssimple", true, {SSL_SIGN_SPHINCSSHA2192SSIMPLE}},
+      {"sphincssha2256fsimple", true, {SSL_SIGN_SPHINCSSHA2256FSIMPLE}},
+      {"sphincssha2256ssimple", true, {SSL_SIGN_SPHINCSSHA2256SSIMPLE}},
+      {"sphincsshake128fsimple", true, {SSL_SIGN_SPHINCSSHAKE128FSIMPLE}},
+      {"sphincsshake128ssimple", true, {SSL_SIGN_SPHINCSSHAKE128SSIMPLE}},
+      {"sphincsshake192fsimple", true, {SSL_SIGN_SPHINCSSHAKE192FSIMPLE}},
+      {"sphincsshake192ssimple", true, {SSL_SIGN_SPHINCSSHAKE192SSIMPLE}},
+      {"sphincsshake256fsimple", true, {SSL_SIGN_SPHINCSSHAKE256FSIMPLE}},
+      {"sphincsshake256ssimple", true, {SSL_SIGN_SPHINCSSHAKE256SSIMPLE}},
 ///// OQS_TEMPLATE_FRAGMENT_SIGALGS_LIST_TESTS_END
   };
 
@@ -7981,12 +7852,6 @@ static const TLSGroup kOQSGroups[] = {
     {NID_p384_kyber768, SSL_CURVE_P384_KYBER768},
     {NID_kyber1024, SSL_CURVE_KYBER1024},
     {NID_p521_kyber1024, SSL_CURVE_P521_KYBER1024},
-    {NID_kyber90s512, SSL_CURVE_KYBER90S512},
-    {NID_p256_kyber90s512, SSL_CURVE_P256_KYBER90S512},
-    {NID_kyber90s768, SSL_CURVE_KYBER90S768},
-    {NID_p384_kyber90s768, SSL_CURVE_P384_KYBER90S768},
-    {NID_kyber90s1024, SSL_CURVE_KYBER90S1024},
-    {NID_p521_kyber90s1024, SSL_CURVE_P521_KYBER90S1024},
 ///// OQS_TEMPLATE_FRAGMENT_LIST_ALL_OQS_KEMS_END
 };
 
@@ -8081,47 +7946,20 @@ INSTANTIATE_TEST_SUITE_P(WithSignatureNIDs, OQSHandshakeTest,
                             NID_dilithium2,
                             NID_dilithium3,
                             NID_dilithium5,
-                            NID_dilithium2_aes,
-                            NID_dilithium3_aes,
-                            NID_dilithium5_aes,
                             NID_falcon512,
                             NID_falcon1024,
-                            NID_sphincsharaka128frobust,
-                            NID_sphincsharaka128fsimple,
-                            NID_sphincsharaka128srobust,
-                            NID_sphincsharaka128ssimple,
-                            NID_sphincsharaka192frobust,
-                            NID_sphincsharaka192fsimple,
-                            NID_sphincsharaka192srobust,
-                            NID_sphincsharaka192ssimple,
-                            NID_sphincsharaka256frobust,
-                            NID_sphincsharaka256fsimple,
-                            NID_sphincsharaka256srobust,
-                            NID_sphincsharaka256ssimple,
-                            NID_sphincssha256128frobust,
-                            NID_sphincssha256128fsimple,
-                            NID_sphincssha256128srobust,
-                            NID_sphincssha256128ssimple,
-                            NID_sphincssha256192frobust,
-                            NID_sphincssha256192fsimple,
-                            NID_sphincssha256192srobust,
-                            NID_sphincssha256192ssimple,
-                            NID_sphincssha256256frobust,
-                            NID_sphincssha256256fsimple,
-                            NID_sphincssha256256srobust,
-                            NID_sphincssha256256ssimple,
-                            NID_sphincsshake256128frobust,
-                            NID_sphincsshake256128fsimple,
-                            NID_sphincsshake256128srobust,
-                            NID_sphincsshake256128ssimple,
-                            NID_sphincsshake256192frobust,
-                            NID_sphincsshake256192fsimple,
-                            NID_sphincsshake256192srobust,
-                            NID_sphincsshake256192ssimple,
-                            NID_sphincsshake256256frobust,
-                            NID_sphincsshake256256fsimple,
-                            NID_sphincsshake256256srobust,
-                            NID_sphincsshake256256ssimple
+                            NID_sphincssha2128fsimple,
+                            NID_sphincssha2128ssimple,
+                            NID_sphincssha2192fsimple,
+                            NID_sphincssha2192ssimple,
+                            NID_sphincssha2256fsimple,
+                            NID_sphincssha2256ssimple,
+                            NID_sphincsshake128fsimple,
+                            NID_sphincsshake128ssimple,
+                            NID_sphincsshake192fsimple,
+                            NID_sphincsshake192ssimple,
+                            NID_sphincsshake256fsimple,
+                            NID_sphincsshake256ssimple
 ///// OQS_TEMPLATE_FRAGMENT_LIST_ALL_OQS_SIGS_END
                          ));
 

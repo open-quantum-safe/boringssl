@@ -1382,12 +1382,6 @@ secg-scheme 14 3 : dhSinglePass-cofactorDH-sha512kdf-scheme
  : p384_kyber768
  : kyber1024
  : p521_kyber1024
- : kyber90s512
- : p256_kyber90s512
- : kyber90s768
- : p384_kyber90s768
- : kyber90s1024
- : p521_kyber90s1024
  : hqc128
  : p256_hqc128
  : hqc192
@@ -1400,45 +1394,18 @@ secg-scheme 14 3 : dhSinglePass-cofactorDH-sha512kdf-scheme
 1 3 6 1 4 1 2 267 7 4 4 : dilithium2 : dilithium2
 1 3 6 1 4 1 2 267 7 6 5 : dilithium3 : dilithium3
 1 3 6 1 4 1 2 267 7 8 7 : dilithium5 : dilithium5
-1 3 6 1 4 1 2 267 11 4 4 : dilithium2_aes : dilithium2_aes
-1 3 6 1 4 1 2 267 11 6 5 : dilithium3_aes : dilithium3_aes
-1 3 6 1 4 1 2 267 11 8 7 : dilithium5_aes : dilithium5_aes
 1 3 9999 3 1 : falcon512 : falcon512
 1 3 9999 3 4 : falcon1024 : falcon1024
-1 3 9999 6 1 1 : sphincsharaka128frobust : sphincsharaka128frobust
-1 3 9999 6 1 4 : sphincsharaka128fsimple : sphincsharaka128fsimple
-1 3 9999 6 1 7 : sphincsharaka128srobust : sphincsharaka128srobust
-1 3 9999 6 1 10 : sphincsharaka128ssimple : sphincsharaka128ssimple
-1 3 9999 6 2 1 : sphincsharaka192frobust : sphincsharaka192frobust
-1 3 9999 6 2 3 : sphincsharaka192fsimple : sphincsharaka192fsimple
-1 3 9999 6 2 5 : sphincsharaka192srobust : sphincsharaka192srobust
-1 3 9999 6 2 7 : sphincsharaka192ssimple : sphincsharaka192ssimple
-1 3 9999 6 3 1 : sphincsharaka256frobust : sphincsharaka256frobust
-1 3 9999 6 3 3 : sphincsharaka256fsimple : sphincsharaka256fsimple
-1 3 9999 6 3 5 : sphincsharaka256srobust : sphincsharaka256srobust
-1 3 9999 6 3 7 : sphincsharaka256ssimple : sphincsharaka256ssimple
-1 3 9999 6 4 1 : sphincssha256128frobust : sphincssha256128frobust
-1 3 9999 6 4 4 : sphincssha256128fsimple : sphincssha256128fsimple
-1 3 9999 6 4 7 : sphincssha256128srobust : sphincssha256128srobust
-1 3 9999 6 4 10 : sphincssha256128ssimple : sphincssha256128ssimple
-1 3 9999 6 5 1 : sphincssha256192frobust : sphincssha256192frobust
-1 3 9999 6 5 3 : sphincssha256192fsimple : sphincssha256192fsimple
-1 3 9999 6 5 5 : sphincssha256192srobust : sphincssha256192srobust
-1 3 9999 6 5 7 : sphincssha256192ssimple : sphincssha256192ssimple
-1 3 9999 6 6 1 : sphincssha256256frobust : sphincssha256256frobust
-1 3 9999 6 6 3 : sphincssha256256fsimple : sphincssha256256fsimple
-1 3 9999 6 6 5 : sphincssha256256srobust : sphincssha256256srobust
-1 3 9999 6 6 7 : sphincssha256256ssimple : sphincssha256256ssimple
-1 3 9999 6 7 1 : sphincsshake256128frobust : sphincsshake256128frobust
-1 3 9999 6 7 4 : sphincsshake256128fsimple : sphincsshake256128fsimple
-1 3 9999 6 7 7 : sphincsshake256128srobust : sphincsshake256128srobust
-1 3 9999 6 7 10 : sphincsshake256128ssimple : sphincsshake256128ssimple
-1 3 9999 6 8 1 : sphincsshake256192frobust : sphincsshake256192frobust
-1 3 9999 6 8 3 : sphincsshake256192fsimple : sphincsshake256192fsimple
-1 3 9999 6 8 5 : sphincsshake256192srobust : sphincsshake256192srobust
-1 3 9999 6 8 7 : sphincsshake256192ssimple : sphincsshake256192ssimple
-1 3 9999 6 9 1 : sphincsshake256256frobust : sphincsshake256256frobust
-1 3 9999 6 9 3 : sphincsshake256256fsimple : sphincsshake256256fsimple
-1 3 9999 6 9 5 : sphincsshake256256srobust : sphincsshake256256srobust
-1 3 9999 6 9 7 : sphincsshake256256ssimple : sphincsshake256256ssimple
+1 3 9999 6 4 4 : sphincssha2128fsimple : sphincssha2128fsimple
+1 3 9999 6 4 10 : sphincssha2128ssimple : sphincssha2128ssimple
+1 3 9999 6 5 3 : sphincssha2192fsimple : sphincssha2192fsimple
+1 3 9999 6 5 7 : sphincssha2192ssimple : sphincssha2192ssimple
+1 3 9999 6 6 3 : sphincssha2256fsimple : sphincssha2256fsimple
+1 3 9999 6 6 7 : sphincssha2256ssimple : sphincssha2256ssimple
+1 3 9999 6 7 4 : sphincsshake128fsimple : sphincsshake128fsimple
+1 3 9999 6 7 10 : sphincsshake128ssimple : sphincsshake128ssimple
+1 3 9999 6 8 3 : sphincsshake192fsimple : sphincsshake192fsimple
+1 3 9999 6 8 7 : sphincsshake192ssimple : sphincsshake192ssimple
+1 3 9999 6 9 3 : sphincsshake256fsimple : sphincsshake256fsimple
+1 3 9999 6 9 7 : sphincsshake256ssimple : sphincsshake256ssimple
 ##### OQS_TEMPLATE_FRAGMENT_ASSIGN_OIDS_END
