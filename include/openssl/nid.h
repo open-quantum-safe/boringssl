@@ -4367,62 +4367,62 @@ extern "C" {
 #define SN_sphincssha2128fsimple "sphincssha2128fsimple"
 #define LN_sphincssha2128fsimple "sphincssha2128fsimple"
 #define NID_sphincssha2128fsimple 1215
-#define OBJ_sphincssha2128fsimple 1L, 3L, 9999L, 6L, 4L, 4L
+#define OBJ_sphincssha2128fsimple 1L, 3L, 9999L, 6L, 4L, 13L
 
 #define SN_sphincssha2128ssimple "sphincssha2128ssimple"
 #define LN_sphincssha2128ssimple "sphincssha2128ssimple"
 #define NID_sphincssha2128ssimple 1216
-#define OBJ_sphincssha2128ssimple 1L, 3L, 9999L, 6L, 4L, 10L
+#define OBJ_sphincssha2128ssimple 1L, 3L, 9999L, 6L, 4L, 16L
 
 #define SN_sphincssha2192fsimple "sphincssha2192fsimple"
 #define LN_sphincssha2192fsimple "sphincssha2192fsimple"
 #define NID_sphincssha2192fsimple 1217
-#define OBJ_sphincssha2192fsimple 1L, 3L, 9999L, 6L, 5L, 3L
+#define OBJ_sphincssha2192fsimple 1L, 3L, 9999L, 6L, 5L, 10L
 
 #define SN_sphincssha2192ssimple "sphincssha2192ssimple"
 #define LN_sphincssha2192ssimple "sphincssha2192ssimple"
 #define NID_sphincssha2192ssimple 1218
-#define OBJ_sphincssha2192ssimple 1L, 3L, 9999L, 6L, 5L, 7L
+#define OBJ_sphincssha2192ssimple 1L, 3L, 9999L, 6L, 5L, 12L
 
 #define SN_sphincssha2256fsimple "sphincssha2256fsimple"
 #define LN_sphincssha2256fsimple "sphincssha2256fsimple"
 #define NID_sphincssha2256fsimple 1219
-#define OBJ_sphincssha2256fsimple 1L, 3L, 9999L, 6L, 6L, 3L
+#define OBJ_sphincssha2256fsimple 1L, 3L, 9999L, 6L, 6L, 10L
 
 #define SN_sphincssha2256ssimple "sphincssha2256ssimple"
 #define LN_sphincssha2256ssimple "sphincssha2256ssimple"
 #define NID_sphincssha2256ssimple 1220
-#define OBJ_sphincssha2256ssimple 1L, 3L, 9999L, 6L, 6L, 7L
+#define OBJ_sphincssha2256ssimple 1L, 3L, 9999L, 6L, 6L, 12L
 
 #define SN_sphincsshake128fsimple "sphincsshake128fsimple"
 #define LN_sphincsshake128fsimple "sphincsshake128fsimple"
 #define NID_sphincsshake128fsimple 1221
-#define OBJ_sphincsshake128fsimple 1L, 3L, 9999L, 6L, 7L, 4L
+#define OBJ_sphincsshake128fsimple 1L, 3L, 9999L, 6L, 7L, 13L
 
 #define SN_sphincsshake128ssimple "sphincsshake128ssimple"
 #define LN_sphincsshake128ssimple "sphincsshake128ssimple"
 #define NID_sphincsshake128ssimple 1222
-#define OBJ_sphincsshake128ssimple 1L, 3L, 9999L, 6L, 7L, 10L
+#define OBJ_sphincsshake128ssimple 1L, 3L, 9999L, 6L, 7L, 16L
 
 #define SN_sphincsshake192fsimple "sphincsshake192fsimple"
 #define LN_sphincsshake192fsimple "sphincsshake192fsimple"
 #define NID_sphincsshake192fsimple 1223
-#define OBJ_sphincsshake192fsimple 1L, 3L, 9999L, 6L, 8L, 3L
+#define OBJ_sphincsshake192fsimple 1L, 3L, 9999L, 6L, 8L, 10L
 
 #define SN_sphincsshake192ssimple "sphincsshake192ssimple"
 #define LN_sphincsshake192ssimple "sphincsshake192ssimple"
 #define NID_sphincsshake192ssimple 1224
-#define OBJ_sphincsshake192ssimple 1L, 3L, 9999L, 6L, 8L, 7L
+#define OBJ_sphincsshake192ssimple 1L, 3L, 9999L, 6L, 8L, 12L
 
 #define SN_sphincsshake256fsimple "sphincsshake256fsimple"
 #define LN_sphincsshake256fsimple "sphincsshake256fsimple"
 #define NID_sphincsshake256fsimple 1225
-#define OBJ_sphincsshake256fsimple 1L, 3L, 9999L, 6L, 9L, 3L
+#define OBJ_sphincsshake256fsimple 1L, 3L, 9999L, 6L, 9L, 10L
 
 #define SN_sphincsshake256ssimple "sphincsshake256ssimple"
 #define LN_sphincsshake256ssimple "sphincsshake256ssimple"
 #define NID_sphincsshake256ssimple 1226
-#define OBJ_sphincsshake256ssimple 1L, 3L, 9999L, 6L, 9L, 7L
+#define OBJ_sphincsshake256ssimple 1L, 3L, 9999L, 6L, 9L, 12L
 
 
 #if defined(__cplusplus)
