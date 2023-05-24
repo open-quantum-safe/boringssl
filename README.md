@@ -37,6 +37,8 @@ This fork is built on top of [commit 5511fa8](https://github.com/open-quantum-sa
 
 liboqs and this integration are provided "as is", without warranty of any kind.  See the [LICENSE](https://github.com/open-quantum-safe/liboqs/blob/main/LICENSE.txt) for the full disclaimer.
 
+**N.B.: WE DO NOT REGULARLY TEST INTEROPERABILITY WITH [OQS-OPENSSL](https://github.com/open-quantum-safe/openssl), INSTEAD ONLY DOING SO AS AND WHEN THE NEED MIGHT ARISE. AS A CONSEQUENCE THIS PROJECT, AS WELL AS THE CHROMIUM DEMO THAT IS BUILT ON TOP OF IT, MAY NOT INTEROPERATE WITH OTHER COMPONENTS IN THE OQS INFRASTRUCTURE.**
+
 ### Limitations and security
 
 As research advances, the supported algorithms may see rapid changes in their security, and may even prove insecure against both classical and quantum computers.
