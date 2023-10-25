@@ -1,9 +1,7 @@
-#if !defined(OPENSSL_NO_ASM) && defined(__x86_64__) && \
-    (defined(__APPLE__) || defined(__ELF__))
+#include <openssl/asm_base.h>
 
-#if defined(BORINGSSL_PREFIX)
-#include <boringssl_prefix_symbols_asm.h>
-#endif
+#if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_X86_64) && \
+    (defined(__APPLE__) || defined(__ELF__))
 
 .intel_syntax noprefix
 .text
@@ -19,8 +17,10 @@ fiat_curve25519_adx_square:
 #endif
 
 .cfi_startproc
-mov [rsp - 0x08], rbp
-.cfi_offset rbp, -8-0x08
+_CET_ENDBR
+push rbp
+.cfi_adjust_cfa_offset 8
+.cfi_offset rbp, -16
 mov rbp, rsp
 
 mov rdx, [ rsi + 0x0 ]
@@ -33,7 +33,7 @@ mov rdx, [ rsi + 0x0 ]
 mulx r9, r8, [ rsi + 0x18 ]
 mov rdx, [ rsi + 0x8 ]
 mov [ rsp - 0x80 ], rbx
-.cfi_offset rbx, -8-0x80
+.cfi_offset rbx, -16-0x80
 mulx rbx, r10, [ rsi + 0x18 ]
 adox r8, rcx
 mov [rsp - 0x48 ], rdi
@@ -47,7 +47,7 @@ mulx rdi, rbx, [ rsi + 0x8 ]
 mov rdx, 0x0
 adox r9, rdx
 mov [ rsp - 0x70 ], r12
-.cfi_offset r12, -8-0x70
+.cfi_offset r12, -16-0x70
 mov r12, -0x3
 inc r12
 adox rbx, r8
@@ -62,9 +62,9 @@ mov rdx, [ rsi + 0x0 ]
 mulx r9, rcx, rdx
 mov rdx, [ rsi + 0x8 ]
 mov [ rsp - 0x68 ], r13
-.cfi_offset r13, -8-0x68
+.cfi_offset r13, -16-0x68
 mov [ rsp - 0x60 ], r14
-.cfi_offset r14, -8-0x60
+.cfi_offset r14, -16-0x60
 mulx r14, r13, rdx
 seto dl
 inc r12
@@ -89,7 +89,7 @@ mulx rdi, rax, rdx
 adox rax, r10
 mov rdx, 0x26
 mov [ rsp - 0x58 ], r15
-.cfi_offset r15, -8-0x58
+.cfi_offset r15, -16-0x58
 mulx r15, r10, r11
 clc
 adcx r10, rcx
@@ -124,20 +124,23 @@ adcx r13, rcx
 mov [ rdi + 0x0 ], r13
 mov [ rdi + 0x18 ], r10
 mov rbx, [ rsp - 0x80 ]
+.cfi_restore rbx
 mov r12, [ rsp - 0x70 ]
+.cfi_restore r12
 mov r13, [ rsp - 0x68 ]
+.cfi_restore r13
 mov r14, [ rsp - 0x60 ]
+.cfi_restore r14
 mov r15, [ rsp - 0x58 ]
+.cfi_restore r15
 
-mov rbp, [rsp - 0x08]
+pop rbp
+.cfi_restore rbp
+.cfi_adjust_cfa_offset -8
 ret
 .cfi_endproc
 #if defined(__ELF__)
 .size fiat_curve25519_adx_square, .-fiat_curve25519_adx_square
 #endif
 
-#endif
-
-#if defined(__ELF__)
-.section	.note.GNU-stack,"",%progbits
 #endif

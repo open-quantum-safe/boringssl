@@ -27,7 +27,7 @@ Both liboqs and this fork are part of the **Open Quantum Safe (OQS) project**, w
 
 ## Status
 
-This fork is built on top of [commit ae88f19](https://github.com/google/boringssl/commit/ae88f198a49d77993e9c44b017d0e69c810dc668), and adds:
+This fork is built on top of [commit 4df6f97](https://github.com/google/boringssl/commit/4df6f97cf9a32770b2a6ffb8da7d97845743ffb7), and adds:
 
 - quantum-safe key exchange to TLS 1.3
 - hybrid (quantum-safe + elliptic curve) key exchange to TLS 1.3
