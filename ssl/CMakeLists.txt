@@ -1,3 +1,5 @@
+include_directories(${LIBOQS_DIR}/include)
+
 add_library(
   ssl
 
@@ -44,4 +46,4 @@ add_library(
 # here.
 install_if_enabled(TARGETS ssl EXPORT OpenSSLTargets ${INSTALL_DESTINATION_DEFAULT})
 set_property(TARGET ssl PROPERTY EXPORT_NAME SSL)
-target_link_libraries(ssl crypto)
+target_link_libraries(ssl crypto ${LIBOQS})

@@ -362,6 +362,9 @@ class GN(object):
                                 files['pki'] + files['pki_internal_headers'])
       self.PrintVariableSection(out, 'tool_sources',
                                 files['tool'] + files['tool_headers'])
+      # OQS note: This is for building with Chromium.
+      self.PrintVariableSection(out, 'oqs_headers',
+                                files['oqs_headers'])
 
       fuzzers = [os.path.splitext(os.path.basename(fuzzer))[0]
                  for fuzzer in files['fuzz']]
@@ -807,8 +810,9 @@ def main(platforms):
                                    NotSSLHeaderFiles)
 
   ssl_internal_h_files = FindHeaderFiles(os.path.join('src', 'ssl'), NoTests)
+  # OQS note: This is for building with Chromium.
+  oqs_h_files = FindHeaderFiles(os.path.join('src', 'oqs', 'include', 'oqs'), NoTests)
   crypto_internal_h_files = (
-      FindHeaderFiles(os.path.join('src', 'crypto'), NoTests) +
       FindHeaderFiles(os.path.join('src', 'third_party', 'fiat'), NoTests))
 
   asm_outputs = sorted(WriteAsmFiles(ReadPerlAsmOperations()).items())
@@ -852,6 +856,7 @@ def main(platforms):
       'test_support': PrefixWithSrc(cmake['TEST_SUPPORT_SOURCES']),
       'test_support_headers': test_support_h_files,
       'urandom_test': PrefixWithSrc(cmake['URANDOM_TEST_SOURCES']),
+      'oqs_headers': oqs_h_files,
   }
 
   for platform in platforms:

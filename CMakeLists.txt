@@ -520,6 +520,31 @@ add_custom_command(
 
 add_library(crypto_test_data OBJECT crypto_test_data.cc)
 
+if(NOT DEFINED LIBOQS_DIR)
+    set(LIBOQS_DIR ${CMAKE_SOURCE_DIR}/oqs)
+endif()
+if(NOT DEFINED LIBOQS_SHARED)
+    set(LIBOQS_SHARED OFF)
+endif()
+
+if(LIBOQS_SHARED)
+    set(LIBOQS ${LIBOQS_DIR}/lib/liboqs.so)
+else()
+    set(LIBOQS ${LIBOQS_DIR}/lib/liboqs.a)
+endif()
+if(NOT EXISTS ${LIBOQS})
+    set(LIBOQS ${LIBOQS_DIR}/lib/oqs.lib)
+endif()
+if(NOT EXISTS ${LIBOQS})
+    message(FATAL_ERROR "This fork requires liboqs.")
+endif()
+# CircleCI reports
+# "getrandom: Operation not permitted"
+# when trying to run fipsmodule/rand/urandom_test.cc
+if(NOT DEFINED ENV{CIRCLE_BUILD_NUM})
+    add_definitions(-DOQS_RUN_URANDOM_TESTS)
+endif()
+
 add_subdirectory(crypto)
 add_subdirectory(ssl)
 add_subdirectory(ssl/test)
