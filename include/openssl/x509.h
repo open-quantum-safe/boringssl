@@ -1999,7 +1999,7 @@ OPENSSL_EXPORT X509 *X509_find_by_subject(const STACK_OF(X509) *sk,
 //
 // WARNING: Unlike most comparison functions, this function returns zero on
 // error, not equality.
-OPENSSL_EXPORT int X509_cmp_time(const ASN1_TIME *s, time_t *t);
+OPENSSL_EXPORT int X509_cmp_time(const ASN1_TIME *s, const time_t *t);
 
 // X509_cmp_time_posix compares |s| against |t|. On success, it returns a
 // negative number if |s| <= |t| and a positive number if |s| > |t|. On error,
@@ -2015,12 +2015,12 @@ OPENSSL_EXPORT int X509_cmp_current_time(const ASN1_TIME *s);
 
 // X509_time_adj calls |X509_time_adj_ex| with |offset_day| equal to zero.
 OPENSSL_EXPORT ASN1_TIME *X509_time_adj(ASN1_TIME *s, long offset_sec,
-                                        time_t *t);
+                                        const time_t *t);
 
 // X509_time_adj_ex behaves like |ASN1_TIME_adj|, but adds an offset to |*t|. If
 // |t| is NULL, it uses the current time instead of |*t|.
 OPENSSL_EXPORT ASN1_TIME *X509_time_adj_ex(ASN1_TIME *s, int offset_day,
-                                           long offset_sec, time_t *t);
+                                           long offset_sec, const time_t *t);
 
 // X509_gmtime_adj behaves like |X509_time_adj_ex| but adds |offset_sec| to the
 // current time.
@@ -2097,20 +2097,22 @@ OPENSSL_EXPORT ASN1_TIME *X509_CRL_get_nextUpdate(X509_CRL *crl);
 OPENSSL_EXPORT ASN1_INTEGER *X509_get_serialNumber(X509 *x509);
 
 // X509_NAME_get_text_by_OBJ finds the first attribute with type |obj| in
-// |name|. If found, it ignores the value's ASN.1 type, writes the raw
-// |ASN1_STRING| representation to |buf|, followed by a NUL byte, and
-// returns the number of bytes in output, excluding the NUL byte.
+// |name|. If found, it writes the value's UTF-8 representation to |buf|.
+// followed by a NUL byte, and returns the number of bytes in the output,
+// excluding the NUL byte. This is unlike OpenSSL which returns the raw
+// ASN1_STRING data. The UTF-8 encoding of the |ASN1_STRING| may not contain a 0
+// codepoint.
 //
-// This function writes at most |len| bytes, including the NUL byte. If |len| is
-// not large enough, it silently truncates the output to fit. If |buf| is NULL,
-// it instead writes enough and returns the number of bytes in the output,
-// excluding the NUL byte.
+// This function writes at most |len| bytes, including the NUL byte.  If |buf|
+// is NULL, it writes nothing and returns the number of bytes in the
+// output, excluding the NUL byte that would be required for the full UTF-8
+// output.
 //
-// WARNING: Do not use this function. It does not return enough information for
-// the caller to correctly interpret its output. The attribute value may be of
-// any type, including one of several ASN.1 string encodings, but this function
-// only outputs the raw |ASN1_STRING| representation. See
-// https://crbug.com/boringssl/436.
+// This function may return -1 if an error occurs for any reason, including the
+// value not being a recognized string type, |len| being of insufficient size to
+// hold the full UTF-8 encoding and NUL byte, memory allocation failures, an
+// object with type |obj| not existing in |name|, or if the UTF-8 encoding of
+// the string contains a zero byte.
 OPENSSL_EXPORT int X509_NAME_get_text_by_OBJ(const X509_NAME *name,
                                              const ASN1_OBJECT *obj, char *buf,
                                              int len);
@@ -2864,14 +2866,12 @@ OPENSSL_EXPORT int X509_STORE_get_by_subject(X509_STORE_CTX *vs, int type,
 OPENSSL_EXPORT int X509_LOOKUP_ctrl(X509_LOOKUP *ctx, int cmd, const char *argc,
                                     long argl, char **ret);
 
-#ifndef OPENSSL_NO_STDIO
 OPENSSL_EXPORT int X509_load_cert_file(X509_LOOKUP *ctx, const char *file,
                                        int type);
 OPENSSL_EXPORT int X509_load_crl_file(X509_LOOKUP *ctx, const char *file,
                                       int type);
 OPENSSL_EXPORT int X509_load_cert_crl_file(X509_LOOKUP *ctx, const char *file,
                                            int type);
-#endif
 
 OPENSSL_EXPORT X509_LOOKUP *X509_LOOKUP_new(X509_LOOKUP_METHOD *method);
 OPENSSL_EXPORT void X509_LOOKUP_free(X509_LOOKUP *ctx);
@@ -2880,11 +2880,9 @@ OPENSSL_EXPORT int X509_LOOKUP_by_subject(X509_LOOKUP *ctx, int type,
                                           X509_NAME *name, X509_OBJECT *ret);
 OPENSSL_EXPORT int X509_LOOKUP_shutdown(X509_LOOKUP *ctx);
 
-#ifndef OPENSSL_NO_STDIO
 OPENSSL_EXPORT int X509_STORE_load_locations(X509_STORE *ctx, const char *file,
                                              const char *dir);
 OPENSSL_EXPORT int X509_STORE_set_default_paths(X509_STORE *ctx);
-#endif
 OPENSSL_EXPORT int X509_STORE_CTX_get_error(X509_STORE_CTX *ctx);
 OPENSSL_EXPORT void X509_STORE_CTX_set_error(X509_STORE_CTX *ctx, int s);
 OPENSSL_EXPORT int X509_STORE_CTX_get_error_depth(X509_STORE_CTX *ctx);

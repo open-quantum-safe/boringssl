@@ -1,5 +1,3 @@
-include_directories(${LIBOQS_DIR}/include)
-
 add_library(
   ssl
 
@@ -46,14 +44,4 @@ add_library(
 # here.
 install_if_enabled(TARGETS ssl EXPORT OpenSSLTargets ${INSTALL_DESTINATION_DEFAULT})
 set_property(TARGET ssl PROPERTY EXPORT_NAME SSL)
-target_link_libraries(ssl crypto ${LIBOQS})
-
-add_executable(
-  ssl_test
-
-  span_test.cc
-  ssl_test.cc
-  ssl_c_test.c
-)
-target_link_libraries(ssl_test test_support_lib boringssl_gtest_main ssl crypto)
-add_dependencies(all_tests ssl_test)
+target_link_libraries(ssl crypto)
