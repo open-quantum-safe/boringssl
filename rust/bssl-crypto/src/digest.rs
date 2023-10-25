@@ -15,7 +15,7 @@
 
 use core::marker::PhantomData;
 
-use crate::ForeignTypeRef;
+use crate::{CSlice, ForeignTypeRef};
 
 /// The SHA-256 digest algorithm.
 #[derive(Clone)]
@@ -86,7 +86,6 @@ impl Sha512 {
 pub struct Digest<M: Md, const OUTPUT_SIZE: usize>(bssl_sys::EVP_MD_CTX, PhantomData<M>);
 
 impl<M: Md, const OUTPUT_SIZE: usize> Digest<M, OUTPUT_SIZE> {
-
     /// Creates a new Digest from the given `Md` type parameter.
     ///
     /// Panics:
@@ -110,10 +109,11 @@ impl<M: Md, const OUTPUT_SIZE: usize> Digest<M, OUTPUT_SIZE> {
 
     /// Hashes the provided input into the current digest operation.
     pub fn update(&mut self, data: &[u8]) {
+        let data_ffi = CSlice(data);
         // Safety:
-        // - `data` is a slice from safe Rust.
+        // - `data` is a CSlice from safe Rust.
         let result = unsafe {
-            bssl_sys::EVP_DigestUpdate(&mut self.0, data.as_ptr() as *const _, data.len())
+            bssl_sys::EVP_DigestUpdate(&mut self.0, data_ffi.as_ptr() as *const _, data_ffi.len())
         };
         assert_eq!(result, 1, "bssl_sys::EVP_DigestUpdate failed");
     }
