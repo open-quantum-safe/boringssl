@@ -84,18 +84,15 @@ struct stack_st {
 static const size_t kMinSize = 4;
 
 OPENSSL_STACK *OPENSSL_sk_new(OPENSSL_sk_cmp_func comp) {
-  OPENSSL_STACK *ret = OPENSSL_malloc(sizeof(OPENSSL_STACK));
+  OPENSSL_STACK *ret = OPENSSL_zalloc(sizeof(OPENSSL_STACK));
   if (ret == NULL) {
     return NULL;
   }
-  OPENSSL_memset(ret, 0, sizeof(OPENSSL_STACK));
 
-  ret->data = OPENSSL_malloc(sizeof(void *) * kMinSize);
+  ret->data = OPENSSL_calloc(kMinSize, sizeof(void *));
   if (ret->data == NULL) {
     goto err;
   }
-
-  OPENSSL_memset(ret->data, 0, sizeof(void *) * kMinSize);
 
   ret->comp = comp;
   ret->num_alloc = kMinSize;
@@ -370,19 +367,17 @@ OPENSSL_STACK *OPENSSL_sk_dup(const OPENSSL_STACK *sk) {
     return NULL;
   }
 
-  OPENSSL_STACK *ret = OPENSSL_malloc(sizeof(OPENSSL_STACK));
+  OPENSSL_STACK *ret = OPENSSL_zalloc(sizeof(OPENSSL_STACK));
   if (ret == NULL) {
     return NULL;
   }
-  OPENSSL_memset(ret, 0, sizeof(OPENSSL_STACK));
 
-  ret->data = OPENSSL_malloc(sizeof(void *) * sk->num_alloc);
+  ret->data = OPENSSL_memdup(sk->data, sizeof(void *) * sk->num_alloc);
   if (ret->data == NULL) {
     goto err;
   }
 
   ret->num = sk->num;
-  OPENSSL_memcpy(ret->data, sk->data, sizeof(void *) * sk->num);
   ret->sorted = sk->sorted;
   ret->num_alloc = sk->num_alloc;
   ret->comp = sk->comp;
@@ -517,4 +512,23 @@ OPENSSL_STACK *OPENSSL_sk_deep_copy(const OPENSSL_STACK *sk,
   }
 
   return ret;
+}
+
+OPENSSL_STACK *sk_new_null(void) { return OPENSSL_sk_new_null(); }
+
+size_t sk_num(const OPENSSL_STACK *sk) { return OPENSSL_sk_num(sk); }
+
+void *sk_value(const OPENSSL_STACK *sk, size_t i) {
+  return OPENSSL_sk_value(sk, i);
+}
+
+void sk_free(OPENSSL_STACK *sk) { OPENSSL_sk_free(sk); }
+
+size_t sk_push(OPENSSL_STACK *sk, void *p) { return OPENSSL_sk_push(sk, p); }
+
+void *sk_pop(OPENSSL_STACK *sk) { return OPENSSL_sk_pop(sk); }
+
+void sk_pop_free_ex(OPENSSL_STACK *sk, OPENSSL_sk_call_free_func call_free_func,
+                    OPENSSL_sk_free_func free_func) {
+  OPENSSL_sk_pop_free_ex(sk, call_free_func, free_func);
 }
