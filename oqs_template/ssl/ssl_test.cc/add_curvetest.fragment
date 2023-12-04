@@ -5,9 +5,9 @@
         {{ classical_alg['name'] }}_{{ kem['name'] }}{%- if not loop.last -%}: {%- endif -%}
     {%- endfor -%}",
     {
-      SSL_CURVE_{{ kem['name']|upper }},
+      SSL_GROUP_{{ kem['name']|upper }},
     {%- for classical_alg in kem['mix_with'] %}
-      SSL_CURVE_{{ classical_alg['name']|upper }}_{{ kem['name']|upper }},
+      SSL_GROUP_{{ classical_alg['name']|upper }}_{{ kem['name']|upper }},
     {%- endfor %}
     },
   },

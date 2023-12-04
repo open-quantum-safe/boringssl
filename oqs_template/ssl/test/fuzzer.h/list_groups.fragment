@@ -1,0 +1,9 @@
+{% for kem in config['kems'] %}
+        SSL_GROUP_{{ kem['name']|upper }},
+  {%- set last_kem = loop.last -%}
+  {%- for classical_alg in kem['mix_with'] %}
+    {%- set last_hybrid = loop.last %}
+        SSL_GROUP_{{ classical_alg['name']|upper }}_{{ kem['name']|upper }}{%- if not (last_kem and last_hybrid) %},{%- endif -%}
+  {%- endfor %}
+{%- endfor %}
+
