@@ -848,15 +848,22 @@ OPENSSL_EXPORT void SSL_CTX_set0_buffer_pool(SSL_CTX *ctx,
 // the wire) but does not include the leaf. Both client and server certificates
 // use these functions.
 //
+// Prefer to configure the certificate before the private key. If configured in
+// the other order, inconsistent private keys will be silently dropped, rather
+// than return an error. Additionally, overwriting a previously-configured
+// certificate and key pair only works if the certificate is configured first.
+//
 // Certificates and keys may be configured before the handshake or dynamically
 // in the early callback and certificate callback.
 
 // SSL_CTX_use_certificate sets |ctx|'s leaf certificate to |x509|. It returns
-// one on success and zero on failure.
+// one on success and zero on failure. If |ctx| has a private key which is
+// inconsistent with |x509|, the private key is silently dropped.
 OPENSSL_EXPORT int SSL_CTX_use_certificate(SSL_CTX *ctx, X509 *x509);
 
 // SSL_use_certificate sets |ssl|'s leaf certificate to |x509|. It returns one
-// on success and zero on failure.
+// on success and zero on failure. If |ssl| has a private key which is
+// inconsistent with |x509|, the private key is silently dropped.
 OPENSSL_EXPORT int SSL_use_certificate(SSL *ssl, X509 *x509);
 
 // SSL_CTX_use_PrivateKey sets |ctx|'s private key to |pkey|. It returns one on
@@ -989,14 +996,6 @@ SSL_get0_peer_delegation_algorithms(const SSL *ssl,
 // SSL_certs_clear resets the private key, leaf certificate, and certificate
 // chain of |ssl|.
 OPENSSL_EXPORT void SSL_certs_clear(SSL *ssl);
-
-// SSL_CTX_check_private_key returns one if the certificate and private key
-// configured in |ctx| are consistent and zero otherwise.
-OPENSSL_EXPORT int SSL_CTX_check_private_key(const SSL_CTX *ctx);
-
-// SSL_check_private_key returns one if the certificate and private key
-// configured in |ssl| are consistent and zero otherwise.
-OPENSSL_EXPORT int SSL_check_private_key(const SSL *ssl);
 
 // SSL_CTX_get0_certificate returns |ctx|'s leaf certificate.
 OPENSSL_EXPORT X509 *SSL_CTX_get0_certificate(const SSL_CTX *ctx);
@@ -1173,11 +1172,23 @@ OPENSSL_EXPORT int SSL_set_chain_and_key(
 // the return value is undefined and, even if not NULL, the stack itself may
 // contain nullptrs. Thus you shouldn't mix this function with
 // non-|CRYPTO_BUFFER| functions for manipulating the chain.)
+OPENSSL_EXPORT const STACK_OF(CRYPTO_BUFFER) *SSL_CTX_get0_chain(
+    const SSL_CTX *ctx);
+
+// SSL_get0_chain returns the list of |CRYPTO_BUFFER|s that were set by
+// |SSL_set_chain_and_key|, unless they have been discarded. Reference counts
+// are not incremented by this call. The return value may be |NULL| if no chain
+// has been set.
 //
-// There is no |SSL*| version of this function because connections discard
-// configuration after handshaking, thus making it of questionable utility.
-OPENSSL_EXPORT const STACK_OF(CRYPTO_BUFFER)*
-    SSL_CTX_get0_chain(const SSL_CTX *ctx);
+// (Note: if a chain was configured by non-|CRYPTO_BUFFER|-based functions then
+// the return value is undefined and, even if not NULL, the stack itself may
+// contain nullptrs. Thus you shouldn't mix this function with
+// non-|CRYPTO_BUFFER| functions for manipulating the chain.)
+//
+// This function may return nullptr if a handshake has completed even if
+// |SSL_set_chain_and_key| was previously called, since the configuration
+// containing the certificates is typically cleared after handshake completion.
+OPENSSL_EXPORT const STACK_OF(CRYPTO_BUFFER) *SSL_get0_chain(const SSL *ssl);
 
 // SSL_CTX_use_RSAPrivateKey sets |ctx|'s private key to |rsa|. It returns one
 // on success and zero on failure.
@@ -1236,6 +1247,11 @@ OPENSSL_EXPORT int SSL_use_PrivateKey_file(SSL *ssl, const char *file,
 // reads the contents of |file| as a PEM-encoded leaf certificate followed
 // optionally by the certificate chain to send to the peer. It returns one on
 // success and zero on failure.
+//
+// WARNING: If the input contains "TRUSTED CERTIFICATE" PEM blocks, this
+// function parses auxiliary properties as in |d2i_X509_AUX|. Passing untrusted
+// input to this function allows an attacker to influence those properties. See
+// |d2i_X509_AUX| for details.
 OPENSSL_EXPORT int SSL_CTX_use_certificate_chain_file(SSL_CTX *ctx,
                                                       const char *file);
 
@@ -1480,19 +1496,19 @@ OPENSSL_EXPORT size_t SSL_get_all_standard_cipher_names(const char **out,
 //
 // Available opcodes are:
 //
-//   The empty opcode enables and appends all matching disabled ciphers to the
+// - The empty opcode enables and appends all matching disabled ciphers to the
 //   end of the enabled list. The newly appended ciphers are ordered relative to
 //   each other matching their order in the disabled list.
 //
-//   |-| disables all matching enabled ciphers and prepends them to the disabled
+// - |-| disables all matching enabled ciphers and prepends them to the disabled
 //   list, with relative order from the enabled list preserved. This means the
 //   most recently disabled ciphers get highest preference relative to other
 //   disabled ciphers if re-enabled.
 //
-//   |+| moves all matching enabled ciphers to the end of the enabled list, with
+// - |+| moves all matching enabled ciphers to the end of the enabled list, with
 //   relative order preserved.
 //
-//   |!| deletes all matching ciphers, enabled or not, from either list. Deleted
+// - |!| deletes all matching ciphers, enabled or not, from either list. Deleted
 //   ciphers will not matched by future operations.
 //
 // A selector may be a specific cipher (using either the standard or OpenSSL
@@ -1502,36 +1518,36 @@ OPENSSL_EXPORT size_t SSL_get_all_standard_cipher_names(const char **out,
 //
 // Available cipher rules are:
 //
-//   |ALL| matches all ciphers, except for deprecated ciphers which must be
+// - |ALL| matches all ciphers, except for deprecated ciphers which must be
 //   named explicitly.
 //
-//   |kRSA|, |kDHE|, |kECDHE|, and |kPSK| match ciphers using plain RSA, DHE,
+// - |kRSA|, |kDHE|, |kECDHE|, and |kPSK| match ciphers using plain RSA, DHE,
 //   ECDHE, and plain PSK key exchanges, respectively. Note that ECDHE_PSK is
 //   matched by |kECDHE| and not |kPSK|.
 //
-//   |aRSA|, |aECDSA|, and |aPSK| match ciphers authenticated by RSA, ECDSA, and
+// - |aRSA|, |aECDSA|, and |aPSK| match ciphers authenticated by RSA, ECDSA, and
 //   a pre-shared key, respectively.
 //
-//   |RSA|, |DHE|, |ECDHE|, |PSK|, |ECDSA|, and |PSK| are aliases for the
+// - |RSA|, |DHE|, |ECDHE|, |PSK|, |ECDSA|, and |PSK| are aliases for the
 //   corresponding |k*| or |a*| cipher rule. |RSA| is an alias for |kRSA|, not
 //   |aRSA|.
 //
-//   |3DES|, |AES128|, |AES256|, |AES|, |AESGCM|, |CHACHA20| match ciphers
+// - |3DES|, |AES128|, |AES256|, |AES|, |AESGCM|, |CHACHA20| match ciphers
 //   whose bulk cipher use the corresponding encryption scheme. Note that
 //   |AES|, |AES128|, and |AES256| match both CBC and GCM ciphers.
 //
-//   |SHA1|, and its alias |SHA|, match legacy cipher suites using HMAC-SHA1.
+// - |SHA1|, and its alias |SHA|, match legacy cipher suites using HMAC-SHA1.
 //
 // Deprecated cipher rules:
 //
-//   |kEDH|, |EDH|, |kEECDH|, and |EECDH| are legacy aliases for |kDHE|, |DHE|,
+// - |kEDH|, |EDH|, |kEECDH|, and |EECDH| are legacy aliases for |kDHE|, |DHE|,
 //   |kECDHE|, and |ECDHE|, respectively.
 //
-//   |HIGH| is an alias for |ALL|.
+// - |HIGH| is an alias for |ALL|.
 //
-//   |FIPS| is an alias for |HIGH|.
+// - |FIPS| is an alias for |HIGH|.
 //
-//   |SSLv3| and |TLSv1| match ciphers available in TLS 1.1 or earlier.
+// - |SSLv3| and |TLSv1| match ciphers available in TLS 1.1 or earlier.
 //   |TLSv1_2| matches ciphers new in TLS 1.2. This is confusing and should not
 //   be used.
 //
@@ -2528,16 +2544,19 @@ OPENSSL_EXPORT int SSL_get_negotiated_group(const SSL *ssl);
 #define SSL_VERIFY_PEER_IF_NO_OBC 0x04
 
 // SSL_CTX_set_verify configures certificate verification behavior. |mode| is
-// one of the |SSL_VERIFY_*| values defined above. |callback|, if not NULL, is
-// used to customize certificate verification, but is deprecated. See
-// |X509_STORE_CTX_set_verify_cb| for details.
+// one of the |SSL_VERIFY_*| values defined above. |callback| should be NULL.
 //
-// The callback may use |SSL_get_ex_data_X509_STORE_CTX_idx| with
-// |X509_STORE_CTX_get_ex_data| to look up the |SSL| from |store_ctx|.
+// If |callback| is non-NULL, it is called as in |X509_STORE_CTX_set_verify_cb|,
+// which is a deprecated and fragile mechanism to run the default certificate
+// verification process, but suppress individual errors in it. See
+// |X509_STORE_CTX_set_verify_cb| for details, If set, the callback may use
+// |SSL_get_ex_data_X509_STORE_CTX_idx| with |X509_STORE_CTX_get_ex_data| to
+// look up the |SSL| from |store_ctx|.
 //
-// WARNING: |callback| should be NULL. This callback does not replace the
-// default certificate verification process and is, instead, called multiple
-// times in the course of that process. It is very difficult to implement this
+// WARNING: |callback| is not suitable for implementing custom certificate
+// check, accepting all certificates, or extracting the certificate after
+// verification. It does not replace the default process and is called multiple
+// times throughout that process. It is also very difficult to implement this
 // callback safely, without inadvertently relying on implementation details or
 // making incorrect assumptions about when the callback is called.
 //
@@ -2545,35 +2564,30 @@ OPENSSL_EXPORT int SSL_get_negotiated_group(const SSL *ssl);
 // |SSL_CTX_set_cert_verify_callback| to customize certificate verification.
 // Those callbacks can inspect the peer-sent chain, call |X509_verify_cert| and
 // inspect the result, or perform other operations more straightforwardly.
-//
-// TODO(crbug.com/boringssl/426): We cite |X509_STORE_CTX_set_verify_cb| but
-// haven't documented it yet. Later that will have a more detailed warning about
-// why one should not use this callback.
 OPENSSL_EXPORT void SSL_CTX_set_verify(
     SSL_CTX *ctx, int mode, int (*callback)(int ok, X509_STORE_CTX *store_ctx));
 
 // SSL_set_verify configures certificate verification behavior. |mode| is one of
-// the |SSL_VERIFY_*| values defined above. |callback|, if not NULL, is used to
-// customize certificate verification, but is deprecated. See the behavior of
-// |X509_STORE_CTX_set_verify_cb|.
+// the |SSL_VERIFY_*| values defined above. |callback| should be NULL.
 //
-// The callback may use |SSL_get_ex_data_X509_STORE_CTX_idx| with
-// |X509_STORE_CTX_get_ex_data| to look up the |SSL| from |store_ctx|.
+// If |callback| is non-NULL, it is called as in |X509_STORE_CTX_set_verify_cb|,
+// which is a deprecated and fragile mechanism to run the default certificate
+// verification process, but suppress individual errors in it. See
+// |X509_STORE_CTX_set_verify_cb| for details, If set, the callback may use
+// |SSL_get_ex_data_X509_STORE_CTX_idx| with |X509_STORE_CTX_get_ex_data| to
+// look up the |SSL| from |store_ctx|.
 //
-// WARNING: |callback| should be NULL. This callback does not replace the
-// default certificate verification process and is, instead, called multiple
-// times in the course of that process. It is very difficult to implement this
+// WARNING: |callback| is not suitable for implementing custom certificate
+// check, accepting all certificates, or extracting the certificate after
+// verification. It does not replace the default process and is called multiple
+// times throughout that process. It is also very difficult to implement this
 // callback safely, without inadvertently relying on implementation details or
 // making incorrect assumptions about when the callback is called.
 //
-// Instead, use |SSL_set_custom_verify| or |SSL_CTX_set_cert_verify_callback| to
+// Instead, use |SSL_set_custom_verify| or |SSL_set_cert_verify_callback| to
 // customize certificate verification. Those callbacks can inspect the peer-sent
 // chain, call |X509_verify_cert| and inspect the result, or perform other
 // operations more straightforwardly.
-//
-// TODO(crbug.com/boringssl/426): We cite |X509_STORE_CTX_set_verify_cb| but
-// haven't documented it yet. Later that will have a more detailed warning about
-// why one should not use this callback.
 OPENSSL_EXPORT void SSL_set_verify(SSL *ssl, int mode,
                                    int (*callback)(int ok,
                                                    X509_STORE_CTX *store_ctx));
@@ -2636,16 +2650,27 @@ OPENSSL_EXPORT int (*SSL_get_verify_callback(const SSL *ssl))(
 // ineffective. Simply checking that a host has some certificate from a CA is
 // rarely meaningful—you have to check that the CA believed that the host was
 // who you expect to be talking to.
+//
+// By default, both subject alternative names and the subject's common name
+// attribute are checked. The latter has long been deprecated, so callers should
+// call |SSL_set_hostflags| with |X509_CHECK_FLAG_NEVER_CHECK_SUBJECT| to use
+// the standard behavior. https://crbug.com/boringssl/464 tracks fixing the
+// default.
 OPENSSL_EXPORT int SSL_set1_host(SSL *ssl, const char *hostname);
 
+// SSL_set_hostflags calls |X509_VERIFY_PARAM_set_hostflags| on the
+// |X509_VERIFY_PARAM| associated with this |SSL*|. |flags| should be some
+// combination of the |X509_CHECK_*| constants.
+OPENSSL_EXPORT void SSL_set_hostflags(SSL *ssl, unsigned flags);
+
 // SSL_CTX_set_verify_depth sets the maximum depth of a certificate chain
-// accepted in verification. This number does not include the leaf, so a depth
-// of 1 allows the leaf and one CA certificate.
+// accepted in verification. This count excludes both the target certificate and
+// the trust anchor (root certificate).
 OPENSSL_EXPORT void SSL_CTX_set_verify_depth(SSL_CTX *ctx, int depth);
 
 // SSL_set_verify_depth sets the maximum depth of a certificate chain accepted
-// in verification. This number does not include the leaf, so a depth of 1
-// allows the leaf and one CA certificate.
+// in verification. This count excludes both the target certificate and the
+// trust anchor (root certificate).
 OPENSSL_EXPORT void SSL_set_verify_depth(SSL *ssl, int depth);
 
 // SSL_CTX_get_verify_depth returns the maximum depth of a certificate accepted
@@ -2702,19 +2727,17 @@ OPENSSL_EXPORT void SSL_CTX_set_cert_store(SSL_CTX *ctx, X509_STORE *store);
 // SSL_CTX_get_cert_store returns |ctx|'s certificate store.
 OPENSSL_EXPORT X509_STORE *SSL_CTX_get_cert_store(const SSL_CTX *ctx);
 
-// SSL_CTX_set_default_verify_paths loads the OpenSSL system-default trust
-// anchors into |ctx|'s store. It returns one on success and zero on failure.
+// SSL_CTX_set_default_verify_paths calls |X509_STORE_set_default_paths| on
+// |ctx|'s store. See that function for details.
+//
+// Using this function is not recommended. In OpenSSL, these defaults are
+// determined by OpenSSL's install prefix. There is no corresponding concept for
+// BoringSSL. Future versions of BoringSSL may change or remove this
+// functionality.
 OPENSSL_EXPORT int SSL_CTX_set_default_verify_paths(SSL_CTX *ctx);
 
-// SSL_CTX_load_verify_locations loads trust anchors into |ctx|'s store from
-// |ca_file| and |ca_dir|, either of which may be NULL. If |ca_file| is passed,
-// it is opened and PEM-encoded CA certificates are read. If |ca_dir| is passed,
-// it is treated as a directory in OpenSSL's hashed directory format. It returns
-// one on success and zero on failure.
-//
-// See
-// https://www.openssl.org/docs/man1.1.0/man3/SSL_CTX_load_verify_locations.html
-// for documentation on the directory format.
+// SSL_CTX_load_verify_locations calls |X509_STORE_load_locations| on |ctx|'s
+// store. See that function for details.
 OPENSSL_EXPORT int SSL_CTX_load_verify_locations(SSL_CTX *ctx,
                                                  const char *ca_file,
                                                  const char *ca_dir);
@@ -2810,11 +2833,6 @@ OPENSSL_EXPORT int SSL_CTX_set_verify_algorithm_prefs(SSL_CTX *ctx,
 OPENSSL_EXPORT int SSL_set_verify_algorithm_prefs(SSL *ssl,
                                                   const uint16_t *prefs,
                                                   size_t num_prefs);
-
-// SSL_set_hostflags calls |X509_VERIFY_PARAM_set_hostflags| on the
-// |X509_VERIFY_PARAM| associated with this |SSL*|. The |flags| argument
-// should be one of the |X509_CHECK_*| constants.
-OPENSSL_EXPORT void SSL_set_hostflags(SSL *ssl, unsigned flags);
 
 
 // Client certificate CA list.
@@ -3370,27 +3388,24 @@ OPENSSL_EXPORT const char *SSL_get_psk_identity(const SSL *ssl);
 //
 // *** EXPERIMENTAL — PRONE TO CHANGE ***
 //
-// draft-ietf-tls-subcerts is a proposed extension for TLS 1.3 and above that
-// allows an end point to use its certificate to delegate credentials for
-// authentication. If the peer indicates support for this extension, then this
-// host may use a delegated credential to sign the handshake. Once issued,
-// credentials can't be revoked. In order to mitigate the damage in case the
-// credential secret key is compromised, the credential is only valid for a
-// short time (days, hours, or even minutes). This library implements draft-03
-// of the protocol spec.
+// Delegated credentials (RFC 9345) allow a TLS 1.3 end point to use its
+// certificate to issue new credentials for authentication. If the peer
+// indicates support for this extension, then this host may use a delegated
+// credential to sign the handshake. Once issued, credentials can't be revoked.
+// In order to mitigate the damage in case the credential secret key is
+// compromised, the credential is only valid for a short time (days, hours, or
+// even minutes).
 //
-// The extension ID has not been assigned; we're using 0xff02 for the time
-// being. Currently only the server side is implemented.
+// Currently only the server side is implemented.
 //
 // Servers configure a DC for use in the handshake via
 // |SSL_set1_delegated_credential|. It must be signed by the host's end-entity
-// certificate as defined in draft-ietf-tls-subcerts-03.
+// certificate as defined in RFC 9345.
 
 // SSL_set1_delegated_credential configures the delegated credential (DC) that
 // will be sent to the peer for the current connection. |dc| is the DC in wire
 // format, and |pkey| or |key_method| is the corresponding private key.
-// Currently (as of draft-03), only servers may configure a DC to use in the
-// handshake.
+// Currently, only servers may configure a DC to use in the handshake.
 //
 // The DC will only be used if the protocol version is correct and the signature
 // scheme is supported by the peer. If not, the DC will not be negotiated and
@@ -5348,6 +5363,25 @@ OPENSSL_EXPORT int SSL_set1_curves_list(SSL *ssl, const char *curves);
 // returns this value, but we define this constant for compatibility.
 #define TLSEXT_nid_unknown 0x1000000
 
+// SSL_CTX_check_private_key returns one if |ctx| has both a certificate and
+// private key, and zero otherwise.
+//
+// This function does not check consistency because the library checks when the
+// certificate and key are individually configured. However, if the private key
+// is configured before the certificate, inconsistent private keys are silently
+// dropped. Some callers are inadvertently relying on this function to detect
+// when this happens.
+//
+// Instead, callers should configure the certificate first, then the private
+// key, checking for errors in each. This function is then unnecessary.
+OPENSSL_EXPORT int SSL_CTX_check_private_key(const SSL_CTX *ctx);
+
+// SSL_check_private_key returns one if |ssl| has both a certificate and private
+// key, and zero otherwise.
+//
+// See discussion in |SSL_CTX_check_private_key|.
+OPENSSL_EXPORT int SSL_check_private_key(const SSL *ssl);
+
 
 // Compliance policy configurations
 //
@@ -5362,7 +5396,7 @@ enum ssl_compliance_policy_t BORINGSSL_ENUM_INT {
   // doesn't undo other policies it's an error to try and set it.
   ssl_compliance_policy_none,
 
-  // ssl_policy_fips_202205 configures a TLS connection to use:
+  // ssl_compliance_policy_fips_202205 configures a TLS connection to use:
   //   * TLS 1.2 or 1.3
   //   * For TLS 1.2, only ECDHE_[RSA|ECDSA]_WITH_AES_*_GCM_SHA*.
   //   * For TLS 1.3, only AES-GCM
@@ -5889,6 +5923,7 @@ BSSL_NAMESPACE_END
 #define SSL_R_ECH_REJECTED 319
 #define SSL_R_INVALID_OUTER_EXTENSION 320
 #define SSL_R_INCONSISTENT_ECH_NEGOTIATION 321
+#define SSL_R_INVALID_ALPS_CODEPOINT 322
 #define SSL_R_SSLV3_ALERT_CLOSE_NOTIFY 1000
 #define SSL_R_SSLV3_ALERT_UNEXPECTED_MESSAGE 1010
 #define SSL_R_SSLV3_ALERT_BAD_RECORD_MAC 1020

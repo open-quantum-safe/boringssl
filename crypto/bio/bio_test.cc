@@ -24,6 +24,7 @@
 #include <openssl/mem.h>
 
 #include "../internal.h"
+#include "../test/file_util.h"
 #include "../test/test_util.h"
 
 #if !defined(OPENSSL_WINDOWS)
@@ -37,6 +38,7 @@
 #include <unistd.h>
 #else
 #include <io.h>
+#include <fcntl.h>
 OPENSSL_MSVC_PRAGMA(warning(push, 3))
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -633,50 +635,65 @@ TEST(BIOTest, Gets) {
       check_bio_gets(bio.get());
     }
 
-    struct FileCloser {
-      void operator()(FILE *f) const { fclose(f); }
-    };
-    using ScopedFILE = std::unique_ptr<FILE, FileCloser>;
-    ScopedFILE file(tmpfile());
-#if defined(OPENSSL_ANDROID)
-    // On Android, when running from an APK, |tmpfile| does not work. See
-    // b/36991167#comment8.
-    if (!file) {
-      fprintf(stderr, "tmpfile failed: %s (%d). Skipping file-based tests.\n",
-              strerror(errno), errno);
-      continue;
-    }
-#else
-    ASSERT_TRUE(file);
-#endif
+    if (!SkipTempFileTests()) {
+      TemporaryFile file;
+      ASSERT_TRUE(file.Init(t.bio));
 
-    if (!t.bio.empty()) {
-      ASSERT_EQ(1u,
-                fwrite(t.bio.data(), t.bio.size(), /*nitems=*/1, file.get()));
-      ASSERT_EQ(0, fseek(file.get(), 0, SEEK_SET));
-    }
+      // TODO(crbug.com/boringssl/585): If the line has an embedded NUL, file
+      // BIOs do not currently report the answer correctly.
+      if (t.bio.find('\0') == std::string::npos) {
+        SCOPED_TRACE("file");
 
-    // TODO(crbug.com/boringssl/585): If the line has an embedded NUL, file
-    // BIOs do not currently report the answer correctly.
-    if (t.bio.find('\0') == std::string::npos) {
-      SCOPED_TRACE("file");
-      bssl::UniquePtr<BIO> bio(BIO_new_fp(file.get(), BIO_NOCLOSE));
-      ASSERT_TRUE(bio);
-      check_bio_gets(bio.get());
-    }
+        // Test |BIO_new_file|.
+        bssl::UniquePtr<BIO> bio(BIO_new_file(file.path().c_str(), "rb"));
+        ASSERT_TRUE(bio);
+        check_bio_gets(bio.get());
 
-    ASSERT_EQ(0, fseek(file.get(), 0, SEEK_SET));
+        // Test |BIO_read_filename|.
+        bio.reset(BIO_new(BIO_s_file()));
+        ASSERT_TRUE(bio);
+        ASSERT_TRUE(BIO_read_filename(bio.get(), file.path().c_str()));
+        check_bio_gets(bio.get());
 
-    {
-      SCOPED_TRACE("fd");
+        // Test |BIO_NOCLOSE|.
+        ScopedFILE file_obj = file.Open("rb");
+        ASSERT_TRUE(file_obj);
+        bio.reset(BIO_new_fp(file_obj.get(), BIO_NOCLOSE));
+        ASSERT_TRUE(bio);
+        check_bio_gets(bio.get());
+
+        // Test |BIO_CLOSE|.
+        file_obj = file.Open("rb");
+        ASSERT_TRUE(file_obj);
+        bio.reset(BIO_new_fp(file_obj.get(), BIO_CLOSE));
+        ASSERT_TRUE(bio);
+        file_obj.release();  // |BIO_new_fp| took ownership on success.
+        check_bio_gets(bio.get());
+      }
+
+      {
+        SCOPED_TRACE("fd");
 #if defined(OPENSSL_WINDOWS)
-      int fd = _fileno(file.get());
+        int open_flags = _O_RDONLY | _O_BINARY;
 #else
-      int fd = fileno(file.get());
+        int open_flags = O_RDONLY;
 #endif
-      bssl::UniquePtr<BIO> bio(BIO_new_fd(fd, BIO_NOCLOSE));
-      ASSERT_TRUE(bio);
-      check_bio_gets(bio.get());
+
+        // Test |BIO_NOCLOSE|.
+        ScopedFD fd = file.OpenFD(open_flags);
+        ASSERT_TRUE(fd.is_valid());
+        bssl::UniquePtr<BIO> bio(BIO_new_fd(fd.get(), BIO_NOCLOSE));
+        ASSERT_TRUE(bio);
+        check_bio_gets(bio.get());
+
+        // Test |BIO_CLOSE|.
+        fd = file.OpenFD(open_flags);
+        ASSERT_TRUE(fd.is_valid());
+        bio.reset(BIO_new_fd(fd.get(), BIO_CLOSE));
+        ASSERT_TRUE(bio);
+        fd.release();  // |BIO_new_fd| took ownership on success.
+        check_bio_gets(bio.get());
+      }
     }
   }
 
@@ -687,6 +704,24 @@ TEST(BIOTest, Gets) {
   EXPECT_EQ(0, BIO_gets(bio.get(), &c, -1));
   EXPECT_EQ(0, BIO_gets(bio.get(), &c, 0));
   EXPECT_EQ(c, 'a');
+}
+
+// Test that, on Windows, |BIO_read_filename| opens files in binary mode.
+TEST(BIOTest, BinaryMode) {
+  if (SkipTempFileTests()) {
+    GTEST_SKIP();
+  }
+
+  TemporaryFile file;
+  ASSERT_TRUE(file.Init("\r\n"));
+
+  // Reading from the file should give back the exact bytes we put in.
+  bssl::UniquePtr<BIO> bio(BIO_new(BIO_s_file()));
+  ASSERT_TRUE(bio);
+  ASSERT_TRUE(BIO_read_filename(bio.get(), file.path().c_str()));
+  char buf[2];
+  ASSERT_EQ(2, BIO_read(bio.get(), buf, 2));
+  EXPECT_EQ(Bytes(buf, 2), Bytes("\r\n"));
 }
 
 // Run through the tests twice, swapping |bio1| and |bio2|, for symmetry.
@@ -778,10 +813,7 @@ TEST_P(BIOPairTest, TestPair) {
   // A closed write end may not be written to.
   EXPECT_EQ(0u, BIO_ctrl_get_write_guarantee(bio1));
   EXPECT_EQ(-1, BIO_write(bio1, "_____", 5));
-
-  uint32_t err = ERR_get_error();
-  EXPECT_EQ(ERR_LIB_BIO, ERR_GET_LIB(err));
-  EXPECT_EQ(BIO_R_BROKEN_PIPE, ERR_GET_REASON(err));
+  EXPECT_TRUE(ErrorEquals(ERR_get_error(), ERR_LIB_BIO, BIO_R_BROKEN_PIPE));
 
   // The other end is still functional.
   EXPECT_EQ(5, BIO_write(bio2, "12345", 5));

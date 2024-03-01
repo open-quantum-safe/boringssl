@@ -109,7 +109,7 @@ extern "C" {
 // A consumer may use this symbol in the preprocessor to temporarily build
 // against multiple revisions of BoringSSL at the same time. It is not
 // recommended to do so for longer than is necessary.
-#define BORINGSSL_API_VERSION 27
+#define BORINGSSL_API_VERSION 30
 
 #if defined(BORINGSSL_SHARED_LIBRARY)
 
@@ -286,6 +286,7 @@ typedef struct AUTHORITY_KEYID_st AUTHORITY_KEYID;
 typedef struct BASIC_CONSTRAINTS_st BASIC_CONSTRAINTS;
 typedef struct DIST_POINT_st DIST_POINT;
 typedef struct DSA_SIG_st DSA_SIG;
+typedef struct GENERAL_NAME_st GENERAL_NAME;
 typedef struct ISSUING_DIST_POINT_st ISSUING_DIST_POINT;
 typedef struct NAME_CONSTRAINTS_st NAME_CONSTRAINTS;
 typedef struct Netscape_spkac_st NETSCAPE_SPKAC;
@@ -372,15 +373,16 @@ typedef struct trust_token_client_st TRUST_TOKEN_CLIENT;
 typedef struct trust_token_issuer_st TRUST_TOKEN_ISSUER;
 typedef struct trust_token_method_st TRUST_TOKEN_METHOD;
 typedef struct v3_ext_ctx X509V3_CTX;
+typedef struct v3_ext_method X509V3_EXT_METHOD;
 typedef struct x509_attributes_st X509_ATTRIBUTE;
 typedef struct x509_lookup_st X509_LOOKUP;
 typedef struct x509_lookup_method_st X509_LOOKUP_METHOD;
 typedef struct x509_object_st X509_OBJECT;
+typedef struct x509_purpose_st X509_PURPOSE;
 typedef struct x509_revoked_st X509_REVOKED;
 typedef struct x509_st X509;
 typedef struct x509_store_ctx_st X509_STORE_CTX;
 typedef struct x509_store_st X509_STORE;
-typedef struct x509_trust_st X509_TRUST;
 
 typedef void *OPENSSL_BLOCK;
 
