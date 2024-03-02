@@ -69,6 +69,7 @@ The following quantum-safe algorithms from liboqs are supported (assuming they h
 - **CRYSTALS-Kyber**: `kyber512`, `kyber768`, `kyber1024`
 - **FrodoKEM**: `frodo640shake`, `frodo976aes`, `frodo976shake`, `frodo1344aes`, `frodo1344shake`
 - **HQC**: `hqc128`, `hqc192`, `hqc256`†
+- **ML-KEM**: `mlkem512`, `mlkem768`, `mlkem1024`
 <!--- OQS_TEMPLATE_FRAGMENT_LIST_KEXS_END -->
 
 For each `<KEX>` listed above, the following hybrid algorithms are made available as follows:
@@ -93,7 +94,7 @@ The following quantum-safe digital signature algorithms from liboqs are supporte
 - **SPHINCS-SHAKE**: `sphincsshake128fsimple`, `sphincsshake128ssimple`, `sphincsshake192fsimple`, `sphincsshake192ssimple`, `sphincsshake256fsimple`, `sphincsshake256ssimple`
 <!--- OQS_TEMPLATE_FRAGMENT_LIST_SIGS_END -->
 
-No hybrid signature algorithms are currently implemented. If those are needed for a project please use [OQS-OpenSSL](https://github.com/open-quantum-safe/openssl) which supports them out of the box, or implement them and create a pull request, or [create an issue](https://github.com/open-quantum-safe/boringssl/issues).
+No hybrid signature algorithms are currently implemented. If those are needed for a project please use [OQS-provider](https://github.com/open-quantum-safe/oqs-provider) which supports them out of the box, or implement them and create a pull request, or [create an issue](https://github.com/open-quantum-safe/boringssl/issues).
 
 ## Quickstart
 
