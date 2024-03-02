@@ -5458,6 +5458,12 @@ TEST(SSLTest, SignatureAlgorithmProperties) {
             SSL_get_signature_algorithm_key_type(SSL_SIGN_DILITHIUM3));
   EXPECT_EQ(EVP_PKEY_DILITHIUM5,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_DILITHIUM5));
+  EXPECT_EQ(EVP_PKEY_MLDSA44,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_MLDSA44));
+  EXPECT_EQ(EVP_PKEY_MLDSA65,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_MLDSA65));
+  EXPECT_EQ(EVP_PKEY_MLDSA87,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_MLDSA87));
   EXPECT_EQ(EVP_PKEY_FALCON512,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_FALCON512));
   EXPECT_EQ(EVP_PKEY_FALCON1024,
@@ -5815,6 +5821,9 @@ TEST(SSLTest, SigAlgs) {
       {{NID_sha256, EVP_PKEY_DILITHIUM2}, true, {SSL_SIGN_DILITHIUM2}},
       {{NID_sha384, EVP_PKEY_DILITHIUM3}, true, {SSL_SIGN_DILITHIUM3}},
       {{NID_sha512, EVP_PKEY_DILITHIUM5}, true, {SSL_SIGN_DILITHIUM5}},
+      {{NID_sha256, EVP_PKEY_MLDSA44}, true, {SSL_SIGN_MLDSA44}},
+      {{NID_sha384, EVP_PKEY_MLDSA65}, true, {SSL_SIGN_MLDSA65}},
+      {{NID_sha512, EVP_PKEY_MLDSA87}, true, {SSL_SIGN_MLDSA87}},
       {{NID_sha256, EVP_PKEY_FALCON512}, true, {SSL_SIGN_FALCON512}},
       {{NID_sha512, EVP_PKEY_FALCON1024}, true, {SSL_SIGN_FALCON1024}},
       {{NID_sha256, EVP_PKEY_SPHINCSSHA2128FSIMPLE}, true, {SSL_SIGN_SPHINCSSHA2128FSIMPLE}},
@@ -5890,6 +5899,9 @@ TEST(SSLTest, SigAlgsList) {
       {"dilithium2", true, {SSL_SIGN_DILITHIUM2}},
       {"dilithium3", true, {SSL_SIGN_DILITHIUM3}},
       {"dilithium5", true, {SSL_SIGN_DILITHIUM5}},
+      {"mldsa44", true, {SSL_SIGN_MLDSA44}},
+      {"mldsa65", true, {SSL_SIGN_MLDSA65}},
+      {"mldsa87", true, {SSL_SIGN_MLDSA87}},
       {"falcon512", true, {SSL_SIGN_FALCON512}},
       {"falcon1024", true, {SSL_SIGN_FALCON1024}},
       {"sphincssha2128fsimple", true, {SSL_SIGN_SPHINCSSHA2128FSIMPLE}},
@@ -8363,6 +8375,9 @@ INSTANTIATE_TEST_SUITE_P(WithSignatureNIDs, OQSHandshakeTest,
                             NID_dilithium2,
                             NID_dilithium3,
                             NID_dilithium5,
+                            NID_mldsa44,
+                            NID_mldsa65,
+                            NID_mldsa87,
                             NID_falcon512,
                             NID_falcon1024,
                             NID_sphincssha2128fsimple,

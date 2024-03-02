@@ -4463,6 +4463,21 @@ extern "C" {
 #define SN_p521_mlkem1024 "p521_mlkem1024"
 #define NID_p521_mlkem1024 1239
 
+#define SN_mldsa44 "mldsa44"
+#define LN_mldsa44 "mldsa44"
+#define NID_mldsa44 1240
+#define OBJ_mldsa44 1L, 3L, 6L, 1L, 4L, 1L, 2L, 267L, 12L, 4L, 4L
+
+#define SN_mldsa65 "mldsa65"
+#define LN_mldsa65 "mldsa65"
+#define NID_mldsa65 1241
+#define OBJ_mldsa65 1L, 3L, 6L, 1L, 4L, 1L, 2L, 267L, 12L, 6L, 5L
+
+#define SN_mldsa87 "mldsa87"
+#define LN_mldsa87 "mldsa87"
+#define NID_mldsa87 1242
+#define OBJ_mldsa87 1L, 3L, 6L, 1L, 4L, 1L, 2L, 267L, 12L, 8L, 7L
+
 
 #if defined(__cplusplus)
 } /* extern C */
