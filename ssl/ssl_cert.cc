@@ -137,10 +137,7 @@ BSSL_NAMESPACE_BEGIN
 CERT::CERT(const SSL_X509_METHOD *x509_method_arg)
     : x509_method(x509_method_arg) {}
 
-CERT::~CERT() {
-  ssl_cert_clear_certs(this);
-  x509_method->cert_free(this);
-}
+CERT::~CERT() { x509_method->cert_free(this); }
 
 static CRYPTO_BUFFER *buffer_up_ref(const CRYPTO_BUFFER *buffer) {
   CRYPTO_BUFFER_up_ref(const_cast<CRYPTO_BUFFER *>(buffer));
@@ -190,23 +187,6 @@ UniquePtr<CERT> ssl_cert_dup(CERT *cert) {
   ret->dc_key_method = cert->dc_key_method;
 
   return ret;
-}
-
-// Free up and clear all certificates and chains
-void ssl_cert_clear_certs(CERT *cert) {
-  if (cert == NULL) {
-    return;
-  }
-
-  cert->x509_method->cert_clear(cert);
-
-  cert->chain.reset();
-  cert->privatekey.reset();
-  cert->key_method = nullptr;
-
-  cert->dc.reset();
-  cert->dc_privatekey.reset();
-  cert->dc_key_method = nullptr;
 }
 
 static void ssl_cert_set_cert_cb(CERT *cert, int (*cb)(SSL *ssl, void *arg),
@@ -513,30 +493,6 @@ bool ssl_compare_public_and_private_key(const EVP_PKEY *pubkey,
   return false;
 }
 
-bool ssl_cert_check_private_key(const CERT *cert, const EVP_PKEY *privkey) {
-  if (privkey == nullptr) {
-    OPENSSL_PUT_ERROR(SSL, SSL_R_NO_PRIVATE_KEY_ASSIGNED);
-    return false;
-  }
-
-  if (cert->chain == nullptr ||
-      sk_CRYPTO_BUFFER_value(cert->chain.get(), 0) == nullptr) {
-    OPENSSL_PUT_ERROR(SSL, SSL_R_NO_CERTIFICATE_ASSIGNED);
-    return false;
-  }
-
-  CBS cert_cbs;
-  CRYPTO_BUFFER_init_CBS(sk_CRYPTO_BUFFER_value(cert->chain.get(), 0),
-                         &cert_cbs);
-  UniquePtr<EVP_PKEY> pubkey = ssl_cert_parse_pubkey(&cert_cbs);
-  if (!pubkey) {
-    OPENSSL_PUT_ERROR(X509, X509_R_UNKNOWN_KEY_TYPE);
-    return false;
-  }
-
-  return ssl_compare_public_and_private_key(pubkey.get(), privkey);
-}
-
 bool ssl_cert_check_key_usage(const CBS *in, enum ssl_key_usage_t bit) {
   CBS buf = *in;
 
@@ -697,8 +653,12 @@ bool ssl_check_leaf_certificate(SSL_HANDSHAKE *hs, EVP_PKEY *pkey,
                                 const CRYPTO_BUFFER *leaf) {
   assert(ssl_protocol_version(hs->ssl) < TLS1_3_VERSION);
 
-  // Check the certificate's type matches the cipher.
-  if (!(hs->new_cipher->algorithm_auth & ssl_cipher_auth_mask_for_key(pkey))) {
+  // Check the certificate's type matches the cipher. This does not check key
+  // usage restrictions, which are handled separately.
+  //
+  // TODO(davidben): Put the key type and key usage checks in one place.
+  if (!(hs->new_cipher->algorithm_auth &
+        ssl_cipher_auth_mask_for_key(pkey, /*sign_ok=*/true))) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_WRONG_CERTIFICATE_TYPE);
     return false;
   }
@@ -755,7 +715,7 @@ UniquePtr<DC> DC::Dup() {
   }
 
   ret->raw = UpRef(raw);
-  ret->expected_cert_verify_algorithm = expected_cert_verify_algorithm;
+  ret->dc_cert_verify_algorithm = dc_cert_verify_algorithm;
   ret->pkey = UpRef(pkey);
   return ret;
 }
@@ -775,7 +735,7 @@ UniquePtr<DC> DC::Parse(CRYPTO_BUFFER *in, uint8_t *out_alert) {
   uint16_t algorithm;
   CRYPTO_BUFFER_init_CBS(dc->raw.get(), &deleg);
   if (!CBS_get_u32(&deleg, &valid_time) ||
-      !CBS_get_u16(&deleg, &dc->expected_cert_verify_algorithm) ||
+      !CBS_get_u16(&deleg, &dc->dc_cert_verify_algorithm) ||
       !CBS_get_u24_length_prefixed(&deleg, &pubkey) ||
       !CBS_get_u16(&deleg, &algorithm) ||
       !CBS_get_u16_length_prefixed(&deleg, &sig) ||
@@ -817,7 +777,7 @@ static bool ssl_can_serve_dc(const SSL_HANDSHAKE *hs) {
   // Check that the DC signature algorithm is supported by the peer.
   Span<const uint16_t> peer_sigalgs = hs->peer_delegated_credential_sigalgs;
   for (uint16_t peer_sigalg : peer_sigalgs) {
-    if (dc->expected_cert_verify_algorithm == peer_sigalg) {
+    if (dc->dc_cert_verify_algorithm == peer_sigalg) {
       return true;
     }
   }
@@ -825,11 +785,8 @@ static bool ssl_can_serve_dc(const SSL_HANDSHAKE *hs) {
 }
 
 bool ssl_signing_with_dc(const SSL_HANDSHAKE *hs) {
-  // As of draft-ietf-tls-subcert-03, only the server may use delegated
-  // credentials to authenticate itself.
-  return hs->ssl->server &&
-         hs->delegated_credential_requested &&
-         ssl_can_serve_dc(hs);
+  // We only support delegated credentials as a server.
+  return hs->ssl->server && ssl_can_serve_dc(hs);
 }
 
 static int cert_set_dc(CERT *cert, CRYPTO_BUFFER *const raw, EVP_PKEY *privkey,
@@ -887,8 +844,32 @@ int SSL_CTX_set_chain_and_key(SSL_CTX *ctx, CRYPTO_BUFFER *const *certs,
                                 privkey_method);
 }
 
-const STACK_OF(CRYPTO_BUFFER)* SSL_CTX_get0_chain(const SSL_CTX *ctx) {
+void SSL_certs_clear(SSL *ssl) {
+  if (!ssl->config) {
+    return;
+  }
+
+  CERT *cert = ssl->config->cert.get();
+  cert->x509_method->cert_clear(cert);
+
+  cert->chain.reset();
+  cert->privatekey.reset();
+  cert->key_method = nullptr;
+
+  cert->dc.reset();
+  cert->dc_privatekey.reset();
+  cert->dc_key_method = nullptr;
+}
+
+const STACK_OF(CRYPTO_BUFFER) *SSL_CTX_get0_chain(const SSL_CTX *ctx) {
   return ctx->cert->chain.get();
+}
+
+const STACK_OF(CRYPTO_BUFFER) *SSL_get0_chain(const SSL *ssl) {
+  if (!ssl->config) {
+    return nullptr;
+  }
+  return ssl->config->cert->chain.get();
 }
 
 int SSL_CTX_use_certificate_ASN1(SSL_CTX *ctx, size_t der_len,

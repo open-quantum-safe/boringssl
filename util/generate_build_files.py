@@ -29,15 +29,14 @@ import json
 # TODO(https://crbug.com/boringssl/542): This probably should be a map, but some
 # downstream scripts import this to find what folders to add/remove from git.
 OS_ARCH_COMBOS = [
-    ('apple', 'arm', 'ios32', [], 'S'),
     ('apple', 'aarch64', 'ios64', [], 'S'),
-    ('apple', 'x86', 'macosx', ['-fPIC', '-DOPENSSL_IA32_SSE2'], 'S'),
+    ('apple', 'x86', 'macosx', ['-fPIC'], 'S'),
     ('apple', 'x86_64', 'macosx', [], 'S'),
     ('linux', 'arm', 'linux32', [], 'S'),
     ('linux', 'aarch64', 'linux64', [], 'S'),
-    ('linux', 'x86', 'elf', ['-fPIC', '-DOPENSSL_IA32_SSE2'], 'S'),
+    ('linux', 'x86', 'elf', ['-fPIC'], 'S'),
     ('linux', 'x86_64', 'elf', [], 'S'),
-    ('win', 'x86', 'win32n', ['-DOPENSSL_IA32_SSE2'], 'asm'),
+    ('win', 'x86', 'win32n', [], 'asm'),
     ('win', 'x86_64', 'nasm', [], 'asm'),
     ('win', 'aarch64', 'win64', [], 'S'),
 ]
@@ -128,6 +127,7 @@ class Android(object):
       self.PrintDefaults(blueprint, 'boringssl_test_support_sources', files['test_support'])
       self.PrintDefaults(blueprint, 'boringssl_crypto_test_sources', files['crypto_test'])
       self.PrintDefaults(blueprint, 'boringssl_ssl_test_sources', files['ssl_test'])
+      self.PrintDefaults(blueprint, 'libpki_sources', files['pki'])
 
     # Legacy Android.mk format, only used by Trusty in new branches
     with open('sources.mk', 'w+') as makefile:
@@ -264,9 +264,12 @@ class Bazel(object):
       self.PrintVariableSection(out, 'crypto_sources', files['crypto'])
       self.PrintVariableSection(out, 'crypto_sources_asm', files['crypto_asm'])
       self.PrintVariableSection(out, 'crypto_sources_nasm', files['crypto_nasm'])
+      self.PrintVariableSection(out, 'pki_headers', files['pki_headers'])
       self.PrintVariableSection(
           out, 'pki_internal_headers', files['pki_internal_headers'])
       self.PrintVariableSection(out, 'pki_sources', files['pki'])
+      self.PrintVariableSection(out, 'rust_bssl_sys', files['rust_bssl_sys'])
+      self.PrintVariableSection(out, 'rust_bssl_crypto', files['rust_bssl_crypto'])
       self.PrintVariableSection(out, 'tool_sources', files['tool'])
       self.PrintVariableSection(out, 'tool_headers', files['tool_headers'])
 
@@ -338,10 +341,15 @@ class GN(object):
       out.write('\n')
     self.firstSection = False
 
-    out.write('%s = [\n' % name)
-    for f in sorted(files):
-      out.write('  "%s",\n' % f)
-    out.write(']\n')
+    if len(files) == 0:
+      out.write('%s = []\n' % name)
+    elif len(files) == 1:
+      out.write('%s = [ "%s" ]\n' % (name, files[0]))
+    else:
+      out.write('%s = [\n' % name)
+      for f in sorted(files):
+        out.write('  "%s",\n' % f)
+      out.write(']\n')
 
   def WriteFiles(self, files):
     with open('BUILD.generated.gni', 'w+') as out:
@@ -353,13 +361,17 @@ class GN(object):
       self.PrintVariableSection(out, 'crypto_sources_asm', files['crypto_asm'])
       self.PrintVariableSection(out, 'crypto_sources_nasm',
                                 files['crypto_nasm'])
-      self.PrintVariableSection(out, 'crypto_headers',
-                                files['crypto_headers'])
+      self.PrintVariableSection(out, 'crypto_headers', files['crypto_headers'])
+      self.PrintVariableSection(out, 'rust_bssl_sys', files['rust_bssl_sys'])
+      self.PrintVariableSection(out, 'rust_bssl_crypto',
+                                files['rust_bssl_crypto'])
       self.PrintVariableSection(out, 'ssl_sources',
                                 files['ssl'] + files['ssl_internal_headers'])
       self.PrintVariableSection(out, 'ssl_headers', files['ssl_headers'])
-      self.PrintVariableSection(out, 'pki_sources',
-                                files['pki'] + files['pki_internal_headers'])
+      self.PrintVariableSection(out, 'pki_sources', files['pki'])
+      self.PrintVariableSection(out, 'pki_internal_headers',
+                                files['pki_internal_headers'])
+      self.PrintVariableSection(out, 'pki_headers', files['pki_headers'])
       self.PrintVariableSection(out, 'tool_sources',
                                 files['tool'] + files['tool_headers'])
       # OQS note: This is for building with Chromium.
@@ -544,7 +556,7 @@ endif()
       self.PrintExe(cmake, 'bssl', files['tool'], ['ssl', 'crypto'])
 
       cmake.write(
-R'''if(NOT ANDROID)
+R'''if(NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
   find_package(Threads REQUIRED)
   target_link_libraries(crypto Threads::Threads)
 endif()
@@ -606,6 +618,14 @@ def SSLHeaderFiles(path, dent, is_dir):
   return dent in ['ssl.h', 'tls1.h', 'ssl23.h', 'ssl3.h', 'dtls1.h', 'srtp.h']
 
 
+def CryptoHeaderFiles(path, dent, is_dir):
+  if SSLHeaderFiles(path, dent, is_dir):
+    return False
+  if is_dir and dent == 'pki':
+    return False
+  return True
+
+
 def FindCFiles(directory, filter_func):
   """Recurses through directory and returns a list of paths to all the C source
   files that pass filter_func."""
@@ -625,6 +645,21 @@ def FindCFiles(directory, filter_func):
 
   cfiles.sort()
   return cfiles
+
+
+def FindRustFiles(directory):
+  """Recurses through directory and returns a list of paths to all the Rust source
+  files."""
+  rust_files = []
+
+  for (path, dirnames, filenames) in os.walk(directory):
+    for filename in filenames:
+      if not filename.endswith('.rs'):
+        continue
+      rust_files.append(os.path.join(path, filename))
+
+  rust_files.sort()
+  return rust_files
 
 
 def FindHeaderFiles(directory, filter_func):
@@ -766,6 +801,8 @@ def main(platforms):
   fips_fragments = FindCFiles(os.path.join('src', 'crypto', 'fipsmodule'), OnlyFIPSFragments)
   ssl_source_files = FindCFiles(os.path.join('src', 'ssl'), NoTests)
   tool_h_files = FindHeaderFiles(os.path.join('src', 'tool'), AllFiles)
+  bssl_sys_files = FindRustFiles(os.path.join('src', 'rust', 'bssl-sys', 'src'))
+  bssl_crypto_files = FindRustFiles(os.path.join('src', 'rust', 'bssl-crypto', 'src'))
 
   # BCM shared library C files
   bcm_crypto_c_files = [
@@ -802,12 +839,12 @@ def main(platforms):
   ssl_h_files = FindHeaderFiles(os.path.join('src', 'include', 'openssl'),
                                 SSLHeaderFiles)
 
-  pki_internal_h_files = FindHeaderFiles(os.path.join('src', 'pki'), AllFiles);
+  pki_internal_h_files = FindHeaderFiles(os.path.join('src', 'pki'), AllFiles)
 
-  def NotSSLHeaderFiles(path, filename, is_dir):
-    return not SSLHeaderFiles(path, filename, is_dir)
   crypto_h_files = FindHeaderFiles(os.path.join('src', 'include', 'openssl'),
-                                   NotSSLHeaderFiles)
+                                   CryptoHeaderFiles)
+  pki_h_files = FindHeaderFiles(
+      os.path.join('src', 'include', 'openssl', 'pki'), AllFiles)
 
   ssl_internal_h_files = FindHeaderFiles(os.path.join('src', 'ssl'), NoTests)
   # OQS note: This is for building with Chromium.
@@ -844,9 +881,12 @@ def main(platforms):
       'fips_fragments': fips_fragments,
       'fuzz': fuzz_c_files,
       'pki': PrefixWithSrc(cmake['PKI_SOURCES']),
+      'pki_headers': pki_h_files,
       'pki_internal_headers': sorted(list(pki_internal_h_files)),
       'pki_test': PrefixWithSrc(cmake['PKI_TEST_SOURCES']),
       'pki_test_data': PrefixWithSrc(cmake['PKI_TEST_DATA']),
+      'rust_bssl_crypto': bssl_crypto_files,
+      'rust_bssl_sys': bssl_sys_files,
       'ssl': ssl_source_files,
       'ssl_headers': ssl_h_files,
       'ssl_internal_headers': ssl_internal_h_files,

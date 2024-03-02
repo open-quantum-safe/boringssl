@@ -146,6 +146,7 @@
 
 #include <stdlib.h>
 
+#include <algorithm>
 #include <initializer_list>
 #include <limits>
 #include <new>
@@ -227,22 +228,10 @@ UniquePtr<T> MakeUnique(Args &&... args) {
   return UniquePtr<T>(New<T>(std::forward<Args>(args)...));
 }
 
-#if defined(BORINGSSL_ALLOW_CXX_RUNTIME)
+// TODO(davidben): Remove these macros after April 2024, once the C++ runtime
+// dependency has stuck.
 #define HAS_VIRTUAL_DESTRUCTOR
 #define PURE_VIRTUAL = 0
-#else
-// HAS_VIRTUAL_DESTRUCTOR should be declared in any base class which defines a
-// virtual destructor. This avoids a dependency on |_ZdlPv| and prevents the
-// class from being used with |delete|.
-#define HAS_VIRTUAL_DESTRUCTOR \
-  void operator delete(void *) { abort(); }
-
-// PURE_VIRTUAL should be used instead of = 0 when defining pure-virtual
-// functions. This avoids a dependency on |__cxa_pure_virtual| but loses
-// compile-time checking.
-#define PURE_VIRTUAL \
-  { abort(); }
-#endif
 
 // Array<T> is an owning array of elements of |T|.
 template <typename T>
@@ -329,7 +318,7 @@ class Array {
     if (!Init(in.size())) {
       return false;
     }
-    OPENSSL_memcpy(data_, in.data(), sizeof(T) * in.size());
+    std::copy(in.begin(), in.end(), data_);
     return true;
   }
 
@@ -472,6 +461,48 @@ inline size_t GetAllNames(const char **out, size_t max_out,
   return fixed_names.size() + objects.size();
 }
 
+// RefCounted is a common base for ref-counted types. This is an instance of the
+// C++ curiously-recurring template pattern, so a type Foo must subclass
+// RefCounted<Foo>. It additionally must friend RefCounted<Foo> to allow calling
+// the destructor.
+template <typename Derived>
+class RefCounted {
+ public:
+  RefCounted(const RefCounted &) = delete;
+  RefCounted &operator=(const RefCounted &) = delete;
+
+  // These methods are intentionally named differently from `bssl::UpRef` to
+  // avoid a collision. Only the implementations of `FOO_up_ref` and `FOO_free`
+  // should call these.
+  void UpRefInternal() { CRYPTO_refcount_inc(&references_); }
+  void DecRefInternal() {
+    if (CRYPTO_refcount_dec_and_test_zero(&references_)) {
+      Derived *d = static_cast<Derived *>(this);
+      d->~Derived();
+      OPENSSL_free(d);
+    }
+  }
+
+ protected:
+  // Ensure that only `Derived`, which must inherit from `RefCounted<Derived>`,
+  // can call the constructor. This catches bugs where someone inherited from
+  // the wrong base.
+  class CheckSubClass {
+   private:
+    friend Derived;
+    CheckSubClass() = default;
+  };
+  RefCounted(CheckSubClass) {
+    static_assert(std::is_base_of<RefCounted, Derived>::value,
+                  "Derived must subclass RefCounted<Derived>");
+  }
+
+  ~RefCounted() = default;
+
+ private:
+  CRYPTO_refcount_t references_ = 1;
+};
+
 
 // Protocol versions.
 //
@@ -554,13 +585,14 @@ BSSL_NAMESPACE_BEGIN
 #define SSL_kGENERIC 0x00000008u
 
 // Bits for |algorithm_auth| (server authentication).
-#define SSL_aRSA 0x00000001u
-#define SSL_aECDSA 0x00000002u
+#define SSL_aRSA_SIGN 0x00000001u
+#define SSL_aRSA_DECRYPT 0x00000002u
+#define SSL_aECDSA 0x00000004u
 // SSL_aPSK is set for both PSK and ECDHE_PSK.
-#define SSL_aPSK 0x00000004u
-#define SSL_aGENERIC 0x00000008u
+#define SSL_aPSK 0x00000008u
+#define SSL_aGENERIC 0x00000010u
 
-#define SSL_aCERT (SSL_aRSA | SSL_aECDSA)
+#define SSL_aCERT (SSL_aRSA_SIGN | SSL_aRSA_DECRYPT | SSL_aECDSA)
 
 // Bits for |algorithm_enc| (symmetric encryption).
 #define SSL_3DES 0x00000001u
@@ -661,8 +693,9 @@ bool ssl_create_cipher_list(UniquePtr<SSLCipherPreferenceList> *out_cipher_list,
                             bool strict);
 
 // ssl_cipher_auth_mask_for_key returns the mask of cipher |algorithm_auth|
-// values suitable for use with |key| in TLS 1.2 and below.
-uint32_t ssl_cipher_auth_mask_for_key(const EVP_PKEY *key);
+// values suitable for use with |key| in TLS 1.2 and below. |sign_ok| indicates
+// whether |key| may be used for signing.
+uint32_t ssl_cipher_auth_mask_for_key(const EVP_PKEY *key, bool sign_ok);
 
 // ssl_cipher_uses_certificate_auth returns whether |cipher| authenticates the
 // server and, optionally, the client with a certificate.
@@ -1586,8 +1619,7 @@ bool ssl_encrypt_client_hello(SSL_HANDSHAKE *hs, Span<const uint8_t> enc);
 
 // Delegated credentials.
 
-// This structure stores a delegated credential (DC) as defined by
-// draft-ietf-tls-subcerts-03.
+// This structure stores a delegated credential (DC) as defined by RFC 9345.
 struct DC {
   static constexpr bool kAllowUniquePtr = true;
   ~DC();
@@ -1600,13 +1632,11 @@ struct DC {
   // |*out_alert|.
   static UniquePtr<DC> Parse(CRYPTO_BUFFER *in, uint8_t *out_alert);
 
-  // raw is the delegated credential encoded as specified in draft-ietf-tls-
-  // subcerts-03.
+  // raw is the delegated credential encoded as specified in RFC 9345.
   UniquePtr<CRYPTO_BUFFER> raw;
 
-  // expected_cert_verify_algorithm is the signature scheme of the DC public
-  // key.
-  uint16_t expected_cert_verify_algorithm = 0;
+  // dc_cert_verify_algorithm is the signature scheme of the DC public key.
+  uint16_t dc_cert_verify_algorithm = 0;
 
   // pkey is the public key parsed from |public_key|.
   UniquePtr<EVP_PKEY> pkey;
@@ -1896,7 +1926,8 @@ struct SSL_HANDSHAKE {
   Array<uint16_t> peer_supported_group_list;
 
   // peer_delegated_credential_sigalgs are the signature algorithms the peer
-  // supports with delegated credentials.
+  // supports with delegated credentials, or empty if the peer does not support
+  // delegated credentials.
   Array<uint16_t> peer_delegated_credential_sigalgs;
 
   // peer_key is the peer's ECDH key for a TLS 1.2 client.
@@ -2005,10 +2036,6 @@ struct SSL_HANDSHAKE {
 
   // ocsp_stapling_requested is true if a client requested OCSP stapling.
   bool ocsp_stapling_requested : 1;
-
-  // delegated_credential_requested is true if the peer indicated support for
-  // the delegated credential extension.
-  bool delegated_credential_requested : 1;
 
   // should_ack_sni is used by a server and indicates that the SNI extension
   // should be echoed in the ServerHello.
@@ -3168,7 +3195,6 @@ struct SSL_CONFIG {
 static const size_t kMaxEarlyDataAccepted = 14336;
 
 UniquePtr<CERT> ssl_cert_dup(CERT *cert);
-void ssl_cert_clear_certs(CERT *cert);
 bool ssl_set_cert(CERT *cert, UniquePtr<CRYPTO_BUFFER> buffer);
 bool ssl_is_key_type_supported(int key_type);
 // ssl_compare_public_and_private_key returns true if |pubkey| is the public
@@ -3176,7 +3202,6 @@ bool ssl_is_key_type_supported(int key_type);
 // message on the error queue.
 bool ssl_compare_public_and_private_key(const EVP_PKEY *pubkey,
                                        const EVP_PKEY *privkey);
-bool ssl_cert_check_private_key(const CERT *cert, const EVP_PKEY *privkey);
 bool ssl_get_new_session(SSL_HANDSHAKE *hs);
 bool ssl_encrypt_ticket(SSL_HANDSHAKE *hs, CBB *out,
                         const SSL_SESSION *session);
@@ -3459,7 +3484,7 @@ struct ssl_method_st {
   const bssl::SSL_X509_METHOD *x509_method;
 };
 
-struct ssl_ctx_st {
+struct ssl_ctx_st : public bssl::RefCounted<ssl_ctx_st> {
   explicit ssl_ctx_st(const SSL_METHOD *ssl_method);
   ssl_ctx_st(const ssl_ctx_st &) = delete;
   ssl_ctx_st &operator=(const ssl_ctx_st &) = delete;
@@ -3528,8 +3553,6 @@ struct ssl_ctx_st {
   void (*remove_session_cb)(SSL_CTX *ctx, SSL_SESSION *sess) = nullptr;
   SSL_SESSION *(*get_session_cb)(SSL *ssl, const uint8_t *data, int len,
                                  int *copy) = nullptr;
-
-  CRYPTO_refcount_t references = 1;
 
   // if defined, these override the X509_verify_cert() calls
   int (*app_verify_callback)(X509_STORE_CTX *store_ctx, void *arg) = nullptr;
@@ -3767,8 +3790,8 @@ struct ssl_ctx_st {
   bool aes_hw_override_value : 1;
 
  private:
+  friend RefCounted;
   ~ssl_ctx_st();
-  friend OPENSSL_EXPORT void SSL_CTX_free(SSL_CTX *);
 };
 
 struct ssl_st {
@@ -3860,12 +3883,10 @@ struct ssl_st {
   bool enable_early_data : 1;
 };
 
-struct ssl_session_st {
+struct ssl_session_st : public bssl::RefCounted<ssl_session_st> {
   explicit ssl_session_st(const bssl::SSL_X509_METHOD *method);
   ssl_session_st(const ssl_session_st &) = delete;
   ssl_session_st &operator=(const ssl_session_st &) = delete;
-
-  CRYPTO_refcount_t references = 1;
 
   // ssl_version is the (D)TLS version that established the session.
   uint16_t ssl_version = 0;
@@ -4009,21 +4030,18 @@ struct ssl_session_st {
   bssl::Array<uint8_t> quic_early_data_context;
 
  private:
+  friend RefCounted;
   ~ssl_session_st();
-  friend OPENSSL_EXPORT void SSL_SESSION_free(SSL_SESSION *);
 };
 
-struct ssl_ech_keys_st {
-  ssl_ech_keys_st() = default;
-  ssl_ech_keys_st(const ssl_ech_keys_st &) = delete;
-  ssl_ech_keys_st &operator=(const ssl_ech_keys_st &) = delete;
+struct ssl_ech_keys_st : public bssl::RefCounted<ssl_ech_keys_st> {
+  ssl_ech_keys_st() : RefCounted(CheckSubClass()) {}
 
   bssl::GrowableArray<bssl::UniquePtr<bssl::ECHServerConfig>> configs;
-  CRYPTO_refcount_t references = 1;
 
  private:
+  friend RefCounted;
   ~ssl_ech_keys_st() = default;
-  friend OPENSSL_EXPORT void SSL_ECH_KEYS_free(SSL_ECH_KEYS *);
 };
 
 #endif  // OPENSSL_HEADER_SSL_INTERNAL_H

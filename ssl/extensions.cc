@@ -2903,7 +2903,7 @@ static bool ext_quic_transport_params_add_serverhello_legacy(SSL_HANDSHAKE *hs,
 
 // Delegated credentials.
 //
-// https://tools.ietf.org/html/draft-ietf-tls-subcerts
+// https://www.rfc-editor.org/rfc/rfc9345.html
 
 static bool ext_delegated_credential_add_clienthello(
     const SSL_HANDSHAKE *hs, CBB *out, CBB *out_compressible,
@@ -2930,7 +2930,6 @@ static bool ext_delegated_credential_parse_clienthello(SSL_HANDSHAKE *hs,
     return false;
   }
 
-  hs->delegated_credential_requested = true;
   return true;
 }
 
@@ -4273,7 +4272,7 @@ bool tls1_choose_signature_algorithm(SSL_HANDSHAKE *hs, uint16_t *out) {
 
   Span<const uint16_t> sigalgs = kSignSignatureAlgorithms;
   if (ssl_signing_with_dc(hs)) {
-    sigalgs = MakeConstSpan(&dc->expected_cert_verify_algorithm, 1);
+    sigalgs = MakeConstSpan(&dc->dc_cert_verify_algorithm, 1);
   } else if (!cert->sigalgs.empty()) {
     sigalgs = cert->sigalgs;
   }

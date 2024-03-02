@@ -523,7 +523,8 @@ static int ssl_session_cmp(const SSL_SESSION *a, const SSL_SESSION *b) {
 }
 
 ssl_ctx_st::ssl_ctx_st(const SSL_METHOD *ssl_method)
-    : method(ssl_method->method),
+    : RefCounted(CheckSubClass()),
+      method(ssl_method->method),
       x509_method(ssl_method->x509_method),
       retain_only_sha256_of_client_certs(false),
       quiet_shutdown(false),
@@ -589,18 +590,14 @@ SSL_CTX *SSL_CTX_new(const SSL_METHOD *method) {
 }
 
 int SSL_CTX_up_ref(SSL_CTX *ctx) {
-  CRYPTO_refcount_inc(&ctx->references);
+  ctx->UpRefInternal();
   return 1;
 }
 
 void SSL_CTX_free(SSL_CTX *ctx) {
-  if (ctx == NULL ||
-      !CRYPTO_refcount_dec_and_test_zero(&ctx->references)) {
-    return;
+  if (ctx != nullptr) {
+    ctx->DecRefInternal();
   }
-
-  ctx->~ssl_ctx_st();
-  OPENSSL_free(ctx);
 }
 
 ssl_st::ssl_st(SSL_CTX *ctx_arg)
@@ -1569,13 +1566,6 @@ const uint8_t *SSL_get0_session_id_context(const SSL *ssl, size_t *out_len) {
   return ssl->config->cert->sid_ctx;
 }
 
-void SSL_certs_clear(SSL *ssl) {
-  if (!ssl->config) {
-    return;
-  }
-  ssl_cert_clear_certs(ssl->config->cert.get());
-}
-
 int SSL_get_fd(const SSL *ssl) { return SSL_get_rfd(ssl); }
 
 int SSL_get_rfd(const SSL *ssl) {
@@ -1734,17 +1724,36 @@ int SSL_has_pending(const SSL *ssl) {
   return SSL_pending(ssl) != 0 || !ssl->s3->read_buffer.empty();
 }
 
+static bool has_cert_and_key(const CERT *cert) {
+  // TODO(davidben): If |cert->key_method| is set, that should be fine too.
+  if (cert->privatekey == nullptr) {
+    OPENSSL_PUT_ERROR(SSL, SSL_R_NO_PRIVATE_KEY_ASSIGNED);
+    return false;
+  }
+
+  if (cert->chain == nullptr ||
+      sk_CRYPTO_BUFFER_value(cert->chain.get(), 0) == nullptr) {
+    OPENSSL_PUT_ERROR(SSL, SSL_R_NO_CERTIFICATE_ASSIGNED);
+    return false;
+  }
+
+  return true;
+}
+
 int SSL_CTX_check_private_key(const SSL_CTX *ctx) {
-  return ssl_cert_check_private_key(ctx->cert.get(),
-                                    ctx->cert->privatekey.get());
+  // There is no need to actually check consistency because inconsistent values
+  // can never be configured.
+  return has_cert_and_key(ctx->cert.get());
 }
 
 int SSL_check_private_key(const SSL *ssl) {
   if (!ssl->config) {
     return 0;
   }
-  return ssl_cert_check_private_key(ssl->config->cert.get(),
-                                    ssl->config->cert->privatekey.get());
+
+  // There is no need to actually check consistency because inconsistent values
+  // can never be configured.
+  return has_cert_and_key(ssl->config->cert.get());
 }
 
 long SSL_get_default_timeout(const SSL *ssl) {
@@ -2519,21 +2528,13 @@ size_t SSL_get0_peer_delegation_algorithms(const SSL *ssl,
 EVP_PKEY *SSL_get_privatekey(const SSL *ssl) {
   if (!ssl->config) {
     assert(ssl->config);
-    return NULL;
+    return nullptr;
   }
-  if (ssl->config->cert != NULL) {
-    return ssl->config->cert->privatekey.get();
-  }
-
-  return NULL;
+  return ssl->config->cert->privatekey.get();
 }
 
 EVP_PKEY *SSL_CTX_get0_privatekey(const SSL_CTX *ctx) {
-  if (ctx->cert != NULL) {
-    return ctx->cert->privatekey.get();
-  }
-
-  return NULL;
+  return ctx->cert->privatekey.get();
 }
 
 const SSL_CIPHER *SSL_get_current_cipher(const SSL *ssl) {
