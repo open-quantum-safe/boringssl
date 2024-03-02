@@ -1,18 +1,19 @@
 # N.B: For interoperability, NIDS must match the group IDs used in
-# https://docs.google.com/spreadsheets/d/12YarzaNv3XQNLnvDsWLlRKwtZFhRrDdWf36YlzwrPeg/edit#gid=0
+# https://github.com/open-quantum-safe/oqs-provider/blob/main/ALGORITHMS.md
 kems:
   -
     family: 'FrodoKEM'
     name: 'frodo640aes'
     nid: '0x0200'
-    mix_with: [{'name': 'p256', 'mix_nid':'0x2F00', 'nid':'SSL_GROUP_SECP256R1'}]
-    use_as_default_with: 'p256'
+    mix_with: [{'name': 'p256', 'mix_nid':'0x2F00', 'nid':'SSL_GROUP_SECP256R1'}, {'name': 'x25519', 'mix_nid':'0x2F80', 'nid':'SSL_GROUP_X25519'}]
+    use_as_default_with: 'x25519'
     oqs_meth: 'OQS_KEM_alg_frodokem_640_aes'
   -
     family: 'FrodoKEM'
     name: 'frodo640shake'
     nid: '0x0201'
-    mix_with: [{'name': 'p256', 'mix_nid':'0x2F01', 'nid':'SSL_GROUP_SECP256R1'}]
+    mix_with: [{'name': 'p256', 'mix_nid':'0x2F01', 'nid':'SSL_GROUP_SECP256R1'}, {'name': 'x25519', 'mix_nid':'0x2F81', 'nid':'SSL_GROUP_X25519'}]
+    use_as_default_with: 'x25519'
     oqs_meth: 'OQS_KEM_alg_frodokem_640_shake'
   -
     family: 'FrodoKEM'
@@ -39,23 +40,11 @@ kems:
     mix_with: [{'name': 'p521', 'mix_nid':'0x2F05', 'nid':'SSL_GROUP_SECP521R1'}]
     oqs_meth: 'OQS_KEM_alg_frodokem_1344_shake'
   -
-    family: 'BIKE'
-    name: 'bikel1'
-    nid: '0x0241'
-    mix_with: [{'name': 'p256', 'mix_nid':'0x2F41', 'nid':'SSL_GROUP_SECP256R1'}]
-    use_as_default_with: 'p256'
-    oqs_meth: 'OQS_KEM_alg_bike_l1'
-  -
-    family: 'BIKE'
-    name: 'bikel3'
-    nid: '0x0242'
-    mix_with: [{'name': 'p384', 'mix_nid':'0x2F42', 'nid':'SSL_GROUP_SECP384R1'}]
-    oqs_meth: 'OQS_KEM_alg_bike_l3'
-  -
     family: 'CRYSTALS-Kyber'
     name: 'kyber512'
     nid: '0x023A'
-    mix_with: [{'name': 'p256', 'mix_nid':'0x2F3A', 'nid':'SSL_GROUP_SECP256R1'}]
+    mix_with: [{'name': 'p256', 'mix_nid':'0x2F3A', 'nid':'SSL_GROUP_SECP256R1'}, {'name': 'x25519', 'mix_nid':'0x2F39', 'nid':'SSL_GROUP_X25519'}]
+    use_as_default_with: 'x25519'
     oqs_meth: 'OQS_KEM_alg_kyber_512'
   -
     family: 'CRYSTALS-Kyber'
@@ -70,10 +59,24 @@ kems:
     mix_with: [{'name': 'p521', 'mix_nid':'0x2F3D', 'nid':'SSL_GROUP_SECP521R1'}]
     oqs_meth: 'OQS_KEM_alg_kyber_1024'
   -
+    family: 'BIKE'
+    name: 'bikel1'
+    nid: '0x0241'
+    mix_with: [{'name': 'p256', 'mix_nid':'0x2F41', 'nid':'SSL_GROUP_SECP256R1'}, {'name': 'x25519', 'mix_nid':'0x2FAE', 'nid':'SSL_GROUP_X25519'}]
+    use_as_default_with: 'x25519'
+    oqs_meth: 'OQS_KEM_alg_bike_l1'
+  -
+    family: 'BIKE'
+    name: 'bikel3'
+    nid: '0x0242'
+    mix_with: [{'name': 'p384', 'mix_nid':'0x2F42', 'nid':'SSL_GROUP_SECP384R1'}]
+    oqs_meth: 'OQS_KEM_alg_bike_l3'
+  -
     family: 'HQC'
     name: 'hqc128'
     nid: '0x0244'
-    mix_with: [{'name': 'p256', 'mix_nid':'0x2F44', 'nid':'SSL_GROUP_SECP256R1'}]
+    mix_with: [{'name': 'p256', 'mix_nid':'0x2F44', 'nid':'SSL_GROUP_SECP256R1'}, {'name': 'x25519', 'mix_nid':'0x2FB0', 'nid':'SSL_GROUP_X25519'}]
+    use_as_default_with: 'x25519'
     oqs_meth: 'OQS_KEM_alg_hqc_128'
   -
     family: 'HQC'
@@ -90,7 +93,7 @@ kems:
 
 
 # N.B: Code points and OIDs must match those used
-# in OQS-OpenSSL 1.1.1 for interoperability.
+# in OQS-OpenSSL for interoperability.
 sigs:
   -
     family: 'CRYSTALS-DILITHIUM'

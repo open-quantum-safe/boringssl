@@ -505,17 +505,19 @@ static const CurveTest kCurveTests[] = {
   },
 ///// OQS_TEMPLATE_FRAGMENT_ADD_CURVETEST_START
   {
-    "frodo640aes:p256_frodo640aes",
+    "frodo640aes:p256_frodo640aes:x25519_frodo640aes",
     {
       SSL_GROUP_FRODO640AES,
       SSL_GROUP_P256_FRODO640AES,
+      SSL_GROUP_X25519_FRODO640AES,
     },
   },
   {
-    "frodo640shake:p256_frodo640shake",
+    "frodo640shake:p256_frodo640shake:x25519_frodo640shake",
     {
       SSL_GROUP_FRODO640SHAKE,
       SSL_GROUP_P256_FRODO640SHAKE,
+      SSL_GROUP_X25519_FRODO640SHAKE,
     },
   },
   {
@@ -547,24 +549,11 @@ static const CurveTest kCurveTests[] = {
     },
   },
   {
-    "bikel1:p256_bikel1",
-    {
-      SSL_GROUP_BIKEL1,
-      SSL_GROUP_P256_BIKEL1,
-    },
-  },
-  {
-    "bikel3:p384_bikel3",
-    {
-      SSL_GROUP_BIKEL3,
-      SSL_GROUP_P384_BIKEL3,
-    },
-  },
-  {
-    "kyber512:p256_kyber512",
+    "kyber512:p256_kyber512:x25519_kyber512",
     {
       SSL_GROUP_KYBER512,
       SSL_GROUP_P256_KYBER512,
+      SSL_GROUP_X25519_KYBER512,
     },
   },
   {
@@ -582,10 +571,26 @@ static const CurveTest kCurveTests[] = {
     },
   },
   {
-    "hqc128:p256_hqc128",
+    "bikel1:p256_bikel1:x25519_bikel1",
+    {
+      SSL_GROUP_BIKEL1,
+      SSL_GROUP_P256_BIKEL1,
+      SSL_GROUP_X25519_BIKEL1,
+    },
+  },
+  {
+    "bikel3:p384_bikel3",
+    {
+      SSL_GROUP_BIKEL3,
+      SSL_GROUP_P384_BIKEL3,
+    },
+  },
+  {
+    "hqc128:p256_hqc128:x25519_hqc128",
     {
       SSL_GROUP_HQC128,
       SSL_GROUP_P256_HQC128,
+      SSL_GROUP_X25519_HQC128,
     },
   },
   {
@@ -8209,8 +8214,10 @@ static const TLSGroup kOQSGroups[] = {
 ///// OQS_TEMPLATE_FRAGMENT_LIST_ALL_OQS_KEMS_START
     {NID_frodo640aes, SSL_GROUP_FRODO640AES},
     {NID_p256_frodo640aes, SSL_GROUP_P256_FRODO640AES},
+    {NID_x25519_frodo640aes, SSL_GROUP_X25519_FRODO640AES},
     {NID_frodo640shake, SSL_GROUP_FRODO640SHAKE},
     {NID_p256_frodo640shake, SSL_GROUP_P256_FRODO640SHAKE},
+    {NID_x25519_frodo640shake, SSL_GROUP_X25519_FRODO640SHAKE},
     {NID_frodo976aes, SSL_GROUP_FRODO976AES},
     {NID_p384_frodo976aes, SSL_GROUP_P384_FRODO976AES},
     {NID_frodo976shake, SSL_GROUP_FRODO976SHAKE},
@@ -8219,16 +8226,18 @@ static const TLSGroup kOQSGroups[] = {
     {NID_p521_frodo1344aes, SSL_GROUP_P521_FRODO1344AES},
     {NID_frodo1344shake, SSL_GROUP_FRODO1344SHAKE},
     {NID_p521_frodo1344shake, SSL_GROUP_P521_FRODO1344SHAKE},
-    {NID_bikel1, SSL_GROUP_BIKEL1},
-    {NID_p256_bikel1, SSL_GROUP_P256_BIKEL1},
-    {NID_bikel3, SSL_GROUP_BIKEL3},
-    {NID_p384_bikel3, SSL_GROUP_P384_BIKEL3},
     {NID_kyber512, SSL_GROUP_KYBER512},
     {NID_p256_kyber512, SSL_GROUP_P256_KYBER512},
+    {NID_x25519_kyber512, SSL_GROUP_X25519_KYBER512},
     {NID_kyber768, SSL_GROUP_KYBER768},
     {NID_p384_kyber768, SSL_GROUP_P384_KYBER768},
     {NID_kyber1024, SSL_GROUP_KYBER1024},
     {NID_p521_kyber1024, SSL_GROUP_P521_KYBER1024},
+    {NID_bikel1, SSL_GROUP_BIKEL1},
+    {NID_p256_bikel1, SSL_GROUP_P256_BIKEL1},
+    {NID_x25519_bikel1, SSL_GROUP_X25519_BIKEL1},
+    {NID_bikel3, SSL_GROUP_BIKEL3},
+    {NID_p384_bikel3, SSL_GROUP_P384_BIKEL3},
 ///// OQS_TEMPLATE_FRAGMENT_LIST_ALL_OQS_KEMS_END
 };
 

@@ -997,3 +997,8 @@ sphincsshake192fsimple		1223
 sphincsshake192ssimple		1224
 sphincsshake256fsimple		1225
 sphincsshake256ssimple		1226
+x25519_frodo640aes		1227
+x25519_frodo640shake		1228
+x25519_kyber512		1229
+x25519_bikel1		1230
+x25519_hqc128		1231

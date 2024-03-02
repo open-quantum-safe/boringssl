@@ -4424,6 +4424,21 @@ extern "C" {
 #define NID_sphincsshake256ssimple 1226
 #define OBJ_sphincsshake256ssimple 1L, 3L, 9999L, 6L, 9L, 12L
 
+#define SN_x25519_frodo640aes "x25519_frodo640aes"
+#define NID_x25519_frodo640aes 1227
+
+#define SN_x25519_frodo640shake "x25519_frodo640shake"
+#define NID_x25519_frodo640shake 1228
+
+#define SN_x25519_kyber512 "x25519_kyber512"
+#define NID_x25519_kyber512 1229
+
+#define SN_x25519_bikel1 "x25519_bikel1"
+#define NID_x25519_bikel1 1230
+
+#define SN_x25519_hqc128 "x25519_hqc128"
+#define NID_x25519_hqc128 1231
+
 
 #if defined(__cplusplus)
 } /* extern C */
