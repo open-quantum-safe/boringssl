@@ -8537,8 +8537,8 @@ func addExtensionTests() {
 		name:     "ClientHelloPadding",
 		config: Config{
 			Bugs: ProtocolBugs{
-				// OQS note: the clienthello size of SSL_GROUP_X25519_FRODO640AES is 10018
-				RequireClientHelloSize: 10018,
+				// OQS note: the clienthello size of SSL_GROUP_X25519_FRODO640AES is 10026
+				RequireClientHelloSize: 10026,
 			},
 		},
 		// This hostname just needs to be long enough to push the
