@@ -228,6 +228,9 @@ OPENSSL_EXPORT EC_KEY *EVP_PKEY_get1_EC_KEY(const EVP_PKEY *pkey);
    (pkey_id == NID_kyber512) || \
    (pkey_id == NID_kyber768) || \
    (pkey_id == NID_kyber1024) || \
+   (pkey_id == NID_mlkem512) || \
+   (pkey_id == NID_mlkem768) || \
+   (pkey_id == NID_mlkem1024) || \
    (pkey_id == NID_bikel1) || \
    (pkey_id == NID_bikel3) || \
    (pkey_id == NID_hqc128) || \

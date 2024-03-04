@@ -571,6 +571,29 @@ static const CurveTest kCurveTests[] = {
     },
   },
   {
+    "mlkem512:p256_mlkem512:x25519_mlkem512",
+    {
+      SSL_GROUP_MLKEM512,
+      SSL_GROUP_P256_MLKEM512,
+      SSL_GROUP_X25519_MLKEM512,
+    },
+  },
+  {
+    "mlkem768:p384_mlkem768:x25519_mlkem768",
+    {
+      SSL_GROUP_MLKEM768,
+      SSL_GROUP_P384_MLKEM768,
+      SSL_GROUP_X25519_MLKEM768,
+    },
+  },
+  {
+    "mlkem1024:p521_mlkem1024",
+    {
+      SSL_GROUP_MLKEM1024,
+      SSL_GROUP_P521_MLKEM1024,
+    },
+  },
+  {
     "bikel1:p256_bikel1:x25519_bikel1",
     {
       SSL_GROUP_BIKEL1,
@@ -8233,6 +8256,14 @@ static const TLSGroup kOQSGroups[] = {
     {NID_p384_kyber768, SSL_GROUP_P384_KYBER768},
     {NID_kyber1024, SSL_GROUP_KYBER1024},
     {NID_p521_kyber1024, SSL_GROUP_P521_KYBER1024},
+    {NID_mlkem512, SSL_GROUP_MLKEM512},
+    {NID_p256_mlkem512, SSL_GROUP_P256_MLKEM512},
+    {NID_x25519_mlkem512, SSL_GROUP_X25519_MLKEM512},
+    {NID_mlkem768, SSL_GROUP_MLKEM768},
+    {NID_p384_mlkem768, SSL_GROUP_P384_MLKEM768},
+    {NID_x25519_mlkem768, SSL_GROUP_X25519_MLKEM768},
+    {NID_mlkem1024, SSL_GROUP_MLKEM1024},
+    {NID_p521_mlkem1024, SSL_GROUP_P521_MLKEM1024},
     {NID_bikel1, SSL_GROUP_BIKEL1},
     {NID_p256_bikel1, SSL_GROUP_P256_BIKEL1},
     {NID_x25519_bikel1, SSL_GROUP_X25519_BIKEL1},
