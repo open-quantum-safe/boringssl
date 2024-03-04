@@ -27,7 +27,7 @@ Both liboqs and this fork are part of the **Open Quantum Safe (OQS) project**, w
 
 ## Status
 
-This fork is built on top of [commit 4df6f97](https://github.com/google/boringssl/commit/4df6f97cf9a32770b2a6ffb8da7d97845743ffb7), and adds:
+This fork is built on top of [commit df3b58e](https://github.com/google/boringssl/commit/df3b58ea74c50ff785ab902be3b007ff008d3e3c), and adds:
 
 - quantum-safe key exchange to TLS 1.3
 - hybrid (quantum-safe + elliptic curve) key exchange to TLS 1.3
@@ -37,7 +37,7 @@ This fork is built on top of [commit 4df6f97](https://github.com/google/boringss
 
 liboqs and this integration are provided "as is", without warranty of any kind.  See the [LICENSE](https://github.com/open-quantum-safe/liboqs/blob/main/LICENSE.txt) for the full disclaimer.
 
-**N.B.: WE DO NOT REGULARLY TEST INTEROPERABILITY WITH [OQS-OPENSSL](https://github.com/open-quantum-safe/openssl), INSTEAD ONLY DOING SO AS AND WHEN THE NEED MIGHT ARISE. AS A CONSEQUENCE, THIS PROJECT, AS WELL AS THE CHROMIUM DEMO THAT IS BUILT ON TOP OF IT, MAY NOT INTEROPERATE WITH OTHER COMPONENTS IN THE OQS INFRASTRUCTURE SUCH AS THE [OQS PROVIDER](https://github.com/open-quantum-safe/oqs-provider) AND THE [OQS TEST SERVER](http://test.openquantumsafe.org/).**
+**N.B.: THIS PROJECT, AS WELL AS THE CHROMIUM DEMO THAT IS BUILT ON TOP OF IT, MAY NOT INTEROPERATE WITH OTHER COMPONENTS IN THE OQS INFRASTRUCTURE SUCH AS THE [OQS PROVIDER](https://github.com/open-quantum-safe/oqs-provider) AND THE [OQS TEST SERVER](http://test.openquantumsafe.org/).**
 
 ### Limitations and security
 
@@ -54,7 +54,7 @@ Some of the KEMs provided in liboqs do provide IND-CCA security; others do not (
 
 Furthermore, the BoringSSL project does not guarantee API or ABI stability; this fork is maintained primarily to enable the use of quantum-safe cryptography in the [Chromium](https://www.chromium.org/) web browser, which relies on BoringSSL's TLS implementation.
 
-The fork is currently based on commit hash `ae88f198a49d77993e9c44b017d0e69c810dc668` which has been verified to work with Chromium tag `117.0.5863.0`. If we do decide to update BoringSSL, we will do so to the most recent commit that is supported by the desired tag at which we would like Chromium to be. **We consequently also cannot guarantee API or ABI stability for this fork.**
+If we do decide to update BoringSSL, we will do so to the most recent commit that is supported by the desired tag at which we would like Chromium to be. **We consequently also cannot guarantee API or ABI stability for this fork.**
 
 ### Supported Algorithms
 
@@ -74,6 +74,7 @@ The following quantum-safe algorithms from liboqs are supported (assuming they h
 For each `<KEX>` listed above, the following hybrid algorithms are made available as follows:
 
 - If `<KEX>` has L1 security, the method `p256_<KEX>` is available, which combines `<KEX>` with ECDH using NIST's P256 curve
+- If `<KEX>` has L1 security, the method `x25519_<KEX>` is available, which combines `<KEX>` with ECDH using X25519 curve
 - If `<KEX>` has L3 security, the method `p384_<KEX>` is available, which combines `<KEX>` with ECDH using NIST's P384 curve
 - If `<KEX>` has L5 security, the method `p521_<KEX>` is available, which combines `<KEX>` with ECDH using NIST's P521 curve
 
@@ -92,11 +93,11 @@ The following quantum-safe digital signature algorithms from liboqs are supporte
 - **SPHINCS-SHAKE**: `sphincsshake128fsimple`, `sphincsshake128ssimple`, `sphincsshake192fsimple`, `sphincsshake192ssimple`, `sphincsshake256fsimple`, `sphincsshake256ssimple`
 <!--- OQS_TEMPLATE_FRAGMENT_LIST_SIGS_END -->
 
-No hybrid signature algorithms are currently implemented. If those are needed for a project please use [OQS-OpenSSL](https://github.com/open-quantum-safe/openssl) which supports them out of the box, or implement them and create a pull request, or [create an issue](https://github.com/open-quantum-safe/boringssl/issues).
+No hybrid signature algorithms are currently implemented. If those are needed for a project please use [OQS-provider](https://github.com/open-quantum-safe/oqs-provider) which supports them out of the box, or implement them and create a pull request, or [create an issue](https://github.com/open-quantum-safe/boringssl/issues).
 
 ## Quickstart
 
-We regularly test the fork on Ubuntu 18.04 and above. Support for other platforms and operating systems, as well as for old versions of GCC (< 8) and Clang (< 8), is not guaranteed.
+We've only tested the fork on the latest Ubuntu LTS and Windows. This fork has limited support for other platforms and may not function properly.
 
 ### Building
 

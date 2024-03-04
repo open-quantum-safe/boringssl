@@ -225,11 +225,11 @@ OPENSSL_EXPORT EC_KEY *EVP_PKEY_get1_EC_KEY(const EVP_PKEY *pkey);
    (pkey_id == NID_frodo976shake) || \
    (pkey_id == NID_frodo1344aes) || \
    (pkey_id == NID_frodo1344shake) || \
-   (pkey_id == NID_bikel1) || \
-   (pkey_id == NID_bikel3) || \
    (pkey_id == NID_kyber512) || \
    (pkey_id == NID_kyber768) || \
    (pkey_id == NID_kyber1024) || \
+   (pkey_id == NID_bikel1) || \
+   (pkey_id == NID_bikel3) || \
    (pkey_id == NID_hqc128) || \
    (pkey_id == NID_hqc192) || \
    (pkey_id == NID_hqc256) || \
