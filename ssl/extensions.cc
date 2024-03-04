@@ -251,6 +251,22 @@ static bool is_post_quantum_group(uint16_t id) {
       return true;
     case SSL_GROUP_P521_KYBER1024:
       return true;
+    case SSL_GROUP_MLKEM512:
+      return true;
+    case SSL_GROUP_P256_MLKEM512:
+      return true;
+    case SSL_GROUP_X25519_MLKEM512:
+      return true;
+    case SSL_GROUP_MLKEM768:
+      return true;
+    case SSL_GROUP_P384_MLKEM768:
+      return true;
+    case SSL_GROUP_X25519_MLKEM768:
+      return true;
+    case SSL_GROUP_MLKEM1024:
+      return true;
+    case SSL_GROUP_P521_MLKEM1024:
+      return true;
     case SSL_GROUP_BIKEL1:
       return true;
     case SSL_GROUP_P256_BIKEL1:
@@ -382,6 +398,7 @@ static const uint16_t kDefaultGroups[] = {
     SSL_GROUP_X25519_FRODO640AES,
     SSL_GROUP_X25519_FRODO640SHAKE,
     SSL_GROUP_X25519_KYBER512,
+    SSL_GROUP_X25519_MLKEM512,
     SSL_GROUP_X25519_BIKEL1,
     SSL_GROUP_X25519_HQC128,
 ///// OQS_TEMPLATE_FRAGMENT_ADD_DEFAULT_KEMS_END
@@ -419,6 +436,14 @@ static const uint16_t kAllSupportedGroups[] = {
     SSL_GROUP_KYBER768,
     SSL_GROUP_P521_KYBER1024,
     SSL_GROUP_KYBER1024,
+    SSL_GROUP_P256_MLKEM512,
+    SSL_GROUP_X25519_MLKEM512,
+    SSL_GROUP_MLKEM512,
+    SSL_GROUP_P384_MLKEM768,
+    SSL_GROUP_X25519_MLKEM768,
+    SSL_GROUP_MLKEM768,
+    SSL_GROUP_P521_MLKEM1024,
+    SSL_GROUP_MLKEM1024,
     SSL_GROUP_P256_BIKEL1,
     SSL_GROUP_X25519_BIKEL1,
     SSL_GROUP_BIKEL1,
@@ -516,6 +541,9 @@ static const uint16_t kVerifySignatureAlgorithms[] = {
     SSL_SIGN_DILITHIUM2,
     SSL_SIGN_DILITHIUM3,
     SSL_SIGN_DILITHIUM5,
+    SSL_SIGN_MLDSA44,
+    SSL_SIGN_MLDSA65,
+    SSL_SIGN_MLDSA87,
     SSL_SIGN_FALCON512,
     SSL_SIGN_FALCON1024,
     SSL_SIGN_SPHINCSSHA2128FSIMPLE,
@@ -556,6 +584,9 @@ static const uint16_t kSignSignatureAlgorithms[] = {
     SSL_SIGN_DILITHIUM2,
     SSL_SIGN_DILITHIUM3,
     SSL_SIGN_DILITHIUM5,
+    SSL_SIGN_MLDSA44,
+    SSL_SIGN_MLDSA65,
+    SSL_SIGN_MLDSA87,
     SSL_SIGN_FALCON512,
     SSL_SIGN_FALCON1024,
     SSL_SIGN_SPHINCSSHA2128FSIMPLE,
@@ -4327,6 +4358,9 @@ Span<const uint16_t> tls1_get_peer_verify_algorithms(const SSL_HANDSHAKE *hs) {
                               SSL_SIGN_DILITHIUM2,
                               SSL_SIGN_DILITHIUM3,
                               SSL_SIGN_DILITHIUM5,
+                              SSL_SIGN_MLDSA44,
+                              SSL_SIGN_MLDSA65,
+                              SSL_SIGN_MLDSA87,
                               SSL_SIGN_FALCON512,
                               SSL_SIGN_FALCON1024,
                               SSL_SIGN_SPHINCSSHA2128FSIMPLE,

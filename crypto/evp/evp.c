@@ -230,6 +230,12 @@ static const EVP_PKEY_ASN1_METHOD *evp_pkey_asn1_find(int nid) {
       return &dilithium3_asn1_meth;
     case EVP_PKEY_DILITHIUM5:
       return &dilithium5_asn1_meth;
+    case EVP_PKEY_MLDSA44:
+      return &mldsa44_asn1_meth;
+    case EVP_PKEY_MLDSA65:
+      return &mldsa65_asn1_meth;
+    case EVP_PKEY_MLDSA87:
+      return &mldsa87_asn1_meth;
     case EVP_PKEY_FALCON512:
       return &falcon512_asn1_meth;
     case EVP_PKEY_FALCON1024:

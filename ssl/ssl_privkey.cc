@@ -79,6 +79,9 @@ bool ssl_is_key_type_supported(int key_type) {
          key_type == EVP_PKEY_DILITHIUM2 ||
          key_type == EVP_PKEY_DILITHIUM3 ||
          key_type == EVP_PKEY_DILITHIUM5 ||
+         key_type == EVP_PKEY_MLDSA44 ||
+         key_type == EVP_PKEY_MLDSA65 ||
+         key_type == EVP_PKEY_MLDSA87 ||
          key_type == EVP_PKEY_FALCON512 ||
          key_type == EVP_PKEY_FALCON1024 ||
          key_type == EVP_PKEY_SPHINCSSHA2128FSIMPLE ||
@@ -156,6 +159,9 @@ static const SSL_SIGNATURE_ALGORITHM kSignatureAlgorithms[] = {
     {SSL_SIGN_DILITHIUM2, EVP_PKEY_DILITHIUM2, NID_undef, &EVP_sha256, false},
     {SSL_SIGN_DILITHIUM3, EVP_PKEY_DILITHIUM3, NID_undef, &EVP_sha384, false},
     {SSL_SIGN_DILITHIUM5, EVP_PKEY_DILITHIUM5, NID_undef, &EVP_sha512, false},
+    {SSL_SIGN_MLDSA44, EVP_PKEY_MLDSA44, NID_undef, &EVP_sha256, false},
+    {SSL_SIGN_MLDSA65, EVP_PKEY_MLDSA65, NID_undef, &EVP_sha384, false},
+    {SSL_SIGN_MLDSA87, EVP_PKEY_MLDSA87, NID_undef, &EVP_sha512, false},
     {SSL_SIGN_FALCON512, EVP_PKEY_FALCON512, NID_undef, &EVP_sha256, false},
     {SSL_SIGN_FALCON1024, EVP_PKEY_FALCON1024, NID_undef, &EVP_sha512, false},
     {SSL_SIGN_SPHINCSSHA2128FSIMPLE, EVP_PKEY_SPHINCSSHA2128FSIMPLE, NID_undef, &EVP_sha256, false},
@@ -560,6 +566,9 @@ static const SignatureAlgorithmName kSignatureAlgorithmNames[] = {
     {SSL_SIGN_DILITHIUM2, "dilithium2"},
     {SSL_SIGN_DILITHIUM3, "dilithium3"},
     {SSL_SIGN_DILITHIUM5, "dilithium5"},
+    {SSL_SIGN_MLDSA44, "mldsa44"},
+    {SSL_SIGN_MLDSA65, "mldsa65"},
+    {SSL_SIGN_MLDSA87, "mldsa87"},
     {SSL_SIGN_FALCON512, "falcon512"},
     {SSL_SIGN_FALCON1024, "falcon1024"},
     {SSL_SIGN_SPHINCSSHA2128FSIMPLE, "sphincssha2128fsimple"},
@@ -736,6 +745,9 @@ static constexpr struct {
     {EVP_PKEY_DILITHIUM2, NID_sha256, SSL_SIGN_DILITHIUM2},
     {EVP_PKEY_DILITHIUM3, NID_sha384, SSL_SIGN_DILITHIUM3},
     {EVP_PKEY_DILITHIUM5, NID_sha512, SSL_SIGN_DILITHIUM5},
+    {EVP_PKEY_MLDSA44, NID_sha256, SSL_SIGN_MLDSA44},
+    {EVP_PKEY_MLDSA65, NID_sha384, SSL_SIGN_MLDSA65},
+    {EVP_PKEY_MLDSA87, NID_sha512, SSL_SIGN_MLDSA87},
     {EVP_PKEY_FALCON512, NID_sha256, SSL_SIGN_FALCON512},
     {EVP_PKEY_FALCON1024, NID_sha512, SSL_SIGN_FALCON1024},
     {EVP_PKEY_SPHINCSSHA2128FSIMPLE, NID_sha256, SSL_SIGN_SPHINCSSHA2128FSIMPLE},

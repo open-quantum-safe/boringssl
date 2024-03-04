@@ -4439,6 +4439,45 @@ extern "C" {
 #define SN_x25519_hqc128 "x25519_hqc128"
 #define NID_x25519_hqc128 1231
 
+#define SN_mlkem512 "mlkem512"
+#define NID_mlkem512 1232
+
+#define SN_p256_mlkem512 "p256_mlkem512"
+#define NID_p256_mlkem512 1233
+
+#define SN_x25519_mlkem512 "x25519_mlkem512"
+#define NID_x25519_mlkem512 1234
+
+#define SN_mlkem768 "mlkem768"
+#define NID_mlkem768 1235
+
+#define SN_p384_mlkem768 "p384_mlkem768"
+#define NID_p384_mlkem768 1236
+
+#define SN_x25519_mlkem768 "x25519_mlkem768"
+#define NID_x25519_mlkem768 1237
+
+#define SN_mlkem1024 "mlkem1024"
+#define NID_mlkem1024 1238
+
+#define SN_p521_mlkem1024 "p521_mlkem1024"
+#define NID_p521_mlkem1024 1239
+
+#define SN_mldsa44 "mldsa44"
+#define LN_mldsa44 "mldsa44"
+#define NID_mldsa44 1240
+#define OBJ_mldsa44 1L, 3L, 6L, 1L, 4L, 1L, 2L, 267L, 12L, 4L, 4L
+
+#define SN_mldsa65 "mldsa65"
+#define LN_mldsa65 "mldsa65"
+#define NID_mldsa65 1241
+#define OBJ_mldsa65 1L, 3L, 6L, 1L, 4L, 1L, 2L, 267L, 12L, 6L, 5L
+
+#define SN_mldsa87 "mldsa87"
+#define LN_mldsa87 "mldsa87"
+#define NID_mldsa87 1242
+#define OBJ_mldsa87 1L, 3L, 6L, 1L, 4L, 1L, 2L, 267L, 12L, 8L, 7L
+
 
 #if defined(__cplusplus)
 } /* extern C */
