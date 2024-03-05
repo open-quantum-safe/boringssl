@@ -202,6 +202,109 @@ bool VerifySignedData(SignatureAlgorithm algorithm, der::Input signed_data,
       cache_algorithm_name = "EcdsaSha512";
       break;
 
+///// OQS_TEMPLATE_FRAGMENT_LIST_SIGS_START
+    case SignatureAlgorithm::kDilithium2:
+      expected_pkey_id = EVP_PKEY_DILITHIUM2;
+      digest = EVP_sha256();
+      cache_algorithm_name = "Dilithium2";
+      break;
+    case SignatureAlgorithm::kDilithium3:
+      expected_pkey_id = EVP_PKEY_DILITHIUM3;
+      digest = EVP_sha384();
+      cache_algorithm_name = "Dilithium3";
+      break;
+    case SignatureAlgorithm::kDilithium5:
+      expected_pkey_id = EVP_PKEY_DILITHIUM5;
+      digest = EVP_sha512();
+      cache_algorithm_name = "Dilithium5";
+      break;
+    case SignatureAlgorithm::kMldsa44:
+      expected_pkey_id = EVP_PKEY_MLDSA44;
+      digest = EVP_sha256();
+      cache_algorithm_name = "Mldsa44";
+      break;
+    case SignatureAlgorithm::kMldsa65:
+      expected_pkey_id = EVP_PKEY_MLDSA65;
+      digest = EVP_sha384();
+      cache_algorithm_name = "Mldsa65";
+      break;
+    case SignatureAlgorithm::kMldsa87:
+      expected_pkey_id = EVP_PKEY_MLDSA87;
+      digest = EVP_sha512();
+      cache_algorithm_name = "Mldsa87";
+      break;
+    case SignatureAlgorithm::kFalcon512:
+      expected_pkey_id = EVP_PKEY_FALCON512;
+      digest = EVP_sha256();
+      cache_algorithm_name = "Falcon512";
+      break;
+    case SignatureAlgorithm::kFalcon1024:
+      expected_pkey_id = EVP_PKEY_FALCON1024;
+      digest = EVP_sha512();
+      cache_algorithm_name = "Falcon1024";
+      break;
+    case SignatureAlgorithm::kSphincssha2128fsimple:
+      expected_pkey_id = EVP_PKEY_SPHINCSSHA2128FSIMPLE;
+      digest = EVP_sha256();
+      cache_algorithm_name = "Sphincssha2128fsimple";
+      break;
+    case SignatureAlgorithm::kSphincssha2128ssimple:
+      expected_pkey_id = EVP_PKEY_SPHINCSSHA2128SSIMPLE;
+      digest = EVP_sha256();
+      cache_algorithm_name = "Sphincssha2128ssimple";
+      break;
+    case SignatureAlgorithm::kSphincssha2192fsimple:
+      expected_pkey_id = EVP_PKEY_SPHINCSSHA2192FSIMPLE;
+      digest = EVP_sha384();
+      cache_algorithm_name = "Sphincssha2192fsimple";
+      break;
+    case SignatureAlgorithm::kSphincssha2192ssimple:
+      expected_pkey_id = EVP_PKEY_SPHINCSSHA2192SSIMPLE;
+      digest = EVP_sha384();
+      cache_algorithm_name = "Sphincssha2192ssimple";
+      break;
+    case SignatureAlgorithm::kSphincssha2256fsimple:
+      expected_pkey_id = EVP_PKEY_SPHINCSSHA2256FSIMPLE;
+      digest = EVP_sha512();
+      cache_algorithm_name = "Sphincssha2256fsimple";
+      break;
+    case SignatureAlgorithm::kSphincssha2256ssimple:
+      expected_pkey_id = EVP_PKEY_SPHINCSSHA2256SSIMPLE;
+      digest = EVP_sha512();
+      cache_algorithm_name = "Sphincssha2256ssimple";
+      break;
+    case SignatureAlgorithm::kSphincsshake128fsimple:
+      expected_pkey_id = EVP_PKEY_SPHINCSSHAKE128FSIMPLE;
+      digest = EVP_sha256();
+      cache_algorithm_name = "Sphincsshake128fsimple";
+      break;
+    case SignatureAlgorithm::kSphincsshake128ssimple:
+      expected_pkey_id = EVP_PKEY_SPHINCSSHAKE128SSIMPLE;
+      digest = EVP_sha256();
+      cache_algorithm_name = "Sphincsshake128ssimple";
+      break;
+    case SignatureAlgorithm::kSphincsshake192fsimple:
+      expected_pkey_id = EVP_PKEY_SPHINCSSHAKE192FSIMPLE;
+      digest = EVP_sha384();
+      cache_algorithm_name = "Sphincsshake192fsimple";
+      break;
+    case SignatureAlgorithm::kSphincsshake192ssimple:
+      expected_pkey_id = EVP_PKEY_SPHINCSSHAKE192SSIMPLE;
+      digest = EVP_sha384();
+      cache_algorithm_name = "Sphincsshake192ssimple";
+      break;
+    case SignatureAlgorithm::kSphincsshake256fsimple:
+      expected_pkey_id = EVP_PKEY_SPHINCSSHAKE256FSIMPLE;
+      digest = EVP_sha512();
+      cache_algorithm_name = "Sphincsshake256fsimple";
+      break;
+    case SignatureAlgorithm::kSphincsshake256ssimple:
+      expected_pkey_id = EVP_PKEY_SPHINCSSHAKE256SSIMPLE;
+      digest = EVP_sha512();
+      cache_algorithm_name = "Sphincsshake256ssimple";
+      break;
+///// OQS_TEMPLATE_FRAGMENT_LIST_SIGS_END
+
     case SignatureAlgorithm::kRsaPssSha256:
       expected_pkey_id = EVP_PKEY_RSA;
       digest = EVP_sha256();
@@ -249,6 +352,10 @@ bool VerifySignedData(SignatureAlgorithm algorithm, der::Input signed_data,
     }
   }
 
+  bool ret;
+  if (IS_OQS_PKEY(expected_pkey_id)) {
+    ret = oqs_verify_sig(public_key, signature_value_bytes.data(), signature_value_bytes.size(), signed_data.data(), signed_data.size()) ? true : false;
+  } else {
   OpenSSLErrStackTracer err_tracer;
 
   bssl::ScopedEVP_MD_CTX ctx;
@@ -268,9 +375,10 @@ bool VerifySignedData(SignatureAlgorithm algorithm, der::Input signed_data,
     }
   }
 
-  bool ret = 1 == EVP_DigestVerify(ctx.get(), signature_value_bytes.data(),
-                                   signature_value_bytes.size(),
-                                   signed_data.data(), signed_data.size());
+  ret = 1 == EVP_DigestVerify(ctx.get(), signature_value_bytes.data(),
+                              signature_value_bytes.size(),
+                              signed_data.data(), signed_data.size());
+  }
   if (!cache_key.empty()) {
     cache->Store(cache_key, ret ? SignatureVerifyCache::Value::kValid
                                 : SignatureVerifyCache::Value::kInvalid);
