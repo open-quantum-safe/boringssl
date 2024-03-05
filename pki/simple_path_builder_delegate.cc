@@ -30,10 +30,6 @@ DEFINE_CERT_ERROR_ID(kUnacceptableCurveForEcdsa,
                      "Only P-256, P-384, P-521 are supported for ECDSA");
 
 bool IsAcceptableCurveForEcdsa(int curve_nid) {
-  if (IS_OQS_PKEY(curve_nid)) {
-    return true;
-  }
-
   switch (curve_nid) {
     case NID_X9_62_prime256v1:
     case NID_secp384r1:

@@ -1,0 +1,14 @@
+{% for sig in config['sigs'] %}
+    case SignatureAlgorithm::k{{ sig['name']|capitalize }}:
+      expected_pkey_id = EVP_PKEY_{{ sig['name']|upper }};
+      {%- if sig['claimed_security_level'] == '1' or sig['claimed_security_level'] == '2' %}
+      digest = EVP_sha256();
+      {%- elif sig['claimed_security_level'] == '3' or sig['claimed_security_level'] == '4' %}
+      digest = EVP_sha384();
+      {%- else %}{# claimed_security_level == '5' #}
+      digest = EVP_sha512();
+      {%- endif %}
+      cache_algorithm_name = "{{ sig['name']|capitalize }}";
+      break;
+{%- endfor %}
+
