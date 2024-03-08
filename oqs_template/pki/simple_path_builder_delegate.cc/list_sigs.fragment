@@ -1,0 +1,4 @@
+{% for sig in config['sigs'] %}
+    case SignatureAlgorithm::k{{ sig['name']|capitalize }}:
+{%- endfor %}
+

@@ -123,6 +123,29 @@ const uint8_t kOidRsaSsaPss[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
 const uint8_t kOidMgf1[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
                             0x0d, 0x01, 0x01, 0x08};
 
+///// OQS_TEMPLATE_FRAGMENT_LIST_SIG_OIDS_START
+const uint8_t kOidDilithium2[] = {0x2b, 0x06, 0x01, 0x04, 0x01, 0x02, 0x82, 0x0b, 0x07, 0x04, 0x04};
+const uint8_t kOidDilithium3[] = {0x2b, 0x06, 0x01, 0x04, 0x01, 0x02, 0x82, 0x0b, 0x07, 0x06, 0x05};
+const uint8_t kOidDilithium5[] = {0x2b, 0x06, 0x01, 0x04, 0x01, 0x02, 0x82, 0x0b, 0x07, 0x08, 0x07};
+const uint8_t kOidMldsa44[] = {0x2b, 0x06, 0x01, 0x04, 0x01, 0x02, 0x82, 0x0b, 0x0c, 0x04, 0x04};
+const uint8_t kOidMldsa65[] = {0x2b, 0x06, 0x01, 0x04, 0x01, 0x02, 0x82, 0x0b, 0x0c, 0x06, 0x05};
+const uint8_t kOidMldsa87[] = {0x2b, 0x06, 0x01, 0x04, 0x01, 0x02, 0x82, 0x0b, 0x0c, 0x08, 0x07};
+const uint8_t kOidFalcon512[] = {0x2b, 0xce, 0x0f, 0x03, 0x06};
+const uint8_t kOidFalcon1024[] = {0x2b, 0xce, 0x0f, 0x03, 0x09};
+const uint8_t kOidSphincssha2128fsimple[] = {0x2b, 0xce, 0x0f, 0x06, 0x04, 0x0d};
+const uint8_t kOidSphincssha2128ssimple[] = {0x2b, 0xce, 0x0f, 0x06, 0x04, 0x10};
+const uint8_t kOidSphincssha2192fsimple[] = {0x2b, 0xce, 0x0f, 0x06, 0x05, 0x0a};
+const uint8_t kOidSphincssha2192ssimple[] = {0x2b, 0xce, 0x0f, 0x06, 0x05, 0x0c};
+const uint8_t kOidSphincssha2256fsimple[] = {0x2b, 0xce, 0x0f, 0x06, 0x06, 0x0a};
+const uint8_t kOidSphincssha2256ssimple[] = {0x2b, 0xce, 0x0f, 0x06, 0x06, 0x0c};
+const uint8_t kOidSphincsshake128fsimple[] = {0x2b, 0xce, 0x0f, 0x06, 0x07, 0x0d};
+const uint8_t kOidSphincsshake128ssimple[] = {0x2b, 0xce, 0x0f, 0x06, 0x07, 0x10};
+const uint8_t kOidSphincsshake192fsimple[] = {0x2b, 0xce, 0x0f, 0x06, 0x08, 0x0a};
+const uint8_t kOidSphincsshake192ssimple[] = {0x2b, 0xce, 0x0f, 0x06, 0x08, 0x0c};
+const uint8_t kOidSphincsshake256fsimple[] = {0x2b, 0xce, 0x0f, 0x06, 0x09, 0x0a};
+const uint8_t kOidSphincsshake256ssimple[] = {0x2b, 0xce, 0x0f, 0x06, 0x09, 0x0c};
+///// OQS_TEMPLATE_FRAGMENT_LIST_SIG_OIDS_END
+
 // Returns true if the entirety of the input is a NULL value.
 [[nodiscard]] bool IsNull(der::Input input) {
   der::Parser parser(input);
@@ -376,6 +399,69 @@ std::optional<SignatureAlgorithm> ParseSignatureAlgorithm(
     return SignatureAlgorithm::kEcdsaSha512;
   }
 
+///// OQS_TEMPLATE_FRAGMENT_PARSE_SIG_OIDS_START
+  if (oid == der::Input(kOidDilithium2)) {
+    return SignatureAlgorithm::kDilithium2;
+  }
+  if (oid == der::Input(kOidDilithium3)) {
+    return SignatureAlgorithm::kDilithium3;
+  }
+  if (oid == der::Input(kOidDilithium5)) {
+    return SignatureAlgorithm::kDilithium5;
+  }
+  if (oid == der::Input(kOidMldsa44)) {
+    return SignatureAlgorithm::kMldsa44;
+  }
+  if (oid == der::Input(kOidMldsa65)) {
+    return SignatureAlgorithm::kMldsa65;
+  }
+  if (oid == der::Input(kOidMldsa87)) {
+    return SignatureAlgorithm::kMldsa87;
+  }
+  if (oid == der::Input(kOidFalcon512)) {
+    return SignatureAlgorithm::kFalcon512;
+  }
+  if (oid == der::Input(kOidFalcon1024)) {
+    return SignatureAlgorithm::kFalcon1024;
+  }
+  if (oid == der::Input(kOidSphincssha2128fsimple)) {
+    return SignatureAlgorithm::kSphincssha2128fsimple;
+  }
+  if (oid == der::Input(kOidSphincssha2128ssimple)) {
+    return SignatureAlgorithm::kSphincssha2128ssimple;
+  }
+  if (oid == der::Input(kOidSphincssha2192fsimple)) {
+    return SignatureAlgorithm::kSphincssha2192fsimple;
+  }
+  if (oid == der::Input(kOidSphincssha2192ssimple)) {
+    return SignatureAlgorithm::kSphincssha2192ssimple;
+  }
+  if (oid == der::Input(kOidSphincssha2256fsimple)) {
+    return SignatureAlgorithm::kSphincssha2256fsimple;
+  }
+  if (oid == der::Input(kOidSphincssha2256ssimple)) {
+    return SignatureAlgorithm::kSphincssha2256ssimple;
+  }
+  if (oid == der::Input(kOidSphincsshake128fsimple)) {
+    return SignatureAlgorithm::kSphincsshake128fsimple;
+  }
+  if (oid == der::Input(kOidSphincsshake128ssimple)) {
+    return SignatureAlgorithm::kSphincsshake128ssimple;
+  }
+  if (oid == der::Input(kOidSphincsshake192fsimple)) {
+    return SignatureAlgorithm::kSphincsshake192fsimple;
+  }
+  if (oid == der::Input(kOidSphincsshake192ssimple)) {
+    return SignatureAlgorithm::kSphincsshake192ssimple;
+  }
+  if (oid == der::Input(kOidSphincsshake256fsimple)) {
+    return SignatureAlgorithm::kSphincsshake256fsimple;
+  }
+  if (oid == der::Input(kOidSphincsshake256ssimple)) {
+    return SignatureAlgorithm::kSphincsshake256ssimple;
+  }
+///// OQS_TEMPLATE_FRAGMENT_PARSE_SIG_OIDS_END
+
   if (oid == der::Input(kOidRsaSsaPss)) {
     return ParseRsaPss(params);
   }
@@ -408,6 +494,34 @@ std::optional<DigestAlgorithm> GetTlsServerEndpointDigestAlgorithm(
     case SignatureAlgorithm::kRsaPkcs1Sha512:
     case SignatureAlgorithm::kEcdsaSha512:
       return DigestAlgorithm::Sha512;
+
+///// OQS_TEMPLATE_FRAGMENT_PAIR_SIGS_WITH_DIGESTS_START
+    case SignatureAlgorithm::kDilithium2:
+    case SignatureAlgorithm::kMldsa44:
+    case SignatureAlgorithm::kFalcon512:
+    case SignatureAlgorithm::kSphincssha2128fsimple:
+    case SignatureAlgorithm::kSphincssha2128ssimple:
+    case SignatureAlgorithm::kSphincsshake128fsimple:
+    case SignatureAlgorithm::kSphincsshake128ssimple:
+      return DigestAlgorithm::Sha256;
+
+    case SignatureAlgorithm::kDilithium3:
+    case SignatureAlgorithm::kMldsa65:
+    case SignatureAlgorithm::kSphincssha2192fsimple:
+    case SignatureAlgorithm::kSphincssha2192ssimple:
+    case SignatureAlgorithm::kSphincsshake192fsimple:
+    case SignatureAlgorithm::kSphincsshake192ssimple:
+      return DigestAlgorithm::Sha384;
+
+    case SignatureAlgorithm::kDilithium5:
+    case SignatureAlgorithm::kMldsa87:
+    case SignatureAlgorithm::kFalcon1024:
+    case SignatureAlgorithm::kSphincssha2256fsimple:
+    case SignatureAlgorithm::kSphincssha2256ssimple:
+    case SignatureAlgorithm::kSphincsshake256fsimple:
+    case SignatureAlgorithm::kSphincsshake256ssimple:
+      return DigestAlgorithm::Sha512;
+///// OQS_TEMPLATE_FRAGMENT_PAIR_SIGS_WITH_DIGESTS_END
 
     // It is ambiguous whether hash-matching RSASSA-PSS instantiations count as
     // using one or multiple digests, but the corresponding digest is the only

@@ -49,7 +49,6 @@ def load_config():
 config = load_config()
 
 # kems
-populate('ssl/s3_both.cc', config, '/////')
 populate('ssl/ssl_key_share.cc', config, '/////')
 populate('ssl/test/fuzzer.h', config, '/////')
 populate('ssl/test/test_config.cc', config, '/////')
@@ -65,6 +64,10 @@ populate('crypto/x509/algorithm.c', config, '/////')
 populate('ssl/ssl_privkey.cc', config, '/////')
 populate('include/openssl/evp.h', config, '/////')
 populate('crypto/obj/obj_xref.c', config, '/////')
+populate('pki/signature_algorithm.cc', config, '/////')
+populate('pki/signature_algorithm.h', config, '/////')
+populate('pki/simple_path_builder_delegate.cc', config, '/////')
+populate('pki/verify_signed_data.cc', config, '/////')
 
 # both
 populate('crypto/obj/objects.txt', config, '#####')

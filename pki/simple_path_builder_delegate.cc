@@ -77,6 +77,28 @@ bool SimplePathBuilderDelegate::IsSignatureAlgorithmAcceptable(
     case SignatureAlgorithm::kEcdsaSha256:
     case SignatureAlgorithm::kEcdsaSha384:
     case SignatureAlgorithm::kEcdsaSha512:
+///// OQS_TEMPLATE_FRAGMENT_LIST_SIGS_START
+    case SignatureAlgorithm::kDilithium2:
+    case SignatureAlgorithm::kDilithium3:
+    case SignatureAlgorithm::kDilithium5:
+    case SignatureAlgorithm::kMldsa44:
+    case SignatureAlgorithm::kMldsa65:
+    case SignatureAlgorithm::kMldsa87:
+    case SignatureAlgorithm::kFalcon512:
+    case SignatureAlgorithm::kFalcon1024:
+    case SignatureAlgorithm::kSphincssha2128fsimple:
+    case SignatureAlgorithm::kSphincssha2128ssimple:
+    case SignatureAlgorithm::kSphincssha2192fsimple:
+    case SignatureAlgorithm::kSphincssha2192ssimple:
+    case SignatureAlgorithm::kSphincssha2256fsimple:
+    case SignatureAlgorithm::kSphincssha2256ssimple:
+    case SignatureAlgorithm::kSphincsshake128fsimple:
+    case SignatureAlgorithm::kSphincsshake128ssimple:
+    case SignatureAlgorithm::kSphincsshake192fsimple:
+    case SignatureAlgorithm::kSphincsshake192ssimple:
+    case SignatureAlgorithm::kSphincsshake256fsimple:
+    case SignatureAlgorithm::kSphincsshake256ssimple:
+///// OQS_TEMPLATE_FRAGMENT_LIST_SIGS_END
     case SignatureAlgorithm::kRsaPssSha256:
     case SignatureAlgorithm::kRsaPssSha384:
     case SignatureAlgorithm::kRsaPssSha512:
@@ -120,6 +142,10 @@ bool SimplePathBuilderDelegate::IsPublicKeyAcceptable(EVP_PKEY *public_key,
       return false;
     }
 
+    return true;
+  }
+
+  if (IS_OQS_PKEY(pkey_id)) {
     return true;
   }
 

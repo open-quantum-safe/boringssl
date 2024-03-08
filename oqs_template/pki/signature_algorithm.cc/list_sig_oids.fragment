@@ -1,0 +1,4 @@
+{% for sig in config['sigs'] %}
+const uint8_t kOid{{ sig['name']|capitalize }}[] = {% raw %}{{% endraw %}{{ sig['oid_encoded']|lower }}{% raw %}}{% endraw %};
+{%- endfor %}
+

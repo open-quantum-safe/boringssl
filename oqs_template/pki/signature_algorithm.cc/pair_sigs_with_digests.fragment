@@ -1,0 +1,25 @@
+{%- set Sha256Sigs = [] %}
+{%- set Sha384Sigs = [] %}
+{%- set Sha512Sigs = [] %}
+{%- for sig in config['sigs'] %}
+{%- if sig['claimed_security_level'] == '1' or sig['claimed_security_level'] == '2' %}
+{%- set _tmp = Sha256Sigs.append( sig['name'] ) %}
+{%- elif sig['claimed_security_level'] == '3' or sig['claimed_security_level'] == '4' %}
+{%- set _tmp = Sha384Sigs.append( sig['name'] ) %}
+{%- else %}{# claimed_security_level == '5' #}
+{%- set _tmp = Sha512Sigs.append( sig['name'] ) %}
+{%- endif %}
+{%- endfor %}
+{%- for sig in Sha256Sigs %}
+    case SignatureAlgorithm::k{{ sig|capitalize }}:
+{%- endfor %}
+      return DigestAlgorithm::Sha256;
+{% for sig in Sha384Sigs %}
+    case SignatureAlgorithm::k{{ sig|capitalize }}:
+{%- endfor %}
+      return DigestAlgorithm::Sha384;
+{% for sig in Sha512Sigs %}
+    case SignatureAlgorithm::k{{ sig|capitalize }}:
+{%- endfor %}
+      return DigestAlgorithm::Sha512;
+
