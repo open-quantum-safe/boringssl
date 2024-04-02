@@ -4340,12 +4340,12 @@ extern "C" {
 #define SN_falcon512 "falcon512"
 #define LN_falcon512 "falcon512"
 #define NID_falcon512 1145
-#define OBJ_falcon512 1L, 3L, 9999L, 3L, 6L
+#define OBJ_falcon512 1L, 3L, 9999L, 3L, 11L
 
 #define SN_falcon1024 "falcon1024"
 #define LN_falcon1024 "falcon1024"
 #define NID_falcon1024 1146
-#define OBJ_falcon1024 1L, 3L, 9999L, 3L, 9L
+#define OBJ_falcon1024 1L, 3L, 9999L, 3L, 14L
 
 #define SN_dilithium5 "dilithium5"
 #define LN_dilithium5 "dilithium5"
@@ -4477,6 +4477,16 @@ extern "C" {
 #define LN_mldsa87 "mldsa87"
 #define NID_mldsa87 1242
 #define OBJ_mldsa87 1L, 3L, 6L, 1L, 4L, 1L, 2L, 267L, 12L, 8L, 7L
+
+#define SN_falconpadded512 "falconpadded512"
+#define LN_falconpadded512 "falconpadded512"
+#define NID_falconpadded512 1243
+#define OBJ_falconpadded512 1L, 3L, 9999L, 3L, 16L
+
+#define SN_falconpadded1024 "falconpadded1024"
+#define LN_falconpadded1024 "falconpadded1024"
+#define NID_falconpadded1024 1244
+#define OBJ_falconpadded1024 1L, 3L, 9999L, 3L, 19L
 
 
 #if defined(__cplusplus)

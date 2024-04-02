@@ -85,7 +85,9 @@ bool SimplePathBuilderDelegate::IsSignatureAlgorithmAcceptable(
     case SignatureAlgorithm::kMldsa65:
     case SignatureAlgorithm::kMldsa87:
     case SignatureAlgorithm::kFalcon512:
+    case SignatureAlgorithm::kFalconpadded512:
     case SignatureAlgorithm::kFalcon1024:
+    case SignatureAlgorithm::kFalconpadded1024:
     case SignatureAlgorithm::kSphincssha2128fsimple:
     case SignatureAlgorithm::kSphincssha2128ssimple:
     case SignatureAlgorithm::kSphincssha2192fsimple:

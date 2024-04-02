@@ -238,8 +238,12 @@ static const EVP_PKEY_ASN1_METHOD *evp_pkey_asn1_find(int nid) {
       return &mldsa87_asn1_meth;
     case EVP_PKEY_FALCON512:
       return &falcon512_asn1_meth;
+    case EVP_PKEY_FALCONPADDED512:
+      return &falconpadded512_asn1_meth;
     case EVP_PKEY_FALCON1024:
       return &falcon1024_asn1_meth;
+    case EVP_PKEY_FALCONPADDED1024:
+      return &falconpadded1024_asn1_meth;
     case EVP_PKEY_SPHINCSSHA2128FSIMPLE:
       return &sphincssha2128fsimple_asn1_meth;
     case EVP_PKEY_SPHINCSSHA2128SSIMPLE:

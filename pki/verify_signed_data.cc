@@ -238,10 +238,20 @@ bool VerifySignedData(SignatureAlgorithm algorithm, der::Input signed_data,
       digest = EVP_sha256();
       cache_algorithm_name = "Falcon512";
       break;
+    case SignatureAlgorithm::kFalconpadded512:
+      expected_pkey_id = EVP_PKEY_FALCONPADDED512;
+      digest = EVP_sha256();
+      cache_algorithm_name = "Falconpadded512";
+      break;
     case SignatureAlgorithm::kFalcon1024:
       expected_pkey_id = EVP_PKEY_FALCON1024;
       digest = EVP_sha512();
       cache_algorithm_name = "Falcon1024";
+      break;
+    case SignatureAlgorithm::kFalconpadded1024:
+      expected_pkey_id = EVP_PKEY_FALCONPADDED1024;
+      digest = EVP_sha512();
+      cache_algorithm_name = "Falconpadded1024";
       break;
     case SignatureAlgorithm::kSphincssha2128fsimple:
       expected_pkey_id = EVP_PKEY_SPHINCSSHA2128FSIMPLE;

@@ -5466,8 +5466,12 @@ TEST(SSLTest, SignatureAlgorithmProperties) {
             SSL_get_signature_algorithm_key_type(SSL_SIGN_MLDSA87));
   EXPECT_EQ(EVP_PKEY_FALCON512,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_FALCON512));
+  EXPECT_EQ(EVP_PKEY_FALCONPADDED512,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_FALCONPADDED512));
   EXPECT_EQ(EVP_PKEY_FALCON1024,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_FALCON1024));
+  EXPECT_EQ(EVP_PKEY_FALCONPADDED1024,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_FALCONPADDED1024));
   EXPECT_EQ(EVP_PKEY_SPHINCSSHA2128FSIMPLE,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHA2128FSIMPLE));
   EXPECT_EQ(EVP_PKEY_SPHINCSSHA2128SSIMPLE,
@@ -5825,7 +5829,9 @@ TEST(SSLTest, SigAlgs) {
       {{NID_sha384, EVP_PKEY_MLDSA65}, true, {SSL_SIGN_MLDSA65}},
       {{NID_sha512, EVP_PKEY_MLDSA87}, true, {SSL_SIGN_MLDSA87}},
       {{NID_sha256, EVP_PKEY_FALCON512}, true, {SSL_SIGN_FALCON512}},
+      {{NID_sha256, EVP_PKEY_FALCONPADDED512}, true, {SSL_SIGN_FALCONPADDED512}},
       {{NID_sha512, EVP_PKEY_FALCON1024}, true, {SSL_SIGN_FALCON1024}},
+      {{NID_sha512, EVP_PKEY_FALCONPADDED1024}, true, {SSL_SIGN_FALCONPADDED1024}},
       {{NID_sha256, EVP_PKEY_SPHINCSSHA2128FSIMPLE}, true, {SSL_SIGN_SPHINCSSHA2128FSIMPLE}},
       {{NID_sha256, EVP_PKEY_SPHINCSSHA2128SSIMPLE}, true, {SSL_SIGN_SPHINCSSHA2128SSIMPLE}},
       {{NID_sha384, EVP_PKEY_SPHINCSSHA2192FSIMPLE}, true, {SSL_SIGN_SPHINCSSHA2192FSIMPLE}},
@@ -5903,7 +5909,9 @@ TEST(SSLTest, SigAlgsList) {
       {"mldsa65", true, {SSL_SIGN_MLDSA65}},
       {"mldsa87", true, {SSL_SIGN_MLDSA87}},
       {"falcon512", true, {SSL_SIGN_FALCON512}},
+      {"falconpadded512", true, {SSL_SIGN_FALCONPADDED512}},
       {"falcon1024", true, {SSL_SIGN_FALCON1024}},
+      {"falconpadded1024", true, {SSL_SIGN_FALCONPADDED1024}},
       {"sphincssha2128fsimple", true, {SSL_SIGN_SPHINCSSHA2128FSIMPLE}},
       {"sphincssha2128ssimple", true, {SSL_SIGN_SPHINCSSHA2128SSIMPLE}},
       {"sphincssha2192fsimple", true, {SSL_SIGN_SPHINCSSHA2192FSIMPLE}},
@@ -8379,7 +8387,9 @@ INSTANTIATE_TEST_SUITE_P(WithSignatureNIDs, OQSHandshakeTest,
                             NID_mldsa65,
                             NID_mldsa87,
                             NID_falcon512,
+                            NID_falconpadded512,
                             NID_falcon1024,
+                            NID_falconpadded1024,
                             NID_sphincssha2128fsimple,
                             NID_sphincssha2128ssimple,
                             NID_sphincssha2192fsimple,
