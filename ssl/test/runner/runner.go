@@ -8537,8 +8537,13 @@ func addExtensionTests() {
 		name:     "ClientHelloPadding",
 		config: Config{
 			Bugs: ProtocolBugs{
-				// OQS note: the clienthello size of SSL_GROUP_X25519_FRODO640AES is 10026
-				RequireClientHelloSize: 10026,
+				// OQS note: The size of the ClientHello message depends on the supported
+				// signature algorithms and default key exchange algorithms.
+				// Whenever the signature algorithms or default key exchange algorithms are updated,
+				// the ClientHello size needs to be recalculated.
+				// The calculation method can be found here:
+				// https://github.com/open-quantum-safe/boringssl/pull/100#issuecomment-1592853839
+				RequireClientHelloSize: 10030,
 			},
 		},
 		// This hostname just needs to be long enough to push the

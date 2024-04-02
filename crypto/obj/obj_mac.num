@@ -1013,3 +1013,5 @@ p521_mlkem1024		1239
 mldsa44		1240
 mldsa65		1241
 mldsa87		1242
+falconpadded512		1243
+falconpadded1024		1244
