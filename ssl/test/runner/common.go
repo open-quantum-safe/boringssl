@@ -16,7 +16,6 @@ import (
 	"io"
 	"math/big"
 	"os"
-	"strings"
 	"sync"
 	"time"
 
@@ -113,7 +112,7 @@ const (
 	extensionPadding                    uint16 = 21
 	extensionExtendedMasterSecret       uint16 = 23
 	extensionCompressedCertAlgs         uint16 = 27
-	extensionDelegatedCredentials       uint16 = 34
+	extensionDelegatedCredential        uint16 = 34
 	extensionSessionTicket              uint16 = 35
 	extensionPreSharedKey               uint16 = 41
 	extensionEarlyData                  uint16 = 42
@@ -269,6 +268,7 @@ type ConnectionState struct {
 	NegotiatedProtocolFromALPN bool                  // protocol negotiated with ALPN
 	ServerName                 string                // server name requested by client, if any (server side only)
 	PeerCertificates           []*x509.Certificate   // certificate chain presented by remote peer
+	PeerDelegatedCredential    []byte                // delegated credential presented by remote peer
 	VerifiedChains             [][]*x509.Certificate // verified chains built from PeerCertificates
 	OCSPResponse               []byte                // stapled OCSP response from the peer, if any
 	ChannelID                  *ecdsa.PublicKey      // the channel ID for this connection
@@ -309,7 +309,8 @@ type ClientSessionState struct {
 	secret                      []byte              // Secret associated with the session
 	handshakeHash               []byte              // Handshake hash for Channel ID purposes.
 	serverCertificates          []*x509.Certificate // Certificate chain presented by the server
-	extendedMasterSecret        bool                // Whether an extended master secret was used to generate the session
+	serverDelegatedCredential   []byte
+	extendedMasterSecret        bool // Whether an extended master secret was used to generate the session
 	sctList                     []byte
 	ocspResponse                []byte
 	earlyALPN                   string
@@ -442,18 +443,9 @@ type Config struct {
 	// If Time is nil, TLS uses time.Now.
 	Time func() time.Time
 
-	// Chains contains one or more certificate chains
-	// to present to the other side of the connection.
-	// Server configurations must include at least one certificate.
-	Chains []CertificateChain
-
-	// NameToChain maps from a certificate name to an element of
-	// Chains. Note that a certificate name can be of the form
-	// '*.example.com' and so doesn't have to be a domain name as such.
-	// See Config.BuildNameToCertificate
-	// The nil value causes the first element of Chains to be used
-	// for all connections.
-	NameToChain map[string]*CertificateChain
+	// Credential contains the credential to present to the other side of
+	// the connection. Server configurations must include this field.
+	Credential *Credential
 
 	// RootCAs defines the set of root certificate authorities
 	// that clients use when verifying server certificates.
@@ -593,13 +585,14 @@ type Config struct {
 	// protection profiles to offer in DTLS-SRTP.
 	SRTPProtectionProfiles []uint16
 
-	// SignSignatureAlgorithms, if not nil, overrides the default set of
-	// supported signature algorithms to sign with.
-	SignSignatureAlgorithms []signatureAlgorithm
-
 	// VerifySignatureAlgorithms, if not nil, overrides the default set of
 	// supported signature algorithms that are accepted.
 	VerifySignatureAlgorithms []signatureAlgorithm
+
+	// DelegatedCredentialAlgorithms, if not empty, is the set of signature
+	// algorithms allowed for the delegated credential key. If empty, delegated
+	// credentials are disabled.
+	DelegatedCredentialAlgorithms []signatureAlgorithm
 
 	// QUICTransportParams, if not empty, will be sent in the QUIC
 	// transport parameters extension.
@@ -1187,10 +1180,10 @@ type ProtocolBugs struct {
 	// RSA_EXPORT) in the plain RSA key exchange.
 	RSAEphemeralKey bool
 
-	// SRTPMasterKeyIdentifer, if not empty, is the SRTP MKI value that the
+	// SRTPMasterKeyIdentifier, if not empty, is the SRTP MKI value that the
 	// client offers when negotiating SRTP. MKI support is still missing so
 	// the peer must still send none.
-	SRTPMasterKeyIdentifer string
+	SRTPMasterKeyIdentifier string
 
 	// SendSRTPProtectionProfile, if non-zero, is the SRTP profile that the
 	// server sends in the ServerHello instead of the negotiated one.
@@ -1847,7 +1840,7 @@ type ProtocolBugs struct {
 
 	// RenegotiationCertificate, if not nil, is the certificate to use on
 	// renegotiation handshakes.
-	RenegotiationCertificate *CertificateChain
+	RenegotiationCertificate *Credential
 
 	// ExpectNoCertificateAuthoritiesExtension, if true, causes the client to
 	// reject CertificateRequest with the CertificateAuthorities extension.
@@ -1953,18 +1946,6 @@ type ProtocolBugs struct {
 	// ExpectKeyShares, if not nil, lists (in order) the curves that a ClientHello
 	// should have key shares for.
 	ExpectedKeyShares []CurveID
-
-	// ExpectDelegatedCredentials, if true, requires that the handshake present
-	// delegated credentials.
-	ExpectDelegatedCredentials bool
-
-	// FailIfDelegatedCredentials, if true, causes a handshake failure if the
-	// server returns delegated credentials.
-	FailIfDelegatedCredentials bool
-
-	// DisableDelegatedCredentials, if true, disables client support for delegated
-	// credentials.
-	DisableDelegatedCredentials bool
 
 	// CompatModeWithQUIC, if true, enables TLS 1.3 compatibility mode
 	// when running over QUIC.
@@ -2134,46 +2115,6 @@ func (c *Config) supportedVersions(isDTLS, requireTLS13 bool) []uint16 {
 	return ret
 }
 
-// getCertificateForName returns the best certificate for the given name,
-// defaulting to the first element of c.Chains if there are no good
-// options.
-func (c *Config) getCertificateForName(name string) *CertificateChain {
-	if len(c.Chains) == 1 || c.NameToChain == nil {
-		// There's only one choice, so no point doing any work.
-		return &c.Chains[0]
-	}
-
-	name = strings.ToLower(name)
-	for len(name) > 0 && name[len(name)-1] == '.' {
-		name = name[:len(name)-1]
-	}
-
-	if cert, ok := c.NameToChain[name]; ok {
-		return cert
-	}
-
-	// try replacing labels in the name with wildcards until we get a
-	// match.
-	labels := strings.Split(name, ".")
-	for i := range labels {
-		labels[i] = "*"
-		candidate := strings.Join(labels, ".")
-		if cert, ok := c.NameToChain[candidate]; ok {
-			return cert
-		}
-	}
-
-	// If nothing matches, return the first certificate.
-	return &c.Chains[0]
-}
-
-func (c *Config) signSignatureAlgorithms() []signatureAlgorithm {
-	if c != nil && c.SignSignatureAlgorithms != nil {
-		return c.SignSignatureAlgorithms
-	}
-	return supportedSignatureAlgorithms
-}
-
 func (c *Config) verifySignatureAlgorithms() []signatureAlgorithm {
 	if c != nil && c.VerifySignatureAlgorithms != nil {
 		return c.VerifySignatureAlgorithms
@@ -2181,28 +2122,18 @@ func (c *Config) verifySignatureAlgorithms() []signatureAlgorithm {
 	return supportedSignatureAlgorithms
 }
 
-// BuildNameToCertificate parses c.Chains and builds c.NameToCertificate
-// from the CommonName and SubjectAlternateName fields of each of the leaf
-// certificates.
-func (c *Config) BuildNameToCertificate() {
-	c.NameToChain = make(map[string]*CertificateChain)
-	for i := range c.Chains {
-		cert := &c.Chains[i]
-		x509Cert, err := x509.ParseCertificate(cert.Certificate[0])
-		if err != nil {
-			continue
-		}
-		if len(x509Cert.Subject.CommonName) > 0 {
-			c.NameToChain[x509Cert.Subject.CommonName] = cert
-		}
-		for _, san := range x509Cert.DNSNames {
-			c.NameToChain[san] = cert
-		}
-	}
-}
+type CredentialType int
 
-// A CertificateChain is a chain of one or more certificates, leaf first.
-type CertificateChain struct {
+const (
+	CredentialTypeX509 CredentialType = iota
+	CredentialTypeDelegated
+)
+
+// A Credential is a certificate chain and private key that a TLS endpoint may
+// use to authenticate.
+type Credential struct {
+	Type CredentialType
+	// Certificate is a chain of one or more certificates, leaf first.
 	Certificate [][]byte
 	PrivateKey  crypto.PrivateKey // supported types: *rsa.PrivateKey, *ecdsa.PrivateKey
 	// OCSPStaple contains an optional OCSP response which will be served
@@ -2212,11 +2143,17 @@ type CertificateChain struct {
 	// SignedCertificateTimestampList structure which will be
 	// served to clients that request it.
 	SignedCertificateTimestampList []byte
+	// SignatureAlgorithms, if not nil, overrides the default set of
+	// supported signature algorithms to sign with.
+	SignatureAlgorithms []signatureAlgorithm
 	// Leaf is the parsed form of the leaf certificate, which may be
 	// initialized using x509.ParseCertificate to reduce per-handshake
 	// processing for TLS clients doing client authentication. If nil, the
 	// leaf certificate will be parsed as needed.
 	Leaf *x509.Certificate
+	// DelegatedCredential is the delegated credential to use
+	// with the certificate.
+	DelegatedCredential []byte
 	// ChainPath is the path to the temporary on disk copy of the certificate
 	// chain.
 	ChainPath string
@@ -2226,6 +2163,34 @@ type CertificateChain struct {
 	// certificate chain. If the chain only contains one certificate ChainPath
 	// and RootPath will be the same.
 	RootPath string
+	// SignSignatureAlgorithms, if not nil, overrides the default set of
+	// supported signature algorithms to sign with.
+	SignSignatureAlgorithms []signatureAlgorithm
+}
+
+func (c *Credential) WithSignatureAlgorithms(sigAlgs ...signatureAlgorithm) *Credential {
+	ret := *c
+	ret.SignatureAlgorithms = sigAlgs
+	return &ret
+}
+
+func (c *Credential) WithOCSP(ocsp []byte) *Credential {
+	ret := *c
+	ret.OCSPStaple = ocsp
+	return &ret
+}
+
+func (c *Credential) WithSCTList(sctList []byte) *Credential {
+	ret := *c
+	ret.SignedCertificateTimestampList = sctList
+	return &ret
+}
+
+func (c *Credential) signatureAlgorithms() []signatureAlgorithm {
+	if c != nil && c.SignatureAlgorithms != nil {
+		return c.SignatureAlgorithms
+	}
+	return supportedSignatureAlgorithms
 }
 
 // A TLS record.
@@ -2402,15 +2367,6 @@ func unexpectedMessageError(wanted, got any) error {
 	return fmt.Errorf("tls: received unexpected handshake message of type %T when waiting for %T", got, wanted)
 }
 
-func isSupportedSignatureAlgorithm(sigAlg signatureAlgorithm, sigAlgs []signatureAlgorithm) bool {
-	for _, s := range sigAlgs {
-		if s == sigAlg {
-			return true
-		}
-	}
-	return false
-}
-
 var (
 	// See RFC 8446, section 4.1.3.
 	downgradeTLS13 = []byte{0x44, 0x4f, 0x57, 0x4e, 0x47, 0x52, 0x44, 0x01}
@@ -2455,18 +2411,16 @@ var baseCertTemplate = &x509.Certificate{
 
 var tmpDir string
 
-func generateSingleCertChain(template *x509.Certificate, key crypto.Signer, ocspStaple, sctList []byte) CertificateChain {
-	cert := generateTestCert(template, nil, key, ocspStaple, sctList)
+func generateSingleCertChain(template *x509.Certificate, key crypto.Signer) Credential {
+	cert := generateTestCert(template, nil, key)
 	tmpCertPath, tmpKeyPath := writeTempCertFile([]*x509.Certificate{cert}), writeTempKeyFile(key)
-	return CertificateChain{
-		Certificate:                    [][]byte{cert.Raw},
-		PrivateKey:                     key,
-		OCSPStaple:                     ocspStaple,
-		SignedCertificateTimestampList: sctList,
-		Leaf:                           cert,
-		ChainPath:                      tmpCertPath,
-		KeyPath:                        tmpKeyPath,
-		RootPath:                       tmpCertPath,
+	return Credential{
+		Certificate: [][]byte{cert.Raw},
+		PrivateKey:  key,
+		Leaf:        cert,
+		ChainPath:   tmpCertPath,
+		KeyPath:     tmpKeyPath,
+		RootPath:    tmpCertPath,
 	}
 }
 
@@ -2506,7 +2460,7 @@ func writeTempKeyFile(privKey crypto.Signer) string {
 	return tmpKeyPath
 }
 
-func generateTestCert(template, issuer *x509.Certificate, key crypto.Signer, ocspStaple, sctList []byte) *x509.Certificate {
+func generateTestCert(template, issuer *x509.Certificate, key crypto.Signer) *x509.Certificate {
 	if template == nil {
 		template = baseCertTemplate
 	}

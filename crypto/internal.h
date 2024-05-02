@@ -271,8 +271,20 @@ typedef __uint128_t uint128_t;
 // should be called in between independent tests, at a point where failure from
 // a previous test will not impact subsequent ones.
 OPENSSL_EXPORT void OPENSSL_reset_malloc_counter_for_testing(void);
+
+// OPENSSL_disable_malloc_failures_for_testing, when malloc testing is enabled,
+// disables simulated malloc failures. Calls to |OPENSSL_malloc| will not
+// increment the malloc counter or synthesize failures. This may be used to skip
+// simulating malloc failures in some region of code.
+OPENSSL_EXPORT void OPENSSL_disable_malloc_failures_for_testing(void);
+
+// OPENSSL_enable_malloc_failures_for_testing, when malloc testing is enabled,
+// re-enables simulated malloc failures.
+OPENSSL_EXPORT void OPENSSL_enable_malloc_failures_for_testing(void);
 #else
 OPENSSL_INLINE void OPENSSL_reset_malloc_counter_for_testing(void) {}
+OPENSSL_INLINE void OPENSSL_disable_malloc_failures_for_testing(void) {}
+OPENSSL_INLINE void OPENSSL_enable_malloc_failures_for_testing(void) {}
 #endif
 
 #if defined(__has_builtin)
@@ -597,6 +609,12 @@ static inline int constant_time_declassify_int(int v) {
   return value_barrier_u32(v);
 }
 
+// declassify_assert behaves like |assert| but declassifies the result of
+// evaluating |expr|. This allows the assertion to branch on the (presumably
+// public) result, but still ensures that values leading up to the computation
+// were secret.
+#define declassify_assert(expr) assert(constant_time_declassify_int(expr))
+
 
 // Thread-safe initialisation.
 
@@ -893,14 +911,12 @@ typedef struct {
 #define CRYPTO_EX_DATA_CLASS_INIT_WITH_APP_DATA \
     {CRYPTO_MUTEX_INIT, NULL, NULL, 0, 1}
 
-// CRYPTO_get_ex_new_index allocates a new index for |ex_data_class| and writes
-// it to |*out_index|. Each class of object should provide a wrapper function
-// that uses the correct |CRYPTO_EX_DATA_CLASS|. It returns one on success and
-// zero otherwise.
-OPENSSL_EXPORT int CRYPTO_get_ex_new_index(CRYPTO_EX_DATA_CLASS *ex_data_class,
-                                           int *out_index, long argl,
-                                           void *argp,
-                                           CRYPTO_EX_free *free_func);
+// CRYPTO_get_ex_new_index_ex allocates a new index for |ex_data_class|. Each
+// class of object should provide a wrapper function that uses the correct
+// |CRYPTO_EX_DATA_CLASS|. It returns the new index on success and -1 on error.
+OPENSSL_EXPORT int CRYPTO_get_ex_new_index_ex(
+    CRYPTO_EX_DATA_CLASS *ex_data_class, long argl, void *argp,
+    CRYPTO_EX_free *free_func);
 
 // CRYPTO_set_ex_data sets an extra data pointer on a given object. Each class
 // of object should provide a wrapper function.
@@ -1170,13 +1186,13 @@ static inline uint64_t CRYPTO_rotr_u64(uint64_t value, int shift) {
 
 static inline uint32_t CRYPTO_addc_u32(uint32_t x, uint32_t y, uint32_t carry,
                                        uint32_t *out_carry) {
-  assert(carry <= 1);
+  declassify_assert(carry <= 1);
   return CRYPTO_GENERIC_ADDC(x, y, carry, out_carry);
 }
 
 static inline uint64_t CRYPTO_addc_u64(uint64_t x, uint64_t y, uint64_t carry,
                                        uint64_t *out_carry) {
-  assert(carry <= 1);
+  declassify_assert(carry <= 1);
   return CRYPTO_GENERIC_ADDC(x, y, carry, out_carry);
 }
 
@@ -1184,7 +1200,7 @@ static inline uint64_t CRYPTO_addc_u64(uint64_t x, uint64_t y, uint64_t carry,
 
 static inline uint32_t CRYPTO_addc_u32(uint32_t x, uint32_t y, uint32_t carry,
                                        uint32_t *out_carry) {
-  assert(carry <= 1);
+  declassify_assert(carry <= 1);
   uint64_t ret = carry;
   ret += (uint64_t)x + y;
   *out_carry = (uint32_t)(ret >> 32);
@@ -1193,7 +1209,7 @@ static inline uint32_t CRYPTO_addc_u32(uint32_t x, uint32_t y, uint32_t carry,
 
 static inline uint64_t CRYPTO_addc_u64(uint64_t x, uint64_t y, uint64_t carry,
                                        uint64_t *out_carry) {
-  assert(carry <= 1);
+  declassify_assert(carry <= 1);
 #if defined(BORINGSSL_HAS_UINT128)
   uint128_t ret = carry;
   ret += (uint128_t)x + y;
@@ -1222,13 +1238,13 @@ static inline uint64_t CRYPTO_addc_u64(uint64_t x, uint64_t y, uint64_t carry,
 
 static inline uint32_t CRYPTO_subc_u32(uint32_t x, uint32_t y, uint32_t borrow,
                                        uint32_t *out_borrow) {
-  assert(borrow <= 1);
+  declassify_assert(borrow <= 1);
   return CRYPTO_GENERIC_SUBC(x, y, borrow, out_borrow);
 }
 
 static inline uint64_t CRYPTO_subc_u64(uint64_t x, uint64_t y, uint64_t borrow,
                                        uint64_t *out_borrow) {
-  assert(borrow <= 1);
+  declassify_assert(borrow <= 1);
   return CRYPTO_GENERIC_SUBC(x, y, borrow, out_borrow);
 }
 
@@ -1236,7 +1252,7 @@ static inline uint64_t CRYPTO_subc_u64(uint64_t x, uint64_t y, uint64_t borrow,
 
 static inline uint32_t CRYPTO_subc_u32(uint32_t x, uint32_t y, uint32_t borrow,
                                        uint32_t *out_borrow) {
-  assert(borrow <= 1);
+  declassify_assert(borrow <= 1);
   uint32_t ret = x - y - borrow;
   *out_borrow = (x < y) | ((x == y) & borrow);
   return ret;
@@ -1244,7 +1260,7 @@ static inline uint32_t CRYPTO_subc_u32(uint32_t x, uint32_t y, uint32_t borrow,
 
 static inline uint64_t CRYPTO_subc_u64(uint64_t x, uint64_t y, uint64_t borrow,
                                        uint64_t *out_borrow) {
-  assert(borrow <= 1);
+  declassify_assert(borrow <= 1);
   uint64_t ret = x - y - borrow;
   *out_borrow = (x < y) | ((x == y) & borrow);
   return ret;
@@ -1436,7 +1452,7 @@ OPENSSL_INLINE int CRYPTO_is_RDRAND_capable(void) {
 // See Intel manual, volume 2A, table 3-8.
 
 OPENSSL_INLINE int CRYPTO_is_BMI1_capable(void) {
-#if defined(__BMI1__)
+#if defined(__BMI__)
   return 1;
 #else
   return (OPENSSL_get_ia32cap(2) & (1u << 3)) != 0;
