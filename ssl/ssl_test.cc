@@ -23,6 +23,7 @@
 #include <utility>
 #include <vector>
 
+#include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 #include <openssl/aead.h>
@@ -59,6 +60,9 @@ OPENSSL_MSVC_PRAGMA(warning(pop))
 #include <thread>
 #endif
 
+
+using testing::ElementsAre;
+using testing::Key;
 
 BSSL_NAMESPACE_BEGIN
 
@@ -1038,6 +1042,35 @@ static bool DecodeBase64(std::vector<uint8_t> *out, const char *in) {
   return true;
 }
 
+static bool DecodeLowerHex(std::vector<uint8_t> *out,
+                           bssl::Span<const char> in) {
+  if (in.size() % 2 != 0) {
+    return false;
+  }
+  out->resize(in.size() / 2);
+  for (size_t i = 0; i < out->size(); i++) {
+    char hi = in[2 * i], lo = in[2 * i + 1];
+    uint8_t b = 0;
+    if ('0' <= hi && hi <= '9') {
+      b |= hi - '0';
+    } else if ('a' <= hi && hi <= 'f') {
+      b |= hi - 'a' + 10;
+    } else {
+      return false;
+    }
+    b <<= 4;
+    if ('0' <= lo && lo <= '9') {
+      b |= lo - '0';
+    } else if ('a' <= lo && lo <= 'f') {
+      b |= lo - 'a' + 10;
+    } else {
+      return false;
+    }
+    (*out)[i] = b;
+  }
+  return true;
+}
+
 TEST(SSLTest, SessionEncoding) {
   for (const char *input_b64 : {
            kOpenSSLSession,
@@ -1454,6 +1487,34 @@ static bssl::UniquePtr<EVP_PKEY> KeyFromPEM(const char *pem) {
       PEM_read_bio_PrivateKey(bio.get(), nullptr, nullptr, nullptr));
 }
 
+static bssl::UniquePtr<CRYPTO_BUFFER> BufferFromPEM(const char *pem) {
+  bssl::UniquePtr<BIO> bio(BIO_new_mem_buf(pem, strlen(pem)));
+  char *name, *header;
+  uint8_t *data;
+  long data_len;
+  if (!PEM_read_bio(bio.get(), &name, &header, &data,
+                    &data_len)) {
+    return nullptr;
+  }
+  OPENSSL_free(name);
+  OPENSSL_free(header);
+
+  auto ret = bssl::UniquePtr<CRYPTO_BUFFER>(
+      CRYPTO_BUFFER_new(data, data_len, nullptr));
+  OPENSSL_free(data);
+  return ret;
+}
+
+static bssl::UniquePtr<X509> X509FromBuffer(
+    bssl::UniquePtr<CRYPTO_BUFFER> buffer) {
+  if (!buffer) {
+    return nullptr;
+  }
+  const uint8_t *derp = CRYPTO_BUFFER_data(buffer.get());
+  return bssl::UniquePtr<X509>(
+      d2i_X509(NULL, &derp, CRYPTO_BUFFER_len(buffer.get())));
+}
+
 static bssl::UniquePtr<X509> GetTestCertificate() {
   static const char kCertPEM[] =
       "-----BEGIN CERTIFICATE-----\n"
@@ -1507,7 +1568,7 @@ static bssl::UniquePtr<SSL_CTX> CreateContextWithTestCertificate(
   return ctx;
 }
 
-static bssl::UniquePtr<X509> GetECDSATestCertificate() {
+static bssl::UniquePtr<CRYPTO_BUFFER> GetECDSATestCertificateBuffer() {
   static const char kCertPEM[] =
       "-----BEGIN CERTIFICATE-----\n"
       "MIIBzzCCAXagAwIBAgIJANlMBNpJfb/rMAkGByqGSM49BAEwRTELMAkGA1UEBhMC\n"
@@ -1521,8 +1582,13 @@ static bssl::UniquePtr<X509> GetECDSATestCertificate() {
       "BgcqhkjOPQQBA0gAMEUCIQDyoDVeUTo2w4J5m+4nUIWOcAZ0lVfSKXQA9L4Vh13E\n"
       "BwIgfB55FGohg/B6dGh5XxSZmmi08cueFV7mHzJSYV51yRQ=\n"
       "-----END CERTIFICATE-----\n";
-  return CertFromPEM(kCertPEM);
+  return BufferFromPEM(kCertPEM);
 }
+
+static bssl::UniquePtr<X509> GetECDSATestCertificate() {
+  return X509FromBuffer(GetECDSATestCertificateBuffer());
+}
+
 
 static bssl::UniquePtr<EVP_PKEY> GetECDSATestKey() {
   static const char kKeyPEM[] =
@@ -1532,24 +1598,6 @@ static bssl::UniquePtr<EVP_PKEY> GetECDSATestKey() {
       "Rvvdqakendy6WgHn1peoChj5w8SjHlbifINI2xYaHPUdfvGULUvPciLB\n"
       "-----END PRIVATE KEY-----\n";
   return KeyFromPEM(kKeyPEM);
-}
-
-static bssl::UniquePtr<CRYPTO_BUFFER> BufferFromPEM(const char *pem) {
-  bssl::UniquePtr<BIO> bio(BIO_new_mem_buf(pem, strlen(pem)));
-  char *name, *header;
-  uint8_t *data;
-  long data_len;
-  if (!PEM_read_bio(bio.get(), &name, &header, &data,
-                    &data_len)) {
-    return nullptr;
-  }
-  OPENSSL_free(name);
-  OPENSSL_free(header);
-
-  auto ret = bssl::UniquePtr<CRYPTO_BUFFER>(
-      CRYPTO_BUFFER_new(data, data_len, nullptr));
-  OPENSSL_free(data);
-  return ret;
 }
 
 static bssl::UniquePtr<CRYPTO_BUFFER> GetChainTestCertificateBuffer() {
@@ -1573,16 +1621,6 @@ static bssl::UniquePtr<CRYPTO_BUFFER> GetChainTestCertificateBuffer() {
       "1ngWZ7Ih\n"
       "-----END CERTIFICATE-----\n";
   return BufferFromPEM(kCertPEM);
-}
-
-static bssl::UniquePtr<X509> X509FromBuffer(
-    bssl::UniquePtr<CRYPTO_BUFFER> buffer) {
-  if (!buffer) {
-    return nullptr;
-  }
-  const uint8_t *derp = CRYPTO_BUFFER_data(buffer.get());
-  return bssl::UniquePtr<X509>(
-      d2i_X509(NULL, &derp, CRYPTO_BUFFER_len(buffer.get())));
 }
 
 static bssl::UniquePtr<X509> GetChainTestCertificate() {
@@ -4191,7 +4229,7 @@ TEST_P(SSLVersionTest, SSLClearFailsWithShedding) {
   ASSERT_FALSE(SSL_clear(server_.get()));
 }
 
-static bool ChainsEqual(STACK_OF(X509) * chain,
+static bool ChainsEqual(const STACK_OF(X509) *chain,
                         const std::vector<X509 *> &expected) {
   if (sk_X509_num(chain) != expected.size()) {
     return false;
@@ -4199,6 +4237,24 @@ static bool ChainsEqual(STACK_OF(X509) * chain,
 
   for (size_t i = 0; i < expected.size(); i++) {
     if (X509_cmp(sk_X509_value(chain, i), expected[i]) != 0) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+static bool BuffersEqual(const STACK_OF(CRYPTO_BUFFER) *chain,
+                         const std::vector<CRYPTO_BUFFER *> &expected) {
+  if (sk_CRYPTO_BUFFER_num(chain) != expected.size()) {
+    return false;
+  }
+
+  for (size_t i = 0; i < expected.size(); i++) {
+    const CRYPTO_BUFFER *buf = sk_CRYPTO_BUFFER_value(chain, i);
+    if (Bytes(CRYPTO_BUFFER_data(buf), CRYPTO_BUFFER_len(buf)) !=
+        Bytes(CRYPTO_BUFFER_data(expected[i]),
+              CRYPTO_BUFFER_len(expected[i]))) {
       return false;
     }
   }
@@ -4772,6 +4828,133 @@ TEST(SSLTest, OverrideCertAndKey) {
 
   ASSERT_TRUE(SSL_CTX_use_certificate(ctx.get(), leaf2.get()));
   ASSERT_TRUE(SSL_CTX_use_PrivateKey(ctx.get(), key2.get()));
+}
+
+TEST(SSLTest, OverrideKeyMethodWithKey) {
+  // Make an SSL_PRIVATE_KEY_METHOD that should never be called.
+  static const SSL_PRIVATE_KEY_METHOD kErrorMethod = {
+      [](SSL *ssl, uint8_t *out, size_t *out_len, size_t max_out,
+         uint16_t signature_algorithm, const uint8_t *in,
+         size_t in_len) { return ssl_private_key_failure; },
+      [](SSL *ssl, uint8_t *out, size_t *out_len, size_t max_out,
+         const uint8_t *in, size_t in_len) { return ssl_private_key_failure; },
+      [](SSL *ssl, uint8_t *out, size_t *out_len, size_t max_oun) {
+        return ssl_private_key_failure;
+      },
+  };
+
+  bssl::UniquePtr<EVP_PKEY> key = GetTestKey();
+  ASSERT_TRUE(key);
+  bssl::UniquePtr<X509> leaf = GetTestCertificate();
+  ASSERT_TRUE(leaf);
+
+  bssl::UniquePtr<SSL_CTX> ctx(SSL_CTX_new(TLS_method()));
+  ASSERT_TRUE(ctx);
+  ASSERT_TRUE(SSL_CTX_use_certificate(ctx.get(), leaf.get()));
+
+  // Configuring an |SSL_PRIVATE_KEY_METHOD| and then overwriting it with an
+  // |EVP_PKEY| should clear the |SSL_PRIVATE_KEY_METHOD|.
+  SSL_CTX_set_private_key_method(ctx.get(), &kErrorMethod);
+  ASSERT_TRUE(SSL_CTX_use_PrivateKey(ctx.get(), key.get()));
+
+  bssl::UniquePtr<SSL> client, server;
+  ASSERT_TRUE(ConnectClientAndServer(&client, &server, ctx.get(), ctx.get()));
+}
+
+// Configuring a chain and then overwriting it with a different chain should
+// clear the old one.
+TEST(SSLTest, OverrideChain) {
+  bssl::UniquePtr<EVP_PKEY> key = GetChainTestKey();
+  ASSERT_TRUE(key);
+  bssl::UniquePtr<X509> leaf = GetChainTestCertificate();
+  ASSERT_TRUE(leaf);
+  bssl::UniquePtr<X509> ca = GetChainTestIntermediate();
+  ASSERT_TRUE(ca);
+
+  bssl::UniquePtr<STACK_OF(X509)> chain(sk_X509_new_null());
+  ASSERT_TRUE(chain);
+  ASSERT_TRUE(bssl::PushToStack(chain.get(), bssl::UpRef(ca)));
+
+  bssl::UniquePtr<STACK_OF(X509)> wrong_chain(sk_X509_new_null());
+  ASSERT_TRUE(wrong_chain);
+  ASSERT_TRUE(bssl::PushToStack(wrong_chain.get(), bssl::UpRef(leaf)));
+  ASSERT_TRUE(bssl::PushToStack(wrong_chain.get(), bssl::UpRef(leaf)));
+
+  bssl::UniquePtr<SSL_CTX> ctx(SSL_CTX_new(TLS_method()));
+  ASSERT_TRUE(ctx);
+  ASSERT_TRUE(SSL_CTX_use_certificate(ctx.get(), leaf.get()));
+  ASSERT_TRUE(SSL_CTX_use_PrivateKey(ctx.get(), key.get()));
+
+  // Configure one chain, then replace it with another. Note this API considers
+  // the chain to exclude the leaf.
+  ASSERT_TRUE(SSL_CTX_set1_chain(ctx.get(), wrong_chain.get()));
+  ASSERT_TRUE(SSL_CTX_set1_chain(ctx.get(), chain.get()));
+
+  bssl::UniquePtr<SSL> client, server;
+  ASSERT_TRUE(ConnectClientAndServer(&client, &server, ctx.get(), ctx.get()));
+  EXPECT_TRUE(ChainsEqual(SSL_get_peer_full_cert_chain(client.get()),
+                          {leaf.get(), ca.get()}));
+}
+
+TEST(SSLTest, OverrideChainAndKey) {
+  bssl::UniquePtr<EVP_PKEY> key1 = GetChainTestKey();
+  ASSERT_TRUE(key1);
+  bssl::UniquePtr<CRYPTO_BUFFER> leaf1 = GetChainTestCertificateBuffer();
+  ASSERT_TRUE(leaf1);
+  bssl::UniquePtr<CRYPTO_BUFFER> ca1 = GetChainTestIntermediateBuffer();
+  ASSERT_TRUE(ca1);
+  bssl::UniquePtr<EVP_PKEY> key2 = GetECDSATestKey();
+  ASSERT_TRUE(key2);
+  bssl::UniquePtr<CRYPTO_BUFFER> leaf2 = GetECDSATestCertificateBuffer();
+  ASSERT_TRUE(leaf2);
+
+  bssl::UniquePtr<SSL_CTX> ctx(SSL_CTX_new(TLS_method()));
+  ASSERT_TRUE(ctx);
+
+  // Configure one cert and key pair, then replace it with noather.
+  std::vector<CRYPTO_BUFFER *> certs = {leaf1.get(), ca1.get()};
+  ASSERT_TRUE(SSL_CTX_set_chain_and_key(ctx.get(), certs.data(), certs.size(),
+                                        key1.get(), nullptr));
+  certs = {leaf2.get()};
+  ASSERT_TRUE(SSL_CTX_set_chain_and_key(ctx.get(), certs.data(), certs.size(),
+                                        key2.get(), nullptr));
+
+  bssl::UniquePtr<SSL> client, server;
+  ASSERT_TRUE(ConnectClientAndServer(&client, &server, ctx.get(), ctx.get()));
+  EXPECT_TRUE(
+      BuffersEqual(SSL_get0_peer_certificates(client.get()), {leaf2.get()}));
+}
+
+TEST(SSLTest, OverrideCredentialChain) {
+  bssl::UniquePtr<EVP_PKEY> key = GetChainTestKey();
+  ASSERT_TRUE(key);
+  bssl::UniquePtr<CRYPTO_BUFFER> leaf = GetChainTestCertificateBuffer();
+  ASSERT_TRUE(leaf);
+  bssl::UniquePtr<CRYPTO_BUFFER> ca = GetChainTestIntermediateBuffer();
+  ASSERT_TRUE(ca);
+
+  std::vector<CRYPTO_BUFFER *> chain = {leaf.get(), ca.get()};
+  std::vector<CRYPTO_BUFFER *> wrong_chain = {leaf.get(), leaf.get(),
+                                              leaf.get()};
+
+  bssl::UniquePtr<SSL_CTX> ctx(SSL_CTX_new(TLS_method()));
+  ASSERT_TRUE(ctx);
+  bssl::UniquePtr<SSL_CREDENTIAL> cred(SSL_CREDENTIAL_new_x509());
+  ASSERT_TRUE(cred);
+
+  // Configure one chain (including the leaf), then replace it with another.
+  ASSERT_TRUE(SSL_CREDENTIAL_set1_cert_chain(cred.get(), wrong_chain.data(),
+                                             wrong_chain.size()));
+  ASSERT_TRUE(
+      SSL_CREDENTIAL_set1_cert_chain(cred.get(), chain.data(), chain.size()));
+
+  ASSERT_TRUE(SSL_CREDENTIAL_set1_private_key(cred.get(), key.get()));
+  ASSERT_TRUE(SSL_CTX_add1_credential(ctx.get(), cred.get()));
+
+  bssl::UniquePtr<SSL> client, server;
+  ASSERT_TRUE(ConnectClientAndServer(&client, &server, ctx.get(), ctx.get()));
+  EXPECT_TRUE(BuffersEqual(SSL_get0_peer_certificates(client.get()),
+                           {leaf.get(), ca.get()}));
 }
 
 TEST(SSLTest, SetChainAndKeyCtx) {
@@ -5866,7 +6049,7 @@ TEST(SSLTest, SigAlgs) {
       continue;
     }
 
-    ExpectSigAlgsEqual(test.expected, ctx->cert->sigalgs);
+    ExpectSigAlgsEqual(test.expected, ctx->cert->default_credential->sigalgs);
   }
 }
 
@@ -5948,7 +6131,7 @@ TEST(SSLTest, SigAlgsList) {
       continue;
     }
 
-    ExpectSigAlgsEqual(test.expected, ctx->cert->sigalgs);
+    ExpectSigAlgsEqual(test.expected, ctx->cert->default_credential->sigalgs);
   }
 }
 
@@ -9606,6 +9789,81 @@ TEST_P(SSLVersionTest, NoCertOrKey) {
       }
     }
   }
+}
+
+TEST_P(SSLVersionTest, KeyLog) {
+  using KeyLog = std::map<std::string, std::vector<uint8_t>>;
+  KeyLog client_log, server_log;
+
+  SSL_CTX_set_app_data(client_ctx_.get(), &client_log);
+  SSL_CTX_set_app_data(server_ctx_.get(), &server_log);
+
+  auto keylog_callback = [](const SSL *ssl, const char *line) {
+    SSL_CTX *ctx = SSL_get_SSL_CTX(ssl);
+    KeyLog *log = static_cast<KeyLog *>(SSL_CTX_get_app_data(ctx));
+    ASSERT_TRUE(log);
+
+    const char *space1 = strchr(line, ' ');
+    ASSERT_TRUE(space1);
+    std::string name(line, space1 - line);
+    space1++;
+    const char *space2 = strchr(space1, ' ');
+    ASSERT_TRUE(space2);
+    bssl::Span<const char> client_random_hex(space1, space2 - space1);
+    space2++;
+    bssl::Span<const char> secret_hex(space2, strlen(space2));
+
+    std::vector<uint8_t> client_random, secret;
+    ASSERT_TRUE(DecodeLowerHex(&client_random, client_random_hex));
+    ASSERT_TRUE(DecodeLowerHex(&secret, secret_hex));
+
+    // The client_random field identifies the connection. Check it matches
+    // the connection.
+    uint8_t expected_random[SSL3_RANDOM_SIZE];
+    ASSERT_EQ(
+        sizeof(expected_random),
+        SSL_get_client_random(ssl, expected_random, sizeof(expected_random)));
+    ASSERT_EQ(Bytes(expected_random), Bytes(client_random));
+
+    ASSERT_EQ(log->count(name), 0u) << "duplicate name " << name;
+    log->emplace(std::move(name), std::move(secret));
+  };
+  SSL_CTX_set_keylog_callback(client_ctx_.get(), keylog_callback);
+  SSL_CTX_set_keylog_callback(server_ctx_.get(), keylog_callback);
+
+  // Connect and capture the various secrets.
+  ASSERT_TRUE(Connect());
+
+  // Check that we logged the secrets we expected to log.
+  if (version() == TLS1_3_VERSION) {
+    EXPECT_THAT(client_log, ElementsAre(Key("CLIENT_HANDSHAKE_TRAFFIC_SECRET"),
+                                        Key("CLIENT_TRAFFIC_SECRET_0"),
+                                        Key("EXPORTER_SECRET"),
+                                        Key("SERVER_HANDSHAKE_TRAFFIC_SECRET"),
+                                        Key("SERVER_TRAFFIC_SECRET_0")));
+
+    // Ideally we'd check the other values, but those are harder to check
+    // without actually decrypting the records.
+    Span<const uint8_t> read_secret, write_secret;
+    ASSERT_TRUE(bssl::SSL_get_traffic_secrets(client_.get(), &read_secret,
+                                              &write_secret));
+    EXPECT_EQ(Bytes(read_secret), Bytes(client_log["SERVER_TRAFFIC_SECRET_0"]));
+    EXPECT_EQ(Bytes(write_secret),
+              Bytes(client_log["CLIENT_TRAFFIC_SECRET_0"]));
+  } else {
+    EXPECT_THAT(client_log, ElementsAre(Key("CLIENT_RANDOM")));
+
+    size_t len =
+        SSL_SESSION_get_master_key(SSL_get0_session(client_.get()), nullptr, 0);
+    std::vector<uint8_t> expected(len);
+    ASSERT_EQ(SSL_SESSION_get_master_key(SSL_get0_session(client_.get()),
+                                         expected.data(), expected.size()),
+              expected.size());
+    EXPECT_EQ(Bytes(expected), Bytes(client_log["CLIENT_RANDOM"]));
+  }
+
+  // The server should have logged the same secrets as the client.
+  EXPECT_EQ(client_log, server_log);
 }
 
 }  // namespace

@@ -218,6 +218,7 @@ OPENSSL_EXPORT int EVP_PKEY_CTX_ctrl(EVP_PKEY_CTX *ctx, int keytype, int optype,
 #define EVP_PKEY_CTRL_HKDF_KEY (EVP_PKEY_ALG_CTRL + 16)
 #define EVP_PKEY_CTRL_HKDF_SALT (EVP_PKEY_ALG_CTRL + 17)
 #define EVP_PKEY_CTRL_HKDF_INFO (EVP_PKEY_ALG_CTRL + 18)
+#define EVP_PKEY_CTRL_DH_PAD (EVP_PKEY_ALG_CTRL + 19)
 
 struct evp_pkey_ctx_st {
   // Method associated with this operation
@@ -300,13 +301,14 @@ extern const EVP_PKEY_ASN1_METHOD ec_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD rsa_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD ed25519_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD x25519_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD dh_asn1_meth;
 ///// OQS_TEMPLATE_FRAGMENT_DECLARE_ASN1_METHS_START
-extern const EVP_PKEY_ASN1_METHOD dilithium2_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD dilithium3_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD dilithium5_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD mldsa44_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD mldsa65_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD mldsa87_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD dilithium2_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD dilithium3_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD dilithium5_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD falcon512_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD falconpadded512_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD falcon1024_asn1_meth;
@@ -330,13 +332,14 @@ extern const EVP_PKEY_METHOD ec_pkey_meth;
 extern const EVP_PKEY_METHOD ed25519_pkey_meth;
 extern const EVP_PKEY_METHOD x25519_pkey_meth;
 extern const EVP_PKEY_METHOD hkdf_pkey_meth;
+extern const EVP_PKEY_METHOD dh_pkey_meth;
 ///// OQS_TEMPLATE_FRAGMENT_DECLARE_PKEY_METHS_START
-extern const EVP_PKEY_METHOD dilithium2_pkey_meth;
-extern const EVP_PKEY_METHOD dilithium3_pkey_meth;
-extern const EVP_PKEY_METHOD dilithium5_pkey_meth;
 extern const EVP_PKEY_METHOD mldsa44_pkey_meth;
 extern const EVP_PKEY_METHOD mldsa65_pkey_meth;
 extern const EVP_PKEY_METHOD mldsa87_pkey_meth;
+extern const EVP_PKEY_METHOD dilithium2_pkey_meth;
+extern const EVP_PKEY_METHOD dilithium3_pkey_meth;
+extern const EVP_PKEY_METHOD dilithium5_pkey_meth;
 extern const EVP_PKEY_METHOD falcon512_pkey_meth;
 extern const EVP_PKEY_METHOD falconpadded512_pkey_meth;
 extern const EVP_PKEY_METHOD falcon1024_pkey_meth;
@@ -354,6 +357,11 @@ extern const EVP_PKEY_METHOD sphincsshake192ssimple_pkey_meth;
 extern const EVP_PKEY_METHOD sphincsshake256fsimple_pkey_meth;
 extern const EVP_PKEY_METHOD sphincsshake256ssimple_pkey_meth;
 ///// OQS_TEMPLATE_FRAGMENT_DECLARE_PKEY_METHS_END
+
+// evp_pkey_set_method behaves like |EVP_PKEY_set_type|, but takes a pointer to
+// a method table. This avoids depending on every |EVP_PKEY_ASN1_METHOD|.
+void evp_pkey_set_method(EVP_PKEY *pkey, const EVP_PKEY_ASN1_METHOD *method);
+
 
 #if defined(__cplusplus)
 }  // extern C

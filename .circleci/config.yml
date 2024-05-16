@@ -19,7 +19,7 @@ localCheckout: &localCheckout
 
 jobs:
   ubuntu_build:
-    description: A template for running BoringSSL tests on x64 Ubuntu Bionic Docker VMs
+    description: A template for running BoringSSL tests on x64 Ubuntu Docker VMs
     parameters:
       LIBOQS_SHARED:
         description: "Build liboqs as a shared library."
@@ -30,7 +30,7 @@ jobs:
         type: boolean
         default: false
     docker:
-      - image: openquantumsafe/ci-ubuntu-focal-x86_64:latest
+      - image: openquantumsafe/ci-ubuntu-latest
         auth:
           username: $DOCKER_LOGIN
           password: $DOCKER_PASSWORD

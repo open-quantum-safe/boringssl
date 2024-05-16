@@ -279,17 +279,21 @@ ssl_open_record_t ssl_open_app_data(SSL *ssl, Span<uint8_t> *out,
   return ret;
 }
 
-static bool cbb_add_hex(CBB *cbb, Span<const uint8_t> in) {
-  static const char hextable[] = "0123456789abcdef";
-  uint8_t *out;
+static uint8_t hex_char_consttime(uint8_t b) {
+  declassify_assert(b < 16);
+  return constant_time_select_8(constant_time_lt_8(b, 10), b + '0',
+                                b - 10 + 'a');
+}
 
-  if (!CBB_add_space(cbb, &out, in.size() * 2)) {
+static bool cbb_add_hex_consttime(CBB *cbb, Span<const uint8_t> in) {
+  uint8_t *out;
+if (!CBB_add_space(cbb, &out, in.size() * 2)) {
     return false;
   }
 
   for (uint8_t b : in) {
-    *(out++) = (uint8_t)hextable[b >> 4];
-    *(out++) = (uint8_t)hextable[b & 0xf];
+    *(out++) = hex_char_consttime(b >> 4);
+    *(out++) = hex_char_consttime(b & 0xf);
   }
 
   return true;
@@ -308,9 +312,11 @@ bool ssl_log_secret(const SSL *ssl, const char *label,
       !CBB_add_bytes(cbb.get(), reinterpret_cast<const uint8_t *>(label),
                      strlen(label)) ||
       !CBB_add_u8(cbb.get(), ' ') ||
-      !cbb_add_hex(cbb.get(), ssl->s3->client_random) ||
+      !cbb_add_hex_consttime(cbb.get(), ssl->s3->client_random) ||
       !CBB_add_u8(cbb.get(), ' ') ||
-      !cbb_add_hex(cbb.get(), secret) ||
+      // Convert to hex in constant time to avoid leaking |secret|. If the
+      // callback discards the data, we should not introduce side channels.
+      !cbb_add_hex_consttime(cbb.get(), secret) ||
       !CBB_add_u8(cbb.get(), 0 /* NUL */) ||
       !CBBFinishArray(cbb.get(), &line)) {
     return false;
@@ -570,9 +576,10 @@ SSL_CTX *SSL_CTX_new(const SSL_METHOD *method) {
   ret->cert = MakeUnique<CERT>(method->x509_method);
   ret->sessions = lh_SSL_SESSION_new(ssl_session_hash, ssl_session_cmp);
   ret->client_CA.reset(sk_CRYPTO_BUFFER_new_null());
-  if (ret->cert == nullptr ||
-      ret->sessions == nullptr ||
-      ret->client_CA == nullptr ||
+  if (ret->cert == nullptr ||       //
+      !ret->cert->is_valid() ||     //
+      ret->sessions == nullptr ||   //
+      ret->client_CA == nullptr ||  //
       !ret->x509_method->ssl_ctx_new(ret.get())) {
     return nullptr;
   }
@@ -705,7 +712,9 @@ SSL_CONFIG::SSL_CONFIG(SSL *ssl_arg)
       jdk11_workaround(false),
       quic_use_legacy_codepoint(false),
       permute_extensions(false),
-      alps_use_new_codepoint(false) {
+      alps_use_new_codepoint(false),
+      check_client_certificate_type(true),
+      check_ecdsa_curve(true) {
   assert(ssl);
 }
 
@@ -1724,15 +1733,15 @@ int SSL_has_pending(const SSL *ssl) {
   return SSL_pending(ssl) != 0 || !ssl->s3->read_buffer.empty();
 }
 
-static bool has_cert_and_key(const CERT *cert) {
-  // TODO(davidben): If |cert->key_method| is set, that should be fine too.
-  if (cert->privatekey == nullptr) {
+static bool has_cert_and_key(const SSL_CREDENTIAL *cred) {
+  // TODO(davidben): If |cred->key_method| is set, that should be fine too.
+  if (cred->privkey == nullptr) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_NO_PRIVATE_KEY_ASSIGNED);
     return false;
   }
 
-  if (cert->chain == nullptr ||
-      sk_CRYPTO_BUFFER_value(cert->chain.get(), 0) == nullptr) {
+  if (cred->chain == nullptr ||
+      sk_CRYPTO_BUFFER_value(cred->chain.get(), 0) == nullptr) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_NO_CERTIFICATE_ASSIGNED);
     return false;
   }
@@ -1743,7 +1752,7 @@ static bool has_cert_and_key(const CERT *cert) {
 int SSL_CTX_check_private_key(const SSL_CTX *ctx) {
   // There is no need to actually check consistency because inconsistent values
   // can never be configured.
-  return has_cert_and_key(ctx->cert.get());
+  return has_cert_and_key(ctx->cert->default_credential.get());
 }
 
 int SSL_check_private_key(const SSL *ssl) {
@@ -1753,7 +1762,7 @@ int SSL_check_private_key(const SSL *ssl) {
 
   // There is no need to actually check consistency because inconsistent values
   // can never be configured.
-  return has_cert_and_key(ssl->config->cert.get());
+  return has_cert_and_key(ssl->config->cert->default_credential.get());
 }
 
 long SSL_get_default_timeout(const SSL *ssl) {
@@ -2530,11 +2539,11 @@ EVP_PKEY *SSL_get_privatekey(const SSL *ssl) {
     assert(ssl->config);
     return nullptr;
   }
-  return ssl->config->cert->privatekey.get();
+  return ssl->config->cert->default_credential->privkey.get();
 }
 
 EVP_PKEY *SSL_CTX_get0_privatekey(const SSL_CTX *ctx) {
-  return ctx->cert->privatekey.get();
+  return ctx->cert->default_credential->privkey.get();
 }
 
 const SSL_CIPHER *SSL_get_current_cipher(const SSL *ssl) {
@@ -2671,12 +2680,8 @@ int SSL_set_quic_method(SSL *ssl, const SSL_QUIC_METHOD *quic_method) {
 
 int SSL_get_ex_new_index(long argl, void *argp, CRYPTO_EX_unused *unused,
                          CRYPTO_EX_dup *dup_unused, CRYPTO_EX_free *free_func) {
-  int index;
-  if (!CRYPTO_get_ex_new_index(&g_ex_data_class_ssl, &index, argl, argp,
-                               free_func)) {
-    return -1;
-  }
-  return index;
+  return CRYPTO_get_ex_new_index_ex(&g_ex_data_class_ssl, argl, argp,
+                                    free_func);
 }
 
 int SSL_set_ex_data(SSL *ssl, int idx, void *data) {
@@ -2690,12 +2695,8 @@ void *SSL_get_ex_data(const SSL *ssl, int idx) {
 int SSL_CTX_get_ex_new_index(long argl, void *argp, CRYPTO_EX_unused *unused,
                              CRYPTO_EX_dup *dup_unused,
                              CRYPTO_EX_free *free_func) {
-  int index;
-  if (!CRYPTO_get_ex_new_index(&g_ex_data_class_ssl_ctx, &index, argl, argp,
-                               free_func)) {
-    return -1;
-  }
-  return index;
+  return CRYPTO_get_ex_new_index_ex(&g_ex_data_class_ssl_ctx, argl, argp,
+                                 free_func);
 }
 
 int SSL_CTX_set_ex_data(SSL_CTX *ctx, int idx, void *data) {
@@ -3047,6 +3048,20 @@ void SSL_set_jdk11_workaround(SSL *ssl, int enable) {
     return;
   }
   ssl->config->jdk11_workaround = !!enable;
+}
+
+void SSL_set_check_client_certificate_type(SSL *ssl, int enable) {
+  if (!ssl->config) {
+    return;
+  }
+  ssl->config->check_client_certificate_type = !!enable;
+}
+
+void SSL_set_check_ecdsa_curve(SSL *ssl, int enable) {
+  if (!ssl->config) {
+    return;
+  }
+  ssl->config->check_ecdsa_curve = !!enable;
 }
 
 void SSL_set_quic_use_legacy_codepoint(SSL *ssl, int use_legacy) {

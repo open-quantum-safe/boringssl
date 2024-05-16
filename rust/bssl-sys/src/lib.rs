@@ -7,7 +7,13 @@ use core::ffi::c_ulong;
 // Wrap the bindgen output in a module and re-export it, so we can override it
 // as needed.
 mod bindgen {
+    #[cfg(not(soong))]
     include!(env!("BINDGEN_RS_FILE"));
+    // Soong, Android's build tool, does not support configuring environment
+    // variables like other Rust build systems too. However, it does support
+    // some hardcoded behavior with the OUT_DIR variable.
+    #[cfg(soong)]
+    include!(concat!(env!("OUT_DIR"), "/bssl_sys_bindings.rs"));
 }
 pub use bindgen::*;
 
@@ -42,22 +48,11 @@ pub const XN_FLAG_ONELINE: c_ulong = bindgen::XN_FLAG_ONELINE as c_ulong;
 
 // TODO(crbug.com/boringssl/596): Remove these wrappers.
 #[cfg(unsupported_inline_wrappers)]
-pub fn ERR_GET_LIB(packed_error: u32) -> i32 {
-    // Safety: This is safe for all inputs. bindgen conservatively marks everything unsafe.
-    unsafe { ERR_GET_LIB_RUST(packed_error) }
-}
-
-#[cfg(unsupported_inline_wrappers)]
-pub fn ERR_GET_REASON(packed_error: u32) -> i32 {
-    // Safety: This is safe for all inputs. bindgen conservatively marks everything unsafe.
-    unsafe { ERR_GET_REASON_RUST(packed_error) }
-}
-
-#[cfg(unsupported_inline_wrappers)]
-pub fn ERR_GET_FUNC(packed_error: u32) -> i32 {
-    // Safety: This is safe for all inputs. bindgen conservatively marks everything unsafe.
-    unsafe { ERR_GET_FUNC_RUST(packed_error) }
-}
+pub use { ERR_GET_LIB_RUST as ERR_GET_LIB,
+          ERR_GET_REASON_RUST as ERR_GET_REASON,
+          ERR_GET_FUNC_RUST as ERR_GET_FUNC,
+          CBS_init_RUST as CBS_init,
+          CBS_len_RUST as CBS_len };
 
 pub fn init() {
     // Safety: `CRYPTO_library_init` may be called multiple times and concurrently.

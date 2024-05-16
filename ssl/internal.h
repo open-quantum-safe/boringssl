@@ -147,6 +147,7 @@
 #include <stdlib.h>
 
 #include <algorithm>
+#include <bitset>
 #include <initializer_list>
 #include <limits>
 #include <new>
@@ -227,11 +228,6 @@ template <typename T, typename... Args>
 UniquePtr<T> MakeUnique(Args &&... args) {
   return UniquePtr<T>(New<T>(std::forward<Args>(args)...));
 }
-
-// TODO(davidben): Remove these macros after April 2024, once the C++ runtime
-// dependency has stuck.
-#define HAS_VIRTUAL_DESTRUCTOR
-#define PURE_VIRTUAL = 0
 
 // Array<T> is an owning array of elements of |T|.
 template <typename T>
@@ -714,12 +710,11 @@ bool ssl_cipher_requires_server_key_exchange(const SSL_CIPHER *cipher);
 size_t ssl_cipher_get_record_split_len(const SSL_CIPHER *cipher);
 
 // ssl_choose_tls13_cipher returns an |SSL_CIPHER| corresponding with the best
-// available from |cipher_suites| compatible with |version|, |group_id|, and
-// |policy|. It returns NULL if there isn't a compatible cipher. |has_aes_hw|
-// indicates if the choice should be made as if support for AES in hardware
-// is available.
+// available from |cipher_suites| compatible with |version| and |policy|. It
+// returns NULL if there isn't a compatible cipher. |has_aes_hw| indicates if
+// the choice should be made as if support for AES in hardware is available.
 const SSL_CIPHER *ssl_choose_tls13_cipher(CBS cipher_suites, bool has_aes_hw,
-                                          uint16_t version, uint16_t group_id,
+                                          uint16_t version,
                                           enum ssl_compliance_policy_t policy);
 
 // ssl_tls13_cipher_meets_policy returns true if |cipher_id| is acceptable given
@@ -962,9 +957,9 @@ class SSLAEADContext {
 // DTLS1_BITMAP maintains a sliding window of 64 sequence numbers to detect
 // replayed packets. It should be initialized by zeroing every field.
 struct DTLS1_BITMAP {
-  // map is a bit mask of the last 64 sequence numbers. Bit
-  // |1<<i| corresponds to |max_seq_num - i|.
-  uint64_t map = 0;
+  // map is a bitset of sequence numbers that have been seen. Bit i corresponds
+  // to |max_seq_num - i|.
+  std::bitset<256> map;
   // max_seq_num is the largest sequence number seen so far as a 64-bit
   // integer.
   uint64_t max_seq_num = 0;
@@ -1080,9 +1075,6 @@ enum ssl_open_record_t ssl_process_alert(SSL *ssl, uint8_t *out_alert,
 
 // Private key operations.
 
-// ssl_has_private_key returns whether |hs| has a private key configured.
-bool ssl_has_private_key(const SSL_HANDSHAKE *hs);
-
 // ssl_private_key_* perform the corresponding operation on
 // |SSL_PRIVATE_KEY_METHOD|. If there is a custom private key configured, they
 // call the corresponding function or |complete| depending on whether there is a
@@ -1099,10 +1091,10 @@ enum ssl_private_key_result_t ssl_private_key_decrypt(SSL_HANDSHAKE *hs,
                                                       size_t max_out,
                                                       Span<const uint8_t> in);
 
-// ssl_private_key_supports_signature_algorithm returns whether |hs|'s private
-// key supports |sigalg|.
-bool ssl_private_key_supports_signature_algorithm(SSL_HANDSHAKE *hs,
-                                                  uint16_t sigalg);
+// ssl_pkey_supports_algorithm returns whether |pkey| may be used to sign
+// |sigalg|.
+bool ssl_pkey_supports_algorithm(const SSL *ssl, EVP_PKEY *pkey,
+                                 uint16_t sigalg);
 
 // ssl_public_key_verify verifies that the |signature| is valid for the public
 // key |pkey| and input |in|, using the signature algorithm |sigalg|.
@@ -1126,18 +1118,17 @@ class SSLKeyShare {
  public:
   virtual ~SSLKeyShare() {}
   static constexpr bool kAllowUniquePtr = true;
-  HAS_VIRTUAL_DESTRUCTOR
 
   // Create returns a SSLKeyShare instance for use with group |group_id| or
   // nullptr on error.
   static UniquePtr<SSLKeyShare> Create(uint16_t group_id);
 
   // GroupID returns the group ID.
-  virtual uint16_t GroupID() const PURE_VIRTUAL;
+  virtual uint16_t GroupID() const = 0;
 
   // Generate generates a keypair and writes the public key to |out_public_key|.
   // It returns true on success and false on error.
-  virtual bool Generate(CBB *out_public_key) PURE_VIRTUAL;
+  virtual bool Generate(CBB *out_public_key) = 0;
 
   // Encap generates an ephemeral, symmetric secret and encapsulates it with
   // |peer_key|. On success, it returns true, writes the encapsulated secret to
@@ -1145,13 +1136,13 @@ class SSLKeyShare {
   // it returns false and sets |*out_alert| to an alert to send to the peer.
   virtual bool Encap(CBB *out_ciphertext, Array<uint8_t> *out_secret,
                      uint8_t *out_alert,
-                     Span<const uint8_t> peer_key) PURE_VIRTUAL;
+                     Span<const uint8_t> peer_key) = 0;
 
   // Decap decapsulates the symmetric secret in |ciphertext|. On success, it
   // returns true and sets |*out_secret| to the shared secret. On failure, it
   // returns false and sets |*out_alert| to an alert to send to the peer.
   virtual bool Decap(Array<uint8_t> *out_secret, uint8_t *out_alert,
-                     Span<const uint8_t> ciphertext) PURE_VIRTUAL;
+                     Span<const uint8_t> ciphertext) = 0;
 
   // SerializePrivateKey writes the private key to |out|, returning true if
   // successful and false otherwise. It should be called after |Generate|.
@@ -1340,10 +1331,6 @@ int ssl_write_buffer_flush(SSL *ssl);
 
 // Certificate functions.
 
-// ssl_has_certificate returns whether a certificate and private key are
-// configured.
-bool ssl_has_certificate(const SSL_HANDSHAKE *hs);
-
 // ssl_parse_cert_chain parses a certificate list from |cbs| in the format used
 // by a TLS Certificate message. On success, it advances |cbs| and returns
 // true. Otherwise, it returns false and sets |*out_alert| to an alert to send
@@ -1360,11 +1347,6 @@ bool ssl_parse_cert_chain(uint8_t *out_alert,
                           UniquePtr<EVP_PKEY> *out_pubkey,
                           uint8_t *out_leaf_sha256, CBS *cbs,
                           CRYPTO_BUFFER_POOL *pool);
-
-// ssl_add_cert_chain adds |hs->ssl|'s certificate chain to |cbb| in the format
-// used by a TLS Certificate message. If there is no certificate chain, it emits
-// an empty certificate list. It returns true on success and false on error.
-bool ssl_add_cert_chain(SSL_HANDSHAKE *hs, CBB *cbb);
 
 enum ssl_key_usage_t {
   key_usage_digital_signature = 0,
@@ -1403,11 +1385,6 @@ bool ssl_add_client_CA_list(SSL_HANDSHAKE *hs, CBB *cbb);
 // an error on the error queue.
 bool ssl_check_leaf_certificate(SSL_HANDSHAKE *hs, EVP_PKEY *pkey,
                                const CRYPTO_BUFFER *leaf);
-
-// ssl_on_certificate_selected is called once the certificate has been selected.
-// It finalizes the certificate and initializes |hs->local_pubkey|. It returns
-// true on success and false on error.
-bool ssl_on_certificate_selected(SSL_HANDSHAKE *hs);
 
 
 // TLS 1.3 key derivation.
@@ -1617,40 +1594,117 @@ size_t ssl_ech_extension_body_length(const EVP_HPKE_AEAD *aead, size_t enc_len,
 bool ssl_encrypt_client_hello(SSL_HANDSHAKE *hs, Span<const uint8_t> enc);
 
 
-// Delegated credentials.
+// Credentials.
 
-// This structure stores a delegated credential (DC) as defined by RFC 9345.
-struct DC {
-  static constexpr bool kAllowUniquePtr = true;
-  ~DC();
-
-  // Dup returns a copy of this DC and takes references to |raw| and |pkey|.
-  UniquePtr<DC> Dup();
-
-  // Parse parses the delegated credential stored in |in|. If successful it
-  // returns the parsed structure, otherwise it returns |nullptr| and sets
-  // |*out_alert|.
-  static UniquePtr<DC> Parse(CRYPTO_BUFFER *in, uint8_t *out_alert);
-
-  // raw is the delegated credential encoded as specified in RFC 9345.
-  UniquePtr<CRYPTO_BUFFER> raw;
-
-  // dc_cert_verify_algorithm is the signature scheme of the DC public key.
-  uint16_t dc_cert_verify_algorithm = 0;
-
-  // pkey is the public key parsed from |public_key|.
-  UniquePtr<EVP_PKEY> pkey;
-
- private:
-  friend DC* New<DC>();
-  DC();
+enum class SSLCredentialType {
+  kX509,
+  kDelegated,
 };
 
-// ssl_signing_with_dc returns true if the peer has indicated support for
-// delegated credentials and this host has sent a delegated credential in
-// response. If this is true then we've committed to using the DC in the
-// handshake.
-bool ssl_signing_with_dc(const SSL_HANDSHAKE *hs);
+BSSL_NAMESPACE_END
+
+// SSL_CREDENTIAL is exported to C, so it must be defined outside the namespace.
+struct ssl_credential_st : public bssl::RefCounted<ssl_credential_st> {
+  explicit ssl_credential_st(bssl::SSLCredentialType type);
+  ssl_credential_st(const ssl_credential_st &) = delete;
+  ssl_credential_st &operator=(const ssl_credential_st &) = delete;
+
+  // Dup returns a copy of the credential, or nullptr on error. The |ex_data|
+  // values are not copied. This is only used on the default credential, whose
+  // |ex_data| is inaccessible.
+  bssl::UniquePtr<SSL_CREDENTIAL> Dup() const;
+
+  // ClearCertAndKey erases any certificate and private key on the credential.
+  void ClearCertAndKey();
+
+  // UsesX509 returns true if the credential type uses an X.509 certificate.
+  bool UsesX509() const;
+
+  // UsesPrivateKey returns true if the credential type uses an asymmetric
+  // private key.
+  bool UsesPrivateKey() const;
+
+  // IsComplete returns whether all required fields in the credential have been
+  // filled in.
+  bool IsComplete() const;
+
+  // SetLeafCert sets the leaf certificate to |leaf|, leaving the remaining
+  // certificates unmodified. It returns true on success and false on error. If
+  // |discard_key_on_mismatch| is true and the private key is inconsistent with
+  // the new leaf certificate, it is silently discarded.
+  bool SetLeafCert(bssl::UniquePtr<CRYPTO_BUFFER> leaf,
+                   bool discard_key_on_mismatch);
+
+  // ClearIntermediateCerts clears intermediate certificates in the certificate
+  // chain, while preserving the leaf.
+  void ClearIntermediateCerts();
+
+  // AppendIntermediateCert appends |cert| to the certificate chain. If there is
+  // no leaf certificate configured, it leaves a placeholder null in |chain|. It
+  // returns one on success and zero on error.
+  bool AppendIntermediateCert(bssl::UniquePtr<CRYPTO_BUFFER> cert);
+
+  // type is the credential type and determines which other fields apply.
+  bssl::SSLCredentialType type;
+
+  // pubkey is the cached public key of the credential. Unlike |privkey|, it is
+  // always present and is extracted from the certificate, delegated credential,
+  // etc.
+  bssl::UniquePtr<EVP_PKEY> pubkey;
+
+  // privkey is the private key of the credential. It may be omitted in favor of
+  // |key_method|.
+  bssl::UniquePtr<EVP_PKEY> privkey;
+
+  // key_method, if non-null, is a set of callbacks to call for private key
+  // operations.
+  const SSL_PRIVATE_KEY_METHOD *key_method = nullptr;
+
+  // sigalgs, if non-empty, is the set of signature algorithms supported by the
+  // private key in decreasing order of preference. If empty, the default list
+  // is used.
+  //
+  // In delegated credentials, this field is not configurable and is instead
+  // computed from the dc_cert_verify_algorithm field.
+  bssl::Array<uint16_t> sigalgs;
+
+  // chain contains the certificate chain, with the leaf at the beginning. The
+  // first element of |chain| may be nullptr to indicate that the leaf
+  // certificate has not yet been set.
+  //   If |chain| != nullptr -> len(chain) >= 1
+  //   If |chain[0]| == nullptr -> len(chain) >= 2.
+  //   |chain[1..]| != nullptr
+  bssl::UniquePtr<STACK_OF(CRYPTO_BUFFER)> chain;
+
+  // dc is the DelegatedCredential structure, if this is a delegated credential.
+  bssl::UniquePtr<CRYPTO_BUFFER> dc;
+
+  // dc_algorithm is the signature scheme of the signature over the delegated
+  // credential itself, made by the end-entity certificate's public key.
+  uint16_t dc_algorithm = 0;
+
+  // Signed certificate timestamp list to be sent to the client, if requested
+  bssl::UniquePtr<CRYPTO_BUFFER> signed_cert_timestamp_list;
+
+  // OCSP response to be sent to the client, if requested.
+  bssl::UniquePtr<CRYPTO_BUFFER> ocsp_response;
+
+  CRYPTO_EX_DATA ex_data;
+
+ private:
+  friend RefCounted;
+  ~ssl_credential_st();
+};
+
+BSSL_NAMESPACE_BEGIN
+
+// ssl_get_credential_list computes |hs|'s credential list. On success, it
+// writes it to |*out| and returns true. Otherwise, it returns false. The
+// credential list may be empty, in which case this function will successfully
+// return an empty array.
+//
+// The pointers in the result are only valid until |hs| is next mutated.
+bool ssl_get_credential_list(SSL_HANDSHAKE *hs, Array<SSL_CREDENTIAL *> *out);
 
 
 // Handshake functions.
@@ -1691,7 +1745,7 @@ enum tls12_server_hs_state_t {
   state12_start_accept = 0,
   state12_read_client_hello,
   state12_read_client_hello_after_ech,
-  state12_select_certificate,
+  state12_cert_callback,
   state12_tls13,
   state12_select_parameters,
   state12_send_server_hello,
@@ -1970,8 +2024,8 @@ struct SSL_HANDSHAKE {
   // received in a CertificateRequest message.
   Array<uint8_t> certificate_types;
 
-  // local_pubkey is the public key we are authenticating as.
-  UniquePtr<EVP_PKEY> local_pubkey;
+  // credential is the credential we are using for the handshake.
+  UniquePtr<SSL_CREDENTIAL> credential;
 
   // peer_pubkey is the public key parsed from the peer's leaf certificate.
   UniquePtr<EVP_PKEY> peer_pubkey;
@@ -2111,6 +2165,10 @@ struct SSL_HANDSHAKE {
   // early_data_written is the amount of early data that has been written by the
   // record layer.
   uint16_t early_data_written = 0;
+
+  // signature_algorithm is the signature algorithm to be used in signing with
+  // the selected credential, or zero if not applicable or not yet selected.
+  uint16_t signature_algorithm = 0;
 
   // ech_config_id is the ECH config sent by the client.
   uint8_t ech_config_id = 0;
@@ -2314,8 +2372,14 @@ enum ssl_verify_result_t ssl_reverify_peer_cert(SSL_HANDSHAKE *hs,
                                                 bool send_alert);
 
 enum ssl_hs_wait_t ssl_get_finished(SSL_HANDSHAKE *hs);
+
+// ssl_send_finished adds a Finished message to the current flight of messages.
+// It returns true on success and false on error.
 bool ssl_send_finished(SSL_HANDSHAKE *hs);
-bool ssl_output_cert_chain(SSL_HANDSHAKE *hs);
+
+// ssl_send_tls12_certificate adds a TLS 1.2 Certificate message to the current
+// flight of messages. It returns true on success and false on error.
+bool ssl_send_tls12_certificate(SSL_HANDSHAKE *hs);
 
 // ssl_handshake_session returns the |SSL_SESSION| corresponding to the current
 // handshake. Note, in TLS 1.2 resumptions, this session is immutable.
@@ -2375,18 +2439,10 @@ bool tls1_parse_peer_sigalgs(SSL_HANDSHAKE *hs, const CBS *sigalgs);
 bool tls1_get_legacy_signature_algorithm(uint16_t *out, const EVP_PKEY *pkey);
 
 // tls1_choose_signature_algorithm sets |*out| to a signature algorithm for use
-// with |hs|'s private key based on the peer's preferences and the algorithms
-// supported. It returns true on success and false on error.
-bool tls1_choose_signature_algorithm(SSL_HANDSHAKE *hs, uint16_t *out);
-
-// tls1_get_peer_verify_algorithms returns the signature schemes for which the
-// peer indicated support.
-//
-// NOTE: The related function |SSL_get0_peer_verify_algorithms| only has
-// well-defined behavior during the callbacks set by |SSL_CTX_set_cert_cb| and
-// |SSL_CTX_set_client_cert_cb|, or when the handshake is paused because of
-// them.
-Span<const uint16_t> tls1_get_peer_verify_algorithms(const SSL_HANDSHAKE *hs);
+// with |cred| based on the peer's preferences and the algorithms supported. It
+// returns true on success and false on error.
+bool tls1_choose_signature_algorithm(SSL_HANDSHAKE *hs,
+                                     const SSL_CREDENTIAL *cred, uint16_t *out);
 
 // tls12_add_verify_sigalgs adds the signature algorithms acceptable for the
 // peer signature to |out|. It returns true on success and false on error.
@@ -2414,42 +2470,36 @@ struct CERT {
   explicit CERT(const SSL_X509_METHOD *x509_method);
   ~CERT();
 
-  UniquePtr<EVP_PKEY> privatekey;
+  bool is_valid() const { return default_credential != nullptr; }
 
-  // chain contains the certificate chain, with the leaf at the beginning. The
-  // first element of |chain| may be NULL to indicate that the leaf certificate
-  // has not yet been set.
-  //   If |chain| != NULL -> len(chain) >= 1
-  //   If |chain[0]| == NULL -> len(chain) >= 2.
-  //   |chain[1..]| != NULL
-  UniquePtr<STACK_OF(CRYPTO_BUFFER)> chain;
+  // credentials is the list of credentials to select between. Elements of this
+  // array immutable.
+  GrowableArray<UniquePtr<SSL_CREDENTIAL>> credentials;
 
-  // x509_chain may contain a parsed copy of |chain[1..]|. This is only used as
-  // a cache in order to implement “get0” functions that return a non-owning
-  // pointer to the certificate chain.
-  STACK_OF(X509) *x509_chain = nullptr;
-
-  // x509_leaf may contain a parsed copy of the first element of |chain|. This
-  // is only used as a cache in order to implement “get0” functions that return
-  // a non-owning pointer to the certificate chain.
-  X509 *x509_leaf = nullptr;
-
-  // x509_stash contains the last |X509| object append to the chain. This is a
-  // workaround for some third-party code that continue to use an |X509| object
-  // even after passing ownership with an “add0” function.
-  X509 *x509_stash = nullptr;
-
-  // key_method, if non-NULL, is a set of callbacks to call for private key
-  // operations.
-  const SSL_PRIVATE_KEY_METHOD *key_method = nullptr;
+  // default_credential is the credential configured by the legacy,
+  // non-credential-based APIs. If IsComplete() returns true, it is appended to
+  // the list of credentials.
+  UniquePtr<SSL_CREDENTIAL> default_credential;
 
   // x509_method contains pointers to functions that might deal with |X509|
   // compatibility, or might be a no-op, depending on the application.
   const SSL_X509_METHOD *x509_method = nullptr;
 
-  // sigalgs, if non-empty, is the set of signature algorithms supported by
-  // |privatekey| in decreasing order of preference.
-  Array<uint16_t> sigalgs;
+  // x509_chain may contain a parsed copy of |chain[1..]| from the default
+  // credential. This is only used as a cache in order to implement “get0”
+  // functions that return a non-owning pointer to the certificate chain.
+  STACK_OF(X509) *x509_chain = nullptr;
+
+  // x509_leaf may contain a parsed copy of the first element of |chain| from
+  // the default credential. This is only used as a cache in order to implement
+  // “get0” functions that return a non-owning pointer to the certificate chain.
+  X509 *x509_leaf = nullptr;
+
+  // x509_stash contains the last |X509| object append to the default
+  // credential's chain. This is a workaround for some third-party code that
+  // continue to use an |X509| object even after passing ownership with an
+  // “add0” function.
+  X509 *x509_stash = nullptr;
 
   // Certificate setup callback: if set is called whenever a
   // certificate may be required (client or server). the callback
@@ -2464,29 +2514,10 @@ struct CERT {
   // store is used instead.
   X509_STORE *verify_store = nullptr;
 
-  // Signed certificate timestamp list to be sent to the client, if requested
-  UniquePtr<CRYPTO_BUFFER> signed_cert_timestamp_list;
-
-  // OCSP response to be sent to the client, if requested.
-  UniquePtr<CRYPTO_BUFFER> ocsp_response;
-
   // sid_ctx partitions the session space within a shared session cache or
   // ticket key. Only sessions with a matching value will be accepted.
   uint8_t sid_ctx_length = 0;
   uint8_t sid_ctx[SSL_MAX_SID_CTX_LENGTH] = {0};
-
-  // Delegated credentials.
-
-  // dc is the delegated credential to send to the peer (if requested).
-  UniquePtr<DC> dc = nullptr;
-
-  // dc_privatekey is used instead of |privatekey| or |key_method| to
-  // authenticate the host if a delegated credential is used in the handshake.
-  UniquePtr<EVP_PKEY> dc_privatekey = nullptr;
-
-  // dc_key_method, if not NULL, is used instead of |dc_privatekey| to
-  // authenticate the host.
-  const SSL_PRIVATE_KEY_METHOD *dc_key_method = nullptr;
 };
 
 // |SSL_PROTOCOL_METHOD| abstracts between TLS and DTLS.
@@ -2789,10 +2820,6 @@ struct SSL3_STATE {
 
   // session_reused indicates whether a session was resumed.
   bool session_reused : 1;
-
-  // delegated_credential_used is whether we presented a delegated credential to
-  // the peer.
-  bool delegated_credential_used : 1;
 
   bool send_connection_binding : 1;
 
@@ -3184,6 +3211,15 @@ struct SSL_CONFIG {
   // alps_use_new_codepoint if set indicates we use new ALPS extension codepoint
   // to negotiate and convey application settings.
   bool alps_use_new_codepoint : 1;
+
+  // check_client_certificate_type indicates whether the client, in TLS 1.2 and
+  // below, will check its certificate against the server's requested
+  // certificate types.
+  bool check_client_certificate_type : 1;
+
+  // check_ecdsa_curve indicates whether the server, in TLS 1.2 and below, will
+  // check its certificate against the client's supported ECDSA curves.
+  bool check_ecdsa_curve : 1;
 };
 
 // From RFC 8446, used in determining PSK modes.

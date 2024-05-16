@@ -209,6 +209,22 @@ static bool is_post_quantum_group(uint16_t id) {
     case SSL_GROUP_X25519_KYBER768_DRAFT00:
       return true;
 ///// OQS_TEMPLATE_FRAGMENT_ADD_PQ_GROUPS_START
+    case SSL_GROUP_MLKEM512:
+      return true;
+    case SSL_GROUP_P256_MLKEM512:
+      return true;
+    case SSL_GROUP_X25519_MLKEM512:
+      return true;
+    case SSL_GROUP_MLKEM768:
+      return true;
+    case SSL_GROUP_P384_MLKEM768:
+      return true;
+    case SSL_GROUP_X25519_MLKEM768:
+      return true;
+    case SSL_GROUP_MLKEM1024:
+      return true;
+    case SSL_GROUP_P521_MLKEM1024:
+      return true;
     case SSL_GROUP_FRODO640AES:
       return true;
     case SSL_GROUP_P256_FRODO640AES:
@@ -250,22 +266,6 @@ static bool is_post_quantum_group(uint16_t id) {
     case SSL_GROUP_KYBER1024:
       return true;
     case SSL_GROUP_P521_KYBER1024:
-      return true;
-    case SSL_GROUP_MLKEM512:
-      return true;
-    case SSL_GROUP_P256_MLKEM512:
-      return true;
-    case SSL_GROUP_X25519_MLKEM512:
-      return true;
-    case SSL_GROUP_MLKEM768:
-      return true;
-    case SSL_GROUP_P384_MLKEM768:
-      return true;
-    case SSL_GROUP_X25519_MLKEM768:
-      return true;
-    case SSL_GROUP_MLKEM1024:
-      return true;
-    case SSL_GROUP_P521_MLKEM1024:
       return true;
     case SSL_GROUP_BIKEL1:
       return true;
@@ -395,10 +395,10 @@ static const uint16_t kDefaultGroups[] = {
     SSL_GROUP_SECP256R1,
     SSL_GROUP_SECP384R1,
 ///// OQS_TEMPLATE_FRAGMENT_ADD_DEFAULT_KEMS_START
+    SSL_GROUP_X25519_MLKEM512,
     SSL_GROUP_X25519_FRODO640AES,
     SSL_GROUP_X25519_FRODO640SHAKE,
     SSL_GROUP_X25519_KYBER512,
-    SSL_GROUP_X25519_MLKEM512,
     SSL_GROUP_X25519_BIKEL1,
     SSL_GROUP_X25519_HQC128,
 ///// OQS_TEMPLATE_FRAGMENT_ADD_DEFAULT_KEMS_END
@@ -415,6 +415,14 @@ static const uint16_t kAllSupportedGroups[] = {
     SSL_GROUP_SECP256R1,
     SSL_GROUP_SECP384R1,
 ///// OQS_TEMPLATE_FRAGMENT_ADD_ALL_KEMS_START
+    SSL_GROUP_P256_MLKEM512,
+    SSL_GROUP_X25519_MLKEM512,
+    SSL_GROUP_MLKEM512,
+    SSL_GROUP_P384_MLKEM768,
+    SSL_GROUP_X25519_MLKEM768,
+    SSL_GROUP_MLKEM768,
+    SSL_GROUP_P521_MLKEM1024,
+    SSL_GROUP_MLKEM1024,
     SSL_GROUP_P256_FRODO640AES,
     SSL_GROUP_X25519_FRODO640AES,
     SSL_GROUP_FRODO640AES,
@@ -436,14 +444,6 @@ static const uint16_t kAllSupportedGroups[] = {
     SSL_GROUP_KYBER768,
     SSL_GROUP_P521_KYBER1024,
     SSL_GROUP_KYBER1024,
-    SSL_GROUP_P256_MLKEM512,
-    SSL_GROUP_X25519_MLKEM512,
-    SSL_GROUP_MLKEM512,
-    SSL_GROUP_P384_MLKEM768,
-    SSL_GROUP_X25519_MLKEM768,
-    SSL_GROUP_MLKEM768,
-    SSL_GROUP_P521_MLKEM1024,
-    SSL_GROUP_MLKEM1024,
     SSL_GROUP_P256_BIKEL1,
     SSL_GROUP_X25519_BIKEL1,
     SSL_GROUP_BIKEL1,
@@ -538,12 +538,12 @@ bool tls1_check_group_id(const SSL_HANDSHAKE *hs, uint16_t group_id) {
 static const uint16_t kVerifySignatureAlgorithms[] = {
     // List our preferred algorithms first.
 ///// OQS_TEMPLATE_FRAGMENT_LIST_VERIFY_SIG_ALGS_START
-    SSL_SIGN_DILITHIUM2,
-    SSL_SIGN_DILITHIUM3,
-    SSL_SIGN_DILITHIUM5,
     SSL_SIGN_MLDSA44,
     SSL_SIGN_MLDSA65,
     SSL_SIGN_MLDSA87,
+    SSL_SIGN_DILITHIUM2,
+    SSL_SIGN_DILITHIUM3,
+    SSL_SIGN_DILITHIUM5,
     SSL_SIGN_FALCON512,
     SSL_SIGN_FALCONPADDED512,
     SSL_SIGN_FALCON1024,
@@ -583,12 +583,12 @@ static const uint16_t kVerifySignatureAlgorithms[] = {
 static const uint16_t kSignSignatureAlgorithms[] = {
     // List our preferred algorithms first.
 ///// OQS_TEMPLATE_FRAGMENT_LIST_SIGN_SIG_ALGS_START
-    SSL_SIGN_DILITHIUM2,
-    SSL_SIGN_DILITHIUM3,
-    SSL_SIGN_DILITHIUM5,
     SSL_SIGN_MLDSA44,
     SSL_SIGN_MLDSA65,
     SSL_SIGN_MLDSA87,
+    SSL_SIGN_DILITHIUM2,
+    SSL_SIGN_DILITHIUM3,
+    SSL_SIGN_DILITHIUM5,
     SSL_SIGN_FALCON512,
     SSL_SIGN_FALCONPADDED512,
     SSL_SIGN_FALCON1024,
@@ -1332,9 +1332,9 @@ static bool ext_ocsp_parse_clienthello(SSL_HANDSHAKE *hs, uint8_t *out_alert,
 static bool ext_ocsp_add_serverhello(SSL_HANDSHAKE *hs, CBB *out) {
   SSL *const ssl = hs->ssl;
   if (ssl_protocol_version(ssl) >= TLS1_3_VERSION ||
-      !hs->ocsp_stapling_requested || hs->config->cert->ocsp_response == NULL ||
-      ssl->s3->session_reused ||
-      !ssl_cipher_uses_certificate_auth(hs->new_cipher)) {
+      !hs->ocsp_stapling_requested || ssl->s3->session_reused ||
+      !ssl_cipher_uses_certificate_auth(hs->new_cipher) ||
+      hs->credential->ocsp_response == nullptr) {
     return true;
   }
 
@@ -1549,21 +1549,22 @@ static bool ext_sct_parse_clienthello(SSL_HANDSHAKE *hs, uint8_t *out_alert,
 
 static bool ext_sct_add_serverhello(SSL_HANDSHAKE *hs, CBB *out) {
   SSL *const ssl = hs->ssl;
+  assert(hs->scts_requested);
   // The extension shouldn't be sent when resuming sessions.
   if (ssl_protocol_version(ssl) >= TLS1_3_VERSION || ssl->s3->session_reused ||
-      hs->config->cert->signed_cert_timestamp_list == NULL) {
+      !ssl_cipher_uses_certificate_auth(hs->new_cipher) ||
+      hs->credential->signed_cert_timestamp_list == nullptr) {
     return true;
   }
 
   CBB contents;
   return CBB_add_u16(out, TLSEXT_TYPE_certificate_timestamp) &&
          CBB_add_u16_length_prefixed(out, &contents) &&
-         CBB_add_bytes(
-             &contents,
-             CRYPTO_BUFFER_data(
-                 hs->config->cert->signed_cert_timestamp_list.get()),
-             CRYPTO_BUFFER_len(
-                 hs->config->cert->signed_cert_timestamp_list.get())) &&
+         CBB_add_bytes(&contents,
+                       CRYPTO_BUFFER_data(
+                           hs->credential->signed_cert_timestamp_list.get()),
+                       CRYPTO_BUFFER_len(
+                           hs->credential->signed_cert_timestamp_list.get())) &&
          CBB_flush(out);
 }
 
@@ -4308,84 +4309,83 @@ bool tls1_get_legacy_signature_algorithm(uint16_t *out, const EVP_PKEY *pkey) {
   }
 }
 
-bool tls1_choose_signature_algorithm(SSL_HANDSHAKE *hs, uint16_t *out) {
+bool tls1_choose_signature_algorithm(SSL_HANDSHAKE *hs,
+                                     const SSL_CREDENTIAL *cred,
+                                     uint16_t *out) {
   SSL *const ssl = hs->ssl;
-  CERT *cert = hs->config->cert.get();
-  DC *dc = cert->dc.get();
+  if (!cred->UsesPrivateKey()) {
+    OPENSSL_PUT_ERROR(SSL, SSL_R_UNKNOWN_CERTIFICATE_TYPE);
+    return false;
+  }
 
   // Before TLS 1.2, the signature algorithm isn't negotiated as part of the
   // handshake.
-  if (ssl_protocol_version(ssl) < TLS1_2_VERSION) {
-    if (!tls1_get_legacy_signature_algorithm(out, hs->local_pubkey.get())) {
+  uint16_t version = ssl_protocol_version(ssl);
+  if (version < TLS1_2_VERSION) {
+    if (!tls1_get_legacy_signature_algorithm(out, cred->pubkey.get())) {
       OPENSSL_PUT_ERROR(SSL, SSL_R_NO_COMMON_SIGNATURE_ALGORITHMS);
       return false;
     }
     return true;
   }
 
-  Span<const uint16_t> sigalgs = kSignSignatureAlgorithms;
-  if (ssl_signing_with_dc(hs)) {
-    sigalgs = MakeConstSpan(&dc->dc_cert_verify_algorithm, 1);
-  } else if (!cert->sigalgs.empty()) {
-    sigalgs = cert->sigalgs;
+  Span<const uint16_t> peer_sigalgs;
+  if (cred->type == SSLCredentialType::kDelegated) {
+    peer_sigalgs = hs->peer_delegated_credential_sigalgs;
+  } else {
+    peer_sigalgs = hs->peer_sigalgs;
+    if (peer_sigalgs.empty() && version == TLS1_2_VERSION) {
+      // If the client didn't specify any signature_algorithms extension, it is
+      // interpreted as SHA-1. See
+      // http://tools.ietf.org/html/rfc5246#section-7.4.1.4.1
+      static const uint16_t kTLS12Default[] = {SSL_SIGN_RSA_PKCS1_SHA1,
+                                               SSL_SIGN_ECDSA_SHA1,
+///// OQS_TEMPLATE_FRAGMENT_LIST_DEFAULT_SIG_ALGS_START
+                                               SSL_SIGN_MLDSA44,
+                                               SSL_SIGN_MLDSA65,
+                                               SSL_SIGN_MLDSA87,
+                                               SSL_SIGN_DILITHIUM2,
+                                               SSL_SIGN_DILITHIUM3,
+                                               SSL_SIGN_DILITHIUM5,
+                                               SSL_SIGN_FALCON512,
+                                               SSL_SIGN_FALCONPADDED512,
+                                               SSL_SIGN_FALCON1024,
+                                               SSL_SIGN_FALCONPADDED1024,
+                                               SSL_SIGN_SPHINCSSHA2128FSIMPLE,
+                                               SSL_SIGN_SPHINCSSHA2128SSIMPLE,
+                                               SSL_SIGN_SPHINCSSHA2192FSIMPLE,
+                                               SSL_SIGN_SPHINCSSHA2192SSIMPLE,
+                                               SSL_SIGN_SPHINCSSHA2256FSIMPLE,
+                                               SSL_SIGN_SPHINCSSHA2256SSIMPLE,
+                                               SSL_SIGN_SPHINCSSHAKE128FSIMPLE,
+                                               SSL_SIGN_SPHINCSSHAKE128SSIMPLE,
+                                               SSL_SIGN_SPHINCSSHAKE192FSIMPLE,
+                                               SSL_SIGN_SPHINCSSHAKE192SSIMPLE,
+                                               SSL_SIGN_SPHINCSSHAKE256FSIMPLE,
+                                               SSL_SIGN_SPHINCSSHAKE256SSIMPLE,
+///// OQS_TEMPLATE_FRAGMENT_LIST_DEFAULT_SIG_ALGS_END
+    };
+      peer_sigalgs = kTLS12Default;
+    }
   }
 
-  Span<const uint16_t> peer_sigalgs = tls1_get_peer_verify_algorithms(hs);
-
+  Span<const uint16_t> sigalgs = cred->sigalgs.empty()
+                                     ? MakeConstSpan(kSignSignatureAlgorithms)
+                                     : cred->sigalgs;
   for (uint16_t sigalg : sigalgs) {
-    if (!ssl_private_key_supports_signature_algorithm(hs, sigalg)) {
+    if (!ssl_pkey_supports_algorithm(ssl, cred->pubkey.get(), sigalg)) {
       continue;
     }
 
-    for (uint16_t peer_sigalg : peer_sigalgs) {
-      if (sigalg == peer_sigalg) {
-        *out = sigalg;
-        return true;
-      }
+    if (std::find(peer_sigalgs.begin(), peer_sigalgs.end(), sigalg) !=
+        peer_sigalgs.end()) {
+      *out = sigalg;
+      return true;
     }
   }
 
   OPENSSL_PUT_ERROR(SSL, SSL_R_NO_COMMON_SIGNATURE_ALGORITHMS);
   return false;
-}
-
-Span<const uint16_t> tls1_get_peer_verify_algorithms(const SSL_HANDSHAKE *hs) {
-  Span<const uint16_t> peer_sigalgs = hs->peer_sigalgs;
-  if (peer_sigalgs.empty() && ssl_protocol_version(hs->ssl) < TLS1_3_VERSION) {
-    // If the client didn't specify any signature_algorithms extension then
-    // we can assume that it supports SHA1. See
-    // http://tools.ietf.org/html/rfc5246#section-7.4.1.4.1
-    static const uint16_t kDefaultPeerAlgorithms[] = {
-                              SSL_SIGN_RSA_PKCS1_SHA1,
-                              SSL_SIGN_ECDSA_SHA1,
-///// OQS_TEMPLATE_FRAGMENT_LIST_DEFAULT_SIG_ALGS_START
-                              SSL_SIGN_DILITHIUM2,
-                              SSL_SIGN_DILITHIUM3,
-                              SSL_SIGN_DILITHIUM5,
-                              SSL_SIGN_MLDSA44,
-                              SSL_SIGN_MLDSA65,
-                              SSL_SIGN_MLDSA87,
-                              SSL_SIGN_FALCON512,
-                              SSL_SIGN_FALCONPADDED512,
-                              SSL_SIGN_FALCON1024,
-                              SSL_SIGN_FALCONPADDED1024,
-                              SSL_SIGN_SPHINCSSHA2128FSIMPLE,
-                              SSL_SIGN_SPHINCSSHA2128SSIMPLE,
-                              SSL_SIGN_SPHINCSSHA2192FSIMPLE,
-                              SSL_SIGN_SPHINCSSHA2192SSIMPLE,
-                              SSL_SIGN_SPHINCSSHA2256FSIMPLE,
-                              SSL_SIGN_SPHINCSSHA2256SSIMPLE,
-                              SSL_SIGN_SPHINCSSHAKE128FSIMPLE,
-                              SSL_SIGN_SPHINCSSHAKE128SSIMPLE,
-                              SSL_SIGN_SPHINCSSHAKE192FSIMPLE,
-                              SSL_SIGN_SPHINCSSHAKE192SSIMPLE,
-                              SSL_SIGN_SPHINCSSHAKE256FSIMPLE,
-                              SSL_SIGN_SPHINCSSHAKE256SSIMPLE,
-///// OQS_TEMPLATE_FRAGMENT_LIST_DEFAULT_SIG_ALGS_END
-    };
-    peer_sigalgs = kDefaultPeerAlgorithms;
-  }
-  return peer_sigalgs;
 }
 
 bool tls1_verify_channel_id(SSL_HANDSHAKE *hs, const SSLMessage &msg) {

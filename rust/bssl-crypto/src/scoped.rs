@@ -69,6 +69,9 @@ impl Drop for EcKey {
 
 /// A scoped `EVP_HPKE_CTX`.
 pub struct EvpHpkeCtx(*mut bssl_sys::EVP_HPKE_CTX);
+// bssl_sys::EVP_HPKE_CTX is heap-allocated and safe to transfer
+// between threads.
+unsafe impl Send for EvpHpkeCtx {}
 
 impl EvpHpkeCtx {
     pub fn new() -> Self {
@@ -77,6 +80,10 @@ impl EvpHpkeCtx {
         // doesn't handle.
         assert!(!ptr.is_null());
         EvpHpkeCtx(ptr)
+    }
+
+    pub fn as_ffi_ptr(&self) -> *const bssl_sys::EVP_HPKE_CTX {
+        self.0
     }
 
     pub fn as_mut_ffi_ptr(&mut self) -> *mut bssl_sys::EVP_HPKE_CTX {
@@ -91,29 +98,27 @@ impl Drop for EvpHpkeCtx {
 }
 
 /// A scoped `EVP_HPKE_KEY`.
-pub struct EvpHpkeKey(*mut bssl_sys::EVP_HPKE_KEY);
+pub struct EvpHpkeKey(bssl_sys::EVP_HPKE_KEY);
 
 impl EvpHpkeKey {
     pub fn new() -> Self {
-        let ptr = unsafe { bssl_sys::EVP_HPKE_KEY_new() };
-        // `ptr` is only NULL if we're out of memory, which this crate
-        // doesn't handle.
-        assert!(!ptr.is_null());
-        EvpHpkeKey(ptr)
+        EvpHpkeKey(unsafe { initialized_struct(|ptr| bssl_sys::EVP_HPKE_KEY_zero(ptr)) })
     }
 
-    pub fn as_ffi_ptr(&mut self) -> *const bssl_sys::EVP_HPKE_KEY {
-        self.0
+    pub fn as_ffi_ptr(&self) -> *const bssl_sys::EVP_HPKE_KEY {
+        &self.0
     }
 
     pub fn as_mut_ffi_ptr(&mut self) -> *mut bssl_sys::EVP_HPKE_KEY {
-        self.0
+        &mut self.0
     }
 }
 
 impl Drop for EvpHpkeKey {
     fn drop(&mut self) {
-        unsafe { bssl_sys::EVP_HPKE_KEY_free(self.0) }
+        // unsafe: the only way to create a `EvpHpkeKey` is via `new` and that
+        // ensures that this structure is initialized.
+        unsafe { bssl_sys::EVP_HPKE_KEY_cleanup(&mut self.0) }
     }
 }
 

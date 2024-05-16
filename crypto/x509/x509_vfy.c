@@ -117,6 +117,7 @@ static int get_crl(X509_STORE_CTX *ctx, X509_CRL **pcrl, X509 *x);
 static int crl_akid_check(X509_STORE_CTX *ctx, X509_CRL *crl, X509 **pissuer,
                           int *pcrl_score);
 static int crl_crldp_check(X509 *x, X509_CRL *crl, int crl_score);
+static int check_crl(X509_STORE_CTX *ctx, X509_CRL *crl);
 static int cert_crl(X509_STORE_CTX *ctx, X509_CRL *crl, X509 *x);
 
 static int internal_verify(X509_STORE_CTX *ctx);
@@ -769,17 +770,18 @@ static int check_cert(X509_STORE_CTX *ctx) {
   // Try to retrieve the relevant CRL. Note that |get_crl| sets
   // |current_crl_issuer| and |current_crl_score|, which |check_crl| then reads.
   //
-  // TODO(davidben): Remove these callbacks. gRPC currently sets them, but
-  // implements them incorrectly. It is not actually possible to implement
-  // |get_crl| from outside the library.
-  if (!ctx->get_crl(ctx, &crl, x)) {
+  // TODO(davidben): The awkward internal calling convention is a historical
+  // artifact of when these functions were user-overridable callbacks, even
+  // though there was no way to set them correctly. These callbacks have since
+  // been removed, so we can pass input and output parameters more directly.
+  if (!get_crl(ctx, &crl, x)) {
     ctx->error = X509_V_ERR_UNABLE_TO_GET_CRL;
     ok = call_verify_cb(0, ctx);
     goto err;
   }
 
   ctx->current_crl = crl;
-  if (!ctx->check_crl(ctx, crl) ||  //
+  if (!check_crl(ctx, crl) ||  //
       !cert_crl(ctx, crl, x)) {
     goto err;
   }
@@ -1409,14 +1411,7 @@ int X509_STORE_CTX_get_ex_new_index(long argl, void *argp,
                                     CRYPTO_EX_unused *unused,
                                     CRYPTO_EX_dup *dup_unused,
                                     CRYPTO_EX_free *free_func) {
-  // This function is (usually) called only once, by
-  // SSL_get_ex_data_X509_STORE_CTX_idx (ssl/ssl_cert.c).
-  int index;
-  if (!CRYPTO_get_ex_new_index(&g_ex_data_class, &index, argl, argp,
-                               free_func)) {
-    return -1;
-  }
-  return index;
+  return CRYPTO_get_ex_new_index_ex(&g_ex_data_class, argl, argp, free_func);
 }
 
 int X509_STORE_CTX_set_ex_data(X509_STORE_CTX *ctx, int idx, void *data) {
@@ -1565,18 +1560,6 @@ int X509_STORE_CTX_init(X509_STORE_CTX *ctx, X509_STORE *store, X509 *x509,
     ctx->verify_cb = store->verify_cb;
   } else {
     ctx->verify_cb = null_callback;
-  }
-
-  if (store->get_crl) {
-    ctx->get_crl = store->get_crl;
-  } else {
-    ctx->get_crl = get_crl;
-  }
-
-  if (store->check_crl) {
-    ctx->check_crl = store->check_crl;
-  } else {
-    ctx->check_crl = check_crl;
   }
 
   return 1;
