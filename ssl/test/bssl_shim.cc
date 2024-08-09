@@ -524,7 +524,7 @@ static bool CheckHandshakeProperties(SSL *ssl, bool is_resume,
     }
   }
 
-  if (!config->expect_next_proto.empty()) {
+  if (!config->expect_next_proto.empty() || config->expect_no_next_proto) {
     const uint8_t *next_proto;
     unsigned next_proto_len;
     SSL_get0_next_proto_negotiated(ssl, &next_proto, &next_proto_len);
@@ -1264,7 +1264,8 @@ static bool DoExchange(bssl::UniquePtr<SSL_SESSION> *out_session,
     return false;
   }
 
-  if (GetProtocolVersion(ssl) >= TLS1_3_VERSION && !config->is_server) {
+  if (GetProtocolVersion(ssl) >= TLS1_3_VERSION && !SSL_is_dtls(ssl) &&
+      !config->is_server) {
     bool expect_new_session =
         !config->expect_no_session && !config->shim_shuts_down;
     if (expect_new_session != test_state->got_new_session) {
@@ -1373,8 +1374,6 @@ int main(int argc, char **argv) {
 #else
   signal(SIGPIPE, SIG_IGN);
 #endif
-
-  CRYPTO_library_init();
 
   TestConfig initial_config, resume_config, retry_config;
   if (!ParseConfig(argc - 1, argv + 1, /*is_shim=*/true, &initial_config,

@@ -201,6 +201,8 @@ set(
   gen/bcm/x86_64-mont-linux.S
   gen/bcm/x86_64-mont5-apple.S
   gen/bcm/x86_64-mont5-linux.S
+  third_party/fiat/asm/fiat_p256_adx_mul.S
+  third_party/fiat/asm/fiat_p256_adx_sqr.S
 )
 
 set(
@@ -365,6 +367,8 @@ set(
   crypto/evp/p_ed25519.c
   crypto/evp/p_ed25519_asn1.c
   crypto/evp/p_hkdf.c
+  crypto/evp/p_oqs.c
+  crypto/evp/p_oqs_asn1.c
   crypto/evp/p_rsa.c
   crypto/evp/p_rsa_asn1.c
   crypto/evp/p_x25519.c
@@ -600,7 +604,6 @@ set(
   crypto/bytestring/internal.h
   crypto/chacha/internal.h
   crypto/cipher_extra/internal.h
-  crypto/conf/conf_def.h
   crypto/conf/internal.h
   crypto/cpu_arm_linux.h
   crypto/curve25519/curve25519_tables.h
@@ -687,8 +690,6 @@ set(
   gen/crypto/chacha20_poly1305_x86_64-linux.S
   third_party/fiat/asm/fiat_curve25519_adx_mul.S
   third_party/fiat/asm/fiat_curve25519_adx_square.S
-  third_party/fiat/asm/fiat_p256_adx_mul.S
-  third_party/fiat/asm/fiat_p256_adx_sqr.S
 )
 
 set(
@@ -812,6 +813,8 @@ set(
   crypto/cipher_extra/test/xchacha20_poly1305_tests.txt
   crypto/curve25519/ed25519_tests.txt
   crypto/dilithium/dilithium_tests.txt
+  crypto/dilithium/edge_cases_draft_dilithium3_sign.txt
+  crypto/dilithium/edge_cases_draft_dilithium3_verify.txt
   crypto/ecdh_extra/ecdh_tests.txt
   crypto/evp/evp_tests.txt
   crypto/evp/scrypt_tests.txt
@@ -1106,6 +1109,7 @@ set(
 
   include/openssl/pki/certificate.h
   include/openssl/pki/signature_verify_cache.h
+  include/openssl/pki/verify.h
   include/openssl/pki/verify_error.h
 )
 

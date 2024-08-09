@@ -92,6 +92,7 @@ static const VersionParam kAllVersions[] = {
     {TLS1_3_VERSION, VersionParam::is_tls, "TLS1_3"},
     {DTLS1_VERSION, VersionParam::is_dtls, "DTLS1"},
     {DTLS1_2_VERSION, VersionParam::is_dtls, "DTLS1_2"},
+    {DTLS1_3_EXPERIMENTAL_VERSION, VersionParam::is_dtls, "DTLS1_3"},
 };
 
 struct ExpectedCipher {
@@ -509,6 +510,29 @@ static const CurveTest kCurveTests[] = {
   },
 ///// OQS_TEMPLATE_FRAGMENT_ADD_CURVETEST_START
   {
+    "mlkem512:p256_mlkem512:x25519_mlkem512",
+    {
+      SSL_GROUP_MLKEM512,
+      SSL_GROUP_P256_MLKEM512,
+      SSL_GROUP_X25519_MLKEM512,
+    },
+  },
+  {
+    "mlkem768:p384_mlkem768:x25519_mlkem768",
+    {
+      SSL_GROUP_MLKEM768,
+      SSL_GROUP_P384_MLKEM768,
+      SSL_GROUP_X25519_MLKEM768,
+    },
+  },
+  {
+    "mlkem1024:p521_mlkem1024",
+    {
+      SSL_GROUP_MLKEM1024,
+      SSL_GROUP_P521_MLKEM1024,
+    },
+  },
+  {
     "frodo640aes:p256_frodo640aes:x25519_frodo640aes",
     {
       SSL_GROUP_FRODO640AES,
@@ -572,29 +596,6 @@ static const CurveTest kCurveTests[] = {
     {
       SSL_GROUP_KYBER1024,
       SSL_GROUP_P521_KYBER1024,
-    },
-  },
-  {
-    "mlkem512:p256_mlkem512:x25519_mlkem512",
-    {
-      SSL_GROUP_MLKEM512,
-      SSL_GROUP_P256_MLKEM512,
-      SSL_GROUP_X25519_MLKEM512,
-    },
-  },
-  {
-    "mlkem768:p384_mlkem768:x25519_mlkem768",
-    {
-      SSL_GROUP_MLKEM768,
-      SSL_GROUP_P384_MLKEM768,
-      SSL_GROUP_X25519_MLKEM768,
-    },
-  },
-  {
-    "mlkem1024:p521_mlkem1024",
-    {
-      SSL_GROUP_MLKEM1024,
-      SSL_GROUP_P521_MLKEM1024,
     },
   },
   {
@@ -1153,11 +1154,11 @@ static void ExpectDefaultVersion(uint16_t min_version, uint16_t max_version,
 }
 
 TEST(SSLTest, DefaultVersion) {
-  ExpectDefaultVersion(TLS1_VERSION, TLS1_3_VERSION, &TLS_method);
+  ExpectDefaultVersion(TLS1_2_VERSION, TLS1_3_VERSION, &TLS_method);
   ExpectDefaultVersion(TLS1_VERSION, TLS1_VERSION, &TLSv1_method);
   ExpectDefaultVersion(TLS1_1_VERSION, TLS1_1_VERSION, &TLSv1_1_method);
   ExpectDefaultVersion(TLS1_2_VERSION, TLS1_2_VERSION, &TLSv1_2_method);
-  ExpectDefaultVersion(DTLS1_VERSION, DTLS1_2_VERSION, &DTLS_method);
+  ExpectDefaultVersion(DTLS1_2_VERSION, DTLS1_2_VERSION, &DTLS_method);
   ExpectDefaultVersion(DTLS1_VERSION, DTLS1_VERSION, &DTLSv1_method);
   ExpectDefaultVersion(DTLS1_2_VERSION, DTLS1_2_VERSION, &DTLSv1_2_method);
 }
@@ -2954,11 +2955,19 @@ TEST_P(SSLVersionTest, SequenceNumber) {
   uint64_t server_write_seq = SSL_get_write_sequence(server_.get());
 
   if (is_dtls()) {
-    // Both client and server must be at epoch 1.
-    EXPECT_EQ(EpochFromSequence(client_read_seq), 1);
-    EXPECT_EQ(EpochFromSequence(client_write_seq), 1);
-    EXPECT_EQ(EpochFromSequence(server_read_seq), 1);
-    EXPECT_EQ(EpochFromSequence(server_write_seq), 1);
+    if (version() == DTLS1_3_EXPERIMENTAL_VERSION) {
+      // Client and server write epochs should be at 3 (application data).
+      EXPECT_EQ(EpochFromSequence(client_write_seq), 3);
+      EXPECT_EQ(EpochFromSequence(server_write_seq), 3);
+      // TODO(crbug.com/42290608): The read sequences aren't checked because the
+      // SSL_get_read_sequence API needs to be reworked for DTLS 1.3.
+    } else {
+      // Both client and server must be at epoch 1.
+      EXPECT_EQ(EpochFromSequence(client_read_seq), 1);
+      EXPECT_EQ(EpochFromSequence(client_write_seq), 1);
+      EXPECT_EQ(EpochFromSequence(server_read_seq), 1);
+      EXPECT_EQ(EpochFromSequence(server_write_seq), 1);
+    }
 
     // The next record to be written should exceed the largest received.
     EXPECT_GT(client_write_seq, server_read_seq);
@@ -2973,6 +2982,14 @@ TEST_P(SSLVersionTest, SequenceNumber) {
   uint8_t byte = 0;
   EXPECT_EQ(SSL_write(client_.get(), &byte, 1), 1);
   EXPECT_EQ(SSL_read(server_.get(), &byte, 1), 1);
+
+  if (version() == DTLS1_3_EXPERIMENTAL_VERSION) {
+    // TODO(crbug.com/42290608): Write an appropriate test for incrementing both
+    // sequence number and epoch in the following test. The server read seq was
+    // in epoch 2, but after the write it's in epoch 3, so adding 1 doesn't work
+    // any more.
+    return;
+  }
 
   // The client write and server read sequence numbers should have
   // incremented.
@@ -3523,6 +3540,7 @@ TEST(SSLTest, DISABLED_ClientHello) {
     // Our default cipher list varies by CPU capabilities, so manually place the
     // ChaCha20 ciphers in front.
     const char *cipher_list = "CHACHA20:ALL";
+    ASSERT_TRUE(SSL_CTX_set_min_proto_version(ctx.get(), TLS1_VERSION));
     ASSERT_TRUE(SSL_CTX_set_max_proto_version(ctx.get(), t.max_version));
     ASSERT_TRUE(SSL_CTX_set_strict_cipher_list(ctx.get(), cipher_list));
 
@@ -3634,6 +3652,11 @@ static int SwitchSessionIDContextSNI(SSL *ssl, int *out_alert, void *arg) {
 }
 
 TEST_P(SSLVersionTest, SessionIDContext) {
+  if (version() == DTLS1_3_EXPERIMENTAL_VERSION) {
+    // TODO(crbug.com/boringssl/715): Enable the rest of this test for DTLS 1.3
+    // once it supports NewSessionTickets.
+    return;
+  }
   static const uint8_t kContext1[] = {1};
   static const uint8_t kContext2[] = {2};
 
@@ -3770,6 +3793,11 @@ static bool GetServerTicketTime(long *out, const SSL_SESSION *session) {
 }
 
 TEST_P(SSLVersionTest, SessionTimeout) {
+  if (version() == DTLS1_3_EXPERIMENTAL_VERSION) {
+    // TODO(crbug.com/boringssl/715): Enable the rest of this test for DTLS 1.3
+    // once it supports NewSessionTickets.
+    return;
+  }
   for (bool server_test : {false, true}) {
     SCOPED_TRACE(server_test);
 
@@ -3906,6 +3934,11 @@ TEST_P(SSLVersionTest, DefaultTicketKeyInitialization) {
 }
 
 TEST_P(SSLVersionTest, DefaultTicketKeyRotation) {
+  if (version() == DTLS1_3_EXPERIMENTAL_VERSION) {
+    // TODO(crbug.com/boringssl/715): Enable the rest of this test for DTLS 1.3
+    // once it supports NewSessionTickets.
+    return;
+  }
   static const time_t kStartTime = 1001;
   g_current_time.tv_sec = kStartTime;
 
@@ -4079,7 +4112,7 @@ TEST(SSLTest, SetVersion) {
   EXPECT_TRUE(SSL_CTX_set_max_proto_version(ctx.get(), 0));
   EXPECT_EQ(TLS1_3_VERSION, SSL_CTX_get_max_proto_version(ctx.get()));
   EXPECT_TRUE(SSL_CTX_set_min_proto_version(ctx.get(), 0));
-  EXPECT_EQ(TLS1_VERSION, SSL_CTX_get_min_proto_version(ctx.get()));
+  EXPECT_EQ(TLS1_2_VERSION, SSL_CTX_get_min_proto_version(ctx.get()));
 
   // SSL 3.0 is not available.
   EXPECT_FALSE(SSL_CTX_set_min_proto_version(ctx.get(), SSL3_VERSION));
@@ -4112,7 +4145,7 @@ TEST(SSLTest, SetVersion) {
   EXPECT_TRUE(SSL_CTX_set_max_proto_version(ctx.get(), 0));
   EXPECT_EQ(DTLS1_2_VERSION, SSL_CTX_get_max_proto_version(ctx.get()));
   EXPECT_TRUE(SSL_CTX_set_min_proto_version(ctx.get(), 0));
-  EXPECT_EQ(DTLS1_VERSION, SSL_CTX_get_min_proto_version(ctx.get()));
+  EXPECT_EQ(DTLS1_2_VERSION, SSL_CTX_get_min_proto_version(ctx.get()));
 }
 
 static const char *GetVersionName(uint16_t version) {
@@ -4129,6 +4162,8 @@ static const char *GetVersionName(uint16_t version) {
       return "DTLSv1";
     case DTLS1_2_VERSION:
       return "DTLSv1.2";
+    case DTLS1_3_EXPERIMENTAL_VERSION:
+      return "DTLSv1.3";
     default:
       return "???";
   }
@@ -4188,7 +4223,8 @@ TEST_P(SSLVersionTest, ALPNCipherAvailable) {
 TEST_P(SSLVersionTest, SSLClearSessionResumption) {
   // Skip this for TLS 1.3. TLS 1.3's ticket mechanism is incompatible with this
   // API pattern.
-  if (version() == TLS1_3_VERSION) {
+  if (version() == TLS1_3_VERSION ||
+      version() == DTLS1_3_EXPERIMENTAL_VERSION) {
     return;
   }
 
@@ -4533,11 +4569,15 @@ TEST_P(SSLVersionTest, RecordCallback) {
       uint16_t record_version, length;
       ASSERT_TRUE(CBS_get_u8(&cbs, &type));
       ASSERT_TRUE(CBS_get_u16(&cbs, &record_version));
-      EXPECT_EQ(record_version & 0xff00, version() & 0xff00);
+      EXPECT_EQ(record_version >> 8, is_dtls() ? 0xfe : 0x03);
       if (is_dtls()) {
         uint16_t epoch;
         ASSERT_TRUE(CBS_get_u16(&cbs, &epoch));
-        EXPECT_TRUE(epoch == 0 || epoch == 1) << "Invalid epoch: " << epoch;
+        uint16_t max_epoch = 1;
+        if (version() == DTLS1_3_EXPERIMENTAL_VERSION) {
+          max_epoch = 3;
+        }
+        EXPECT_LE(epoch, max_epoch) << "Invalid epoch: " << epoch;
         ASSERT_TRUE(CBS_skip(&cbs, 6));
       }
       ASSERT_TRUE(CBS_get_u16(&cbs, &length));
@@ -4585,6 +4625,11 @@ TEST_P(SSLVersionTest, GetServerName) {
   bssl::UniquePtr<SSL_SESSION> session =
       CreateClientSession(client_ctx_.get(), server_ctx_.get(), config);
 
+  if (version() == DTLS1_3_EXPERIMENTAL_VERSION) {
+    // TODO(crbug.com/boringssl/715): Enable the rest of this test for DTLS 1.3
+    // once it supports NewSessionTickets.
+    return;
+  }
   // If the client resumes a session with a different name, |SSL_get_servername|
   // must return the new name.
   ASSERT_TRUE(session);
@@ -4597,6 +4642,11 @@ TEST_P(SSLVersionTest, GetServerName) {
 
 // Test that session cache mode bits are honored in the client session callback.
 TEST_P(SSLVersionTest, ClientSessionCacheMode) {
+  if (version() == DTLS1_3_EXPERIMENTAL_VERSION) {
+    // TODO(crbug.com/boringssl/715): Enable the rest of this test for DTLS 1.3
+    // once it supports NewSessionTickets.
+    return;
+  }
   SSL_CTX_set_session_cache_mode(client_ctx_.get(), SSL_SESS_CACHE_OFF);
   EXPECT_FALSE(CreateClientSession(client_ctx_.get(), server_ctx_.get()));
 
@@ -5478,17 +5528,52 @@ TEST(SSLTest, SelectNextProto) {
                                   (const uint8_t *)"\3ccc\2bb\1a", 9));
   EXPECT_EQ(Bytes("a"), Bytes(result, result_len));
 
-  // If there is no overlap, return the first local protocol.
+  // If there is no overlap, opportunistically select the first local protocol.
+  // ALPN callers should ignore this, but NPN callers may use this per
+  // draft-agl-tls-nextprotoneg-03, section 6.
   EXPECT_EQ(OPENSSL_NPN_NO_OVERLAP,
             SSL_select_next_proto(&result, &result_len,
                                   (const uint8_t *)"\1a\2bb\3ccc", 9,
                                   (const uint8_t *)"\1x\2yy\3zzz", 9));
   EXPECT_EQ(Bytes("x"), Bytes(result, result_len));
 
+  // The peer preference order may be empty in NPN. This should be treated as no
+  // overlap and continue to select an opportunistic protocol.
   EXPECT_EQ(OPENSSL_NPN_NO_OVERLAP,
             SSL_select_next_proto(&result, &result_len, nullptr, 0,
                                   (const uint8_t *)"\1x\2yy\3zzz", 9));
   EXPECT_EQ(Bytes("x"), Bytes(result, result_len));
+
+  // Although calling this function with no local protocols is a caller error,
+  // it should cleanly return an empty protocol.
+  EXPECT_EQ(
+      OPENSSL_NPN_NO_OVERLAP,
+      SSL_select_next_proto(&result, &result_len,
+                            (const uint8_t *)"\1a\2bb\3ccc", 9, nullptr, 0));
+  EXPECT_EQ(Bytes(""), Bytes(result, result_len));
+
+  // Syntax errors are similarly caller errors.
+  EXPECT_EQ(
+      OPENSSL_NPN_NO_OVERLAP,
+      SSL_select_next_proto(&result, &result_len, (const uint8_t *)"\4aaa", 4,
+                            (const uint8_t *)"\1a\2bb\3ccc", 9));
+  EXPECT_EQ(Bytes(""), Bytes(result, result_len));
+  EXPECT_EQ(OPENSSL_NPN_NO_OVERLAP,
+            SSL_select_next_proto(&result, &result_len,
+                                  (const uint8_t *)"\1a\2bb\3ccc", 9,
+                                  (const uint8_t *)"\4aaa", 4));
+  EXPECT_EQ(Bytes(""), Bytes(result, result_len));
+
+  // Protocols in protocol lists may not be empty.
+  EXPECT_EQ(OPENSSL_NPN_NO_OVERLAP,
+            SSL_select_next_proto(&result, &result_len,
+                                  (const uint8_t *)"\0\2bb\3ccc", 8,
+                                  (const uint8_t *)"\1a\2bb\3ccc", 9));
+  EXPECT_EQ(OPENSSL_NPN_NO_OVERLAP,
+            SSL_select_next_proto(&result, &result_len,
+                                  (const uint8_t *)"\1a\2bb\3ccc", 9,
+                                  (const uint8_t *)"\0\2bb\3ccc", 8));
+  EXPECT_EQ(Bytes(""), Bytes(result, result_len));
 }
 
 // The client should gracefully handle no suitable ciphers being enabled.
@@ -5500,6 +5585,7 @@ TEST(SSLTest, NoCiphersAvailable) {
   // version configuration.
   ASSERT_TRUE(SSL_CTX_set_strict_cipher_list(
       ctx.get(), "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"));
+  ASSERT_TRUE(SSL_CTX_set_min_proto_version(ctx.get(), TLS1_1_VERSION));
   ASSERT_TRUE(SSL_CTX_set_max_proto_version(ctx.get(), TLS1_1_VERSION));
 
   bssl::UniquePtr<SSL> ssl(SSL_new(ctx.get()));
@@ -5520,6 +5606,11 @@ TEST(SSLTest, NoCiphersAvailable) {
 }
 
 TEST_P(SSLVersionTest, SessionVersion) {
+  if (version() == DTLS1_3_EXPERIMENTAL_VERSION) {
+    // TODO(crbug.com/boringssl/715): Enable the rest of this test for DTLS 1.3
+    // once it supports NewSessionTickets.
+    return;
+  }
   SSL_CTX_set_session_cache_mode(client_ctx_.get(), SSL_SESS_CACHE_BOTH);
   SSL_CTX_set_session_cache_mode(server_ctx_.get(), SSL_SESS_CACHE_BOTH);
 
@@ -5635,18 +5726,18 @@ TEST(SSLTest, SignatureAlgorithmProperties) {
             SSL_get_signature_algorithm_digest(SSL_SIGN_RSA_PSS_RSAE_SHA384));
   EXPECT_TRUE(SSL_is_signature_algorithm_rsa_pss(SSL_SIGN_RSA_PSS_RSAE_SHA384));
 ///// OQS_TEMPLATE_FRAGMENT_ADD_SIG_ALG_PROP_TESTS_START
-  EXPECT_EQ(EVP_PKEY_DILITHIUM2,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_DILITHIUM2));
-  EXPECT_EQ(EVP_PKEY_DILITHIUM3,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_DILITHIUM3));
-  EXPECT_EQ(EVP_PKEY_DILITHIUM5,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_DILITHIUM5));
   EXPECT_EQ(EVP_PKEY_MLDSA44,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_MLDSA44));
   EXPECT_EQ(EVP_PKEY_MLDSA65,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_MLDSA65));
   EXPECT_EQ(EVP_PKEY_MLDSA87,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_MLDSA87));
+  EXPECT_EQ(EVP_PKEY_DILITHIUM2,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_DILITHIUM2));
+  EXPECT_EQ(EVP_PKEY_DILITHIUM3,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_DILITHIUM3));
+  EXPECT_EQ(EVP_PKEY_DILITHIUM5,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_DILITHIUM5));
   EXPECT_EQ(EVP_PKEY_FALCON512,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_FALCON512));
   EXPECT_EQ(EVP_PKEY_FALCONPADDED512,
@@ -6005,12 +6096,12 @@ TEST(SSLTest, SigAlgs) {
        true,
        {SSL_SIGN_ED25519, SSL_SIGN_ECDSA_SECP384R1_SHA384}},
 ///// OQS_TEMPLATE_FRAGMENT_ADD_SIG_ALG_EQ_TESTS_START
-      {{NID_sha256, EVP_PKEY_DILITHIUM2}, true, {SSL_SIGN_DILITHIUM2}},
-      {{NID_sha384, EVP_PKEY_DILITHIUM3}, true, {SSL_SIGN_DILITHIUM3}},
-      {{NID_sha512, EVP_PKEY_DILITHIUM5}, true, {SSL_SIGN_DILITHIUM5}},
       {{NID_sha256, EVP_PKEY_MLDSA44}, true, {SSL_SIGN_MLDSA44}},
       {{NID_sha384, EVP_PKEY_MLDSA65}, true, {SSL_SIGN_MLDSA65}},
       {{NID_sha512, EVP_PKEY_MLDSA87}, true, {SSL_SIGN_MLDSA87}},
+      {{NID_sha256, EVP_PKEY_DILITHIUM2}, true, {SSL_SIGN_DILITHIUM2}},
+      {{NID_sha384, EVP_PKEY_DILITHIUM3}, true, {SSL_SIGN_DILITHIUM3}},
+      {{NID_sha512, EVP_PKEY_DILITHIUM5}, true, {SSL_SIGN_DILITHIUM5}},
       {{NID_sha256, EVP_PKEY_FALCON512}, true, {SSL_SIGN_FALCON512}},
       {{NID_sha256, EVP_PKEY_FALCONPADDED512}, true, {SSL_SIGN_FALCONPADDED512}},
       {{NID_sha512, EVP_PKEY_FALCON1024}, true, {SSL_SIGN_FALCON1024}},
@@ -6085,12 +6176,12 @@ TEST(SSLTest, SigAlgsList) {
       {"RSA-PSS+SHA256", true, {SSL_SIGN_RSA_PSS_RSAE_SHA256}},
       {"PSS+SHA256", true, {SSL_SIGN_RSA_PSS_RSAE_SHA256}},
 ///// OQS_TEMPLATE_FRAGMENT_SIGALGS_LIST_TESTS_START
-      {"dilithium2", true, {SSL_SIGN_DILITHIUM2}},
-      {"dilithium3", true, {SSL_SIGN_DILITHIUM3}},
-      {"dilithium5", true, {SSL_SIGN_DILITHIUM5}},
       {"mldsa44", true, {SSL_SIGN_MLDSA44}},
       {"mldsa65", true, {SSL_SIGN_MLDSA65}},
       {"mldsa87", true, {SSL_SIGN_MLDSA87}},
+      {"dilithium2", true, {SSL_SIGN_DILITHIUM2}},
+      {"dilithium3", true, {SSL_SIGN_DILITHIUM3}},
+      {"dilithium5", true, {SSL_SIGN_DILITHIUM5}},
       {"falcon512", true, {SSL_SIGN_FALCON512}},
       {"falconpadded512", true, {SSL_SIGN_FALCONPADDED512}},
       {"falcon1024", true, {SSL_SIGN_FALCON1024}},
@@ -6266,6 +6357,11 @@ TEST_P(SSLVersionTest, VerifyBeforeCertRequest) {
 
 // Test that ticket-based sessions on the client get fake session IDs.
 TEST_P(SSLVersionTest, FakeIDsForTickets) {
+  if (version() == DTLS1_3_EXPERIMENTAL_VERSION) {
+    // TODO(crbug.com/boringssl/715): Enable the rest of this test for DTLS 1.3
+    // once it supports NewSessionTickets.
+    return;
+  }
   SSL_CTX_set_session_cache_mode(client_ctx_.get(), SSL_SESS_CACHE_BOTH);
   SSL_CTX_set_session_cache_mode(server_ctx_.get(), SSL_SESS_CACHE_BOTH);
 
@@ -6287,7 +6383,8 @@ TEST_P(SSLVersionTest, SessionCacheThreads) {
   SSL_CTX_set_session_cache_mode(client_ctx_.get(), SSL_SESS_CACHE_BOTH);
   SSL_CTX_set_session_cache_mode(server_ctx_.get(), SSL_SESS_CACHE_BOTH);
 
-  if (version() == TLS1_3_VERSION) {
+  if (version() == TLS1_3_VERSION ||
+      version() == DTLS1_3_EXPERIMENTAL_VERSION) {
     // Our TLS 1.3 implementation does not support stateful resumption.
     ASSERT_FALSE(CreateClientSession(client_ctx_.get(), server_ctx_.get()));
     return;
@@ -6396,6 +6493,11 @@ TEST_P(SSLVersionTest, SessionCacheThreads) {
 }
 
 TEST_P(SSLVersionTest, SessionTicketThreads) {
+  if (version() == DTLS1_3_EXPERIMENTAL_VERSION) {
+    // TODO(crbug.com/boringssl/715): Enable the rest of this test for DTLS 1.3
+    // once it supports NewSessionTickets.
+    return;
+  }
   for (bool renew_ticket : {false, true}) {
     SCOPED_TRACE(renew_ticket);
     ASSERT_NO_FATAL_FAILURE(ResetContexts());
@@ -6465,7 +6567,8 @@ TEST(SSLTest, GetCertificateThreads) {
 // performing stateful resumption will share an underlying SSL_SESSION object,
 // potentially across threads.
 TEST_P(SSLVersionTest, SessionPropertiesThreads) {
-  if (version() == TLS1_3_VERSION) {
+  if (version() == TLS1_3_VERSION ||
+      version() == DTLS1_3_EXPERIMENTAL_VERSION) {
     // Our TLS 1.3 implementation does not support stateful resumption.
     ASSERT_FALSE(CreateClientSession(client_ctx_.get(), server_ctx_.get()));
     return;
@@ -8060,6 +8163,11 @@ TEST_P(SSLVersionTest, DoubleSSLError) {
 }
 
 TEST_P(SSLVersionTest, SameKeyResume) {
+  if (version() == DTLS1_3_EXPERIMENTAL_VERSION) {
+    // TODO(crbug.com/boringssl/715): Enable the rest of this test for DTLS 1.3
+    // once it supports NewSessionTickets.
+    return;
+  }
   uint8_t key[48];
   RAND_bytes(key, sizeof(key));
 
@@ -8097,6 +8205,11 @@ TEST_P(SSLVersionTest, SameKeyResume) {
 }
 
 TEST_P(SSLVersionTest, DifferentKeyNoResume) {
+  if (version() == DTLS1_3_EXPERIMENTAL_VERSION) {
+    // TODO(crbug.com/boringssl/715): Enable the rest of this test for DTLS 1.3
+    // once it supports NewSessionTickets.
+    return;
+  }
   uint8_t key1[48], key2[48];
   RAND_bytes(key1, sizeof(key1));
   RAND_bytes(key2, sizeof(key2));
@@ -8135,6 +8248,11 @@ TEST_P(SSLVersionTest, DifferentKeyNoResume) {
 }
 
 TEST_P(SSLVersionTest, UnrelatedServerNoResume) {
+  if (version() == DTLS1_3_EXPERIMENTAL_VERSION) {
+    // TODO(crbug.com/boringssl/715): Enable the rest of this test for DTLS 1.3
+    // once it supports NewSessionTickets.
+    return;
+  }
   bssl::UniquePtr<SSL_CTX> server_ctx2 = CreateContext();
   ASSERT_TRUE(server_ctx2);
   ASSERT_TRUE(UseCertAndKey(server_ctx2.get()));
@@ -8172,6 +8290,11 @@ Span<const uint8_t> SessionIDOf(const SSL* ssl) {
 }
 
 TEST_P(SSLVersionTest, TicketSessionIDsMatch) {
+  if (version() == DTLS1_3_EXPERIMENTAL_VERSION) {
+    // TODO(crbug.com/boringssl/715): Enable the rest of this test for DTLS 1.3
+    // once it supports NewSessionTickets.
+    return;
+  }
   // This checks that the session IDs at client and server match after a ticket
   // resumption. It's unclear whether this should be true, but Envoy depends
   // on it in their tests so this will give an early signal if we break it.
@@ -8438,6 +8561,14 @@ struct TLSGroup {
 // is suspected to be the cause of the non-deterministic OQS test failures.
 static const TLSGroup kOQSGroups[] = {
 ///// OQS_TEMPLATE_FRAGMENT_LIST_ALL_OQS_KEMS_START
+    {NID_mlkem512, SSL_GROUP_MLKEM512},
+    {NID_p256_mlkem512, SSL_GROUP_P256_MLKEM512},
+    {NID_x25519_mlkem512, SSL_GROUP_X25519_MLKEM512},
+    {NID_mlkem768, SSL_GROUP_MLKEM768},
+    {NID_p384_mlkem768, SSL_GROUP_P384_MLKEM768},
+    {NID_x25519_mlkem768, SSL_GROUP_X25519_MLKEM768},
+    {NID_mlkem1024, SSL_GROUP_MLKEM1024},
+    {NID_p521_mlkem1024, SSL_GROUP_P521_MLKEM1024},
     {NID_frodo640aes, SSL_GROUP_FRODO640AES},
     {NID_p256_frodo640aes, SSL_GROUP_P256_FRODO640AES},
     {NID_x25519_frodo640aes, SSL_GROUP_X25519_FRODO640AES},
@@ -8459,14 +8590,6 @@ static const TLSGroup kOQSGroups[] = {
     {NID_p384_kyber768, SSL_GROUP_P384_KYBER768},
     {NID_kyber1024, SSL_GROUP_KYBER1024},
     {NID_p521_kyber1024, SSL_GROUP_P521_KYBER1024},
-    {NID_mlkem512, SSL_GROUP_MLKEM512},
-    {NID_p256_mlkem512, SSL_GROUP_P256_MLKEM512},
-    {NID_x25519_mlkem512, SSL_GROUP_X25519_MLKEM512},
-    {NID_mlkem768, SSL_GROUP_MLKEM768},
-    {NID_p384_mlkem768, SSL_GROUP_P384_MLKEM768},
-    {NID_x25519_mlkem768, SSL_GROUP_X25519_MLKEM768},
-    {NID_mlkem1024, SSL_GROUP_MLKEM1024},
-    {NID_p521_mlkem1024, SSL_GROUP_P521_MLKEM1024},
     {NID_bikel1, SSL_GROUP_BIKEL1},
     {NID_p256_bikel1, SSL_GROUP_P256_BIKEL1},
     {NID_x25519_bikel1, SSL_GROUP_X25519_BIKEL1},
@@ -8563,12 +8686,12 @@ class OQSHandshakeTest : public ::testing::TestWithParam<int> {
 INSTANTIATE_TEST_SUITE_P(WithSignatureNIDs, OQSHandshakeTest,
                          testing::Values(
 ///// OQS_TEMPLATE_FRAGMENT_LIST_ALL_OQS_SIGS_START
-                            NID_dilithium2,
-                            NID_dilithium3,
-                            NID_dilithium5,
                             NID_mldsa44,
                             NID_mldsa65,
                             NID_mldsa87,
+                            NID_dilithium2,
+                            NID_dilithium3,
+                            NID_dilithium5,
                             NID_falcon512,
                             NID_falconpadded512,
                             NID_falcon1024,
@@ -9835,7 +9958,8 @@ TEST_P(SSLVersionTest, KeyLog) {
   ASSERT_TRUE(Connect());
 
   // Check that we logged the secrets we expected to log.
-  if (version() == TLS1_3_VERSION) {
+  if (version() == TLS1_3_VERSION ||
+      version() == DTLS1_3_EXPERIMENTAL_VERSION) {
     EXPECT_THAT(client_log, ElementsAre(Key("CLIENT_HANDSHAKE_TRAFFIC_SECRET"),
                                         Key("CLIENT_TRAFFIC_SECRET_0"),
                                         Key("EXPORTER_SECRET"),

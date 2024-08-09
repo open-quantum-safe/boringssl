@@ -71,19 +71,19 @@
 #include "internal.h"
 #include "../crypto/internal.h"
 
+
 BSSL_NAMESPACE_BEGIN
 
 bool ssl_is_key_type_supported(int key_type) {
-  return key_type == EVP_PKEY_RSA ||
-         key_type == EVP_PKEY_EC ||
+  return key_type == EVP_PKEY_RSA || key_type == EVP_PKEY_EC ||
          key_type == EVP_PKEY_ED25519 ||
 ///// OQS_TEMPLATE_FRAGMENT_CHECK_KEY_TYPE_START
-         key_type == EVP_PKEY_DILITHIUM2 ||
-         key_type == EVP_PKEY_DILITHIUM3 ||
-         key_type == EVP_PKEY_DILITHIUM5 ||
          key_type == EVP_PKEY_MLDSA44 ||
          key_type == EVP_PKEY_MLDSA65 ||
          key_type == EVP_PKEY_MLDSA87 ||
+         key_type == EVP_PKEY_DILITHIUM2 ||
+         key_type == EVP_PKEY_DILITHIUM3 ||
+         key_type == EVP_PKEY_DILITHIUM5 ||
          key_type == EVP_PKEY_FALCON512 ||
          key_type == EVP_PKEY_FALCONPADDED512 ||
          key_type == EVP_PKEY_FALCON1024 ||
@@ -109,52 +109,84 @@ typedef struct {
   int curve;
   const EVP_MD *(*digest_func)(void);
   bool is_rsa_pss;
+  bool tls12_ok;
+  bool tls13_ok;
+  bool client_only;
 } SSL_SIGNATURE_ALGORITHM;
 
 static const SSL_SIGNATURE_ALGORITHM kSignatureAlgorithms[] = {
+    // PKCS#1 v1.5 code points are only allowed in TLS 1.2.
     {SSL_SIGN_RSA_PKCS1_MD5_SHA1, EVP_PKEY_RSA, NID_undef, &EVP_md5_sha1,
-     false},
-    {SSL_SIGN_RSA_PKCS1_SHA1, EVP_PKEY_RSA, NID_undef, &EVP_sha1, false},
-    {SSL_SIGN_RSA_PKCS1_SHA256, EVP_PKEY_RSA, NID_undef, &EVP_sha256, false},
-    {SSL_SIGN_RSA_PKCS1_SHA384, EVP_PKEY_RSA, NID_undef, &EVP_sha384, false},
-    {SSL_SIGN_RSA_PKCS1_SHA512, EVP_PKEY_RSA, NID_undef, &EVP_sha512, false},
+     /*is_rsa_pss=*/false, /*tls12_ok=*/true, /*tls13_ok=*/false,
+     /*client_only=*/false},
+    {SSL_SIGN_RSA_PKCS1_SHA1, EVP_PKEY_RSA, NID_undef, &EVP_sha1,
+     /*is_rsa_pss=*/false, /*tls12_ok=*/true, /*tls13_ok=*/false,
+     /*client_only=*/false},
+    {SSL_SIGN_RSA_PKCS1_SHA256, EVP_PKEY_RSA, NID_undef, &EVP_sha256,
+     /*is_rsa_pss=*/false, /*tls12_ok=*/true, /*tls13_ok=*/false,
+     /*client_only=*/false},
+    {SSL_SIGN_RSA_PKCS1_SHA384, EVP_PKEY_RSA, NID_undef, &EVP_sha384,
+     /*is_rsa_pss=*/false, /*tls12_ok=*/true, /*tls13_ok=*/false,
+     /*client_only=*/false},
+    {SSL_SIGN_RSA_PKCS1_SHA512, EVP_PKEY_RSA, NID_undef, &EVP_sha512,
+     /*is_rsa_pss=*/false, /*tls12_ok=*/true, /*tls13_ok=*/false,
+     /*client_only=*/false},
 
-    {SSL_SIGN_RSA_PSS_RSAE_SHA256, EVP_PKEY_RSA, NID_undef, &EVP_sha256, true},
-    {SSL_SIGN_RSA_PSS_RSAE_SHA384, EVP_PKEY_RSA, NID_undef, &EVP_sha384, true},
-    {SSL_SIGN_RSA_PSS_RSAE_SHA512, EVP_PKEY_RSA, NID_undef, &EVP_sha512, true},
+    // Legacy PKCS#1 v1.5 code points are only allowed in TLS 1.3 and
+    // client-only. See draft-ietf-tls-tls13-pkcs1-00.
+    {SSL_SIGN_RSA_PKCS1_SHA256_LEGACY, EVP_PKEY_RSA, NID_undef, &EVP_sha256,
+     /*is_rsa_pss=*/false, /*tls12_ok=*/false, /*tls13_ok=*/true,
+     /*client_only=*/true},
 
-    {SSL_SIGN_ECDSA_SHA1, EVP_PKEY_EC, NID_undef, &EVP_sha1, false},
+    {SSL_SIGN_RSA_PSS_RSAE_SHA256, EVP_PKEY_RSA, NID_undef, &EVP_sha256,
+     /*is_rsa_pss=*/true, /*tls12_ok=*/true, /*tls13_ok=*/true,
+     /*client_only=*/false},
+    {SSL_SIGN_RSA_PSS_RSAE_SHA384, EVP_PKEY_RSA, NID_undef, &EVP_sha384,
+     /*is_rsa_pss=*/true, /*tls12_ok=*/true, /*tls13_ok=*/true,
+     /*client_only=*/false},
+    {SSL_SIGN_RSA_PSS_RSAE_SHA512, EVP_PKEY_RSA, NID_undef, &EVP_sha512,
+     /*is_rsa_pss=*/true, /*tls12_ok=*/true, /*tls13_ok=*/true,
+     /*client_only=*/false},
+
+    {SSL_SIGN_ECDSA_SHA1, EVP_PKEY_EC, NID_undef, &EVP_sha1,
+     /*is_rsa_pss=*/false, /*tls12_ok=*/true, /*tls13_ok=*/false,
+     /*client_only=*/false},
     {SSL_SIGN_ECDSA_SECP256R1_SHA256, EVP_PKEY_EC, NID_X9_62_prime256v1,
-     &EVP_sha256, false},
+     &EVP_sha256, /*is_rsa_pss=*/false, /*tls12_ok=*/true, /*tls13_ok=*/true,
+     /*client_only=*/false},
     {SSL_SIGN_ECDSA_SECP384R1_SHA384, EVP_PKEY_EC, NID_secp384r1, &EVP_sha384,
-     false},
+     /*is_rsa_pss=*/false, /*tls12_ok=*/true, /*tls13_ok=*/true,
+     /*client_only=*/false},
     {SSL_SIGN_ECDSA_SECP521R1_SHA512, EVP_PKEY_EC, NID_secp521r1, &EVP_sha512,
-     false},
+     /*is_rsa_pss=*/false, /*tls12_ok=*/true, /*tls13_ok=*/true,
+     /*client_only=*/false},
 
-    {SSL_SIGN_ED25519, EVP_PKEY_ED25519, NID_undef, nullptr, false},
+    {SSL_SIGN_ED25519, EVP_PKEY_ED25519, NID_undef, nullptr,
+     /*is_rsa_pss=*/false, /*tls12_ok=*/true, /*tls13_ok=*/true,
+     /*client_only=*/false},
 ///// OQS_TEMPLATE_FRAGMENT_LIST_SSL_SIG_ALGS_START
-    {SSL_SIGN_DILITHIUM2, EVP_PKEY_DILITHIUM2, NID_undef, &EVP_sha256, false},
-    {SSL_SIGN_DILITHIUM3, EVP_PKEY_DILITHIUM3, NID_undef, &EVP_sha384, false},
-    {SSL_SIGN_DILITHIUM5, EVP_PKEY_DILITHIUM5, NID_undef, &EVP_sha512, false},
-    {SSL_SIGN_MLDSA44, EVP_PKEY_MLDSA44, NID_undef, &EVP_sha256, false},
-    {SSL_SIGN_MLDSA65, EVP_PKEY_MLDSA65, NID_undef, &EVP_sha384, false},
-    {SSL_SIGN_MLDSA87, EVP_PKEY_MLDSA87, NID_undef, &EVP_sha512, false},
-    {SSL_SIGN_FALCON512, EVP_PKEY_FALCON512, NID_undef, &EVP_sha256, false},
-    {SSL_SIGN_FALCONPADDED512, EVP_PKEY_FALCONPADDED512, NID_undef, &EVP_sha256, false},
-    {SSL_SIGN_FALCON1024, EVP_PKEY_FALCON1024, NID_undef, &EVP_sha512, false},
-    {SSL_SIGN_FALCONPADDED1024, EVP_PKEY_FALCONPADDED1024, NID_undef, &EVP_sha512, false},
-    {SSL_SIGN_SPHINCSSHA2128FSIMPLE, EVP_PKEY_SPHINCSSHA2128FSIMPLE, NID_undef, &EVP_sha256, false},
-    {SSL_SIGN_SPHINCSSHA2128SSIMPLE, EVP_PKEY_SPHINCSSHA2128SSIMPLE, NID_undef, &EVP_sha256, false},
-    {SSL_SIGN_SPHINCSSHA2192FSIMPLE, EVP_PKEY_SPHINCSSHA2192FSIMPLE, NID_undef, &EVP_sha384, false},
-    {SSL_SIGN_SPHINCSSHA2192SSIMPLE, EVP_PKEY_SPHINCSSHA2192SSIMPLE, NID_undef, &EVP_sha384, false},
-    {SSL_SIGN_SPHINCSSHA2256FSIMPLE, EVP_PKEY_SPHINCSSHA2256FSIMPLE, NID_undef, &EVP_sha512, false},
-    {SSL_SIGN_SPHINCSSHA2256SSIMPLE, EVP_PKEY_SPHINCSSHA2256SSIMPLE, NID_undef, &EVP_sha512, false},
-    {SSL_SIGN_SPHINCSSHAKE128FSIMPLE, EVP_PKEY_SPHINCSSHAKE128FSIMPLE, NID_undef, &EVP_sha256, false},
-    {SSL_SIGN_SPHINCSSHAKE128SSIMPLE, EVP_PKEY_SPHINCSSHAKE128SSIMPLE, NID_undef, &EVP_sha256, false},
-    {SSL_SIGN_SPHINCSSHAKE192FSIMPLE, EVP_PKEY_SPHINCSSHAKE192FSIMPLE, NID_undef, &EVP_sha384, false},
-    {SSL_SIGN_SPHINCSSHAKE192SSIMPLE, EVP_PKEY_SPHINCSSHAKE192SSIMPLE, NID_undef, &EVP_sha384, false},
-    {SSL_SIGN_SPHINCSSHAKE256FSIMPLE, EVP_PKEY_SPHINCSSHAKE256FSIMPLE, NID_undef, &EVP_sha512, false},
-    {SSL_SIGN_SPHINCSSHAKE256SSIMPLE, EVP_PKEY_SPHINCSSHAKE256SSIMPLE, NID_undef, &EVP_sha512, false},
+    {SSL_SIGN_MLDSA44, EVP_PKEY_MLDSA44, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_MLDSA65, EVP_PKEY_MLDSA65, NID_undef, &EVP_sha384, false, true, true, false},
+    {SSL_SIGN_MLDSA87, EVP_PKEY_MLDSA87, NID_undef, &EVP_sha512, false, true, true, false},
+    {SSL_SIGN_DILITHIUM2, EVP_PKEY_DILITHIUM2, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_DILITHIUM3, EVP_PKEY_DILITHIUM3, NID_undef, &EVP_sha384, false, true, true, false},
+    {SSL_SIGN_DILITHIUM5, EVP_PKEY_DILITHIUM5, NID_undef, &EVP_sha512, false, true, true, false},
+    {SSL_SIGN_FALCON512, EVP_PKEY_FALCON512, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_FALCONPADDED512, EVP_PKEY_FALCONPADDED512, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_FALCON1024, EVP_PKEY_FALCON1024, NID_undef, &EVP_sha512, false, true, true, false},
+    {SSL_SIGN_FALCONPADDED1024, EVP_PKEY_FALCONPADDED1024, NID_undef, &EVP_sha512, false, true, true, false},
+    {SSL_SIGN_SPHINCSSHA2128FSIMPLE, EVP_PKEY_SPHINCSSHA2128FSIMPLE, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_SPHINCSSHA2128SSIMPLE, EVP_PKEY_SPHINCSSHA2128SSIMPLE, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_SPHINCSSHA2192FSIMPLE, EVP_PKEY_SPHINCSSHA2192FSIMPLE, NID_undef, &EVP_sha384, false, true, true, false},
+    {SSL_SIGN_SPHINCSSHA2192SSIMPLE, EVP_PKEY_SPHINCSSHA2192SSIMPLE, NID_undef, &EVP_sha384, false, true, true, false},
+    {SSL_SIGN_SPHINCSSHA2256FSIMPLE, EVP_PKEY_SPHINCSSHA2256FSIMPLE, NID_undef, &EVP_sha512, false, true, true, false},
+    {SSL_SIGN_SPHINCSSHA2256SSIMPLE, EVP_PKEY_SPHINCSSHA2256SSIMPLE, NID_undef, &EVP_sha512, false, true, true, false},
+    {SSL_SIGN_SPHINCSSHAKE128FSIMPLE, EVP_PKEY_SPHINCSSHAKE128FSIMPLE, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_SPHINCSSHAKE128SSIMPLE, EVP_PKEY_SPHINCSSHAKE128SSIMPLE, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_SPHINCSSHAKE192FSIMPLE, EVP_PKEY_SPHINCSSHAKE192FSIMPLE, NID_undef, &EVP_sha384, false, true, true, false},
+    {SSL_SIGN_SPHINCSSHAKE192SSIMPLE, EVP_PKEY_SPHINCSSHAKE192SSIMPLE, NID_undef, &EVP_sha384, false, true, true, false},
+    {SSL_SIGN_SPHINCSSHAKE256FSIMPLE, EVP_PKEY_SPHINCSSHAKE256FSIMPLE, NID_undef, &EVP_sha512, false, true, true, false},
+    {SSL_SIGN_SPHINCSSHAKE256SSIMPLE, EVP_PKEY_SPHINCSSHAKE256SSIMPLE, NID_undef, &EVP_sha512, false, true, true, false},
 ///// OQS_TEMPLATE_FRAGMENT_LIST_SSL_SIG_ALGS_END
 };
 
@@ -168,7 +200,7 @@ static const SSL_SIGNATURE_ALGORITHM *get_signature_algorithm(uint16_t sigalg) {
 }
 
 bool ssl_pkey_supports_algorithm(const SSL *ssl, EVP_PKEY *pkey,
-                                 uint16_t sigalg) {
+                                 uint16_t sigalg, bool is_verify) {
   const SSL_SIGNATURE_ALGORITHM *alg = get_signature_algorithm(sigalg);
   if (alg == NULL || EVP_PKEY_id(pkey) != alg->pkey_type) {
     return false;
@@ -200,8 +232,12 @@ bool ssl_pkey_supports_algorithm(const SSL *ssl, EVP_PKEY *pkey,
   }
 
   if (ssl_protocol_version(ssl) >= TLS1_3_VERSION) {
-    // RSA keys may only be used with RSA-PSS.
-    if (alg->pkey_type == EVP_PKEY_RSA && !alg->is_rsa_pss) {
+    if (!alg->tls13_ok) {
+      return false;
+    }
+
+    bool is_client_sign = ssl->server == is_verify;
+    if (alg->client_only && !is_client_sign) {
       return false;
     }
 
@@ -212,6 +248,8 @@ bool ssl_pkey_supports_algorithm(const SSL *ssl, EVP_PKEY *pkey,
              EC_KEY_get0_group(EVP_PKEY_get0_EC_KEY(pkey))) != alg->curve)) {
       return false;
     }
+  } else if (!alg->tls12_ok) {
+    return false;
   }
 
   return true;
@@ -219,7 +257,7 @@ bool ssl_pkey_supports_algorithm(const SSL *ssl, EVP_PKEY *pkey,
 
 static bool setup_ctx(SSL *ssl, EVP_MD_CTX *ctx, EVP_PKEY *pkey,
                       uint16_t sigalg, bool is_verify) {
-  if (!ssl_pkey_supports_algorithm(ssl, pkey, sigalg)) {
+  if (!ssl_pkey_supports_algorithm(ssl, pkey, sigalg, is_verify)) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_WRONG_SIGNATURE_TYPE);
     return false;
   }
@@ -496,7 +534,7 @@ void SSL_CTX_set_private_key_method(SSL_CTX *ctx,
       ctx->cert->default_credential.get(), key_method));
 }
 
-// OQS note: This was changed from 23 to 30 to accommodate
+// OQS note: This was changed from 24 to 30 to accommodate
 // large algorithm names (such as "Rainbow-IIIc-Cyclic-Compressed").
 static constexpr size_t kMaxSignatureAlgorithmNameLen = 30;
 
@@ -511,6 +549,7 @@ static const SignatureAlgorithmName kSignatureAlgorithmNames[] = {
     {SSL_SIGN_RSA_PKCS1_MD5_SHA1, "rsa_pkcs1_md5_sha1"},
     {SSL_SIGN_RSA_PKCS1_SHA1, "rsa_pkcs1_sha1"},
     {SSL_SIGN_RSA_PKCS1_SHA256, "rsa_pkcs1_sha256"},
+    {SSL_SIGN_RSA_PKCS1_SHA256_LEGACY, "rsa_pkcs1_sha256_legacy"},
     {SSL_SIGN_RSA_PKCS1_SHA384, "rsa_pkcs1_sha384"},
     {SSL_SIGN_RSA_PKCS1_SHA512, "rsa_pkcs1_sha512"},
     {SSL_SIGN_ECDSA_SHA1, "ecdsa_sha1"},
@@ -522,12 +561,12 @@ static const SignatureAlgorithmName kSignatureAlgorithmNames[] = {
     {SSL_SIGN_RSA_PSS_RSAE_SHA512, "rsa_pss_rsae_sha512"},
     {SSL_SIGN_ED25519, "ed25519"},
 ///// OQS_TEMPLATE_FRAGMENT_NAME_SIG_ALG_START
-    {SSL_SIGN_DILITHIUM2, "dilithium2"},
-    {SSL_SIGN_DILITHIUM3, "dilithium3"},
-    {SSL_SIGN_DILITHIUM5, "dilithium5"},
     {SSL_SIGN_MLDSA44, "mldsa44"},
     {SSL_SIGN_MLDSA65, "mldsa65"},
     {SSL_SIGN_MLDSA87, "mldsa87"},
+    {SSL_SIGN_DILITHIUM2, "dilithium2"},
+    {SSL_SIGN_DILITHIUM3, "dilithium3"},
+    {SSL_SIGN_DILITHIUM5, "dilithium5"},
     {SSL_SIGN_FALCON512, "falcon512"},
     {SSL_SIGN_FALCONPADDED512, "falconpadded512"},
     {SSL_SIGN_FALCON1024, "falcon1024"},
@@ -722,12 +761,12 @@ static constexpr struct {
     {EVP_PKEY_EC, NID_sha512, SSL_SIGN_ECDSA_SECP521R1_SHA512},
     {EVP_PKEY_ED25519, NID_undef, SSL_SIGN_ED25519},
 ///// OQS_TEMPLATE_FRAGMENT_ADD_SIG_ALG_MAPPINGS_START
-    {EVP_PKEY_DILITHIUM2, NID_sha256, SSL_SIGN_DILITHIUM2},
-    {EVP_PKEY_DILITHIUM3, NID_sha384, SSL_SIGN_DILITHIUM3},
-    {EVP_PKEY_DILITHIUM5, NID_sha512, SSL_SIGN_DILITHIUM5},
     {EVP_PKEY_MLDSA44, NID_sha256, SSL_SIGN_MLDSA44},
     {EVP_PKEY_MLDSA65, NID_sha384, SSL_SIGN_MLDSA65},
     {EVP_PKEY_MLDSA87, NID_sha512, SSL_SIGN_MLDSA87},
+    {EVP_PKEY_DILITHIUM2, NID_sha256, SSL_SIGN_DILITHIUM2},
+    {EVP_PKEY_DILITHIUM3, NID_sha384, SSL_SIGN_DILITHIUM3},
+    {EVP_PKEY_DILITHIUM5, NID_sha512, SSL_SIGN_DILITHIUM5},
     {EVP_PKEY_FALCON512, NID_sha256, SSL_SIGN_FALCON512},
     {EVP_PKEY_FALCONPADDED512, NID_sha256, SSL_SIGN_FALCONPADDED512},
     {EVP_PKEY_FALCON1024, NID_sha512, SSL_SIGN_FALCON1024},

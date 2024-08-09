@@ -1,4 +1,4 @@
 {%- for sig in config['sigs'] %}
-                              SSL_SIGN_{{ sig['name']|upper }},
+                                               SSL_SIGN_{{ sig['name']|upper }},
 {%- endfor %}
 

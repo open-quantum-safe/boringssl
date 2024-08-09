@@ -219,18 +219,18 @@ static const EVP_PKEY_ASN1_METHOD *evp_pkey_asn1_find(int nid) {
     case EVP_PKEY_X25519:
       return &x25519_asn1_meth;
 ///// OQS_TEMPLATE_FRAGMENT_PKEY_TO_ASN1_METH_START
-    case EVP_PKEY_DILITHIUM2:
-      return &dilithium2_asn1_meth;
-    case EVP_PKEY_DILITHIUM3:
-      return &dilithium3_asn1_meth;
-    case EVP_PKEY_DILITHIUM5:
-      return &dilithium5_asn1_meth;
     case EVP_PKEY_MLDSA44:
       return &mldsa44_asn1_meth;
     case EVP_PKEY_MLDSA65:
       return &mldsa65_asn1_meth;
     case EVP_PKEY_MLDSA87:
       return &mldsa87_asn1_meth;
+    case EVP_PKEY_DILITHIUM2:
+      return &dilithium2_asn1_meth;
+    case EVP_PKEY_DILITHIUM3:
+      return &dilithium3_asn1_meth;
+    case EVP_PKEY_DILITHIUM5:
+      return &dilithium5_asn1_meth;
     case EVP_PKEY_FALCON512:
       return &falcon512_asn1_meth;
     case EVP_PKEY_FALCONPADDED512:
