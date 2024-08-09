@@ -185,12 +185,12 @@ OPENSSL_EXPORT DH *EVP_PKEY_get1_DH(const EVP_PKEY *pkey);
 #define EVP_PKEY_DH NID_dhKeyAgreement
 
 ///// OQS_TEMPLATE_FRAGMENT_DEFINE_EVP_PKEYS_START
-#define EVP_PKEY_DILITHIUM2 NID_dilithium2
-#define EVP_PKEY_DILITHIUM3 NID_dilithium3
-#define EVP_PKEY_DILITHIUM5 NID_dilithium5
 #define EVP_PKEY_MLDSA44 NID_mldsa44
 #define EVP_PKEY_MLDSA65 NID_mldsa65
 #define EVP_PKEY_MLDSA87 NID_mldsa87
+#define EVP_PKEY_DILITHIUM2 NID_dilithium2
+#define EVP_PKEY_DILITHIUM3 NID_dilithium3
+#define EVP_PKEY_DILITHIUM5 NID_dilithium5
 #define EVP_PKEY_FALCON512 NID_falcon512
 #define EVP_PKEY_FALCONPADDED512 NID_falconpadded512
 #define EVP_PKEY_FALCON1024 NID_falcon1024
@@ -209,12 +209,12 @@ OPENSSL_EXPORT DH *EVP_PKEY_get1_DH(const EVP_PKEY *pkey);
 #define EVP_PKEY_SPHINCSSHAKE256SSIMPLE NID_sphincsshake256ssimple
 
 #define IS_OQS_PKEY(pkey_id) ( \
-   (pkey_id == NID_dilithium2) || \
-   (pkey_id == NID_dilithium3) || \
-   (pkey_id == NID_dilithium5) || \
    (pkey_id == NID_mldsa44) || \
    (pkey_id == NID_mldsa65) || \
    (pkey_id == NID_mldsa87) || \
+   (pkey_id == NID_dilithium2) || \
+   (pkey_id == NID_dilithium3) || \
+   (pkey_id == NID_dilithium5) || \
    (pkey_id == NID_falcon512) || \
    (pkey_id == NID_falconpadded512) || \
    (pkey_id == NID_falcon1024) || \
@@ -231,6 +231,9 @@ OPENSSL_EXPORT DH *EVP_PKEY_get1_DH(const EVP_PKEY *pkey);
    (pkey_id == NID_sphincsshake192ssimple) || \
    (pkey_id == NID_sphincsshake256fsimple) || \
    (pkey_id == NID_sphincsshake256ssimple) || \
+   (pkey_id == NID_mlkem512) || \
+   (pkey_id == NID_mlkem768) || \
+   (pkey_id == NID_mlkem1024) || \
    (pkey_id == NID_frodo640aes) || \
    (pkey_id == NID_frodo640shake) || \
    (pkey_id == NID_frodo976aes) || \
@@ -240,9 +243,6 @@ OPENSSL_EXPORT DH *EVP_PKEY_get1_DH(const EVP_PKEY *pkey);
    (pkey_id == NID_kyber512) || \
    (pkey_id == NID_kyber768) || \
    (pkey_id == NID_kyber1024) || \
-   (pkey_id == NID_mlkem512) || \
-   (pkey_id == NID_mlkem768) || \
-   (pkey_id == NID_mlkem1024) || \
    (pkey_id == NID_bikel1) || \
    (pkey_id == NID_bikel3) || \
    (pkey_id == NID_hqc128) || \

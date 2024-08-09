@@ -203,21 +203,6 @@ bool VerifySignedData(SignatureAlgorithm algorithm, der::Input signed_data,
       break;
 
 ///// OQS_TEMPLATE_FRAGMENT_LIST_SIGS_START
-    case SignatureAlgorithm::kDilithium2:
-      expected_pkey_id = EVP_PKEY_DILITHIUM2;
-      digest = EVP_sha256();
-      cache_algorithm_name = "Dilithium2";
-      break;
-    case SignatureAlgorithm::kDilithium3:
-      expected_pkey_id = EVP_PKEY_DILITHIUM3;
-      digest = EVP_sha384();
-      cache_algorithm_name = "Dilithium3";
-      break;
-    case SignatureAlgorithm::kDilithium5:
-      expected_pkey_id = EVP_PKEY_DILITHIUM5;
-      digest = EVP_sha512();
-      cache_algorithm_name = "Dilithium5";
-      break;
     case SignatureAlgorithm::kMldsa44:
       expected_pkey_id = EVP_PKEY_MLDSA44;
       digest = EVP_sha256();
@@ -232,6 +217,21 @@ bool VerifySignedData(SignatureAlgorithm algorithm, der::Input signed_data,
       expected_pkey_id = EVP_PKEY_MLDSA87;
       digest = EVP_sha512();
       cache_algorithm_name = "Mldsa87";
+      break;
+    case SignatureAlgorithm::kDilithium2:
+      expected_pkey_id = EVP_PKEY_DILITHIUM2;
+      digest = EVP_sha256();
+      cache_algorithm_name = "Dilithium2";
+      break;
+    case SignatureAlgorithm::kDilithium3:
+      expected_pkey_id = EVP_PKEY_DILITHIUM3;
+      digest = EVP_sha384();
+      cache_algorithm_name = "Dilithium3";
+      break;
+    case SignatureAlgorithm::kDilithium5:
+      expected_pkey_id = EVP_PKEY_DILITHIUM5;
+      digest = EVP_sha512();
+      cache_algorithm_name = "Dilithium5";
       break;
     case SignatureAlgorithm::kFalcon512:
       expected_pkey_id = EVP_PKEY_FALCON512;
