@@ -105,6 +105,10 @@ int x509_digest_sign_algorithm(EVP_MD_CTX *ctx, X509_ALGOR *algor) {
       pkey_id == EVP_PKEY_FALCONPADDED512 ||
       pkey_id == EVP_PKEY_FALCON1024 ||
       pkey_id == EVP_PKEY_FALCONPADDED1024 ||
+      pkey_id == EVP_PKEY_MAYO1 ||
+      pkey_id == EVP_PKEY_MAYO2 ||
+      pkey_id == EVP_PKEY_MAYO3 ||
+      pkey_id == EVP_PKEY_MAYO5 ||
       pkey_id == EVP_PKEY_SPHINCSSHA2128FSIMPLE ||
       pkey_id == EVP_PKEY_SPHINCSSHA2128SSIMPLE ||
       pkey_id == EVP_PKEY_SPHINCSSHA2192FSIMPLE ||

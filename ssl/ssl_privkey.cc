@@ -88,6 +88,10 @@ bool ssl_is_key_type_supported(int key_type) {
          key_type == EVP_PKEY_FALCONPADDED512 ||
          key_type == EVP_PKEY_FALCON1024 ||
          key_type == EVP_PKEY_FALCONPADDED1024 ||
+         key_type == EVP_PKEY_MAYO1 ||
+         key_type == EVP_PKEY_MAYO2 ||
+         key_type == EVP_PKEY_MAYO3 ||
+         key_type == EVP_PKEY_MAYO5 ||
          key_type == EVP_PKEY_SPHINCSSHA2128FSIMPLE ||
          key_type == EVP_PKEY_SPHINCSSHA2128SSIMPLE ||
          key_type == EVP_PKEY_SPHINCSSHA2192FSIMPLE ||
@@ -175,6 +179,10 @@ static const SSL_SIGNATURE_ALGORITHM kSignatureAlgorithms[] = {
     {SSL_SIGN_FALCONPADDED512, EVP_PKEY_FALCONPADDED512, NID_undef, &EVP_sha256, false, true, true, false},
     {SSL_SIGN_FALCON1024, EVP_PKEY_FALCON1024, NID_undef, &EVP_sha512, false, true, true, false},
     {SSL_SIGN_FALCONPADDED1024, EVP_PKEY_FALCONPADDED1024, NID_undef, &EVP_sha512, false, true, true, false},
+    {SSL_SIGN_MAYO1, EVP_PKEY_MAYO1, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_MAYO2, EVP_PKEY_MAYO2, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_MAYO3, EVP_PKEY_MAYO3, NID_undef, &EVP_sha384, false, true, true, false},
+    {SSL_SIGN_MAYO5, EVP_PKEY_MAYO5, NID_undef, &EVP_sha512, false, true, true, false},
     {SSL_SIGN_SPHINCSSHA2128FSIMPLE, EVP_PKEY_SPHINCSSHA2128FSIMPLE, NID_undef, &EVP_sha256, false, true, true, false},
     {SSL_SIGN_SPHINCSSHA2128SSIMPLE, EVP_PKEY_SPHINCSSHA2128SSIMPLE, NID_undef, &EVP_sha256, false, true, true, false},
     {SSL_SIGN_SPHINCSSHA2192FSIMPLE, EVP_PKEY_SPHINCSSHA2192FSIMPLE, NID_undef, &EVP_sha384, false, true, true, false},
@@ -571,6 +579,10 @@ static const SignatureAlgorithmName kSignatureAlgorithmNames[] = {
     {SSL_SIGN_FALCONPADDED512, "falconpadded512"},
     {SSL_SIGN_FALCON1024, "falcon1024"},
     {SSL_SIGN_FALCONPADDED1024, "falconpadded1024"},
+    {SSL_SIGN_MAYO1, "mayo1"},
+    {SSL_SIGN_MAYO2, "mayo2"},
+    {SSL_SIGN_MAYO3, "mayo3"},
+    {SSL_SIGN_MAYO5, "mayo5"},
     {SSL_SIGN_SPHINCSSHA2128FSIMPLE, "sphincssha2128fsimple"},
     {SSL_SIGN_SPHINCSSHA2128SSIMPLE, "sphincssha2128ssimple"},
     {SSL_SIGN_SPHINCSSHA2192FSIMPLE, "sphincssha2192fsimple"},
@@ -771,6 +783,10 @@ static constexpr struct {
     {EVP_PKEY_FALCONPADDED512, NID_sha256, SSL_SIGN_FALCONPADDED512},
     {EVP_PKEY_FALCON1024, NID_sha512, SSL_SIGN_FALCON1024},
     {EVP_PKEY_FALCONPADDED1024, NID_sha512, SSL_SIGN_FALCONPADDED1024},
+    {EVP_PKEY_MAYO1, NID_sha256, SSL_SIGN_MAYO1},
+    {EVP_PKEY_MAYO2, NID_sha256, SSL_SIGN_MAYO2},
+    {EVP_PKEY_MAYO3, NID_sha384, SSL_SIGN_MAYO3},
+    {EVP_PKEY_MAYO5, NID_sha512, SSL_SIGN_MAYO5},
     {EVP_PKEY_SPHINCSSHA2128FSIMPLE, NID_sha256, SSL_SIGN_SPHINCSSHA2128FSIMPLE},
     {EVP_PKEY_SPHINCSSHA2128SSIMPLE, NID_sha256, SSL_SIGN_SPHINCSSHA2128SSIMPLE},
     {EVP_PKEY_SPHINCSSHA2192FSIMPLE, NID_sha384, SSL_SIGN_SPHINCSSHA2192FSIMPLE},

@@ -195,6 +195,10 @@ OPENSSL_EXPORT DH *EVP_PKEY_get1_DH(const EVP_PKEY *pkey);
 #define EVP_PKEY_FALCONPADDED512 NID_falconpadded512
 #define EVP_PKEY_FALCON1024 NID_falcon1024
 #define EVP_PKEY_FALCONPADDED1024 NID_falconpadded1024
+#define EVP_PKEY_MAYO1 NID_mayo1
+#define EVP_PKEY_MAYO2 NID_mayo2
+#define EVP_PKEY_MAYO3 NID_mayo3
+#define EVP_PKEY_MAYO5 NID_mayo5
 #define EVP_PKEY_SPHINCSSHA2128FSIMPLE NID_sphincssha2128fsimple
 #define EVP_PKEY_SPHINCSSHA2128SSIMPLE NID_sphincssha2128ssimple
 #define EVP_PKEY_SPHINCSSHA2192FSIMPLE NID_sphincssha2192fsimple
@@ -219,6 +223,10 @@ OPENSSL_EXPORT DH *EVP_PKEY_get1_DH(const EVP_PKEY *pkey);
    (pkey_id == NID_falconpadded512) || \
    (pkey_id == NID_falcon1024) || \
    (pkey_id == NID_falconpadded1024) || \
+   (pkey_id == NID_mayo1) || \
+   (pkey_id == NID_mayo2) || \
+   (pkey_id == NID_mayo3) || \
+   (pkey_id == NID_mayo5) || \
    (pkey_id == NID_sphincssha2128fsimple) || \
    (pkey_id == NID_sphincssha2128ssimple) || \
    (pkey_id == NID_sphincssha2192fsimple) || \

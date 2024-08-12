@@ -134,6 +134,10 @@ const uint8_t kOidFalcon512[] = {0x2b, 0xce, 0x0f, 0x03, 0x0b};
 const uint8_t kOidFalconpadded512[] = {0x2b, 0xce, 0x0f, 0x03, 0x10};
 const uint8_t kOidFalcon1024[] = {0x2b, 0xce, 0x0f, 0x03, 0x0e};
 const uint8_t kOidFalconpadded1024[] = {0x2b, 0xce, 0x0f, 0x03, 0x13};
+const uint8_t kOidMayo1[] = {0x2b, 0xce, 0x0f, 0x08, 0x01, 0x01};
+const uint8_t kOidMayo2[] = {0x2b, 0xce, 0x0f, 0x08, 0x02, 0x01};
+const uint8_t kOidMayo3[] = {0x2b, 0xce, 0x0f, 0x08, 0x03, 0x01};
+const uint8_t kOidMayo5[] = {0x2b, 0xce, 0x0f, 0x08, 0x05, 0x01};
 const uint8_t kOidSphincssha2128fsimple[] = {0x2b, 0xce, 0x0f, 0x06, 0x04, 0x0d};
 const uint8_t kOidSphincssha2128ssimple[] = {0x2b, 0xce, 0x0f, 0x06, 0x04, 0x10};
 const uint8_t kOidSphincssha2192fsimple[] = {0x2b, 0xce, 0x0f, 0x06, 0x05, 0x0a};
@@ -432,6 +436,18 @@ std::optional<SignatureAlgorithm> ParseSignatureAlgorithm(
   if (oid == der::Input(kOidFalconpadded1024)) {
     return SignatureAlgorithm::kFalconpadded1024;
   }
+  if (oid == der::Input(kOidMayo1)) {
+    return SignatureAlgorithm::kMayo1;
+  }
+  if (oid == der::Input(kOidMayo2)) {
+    return SignatureAlgorithm::kMayo2;
+  }
+  if (oid == der::Input(kOidMayo3)) {
+    return SignatureAlgorithm::kMayo3;
+  }
+  if (oid == der::Input(kOidMayo5)) {
+    return SignatureAlgorithm::kMayo5;
+  }
   if (oid == der::Input(kOidSphincssha2128fsimple)) {
     return SignatureAlgorithm::kSphincssha2128fsimple;
   }
@@ -508,6 +524,8 @@ std::optional<DigestAlgorithm> GetTlsServerEndpointDigestAlgorithm(
     case SignatureAlgorithm::kDilithium2:
     case SignatureAlgorithm::kFalcon512:
     case SignatureAlgorithm::kFalconpadded512:
+    case SignatureAlgorithm::kMayo1:
+    case SignatureAlgorithm::kMayo2:
     case SignatureAlgorithm::kSphincssha2128fsimple:
     case SignatureAlgorithm::kSphincssha2128ssimple:
     case SignatureAlgorithm::kSphincsshake128fsimple:
@@ -516,6 +534,7 @@ std::optional<DigestAlgorithm> GetTlsServerEndpointDigestAlgorithm(
 
     case SignatureAlgorithm::kMldsa65:
     case SignatureAlgorithm::kDilithium3:
+    case SignatureAlgorithm::kMayo3:
     case SignatureAlgorithm::kSphincssha2192fsimple:
     case SignatureAlgorithm::kSphincssha2192ssimple:
     case SignatureAlgorithm::kSphincsshake192fsimple:
@@ -526,6 +545,7 @@ std::optional<DigestAlgorithm> GetTlsServerEndpointDigestAlgorithm(
     case SignatureAlgorithm::kDilithium5:
     case SignatureAlgorithm::kFalcon1024:
     case SignatureAlgorithm::kFalconpadded1024:
+    case SignatureAlgorithm::kMayo5:
     case SignatureAlgorithm::kSphincssha2256fsimple:
     case SignatureAlgorithm::kSphincssha2256ssimple:
     case SignatureAlgorithm::kSphincsshake256fsimple:
