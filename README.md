@@ -90,6 +90,7 @@ The following quantum-safe digital signature algorithms from liboqs are supporte
 <!--- OQS_TEMPLATE_FRAGMENT_LIST_SIGS_START -->
 - **CRYSTALS-DILITHIUM**: `dilithium2`, `dilithium3`, `dilithium5`
 - **Falcon**: `falcon512`, `falconpadded512`, `falcon1024`, `falconpadded1024`
+- **MAYO**: `mayo1`, `mayo2`, `mayo3`, `mayo5`
 - **ML-DSA**: `mldsa65`, `mldsa87`
 - **SPHINCS-SHA2**: `sphincssha2128fsimple`, `sphincssha2128ssimple`, `sphincssha2192fsimple`, `sphincssha2192ssimple`, `sphincssha2256fsimple`, `sphincssha2256ssimple`
 - **SPHINCS-SHAKE**: `sphincsshake128fsimple`, `sphincsshake128ssimple`, `sphincsshake192fsimple`, `sphincsshake192ssimple`, `sphincsshake256fsimple`, `sphincsshake256ssimple`

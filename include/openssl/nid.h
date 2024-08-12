@@ -4488,6 +4488,26 @@ extern "C" {
 #define NID_falconpadded1024 1244
 #define OBJ_falconpadded1024 1L, 3L, 9999L, 3L, 19L
 
+#define SN_mayo1 "mayo1"
+#define LN_mayo1 "mayo1"
+#define NID_mayo1 1245
+#define OBJ_mayo1 1L, 3L, 9999L, 8L, 1L, 1L
+
+#define SN_mayo2 "mayo2"
+#define LN_mayo2 "mayo2"
+#define NID_mayo2 1246
+#define OBJ_mayo2 1L, 3L, 9999L, 8L, 2L, 1L
+
+#define SN_mayo3 "mayo3"
+#define LN_mayo3 "mayo3"
+#define NID_mayo3 1247
+#define OBJ_mayo3 1L, 3L, 9999L, 8L, 3L, 1L
+
+#define SN_mayo5 "mayo5"
+#define LN_mayo5 "mayo5"
+#define NID_mayo5 1248
+#define OBJ_mayo5 1L, 3L, 9999L, 8L, 5L, 1L
+
 
 #if defined(__cplusplus)
 } /* extern C */
