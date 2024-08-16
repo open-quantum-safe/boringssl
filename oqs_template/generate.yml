@@ -91,6 +91,12 @@ kems:
     mix_with: [{'name': 'p384', 'mix_nid':'0x2F42', 'nid':'SSL_GROUP_SECP384R1'}]
     oqs_meth: 'OQS_KEM_alg_bike_l3'
   -
+    family: 'BIKE'
+    name: 'bikel5'
+    nid: '0x0243'
+    mix_with: [{'name': 'p521', 'mix_nid':'0x2F43', 'nid':'SSL_GROUP_SECP521R1'}]
+    oqs_meth: 'OQS_KEM_alg_bike_l5'
+  -
     family: 'HQC'
     name: 'hqc128'
     nid: '0x0244'
@@ -124,11 +130,27 @@ sigs:
     claimed_security_level: '2'
   -
     family: 'ML-DSA'
+    name: 'rsa3072_mldsa44'
+    oid: '1 3 9999 7 2'
+    oid_encoded: '0x2B, 0xCE, 0x0F, 0x07, 0x02'
+    oqs_meth: 'OQS_SIG_alg_ml_dsa_44'
+    code_point: '0xfed4'
+    claimed_security_level: '2'
+  -
+    family: 'ML-DSA'
     name: 'mldsa65'
     oid: '1 3 6 1 4 1 2 267 12 6 5'
     oid_encoded: '0x2B, 0x06, 0x01, 0x04, 0x01, 0x02, 0x82, 0x0B, 0x0C, 0x06, 0x05'
     oqs_meth: 'OQS_SIG_alg_ml_dsa_65'
     code_point: '0xfed1'
+    claimed_security_level: '3'
+  -
+    family: 'ML-DSA'
+    name: 'p384_mldsa65'
+    oid: '1 3 9999 7 3'
+    oid_encoded: '0x2B, 0xCE, 0x0F, 0x07, 0x03'
+    oqs_meth: 'OQS_SIG_alg_ml_dsa_65'
+    code_point: '0xfed5'
     claimed_security_level: '3'
   -
     family: 'ML-DSA'
@@ -169,6 +191,14 @@ sigs:
     oid_encoded: '0x2B, 0xCE, 0x0F, 0x03, 0x0B'
     oqs_meth: 'OQS_SIG_alg_falcon_512'
     code_point: '0xfed7'
+    claimed_security_level: '1'
+  -
+    family: 'Falcon'
+    name: 'p256_falcon512'
+    oid: '1 3 9999 3 12'
+    oid_encoded: '0x2B, 0xCE, 0x0F, 0x03, 0x0C'
+    oqs_meth: 'OQS_SIG_alg_falcon_512'
+    code_point: '0xfed8'
     claimed_security_level: '1'
   -
     family: 'Falcon'

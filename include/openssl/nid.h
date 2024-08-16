@@ -4508,6 +4508,27 @@ extern "C" {
 #define NID_mayo5 1248
 #define OBJ_mayo5 1L, 3L, 9999L, 8L, 5L, 1L
 
+#define SN_bikel5 "bikel5"
+#define NID_bikel5 1249
+
+#define SN_p521_bikel5 "p521_bikel5"
+#define NID_p521_bikel5 1250
+
+#define SN_rsa3072_mldsa44 "rsa3072_mldsa44"
+#define LN_rsa3072_mldsa44 "rsa3072_mldsa44"
+#define NID_rsa3072_mldsa44 1251
+#define OBJ_rsa3072_mldsa44 1L, 3L, 9999L, 7L, 2L
+
+#define SN_p384_mldsa65 "p384_mldsa65"
+#define LN_p384_mldsa65 "p384_mldsa65"
+#define NID_p384_mldsa65 1252
+#define OBJ_p384_mldsa65 1L, 3L, 9999L, 7L, 3L
+
+#define SN_p256_falcon512 "p256_falcon512"
+#define LN_p256_falcon512 "p256_falcon512"
+#define NID_p256_falcon512 1253
+#define OBJ_p256_falcon512 1L, 3L, 9999L, 3L, 12L
+
 
 #if defined(__cplusplus)
 } /* extern C */

@@ -1,0 +1,7 @@
+{%- for sig in config['sigs'] %}
+{%- if sig['name'].startswith("rsa") or sig['name'].startswith("p256") or sig['name'].startswith("p384") or sig['name'].startswith("p521") %}
+    case NID_{{ sig['name'] }}:
+      return 1;
+{%- endif %}
+{%- endfor %}
+

@@ -284,17 +284,42 @@ typedef struct {
 #define ED25519_PUBLIC_KEY_OFFSET 32
 
 typedef struct {
-    OQS_SIG *ctx;
-    uint8_t *pub;
-    uint8_t *priv;
-    char has_private;
-} OQS_KEY;
-
-typedef struct {
   uint8_t pub[32];
   uint8_t priv[32];
   char has_private;
 } X25519_KEY;
+
+typedef struct {
+    OQS_SIG *ctx;
+    uint8_t *pub;
+    uint8_t *priv;
+    char has_private;
+    int nid;
+    EVP_PKEY *classical_pkey;
+} OQS_KEY;
+
+typedef enum {
+    KEY_TYPE_PUBLIC,
+    KEY_TYPE_PRIVATE,
+} oqs_key_type_t;
+
+#define SIZE_OF_UINT32 4
+
+#define ENCODE_UINT32(pbuf, i)  (pbuf)[0] = (unsigned char)((i>>24) & 0xff); \
+                                (pbuf)[1] = (unsigned char)((i>>16) & 0xff); \
+                                (pbuf)[2] = (unsigned char)((i>> 8) & 0xff); \
+                                (pbuf)[3] = (unsigned char)((i    ) & 0xff)
+
+#define DECODE_UINT32(i, pbuf)  i  = ((uint32_t) (pbuf)[0]) << 24; \
+                                i |= ((uint32_t) (pbuf)[1]) << 16; \
+                                i |= ((uint32_t) (pbuf)[2]) <<  8; \
+                                i |= ((uint32_t) (pbuf)[3])
+
+void oqs_pkey_ctx_free(OQS_KEY* key);
+int get_classical_nid(int hybrid_id);
+int is_oqs_hybrid_alg(int hybrid_nid);
+int is_EC_nid(int nid);
+int get_classical_sig_len(int classical_id);
 
 extern const EVP_PKEY_ASN1_METHOD dsa_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD ec_asn1_meth;
@@ -304,12 +329,15 @@ extern const EVP_PKEY_ASN1_METHOD x25519_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD dh_asn1_meth;
 ///// OQS_TEMPLATE_FRAGMENT_DECLARE_ASN1_METHS_START
 extern const EVP_PKEY_ASN1_METHOD mldsa44_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD rsa3072_mldsa44_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD mldsa65_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD p384_mldsa65_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD mldsa87_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD dilithium2_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD dilithium3_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD dilithium5_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD falcon512_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD p256_falcon512_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD falconpadded512_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD falcon1024_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD falconpadded1024_asn1_meth;
@@ -339,12 +367,15 @@ extern const EVP_PKEY_METHOD hkdf_pkey_meth;
 extern const EVP_PKEY_METHOD dh_pkey_meth;
 ///// OQS_TEMPLATE_FRAGMENT_DECLARE_PKEY_METHS_START
 extern const EVP_PKEY_METHOD mldsa44_pkey_meth;
+extern const EVP_PKEY_METHOD rsa3072_mldsa44_pkey_meth;
 extern const EVP_PKEY_METHOD mldsa65_pkey_meth;
+extern const EVP_PKEY_METHOD p384_mldsa65_pkey_meth;
 extern const EVP_PKEY_METHOD mldsa87_pkey_meth;
 extern const EVP_PKEY_METHOD dilithium2_pkey_meth;
 extern const EVP_PKEY_METHOD dilithium3_pkey_meth;
 extern const EVP_PKEY_METHOD dilithium5_pkey_meth;
 extern const EVP_PKEY_METHOD falcon512_pkey_meth;
+extern const EVP_PKEY_METHOD p256_falcon512_pkey_meth;
 extern const EVP_PKEY_METHOD falconpadded512_pkey_meth;
 extern const EVP_PKEY_METHOD falcon1024_pkey_meth;
 extern const EVP_PKEY_METHOD falconpadded1024_pkey_meth;

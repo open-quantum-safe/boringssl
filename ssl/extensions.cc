@@ -277,6 +277,10 @@ static bool is_post_quantum_group(uint16_t id) {
       return true;
     case SSL_GROUP_P384_BIKEL3:
       return true;
+    case SSL_GROUP_BIKEL5:
+      return true;
+    case SSL_GROUP_P521_BIKEL5:
+      return true;
     case SSL_GROUP_HQC128:
       return true;
     case SSL_GROUP_P256_HQC128:
@@ -449,6 +453,8 @@ static const uint16_t kAllSupportedGroups[] = {
     SSL_GROUP_BIKEL1,
     SSL_GROUP_P384_BIKEL3,
     SSL_GROUP_BIKEL3,
+    SSL_GROUP_P521_BIKEL5,
+    SSL_GROUP_BIKEL5,
     SSL_GROUP_P256_HQC128,
     SSL_GROUP_X25519_HQC128,
     SSL_GROUP_HQC128,
@@ -539,12 +545,15 @@ static const uint16_t kVerifySignatureAlgorithms[] = {
     // List our preferred algorithms first.
 ///// OQS_TEMPLATE_FRAGMENT_LIST_VERIFY_SIG_ALGS_START
     SSL_SIGN_MLDSA44,
+    SSL_SIGN_RSA3072_MLDSA44,
     SSL_SIGN_MLDSA65,
+    SSL_SIGN_P384_MLDSA65,
     SSL_SIGN_MLDSA87,
     SSL_SIGN_DILITHIUM2,
     SSL_SIGN_DILITHIUM3,
     SSL_SIGN_DILITHIUM5,
     SSL_SIGN_FALCON512,
+    SSL_SIGN_P256_FALCON512,
     SSL_SIGN_FALCONPADDED512,
     SSL_SIGN_FALCON1024,
     SSL_SIGN_FALCONPADDED1024,
@@ -588,12 +597,15 @@ static const uint16_t kSignSignatureAlgorithms[] = {
     // List our preferred algorithms first.
 ///// OQS_TEMPLATE_FRAGMENT_LIST_SIGN_SIG_ALGS_START
     SSL_SIGN_MLDSA44,
+    SSL_SIGN_RSA3072_MLDSA44,
     SSL_SIGN_MLDSA65,
+    SSL_SIGN_P384_MLDSA65,
     SSL_SIGN_MLDSA87,
     SSL_SIGN_DILITHIUM2,
     SSL_SIGN_DILITHIUM3,
     SSL_SIGN_DILITHIUM5,
     SSL_SIGN_FALCON512,
+    SSL_SIGN_P256_FALCON512,
     SSL_SIGN_FALCONPADDED512,
     SSL_SIGN_FALCON1024,
     SSL_SIGN_FALCONPADDED1024,
@@ -4356,12 +4368,15 @@ bool tls1_choose_signature_algorithm(SSL_HANDSHAKE *hs,
                                                SSL_SIGN_ECDSA_SHA1,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_DEFAULT_SIG_ALGS_START
                                                SSL_SIGN_MLDSA44,
+                                               SSL_SIGN_RSA3072_MLDSA44,
                                                SSL_SIGN_MLDSA65,
+                                               SSL_SIGN_P384_MLDSA65,
                                                SSL_SIGN_MLDSA87,
                                                SSL_SIGN_DILITHIUM2,
                                                SSL_SIGN_DILITHIUM3,
                                                SSL_SIGN_DILITHIUM5,
                                                SSL_SIGN_FALCON512,
+                                               SSL_SIGN_P256_FALCON512,
                                                SSL_SIGN_FALCONPADDED512,
                                                SSL_SIGN_FALCON1024,
                                                SSL_SIGN_FALCONPADDED1024,

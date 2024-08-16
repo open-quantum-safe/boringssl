@@ -125,12 +125,15 @@ const uint8_t kOidMgf1[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
 
 ///// OQS_TEMPLATE_FRAGMENT_LIST_SIG_OIDS_START
 const uint8_t kOidMldsa44[] = {0x2b, 0x06, 0x01, 0x04, 0x01, 0x02, 0x82, 0x0b, 0x0c, 0x04, 0x04};
+const uint8_t kOidRsa3072_mldsa44[] = {0x2b, 0xce, 0x0f, 0x07, 0x02};
 const uint8_t kOidMldsa65[] = {0x2b, 0x06, 0x01, 0x04, 0x01, 0x02, 0x82, 0x0b, 0x0c, 0x06, 0x05};
+const uint8_t kOidP384_mldsa65[] = {0x2b, 0xce, 0x0f, 0x07, 0x03};
 const uint8_t kOidMldsa87[] = {0x2b, 0x06, 0x01, 0x04, 0x01, 0x02, 0x82, 0x0b, 0x0c, 0x08, 0x07};
 const uint8_t kOidDilithium2[] = {0x2b, 0x06, 0x01, 0x04, 0x01, 0x02, 0x82, 0x0b, 0x07, 0x04, 0x04};
 const uint8_t kOidDilithium3[] = {0x2b, 0x06, 0x01, 0x04, 0x01, 0x02, 0x82, 0x0b, 0x07, 0x06, 0x05};
 const uint8_t kOidDilithium5[] = {0x2b, 0x06, 0x01, 0x04, 0x01, 0x02, 0x82, 0x0b, 0x07, 0x08, 0x07};
 const uint8_t kOidFalcon512[] = {0x2b, 0xce, 0x0f, 0x03, 0x0b};
+const uint8_t kOidP256_falcon512[] = {0x2b, 0xce, 0x0f, 0x03, 0x0c};
 const uint8_t kOidFalconpadded512[] = {0x2b, 0xce, 0x0f, 0x03, 0x10};
 const uint8_t kOidFalcon1024[] = {0x2b, 0xce, 0x0f, 0x03, 0x0e};
 const uint8_t kOidFalconpadded1024[] = {0x2b, 0xce, 0x0f, 0x03, 0x13};
@@ -409,8 +412,14 @@ std::optional<SignatureAlgorithm> ParseSignatureAlgorithm(
   if (oid == der::Input(kOidMldsa44)) {
     return SignatureAlgorithm::kMldsa44;
   }
+  if (oid == der::Input(kOidRsa3072_mldsa44)) {
+    return SignatureAlgorithm::kRsa3072_mldsa44;
+  }
   if (oid == der::Input(kOidMldsa65)) {
     return SignatureAlgorithm::kMldsa65;
+  }
+  if (oid == der::Input(kOidP384_mldsa65)) {
+    return SignatureAlgorithm::kP384_mldsa65;
   }
   if (oid == der::Input(kOidMldsa87)) {
     return SignatureAlgorithm::kMldsa87;
@@ -426,6 +435,9 @@ std::optional<SignatureAlgorithm> ParseSignatureAlgorithm(
   }
   if (oid == der::Input(kOidFalcon512)) {
     return SignatureAlgorithm::kFalcon512;
+  }
+  if (oid == der::Input(kOidP256_falcon512)) {
+    return SignatureAlgorithm::kP256_falcon512;
   }
   if (oid == der::Input(kOidFalconpadded512)) {
     return SignatureAlgorithm::kFalconpadded512;
@@ -521,8 +533,10 @@ std::optional<DigestAlgorithm> GetTlsServerEndpointDigestAlgorithm(
 
 ///// OQS_TEMPLATE_FRAGMENT_PAIR_SIGS_WITH_DIGESTS_START
     case SignatureAlgorithm::kMldsa44:
+    case SignatureAlgorithm::kRsa3072_mldsa44:
     case SignatureAlgorithm::kDilithium2:
     case SignatureAlgorithm::kFalcon512:
+    case SignatureAlgorithm::kP256_falcon512:
     case SignatureAlgorithm::kFalconpadded512:
     case SignatureAlgorithm::kMayo1:
     case SignatureAlgorithm::kMayo2:
@@ -533,6 +547,7 @@ std::optional<DigestAlgorithm> GetTlsServerEndpointDigestAlgorithm(
       return DigestAlgorithm::Sha256;
 
     case SignatureAlgorithm::kMldsa65:
+    case SignatureAlgorithm::kP384_mldsa65:
     case SignatureAlgorithm::kDilithium3:
     case SignatureAlgorithm::kMayo3:
     case SignatureAlgorithm::kSphincssha2192fsimple:

@@ -604,6 +604,8 @@ constexpr NamedGroup kNamedGroups[] = {
     {NID_x25519_bikel1, SSL_GROUP_X25519_BIKEL1, "x25519_bikel1", "x25519_bikel1"},
     {NID_bikel3, SSL_GROUP_BIKEL3, "bikel3", "bikel3"},
     {NID_p384_bikel3, SSL_GROUP_P384_BIKEL3, "p384_bikel3", "p384_bikel3"},
+    {NID_bikel5, SSL_GROUP_BIKEL5, "bikel5", "bikel5"},
+    {NID_p521_bikel5, SSL_GROUP_P521_BIKEL5, "p521_bikel5", "p521_bikel5"},
     {NID_hqc128, SSL_GROUP_HQC128, "hqc128", "hqc128"},
     {NID_p256_hqc128, SSL_GROUP_P256_HQC128, "p256_hqc128", "p256_hqc128"},
     {NID_x25519_hqc128, SSL_GROUP_X25519_HQC128, "x25519_hqc128", "x25519_hqc128"},
@@ -703,6 +705,10 @@ UniquePtr<SSLKeyShare> SSLKeyShare::Create(uint16_t group_id) {
       return MakeUnique<OQSKeyShare>(SSL_GROUP_BIKEL3, OQS_KEM_alg_bike_l3);
     case SSL_GROUP_P384_BIKEL3:
       return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P384_BIKEL3, SSL_GROUP_SECP384R1, OQS_KEM_alg_bike_l3);
+    case SSL_GROUP_BIKEL5:
+      return MakeUnique<OQSKeyShare>(SSL_GROUP_BIKEL5, OQS_KEM_alg_bike_l5);
+    case SSL_GROUP_P521_BIKEL5:
+      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P521_BIKEL5, SSL_GROUP_SECP521R1, OQS_KEM_alg_bike_l5);
     case SSL_GROUP_HQC128:
       return MakeUnique<OQSKeyShare>(SSL_GROUP_HQC128, OQS_KEM_alg_hqc_128);
     case SSL_GROUP_P256_HQC128:

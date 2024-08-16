@@ -2270,6 +2270,7 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
         NID_kyber1024, NID_p521_kyber1024,
         NID_bikel1, NID_p256_bikel1, NID_x25519_bikel1,
         NID_bikel3, NID_p384_bikel3,
+        NID_bikel5, NID_p521_bikel5,
         NID_hqc128, NID_p256_hqc128, NID_x25519_hqc128,
         NID_hqc192, NID_p384_hqc192,
         NID_hqc256, NID_p521_hqc256,

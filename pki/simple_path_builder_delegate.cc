@@ -79,12 +79,15 @@ bool SimplePathBuilderDelegate::IsSignatureAlgorithmAcceptable(
     case SignatureAlgorithm::kEcdsaSha512:
 ///// OQS_TEMPLATE_FRAGMENT_LIST_SIGS_START
     case SignatureAlgorithm::kMldsa44:
+    case SignatureAlgorithm::kRsa3072_mldsa44:
     case SignatureAlgorithm::kMldsa65:
+    case SignatureAlgorithm::kP384_mldsa65:
     case SignatureAlgorithm::kMldsa87:
     case SignatureAlgorithm::kDilithium2:
     case SignatureAlgorithm::kDilithium3:
     case SignatureAlgorithm::kDilithium5:
     case SignatureAlgorithm::kFalcon512:
+    case SignatureAlgorithm::kP256_falcon512:
     case SignatureAlgorithm::kFalconpadded512:
     case SignatureAlgorithm::kFalcon1024:
     case SignatureAlgorithm::kFalconpadded1024:
