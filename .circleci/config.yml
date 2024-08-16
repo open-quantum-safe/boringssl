@@ -53,7 +53,7 @@ jobs:
           working_directory: build
       - run:
           name: Run BoringSSL tests
-          command: ninja run_tests
+          command: ./ssl_test && ninja run_tests
           working_directory: build
       - run:
           name: Check that we have the bssl server and client syntax right
