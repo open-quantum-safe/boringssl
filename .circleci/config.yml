@@ -30,12 +30,15 @@ jobs:
         type: boolean
         default: false
     docker:
-      - image: openquantumsafe/ci-ubuntu-latest
+      - image: ubuntu:latest
         auth:
           username: $DOCKER_LOGIN
           password: $DOCKER_PASSWORD
     steps:
       - checkout # change this from "checkout" to "*localCheckout" when running CircleCI locally
+      - run:
+          name: Install required packages
+          command: apt update && apt install cmake gcc ninja-build libunwind-dev pkg-config python3 python3-psutil golang-go -y
       - run:
           name: Clone liboqs
           command: git clone --branch main --single-branch --depth 1 https://github.com/open-quantum-safe/liboqs.git
@@ -50,10 +53,6 @@ jobs:
           name: Build BoringSSL
           # More build processes exhaust memory on CircleCI
           command: ninja -j15
-          working_directory: build
-      - run:
-          name: Run SSL tests
-          command: ./ssl_test
           working_directory: build
       - run:
           name: Run BoringSSL tests
