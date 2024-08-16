@@ -35,7 +35,6 @@ static int ALG##_pkey_keygen(EVP_PKEY_CTX *ctx, EVP_PKEY *pkey) {              \
   }                                                                            \
                                                                                \
   if (!EVP_PKEY_set_type(pkey, ALG_PKEY)) {                                    \
-    OPENSSL_free(key);                                                         \
     goto end;                                                                  \
   }                                                                            \
                                                                                \
@@ -57,21 +56,22 @@ static int ALG##_pkey_keygen(EVP_PKEY_CTX *ctx, EVP_PKEY *pkey) {              \
          !EVP_PKEY_CTX_set_ec_paramgen_curve_nid(param_ctx, classical_id) ||   \
          !EVP_PKEY_paramgen(param_ctx, &param_pkey)) {                         \
         OPENSSL_PUT_ERROR(EVP, EVP_R_KEYS_NOT_SET);                            \
+        EVP_PKEY_free(param_pkey);                                             \
         goto end;                                                              \
       }                                                                        \
     }                                                                          \
     if (param_pkey != NULL) {                                                  \
       keygen_ctx = EVP_PKEY_CTX_new(param_pkey, NULL);                         \
-      EVP_PKEY_free(param_pkey);                                               \
     } else {                                                                   \
       keygen_ctx = EVP_PKEY_CTX_new_id(classical_id, NULL);                    \
     }                                                                          \
+    EVP_PKEY_free(param_pkey);                                                 \
     if (!keygen_ctx || !EVP_PKEY_keygen_init(keygen_ctx)) {                    \
       OPENSSL_PUT_ERROR(EVP, ERR_R_MALLOC_FAILURE);                            \
       goto end;                                                                \
     }                                                                          \
-    if ( classical_id == EVP_PKEY_RSA ) {                                      \
-      if(!EVP_PKEY_CTX_set_rsa_keygen_bits(keygen_ctx, rsa_size)) {            \
+    if (classical_id == EVP_PKEY_RSA) {                                        \
+      if (!EVP_PKEY_CTX_set_rsa_keygen_bits(keygen_ctx, rsa_size)) {           \
         OPENSSL_PUT_ERROR(EVP, EVP_R_KEYS_NOT_SET);                            \
         goto end;                                                              \
       }                                                                        \
@@ -80,8 +80,6 @@ static int ALG##_pkey_keygen(EVP_PKEY_CTX *ctx, EVP_PKEY *pkey) {              \
       OPENSSL_PUT_ERROR(EVP, EVP_R_KEYS_NOT_SET);                              \
       goto end;                                                                \
     }                                                                          \
-    EVP_PKEY_CTX_free(keygen_ctx);                                             \
-    keygen_ctx = NULL;                                                         \
   }                                                                            \
                                                                                \
   key->priv = (uint8_t *)(malloc(key->ctx->length_secret_key));                \
@@ -107,13 +105,12 @@ static int ALG##_pkey_keygen(EVP_PKEY_CTX *ctx, EVP_PKEY *pkey) {              \
   OPENSSL_free(pkey->pkey);                                                    \
   pkey->pkey = key;                                                            \
   rv = 1;                                                                      \
-  return 1;                                                                    \
                                                                                \
-  end:                                                                         \
-    if (keygen_ctx) EVP_PKEY_CTX_free(keygen_ctx);                             \
-    if (param_ctx) EVP_PKEY_CTX_free(param_ctx);                               \
-    if (key && rv == 0) oqs_pkey_ctx_free(key);                                \
-    return rv;                                                                 \
+end:                                                                           \
+  EVP_PKEY_CTX_free(keygen_ctx);                                               \
+  EVP_PKEY_CTX_free(param_ctx);                                                \
+  if (rv == 0) oqs_pkey_ctx_free(key);                                         \
+  return rv;                                                                   \
 }
 
 static int pkey_oqs_sign_message(EVP_PKEY_CTX *ctx, uint8_t *sig,
@@ -125,10 +122,11 @@ static int pkey_oqs_sign_message(EVP_PKEY_CTX *ctx, uint8_t *sig,
   int classical_id = 0;
   size_t actual_classical_sig_len = 0;
   size_t max_sig_len = key->ctx->length_signature;
+  EVP_PKEY_CTX *classical_ctx_sign = NULL;
 
   if (!key->has_private) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_NOT_A_PRIVATE_KEY);
-    return 0;
+    goto err;
   }
 
   if (is_hybrid) {
@@ -139,15 +137,15 @@ static int pkey_oqs_sign_message(EVP_PKEY_CTX *ctx, uint8_t *sig,
 
   if (sig == NULL) {
     *siglen = max_sig_len;
+    EVP_PKEY_CTX_free(classical_ctx_sign);
     return 1;
   }
   if (*siglen != max_sig_len) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_BUFFER_TOO_SMALL);
-    return 0;
+    goto err;
   }
 
   size_t index = 0, classical_sig_len = 0;
-  EVP_PKEY_CTX *classical_ctx_sign = NULL;
   if (is_hybrid) {
     const EVP_MD *classical_md;
     int digest_len;
@@ -155,11 +153,11 @@ static int pkey_oqs_sign_message(EVP_PKEY_CTX *ctx, uint8_t *sig,
 
     if ((classical_ctx_sign = EVP_PKEY_CTX_new(key->classical_pkey, NULL)) == NULL ||
          EVP_PKEY_sign_init(classical_ctx_sign) <= 0) {
-      return 0;
+      goto err;
     }
     if ((classical_id == EVP_PKEY_RSA) &&
         (EVP_PKEY_CTX_set_rsa_padding(classical_ctx_sign, RSA_PKCS1_PADDING) <= 0)) {
-      return 0;
+      goto err;
     }
 
     switch (key->ctx->claimed_nist_level) {
@@ -184,7 +182,7 @@ static int pkey_oqs_sign_message(EVP_PKEY_CTX *ctx, uint8_t *sig,
     if ((EVP_PKEY_CTX_set_signature_md(classical_ctx_sign, classical_md) <= 0) ||
         (EVP_PKEY_sign(classical_ctx_sign, sig + SIZE_OF_UINT32, &actual_classical_sig_len, digest, digest_len) <= 0) ||
         (actual_classical_sig_len > (size_t) get_classical_sig_len(classical_id))) {
-      return 0;
+      goto err;
     }
 
     ENCODE_UINT32(sig, actual_classical_sig_len);
@@ -194,10 +192,14 @@ static int pkey_oqs_sign_message(EVP_PKEY_CTX *ctx, uint8_t *sig,
 
   size_t oqs_sig_len = 0;
   if (OQS_SIG_sign(key->ctx, sig + index, &oqs_sig_len, tbs, tbslen, key->priv) != OQS_SUCCESS) {
-    return 0;
+    goto err;
   }
   *siglen = classical_sig_len + oqs_sig_len;
+  EVP_PKEY_CTX_free(classical_ctx_sign);
   return 1;
+err:
+  EVP_PKEY_CTX_free(classical_ctx_sign);
+  return 0;
 }
 
 int oqs_verify_sig(EVP_PKEY *bssl_oqs_pkey, const uint8_t *sig,
@@ -247,6 +249,8 @@ int oqs_verify_sig(EVP_PKEY *bssl_oqs_pkey, const uint8_t *sig,
 
     if ((EVP_PKEY_CTX_set_signature_md(ctx_verify, classical_md) <= 0) ||
         (EVP_PKEY_verify(ctx_verify, sig + SIZE_OF_UINT32, actual_classical_sig_len, digest, digest_len) <= 0)) {
+
+      EVP_PKEY_CTX_free(ctx_verify);
       return 0;
     }
 
@@ -259,7 +263,6 @@ int oqs_verify_sig(EVP_PKEY *bssl_oqs_pkey, const uint8_t *sig,
     OPENSSL_PUT_ERROR(EVP, EVP_R_INVALID_SIGNATURE);
     return 0;
   }
-
   return 1;
 }
 

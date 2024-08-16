@@ -50,36 +50,6 @@ void oqs_pkey_ctx_free(OQS_KEY* key) {
   OPENSSL_free(key);
 }
 
-#define DEFINE_OQS_GET_PRIV_RAW(ALG, OQS_METH)                      \
-  static int ALG##_get_priv_raw(const EVP_PKEY *pkey, uint8_t *out, \
-                                size_t *out_len) {                  \
-    OQS_KEY *key = pkey->pkey;                                      \
-    if (!key->has_private) {                                        \
-      OPENSSL_PUT_ERROR(EVP, EVP_R_NOT_A_PRIVATE_KEY);              \
-      return 0;                                                     \
-    }                                                               \
-                                                                    \
-    key->ctx = OQS_SIG_new(OQS_METH);                               \
-    if (!key->ctx) {                                                \
-      OPENSSL_PUT_ERROR(EVP, ERR_R_MALLOC_FAILURE);                 \
-      return 0;                                                     \
-    }                                                               \
-                                                                    \
-    if (!out) {                                                     \
-      *out_len = key->ctx->length_secret_key;                       \
-      return 1;                                                     \
-    }                                                               \
-                                                                    \
-    if (*out_len < key->ctx->length_secret_key) {                   \
-      OPENSSL_PUT_ERROR(EVP, EVP_R_BUFFER_TOO_SMALL);               \
-      return 0;                                                     \
-    }                                                               \
-                                                                    \
-    OPENSSL_memcpy(out, key->priv, key->ctx->length_secret_key);    \
-    *out_len = key->ctx->length_secret_key;                         \
-    return 1;                                                       \
-  }
-
 #define DEFINE_OQS_SET_PRIV_RAW(ALG, OQS_METH)                              \
   static int ALG##_set_priv_raw(EVP_PKEY *pkey, const uint8_t *in,          \
                                 size_t len) {                               \
@@ -217,7 +187,6 @@ void oqs_pkey_ctx_free(OQS_KEY* key) {
 #define DEFINE_OQS_PUB_ENCODE(ALG)                                            \
   static int ALG##_pub_encode(CBB *out, const EVP_PKEY *pkey) {               \
     const OQS_KEY *key = pkey->pkey;                                          \
-    unsigned char *penc;                                                      \
     uint32_t pubkey_len = 0, max_classical_pubkey_len = 0, classical_pubkey_len = 0, index = 0;                   \
                                                                               \
     int is_hybrid = (key->classical_pkey != NULL);                            \
@@ -226,11 +195,13 @@ void oqs_pkey_ctx_free(OQS_KEY* key) {
       max_classical_pubkey_len = get_classical_key_len(KEY_TYPE_PUBLIC, get_classical_nid(pkey->ameth->pkey_id)); \
       pubkey_len += (SIZE_OF_UINT32 + max_classical_pubkey_len);              \
     }                                                                         \
-    penc = OPENSSL_malloc(pubkey_len);                                        \
+    unsigned char *penc = OPENSSL_malloc(pubkey_len);                         \
+    unsigned char *classical_pubkey = penc + SIZE_OF_UINT32;                  \
     if (is_hybrid) {                                                          \
-      unsigned char *classical_pubkey = penc + SIZE_OF_UINT32;                \
+      classical_pubkey = penc + SIZE_OF_UINT32;                               \
       uint32_t actual_classical_pubkey_len = i2d_PublicKey(key->classical_pkey, &classical_pubkey);               \
       if (actual_classical_pubkey_len > max_classical_pubkey_len) {           \
+        OPENSSL_free(classical_pubkey);                                       \
         OPENSSL_free(penc);                                                   \
         OPENSSL_PUT_ERROR(EVP, EVP_R_ENCODE_ERROR);                           \
         return 0;                                                             \
@@ -253,6 +224,7 @@ void oqs_pkey_ctx_free(OQS_KEY* key) {
         !CBB_add_bytes(&key_bitstring, penc, pubkey_len) ||                   \
         !CBB_flush(out)) {                                                    \
       OPENSSL_PUT_ERROR(EVP, EVP_R_ENCODE_ERROR);                             \
+      OPENSSL_free(classical_pubkey);                                         \
       OPENSSL_free(penc);                                                     \
       return 0;                                                               \
     }                                                                         \
@@ -355,6 +327,7 @@ int get_classical_sig_len(int classical_id)
 static EVP_PKEY *decode_RSA_pub(EVP_PKEY **out, const uint8_t **inp, long len) {
   EVP_PKEY *ret = EVP_PKEY_new();
   if (ret == NULL) {
+    EVP_PKEY_free(ret);
     return NULL;
   }
 
@@ -363,6 +336,7 @@ static EVP_PKEY *decode_RSA_pub(EVP_PKEY **out, const uint8_t **inp, long len) {
   RSA *rsa = RSA_parse_public_key(&cbs);
   if (rsa == NULL || !EVP_PKEY_assign_RSA(ret, rsa)) {
     RSA_free(rsa);
+    EVP_PKEY_free(ret);
     return NULL;
   }
 
@@ -400,10 +374,12 @@ static int decode_EC_pub(int nid, const unsigned char* encoded_key, int key_len,
 
   rv = 1;
 
-  end:
-    if (rv == 0 && ecgroup) EC_GROUP_free(ecgroup);
-    if (rv == 0 && ec_key) EC_KEY_free(ec_key);
-    return rv;
+end:
+  if (rv == 0) {
+    EC_GROUP_free(ecgroup);
+    EC_KEY_free(ec_key);
+  }
+  return rv;
 }
 
 // Dummy wrapper to improve readability
@@ -413,7 +389,6 @@ static int decode_EC_pub(int nid, const unsigned char* encoded_key, int key_len,
 
 #define DEFINE_OQS_ASN1_METHODS(ALG, OQS_METH, ALG_PKEY) \
   DEFINE_OQS_SET_PRIV_RAW(ALG, OQS_METH)                 \
-  DEFINE_OQS_GET_PRIV_RAW(ALG, OQS_METH)                 \
   DEFINE_OQS_PRIV_DECODE(ALG)                            \
   DEFINE_OQS_SET_PUB_RAW(ALG, OQS_METH)                  \
   DEFINE_OQS_PUB_DECODE(ALG)                             \
@@ -432,7 +407,7 @@ static int decode_EC_pub(int nid, const unsigned char* encoded_key, int key_len,
       NULL /* priv_encode */,                           \
       ALG##_set_priv_raw,                               \
       ALG##_set_pub_raw,                                \
-      ALG##_get_priv_raw,                               \
+      NULL /* get_priv_raw */,                          \
       NULL /* get_pub_raw */,                           \
       NULL /* int set1_tls_encodedpoint */,             \
       NULL /* size_t set1_tls_encodedpoint */,          \
