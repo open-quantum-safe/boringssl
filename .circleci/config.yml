@@ -52,8 +52,12 @@ jobs:
           command: ninja -j15
           working_directory: build
       - run:
+          name: Run SSL tests
+          command: ./ssl_test
+          working_directory: build
+      - run:
           name: Run BoringSSL tests
-          command: ./ssl_test && ninja run_tests
+          command: ninja run_tests
           working_directory: build
       - run:
           name: Check that we have the bssl server and client syntax right
