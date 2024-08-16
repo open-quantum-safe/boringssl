@@ -198,7 +198,6 @@ void oqs_pkey_ctx_free(OQS_KEY* key) {
     unsigned char *penc = OPENSSL_malloc(pubkey_len);                         \
     unsigned char *classical_pubkey = penc + SIZE_OF_UINT32;                  \
     if (is_hybrid) {                                                          \
-      classical_pubkey = penc + SIZE_OF_UINT32;                               \
       uint32_t actual_classical_pubkey_len = i2d_PublicKey(key->classical_pkey, &classical_pubkey);               \
       if (actual_classical_pubkey_len > max_classical_pubkey_len) {           \
         OPENSSL_free(classical_pubkey);                                       \
