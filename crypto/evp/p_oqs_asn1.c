@@ -177,7 +177,7 @@ void oqs_pkey_ctx_free(OQS_KEY* key) {
         decode_EC_pub(classical_id, in + SIZE_OF_UINT32, actual_classical_pubkey_len, key);                                 \
       } else {                                                      \
         const unsigned char* pubkey_temp = in + SIZE_OF_UINT32;     \
-        key->classical_pkey = d2i_PublicKey(classical_id, &key->classical_pkey, &pubkey_temp, actual_classical_pubkey_len); \
+        key->classical_pkey = decode_RSA_pub(&key->classical_pkey, &pubkey_temp, actual_classical_pubkey_len);              \
       }                                                             \
       if (key->classical_pkey == NULL) {                            \
         OPENSSL_PUT_ERROR(EVP, EVP_R_DECODE_ERROR);                 \
@@ -350,6 +350,27 @@ int get_classical_sig_len(int classical_id)
     default:
       return 0;
   }
+}
+
+static EVP_PKEY *decode_RSA_pub(EVP_PKEY **out, const uint8_t **inp, long len) {
+  EVP_PKEY *ret = EVP_PKEY_new();
+  if (ret == NULL) {
+    return NULL;
+  }
+
+  CBS cbs;
+  CBS_init(&cbs, *inp, len < 0 ? 0 : (size_t)len);
+  RSA *rsa = RSA_parse_public_key(&cbs);
+  if (rsa == NULL || !EVP_PKEY_assign_RSA(ret, rsa)) {
+    RSA_free(rsa);
+    return NULL;
+  }
+
+  *inp = CBS_data(&cbs);
+  if (out != NULL) {
+    *out = ret;
+  }
+  return ret;
 }
 
 static int decode_EC_pub(int nid, const unsigned char* encoded_key, int key_len, OQS_KEY* oqs_key) {
