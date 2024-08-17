@@ -38,7 +38,7 @@ jobs:
       - checkout # change this from "checkout" to "*localCheckout" when running CircleCI locally
       - run:
           name: Install required packages
-          command: apt update && apt install cmake gcc ninja-build libunwind-dev pkg-config python3 python3-psutil golang-go -y
+          command: apt update && TZ=UTC && echo "UTC" > /etc/timezone && apt install tzdata -y && dpkg-reconfigure --frontend noninteractive tzdata && apt install cmake gcc ninja-build libunwind-dev pkg-config python3 python3-psutil golang-go -y
       - run:
           name: Clone liboqs
           command: git clone --branch main --single-branch --depth 1 https://github.com/open-quantum-safe/liboqs.git
