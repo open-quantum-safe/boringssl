@@ -186,12 +186,15 @@ OPENSSL_EXPORT DH *EVP_PKEY_get1_DH(const EVP_PKEY *pkey);
 
 ///// OQS_TEMPLATE_FRAGMENT_DEFINE_EVP_PKEYS_START
 #define EVP_PKEY_MLDSA44 NID_mldsa44
+#define EVP_PKEY_RSA3072_MLDSA44 NID_rsa3072_mldsa44
 #define EVP_PKEY_MLDSA65 NID_mldsa65
+#define EVP_PKEY_P384_MLDSA65 NID_p384_mldsa65
 #define EVP_PKEY_MLDSA87 NID_mldsa87
 #define EVP_PKEY_DILITHIUM2 NID_dilithium2
 #define EVP_PKEY_DILITHIUM3 NID_dilithium3
 #define EVP_PKEY_DILITHIUM5 NID_dilithium5
 #define EVP_PKEY_FALCON512 NID_falcon512
+#define EVP_PKEY_P256_FALCON512 NID_p256_falcon512
 #define EVP_PKEY_FALCONPADDED512 NID_falconpadded512
 #define EVP_PKEY_FALCON1024 NID_falcon1024
 #define EVP_PKEY_FALCONPADDED1024 NID_falconpadded1024
@@ -214,12 +217,15 @@ OPENSSL_EXPORT DH *EVP_PKEY_get1_DH(const EVP_PKEY *pkey);
 
 #define IS_OQS_PKEY(pkey_id) ( \
    (pkey_id == NID_mldsa44) || \
+   (pkey_id == NID_rsa3072_mldsa44) || \
    (pkey_id == NID_mldsa65) || \
+   (pkey_id == NID_p384_mldsa65) || \
    (pkey_id == NID_mldsa87) || \
    (pkey_id == NID_dilithium2) || \
    (pkey_id == NID_dilithium3) || \
    (pkey_id == NID_dilithium5) || \
    (pkey_id == NID_falcon512) || \
+   (pkey_id == NID_p256_falcon512) || \
    (pkey_id == NID_falconpadded512) || \
    (pkey_id == NID_falcon1024) || \
    (pkey_id == NID_falconpadded1024) || \
@@ -253,6 +259,7 @@ OPENSSL_EXPORT DH *EVP_PKEY_get1_DH(const EVP_PKEY *pkey);
    (pkey_id == NID_kyber1024) || \
    (pkey_id == NID_bikel1) || \
    (pkey_id == NID_bikel3) || \
+   (pkey_id == NID_bikel5) || \
    (pkey_id == NID_hqc128) || \
    (pkey_id == NID_hqc192) || \
    (pkey_id == NID_hqc256) || \

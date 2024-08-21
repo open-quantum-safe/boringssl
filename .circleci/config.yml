@@ -41,15 +41,15 @@ jobs:
           command: git clone --branch main --single-branch --depth 1 https://github.com/open-quantum-safe/liboqs.git
       - run:
           name: Build liboqs
-          command: mkdir build && cd build && cmake .. -G"Ninja" -DBUILD_SHARED_LIBS=<< parameters.LIBOQS_SHARED >> -DOQS_USE_OPENSSL=OFF -DOQS_BUILD_ONLY_LIB=ON -DCMAKE_INSTALL_PREFIX=../../oqs && ninja install
+          command: mkdir build && cd build && cmake .. -G"Ninja" -DBUILD_SHARED_LIBS=<< parameters.LIBOQS_SHARED >> -DOQS_USE_OPENSSL=OFF -DCMAKE_INSTALL_PREFIX=../../oqs && ninja install
           working_directory: liboqs
       - run:
           name: Configure BoringSSL
-          command: mkdir build && cd build && source ~/.bashrc && cmake -GNinja -DBUILD_SHARED_LIBS=<< parameters.BORINGSSL_SHARED >> -DLIBOQS_SHARED=<< parameters.LIBOQS_SHARED >> .. && cmake -LA ..
+          command: mkdir build && cd build && cmake -GNinja -DBUILD_SHARED_LIBS=<< parameters.BORINGSSL_SHARED >> -DLIBOQS_SHARED=<< parameters.LIBOQS_SHARED >> ..
       - run:
           name: Build BoringSSL
           # More build processes exhaust memory on CircleCI
-          command: ninja -j15
+          command: ninja
           working_directory: build
       - run:
           name: Run BoringSSL tests

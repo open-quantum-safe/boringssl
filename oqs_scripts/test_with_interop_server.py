@@ -1,16 +1,11 @@
-import json
-import sys
-import subprocess
-import os
-import pytest
-import time
-import shutil
-import tempfile
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*
+
+import os, re
 import urllib.request
+from tempfile import NamedTemporaryFile
 
 kexs = [
-        'prime256v1',
-        'x25519',
 ##### OQS_TEMPLATE_FRAGMENT_LIST_KEMS_START
         'mlkem768',
         'p384_mlkem768',
@@ -43,6 +38,8 @@ kexs = [
         'x25519_bikel1',
         'bikel3',
         'p384_bikel3',
+        'bikel5',
+        'p521_bikel5',
         'hqc128',
         'p256_hqc128',
         'x25519_hqc128',
@@ -55,14 +52,18 @@ kexs = [
 
 sigs = [
         'ecdsap256',
+        'rsa3072',
 ##### OQS_TEMPLATE_FRAGMENT_LIST_ALL_SIGS_START
         'mldsa44',
+        'rsa3072_mldsa44',
         'mldsa65',
+        'p384_mldsa65',
         'mldsa87',
         'dilithium2',
         'dilithium3',
         'dilithium5',
         'falcon512',
+        'p256_falcon512',
         'falconpadded512',
         'falcon1024',
         'falconpadded1024',
@@ -85,42 +86,29 @@ sigs = [
 ##### OQS_TEMPLATE_FRAGMENT_LIST_ALL_SIGS_END
 ]
 
-@pytest.fixture(scope="session")
-def server_CA_cert(request):
-    with urllib.request.urlopen('https://test.openquantumsafe.org/CA.crt') as response:
-        with tempfile.NamedTemporaryFile(delete=False) as ca_file:
-            shutil.copyfileobj(response, ca_file)
-            return ca_file
+rootCert = NamedTemporaryFile().name + ".pem"
+urllib.request.urlretrieve("https://test.openquantumsafe.org/CA.crt", rootCert)
 
-@pytest.fixture(scope="session")
-def server_port_assignments(request):
-    with urllib.request.urlopen('https://test.openquantumsafe.org/assignments.json') as response:
-       return json.loads(response.read())
+linePattern = re.compile(r'<tr>(.*?)</tr>', re.DOTALL)
+cellPattern = re.compile(r'<td>(.*?)</td>', re.DOTALL)
 
-@pytest.fixture
-def bssl(request):
-    return os.path.join('build', 'tool', 'bssl')
+with urllib.request.urlopen("https://test.openquantumsafe.org/") as response:
+    htmlContent = response.read().decode('utf-8')
 
-@pytest.mark.parametrize('kex', kexs)
-@pytest.mark.parametrize('sig', sigs)
-def test_sig_kex_pair(sig, kex, bssl, server_CA_cert, server_port_assignments):
-    if kex == 'prime256v1':
-       server_port = server_port_assignments[sig]["*"]
-    elif kex == 'x25519':
-       server_port = server_port_assignments[sig]['X25519']
-    else:
-       server_port = server_port_assignments[sig][kex]
+lineMatches = linePattern.findall(htmlContent)
 
-    client = subprocess.Popen([bssl, "client",
-                                     "-connect",
-                                       "test.openquantumsafe.org:"+str(server_port),
-                                     "-curves", kex,
-                                     "-root-certs",  server_CA_cert.name],
-                              stdin=subprocess.PIPE,
-                              stdout=subprocess.PIPE,
-                              stderr=subprocess.PIPE)
-    time.sleep(1.5)
-    stdout, stderr = client.communicate(input="GET /\n".encode())
-    assert client.returncode == 0, stderr.decode("utf-8")
-    assert "Successfully connected using".format(sig, kex) in stdout.decode("utf-8"), stdout.decode("utf-8")
+errorPorts = []
 
+for lines in lineMatches:
+    cellMatches = cellPattern.findall(lines)
+    if len(cellMatches) > 2 and cellMatches[0] in sigs and cellMatches[1] in kexs:
+        if os.system("../build/tool/bssl client -root-certs " + rootCert + " -curves " + cellMatches[1] + " -connect test.openquantumsafe.org:" + cellMatches[2] + " </dev/null\n") != 0:
+            errorPorts.append(cellMatches[2])
+
+os.unlink(rootCert)
+
+if len(errorPorts) > 0:
+    print("Following ports are NOT working: ")
+    for errorPort in errorPorts:
+        print("test.openquantumsafe.org:" + errorPort)
+    raise SystemExit(1)

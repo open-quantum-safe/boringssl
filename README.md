@@ -27,11 +27,12 @@ Both liboqs and this fork are part of the **Open Quantum Safe (OQS) project**, w
 
 ## Status
 
-This fork is built on top of [commit df3b58e](https://github.com/google/boringssl/commit/df3b58ea74c50ff785ab902be3b007ff008d3e3c), and adds:
+This fork is built on top of [commit 5bcb626](https://github.com/google/boringssl/commit/5bcb626c847a10e2e631118b637c9db25593cdea), and adds:
 
-- quantum-safe key exchange to TLS 1.3
-- hybrid (quantum-safe + elliptic curve) key exchange to TLS 1.3
-- quantum-safe digital signatures to TLS 1.3
+- quantum-safe key exchange
+- hybrid (quantum-safe + elliptic curve) key exchange
+- quantum-safe digital signatures
+- hybrid (quantum-safe + RSA / elliptic curve) digital signatures
 
 **WE DO NOT RECOMMEND RELYING ON THIS FORK IN A PRODUCTION ENVIRONMENT OR TO PROTECT ANY SENSITIVE DATA.** This fork is at an experimental stage, and BoringSSL does not guarantee API or ABI stability. See the [Limitations and Security](#limitations-and-security) section below for more information.
 
@@ -65,7 +66,7 @@ If an algorithm is provided by liboqs but is not listed below, it might still be
 The following quantum-safe algorithms from liboqs are supported (assuming they have been enabled in liboqs):
 
 <!--- OQS_TEMPLATE_FRAGMENT_LIST_KEXS_START -->
-- **BIKE**: `bikel1`, `bikel3`
+- **BIKE**: `bikel1`, `bikel3`, `bikel5`
 - **CRYSTALS-Kyber**: `kyber512`, `kyber768`, `kyber1024`
 - **FrodoKEM**: `frodo640aes`, `frodo640shake`, `frodo976aes`, `frodo976shake`, `frodo1344aes`, `frodo1344shake`
 - **HQC**: `hqc128`, `hqc192`, `hqc256`†
@@ -79,7 +80,7 @@ For each `<KEX>` listed above, the following hybrid algorithms are made availabl
 - If `<KEX>` has L3 security, the method `p384_<KEX>` is available, which combines `<KEX>` with ECDH using NIST's P384 curve
 - If `<KEX>` has L5 security, the method `p521_<KEX>` is available, which combines `<KEX>` with ECDH using NIST's P521 curve
 
-For example, since `kyber768` claims L3 security, the hybrid `p384_kyber768` is available.
+For example, since `kyber768` claims L3 security, the hybrid `p384_kyber768` is available. Be aware that hybrid algorithms utlizing `X448` are not supported. If those are needed for a project please use [OQS-provider](https://github.com/open-quantum-safe/oqs-provider) which supports them out of the box, or implement them and create a pull request, or [create an issue](https://github.com/open-quantum-safe/boringssl/issues).
 
 Note that algorithms marked with a dagger (†) have large stack usage and may cause failures when run on threads or in constrained environments.
 
@@ -89,14 +90,14 @@ The following quantum-safe digital signature algorithms from liboqs are supporte
 
 <!--- OQS_TEMPLATE_FRAGMENT_LIST_SIGS_START -->
 - **CRYSTALS-DILITHIUM**: `dilithium2`, `dilithium3`, `dilithium5`
-- **Falcon**: `falcon512`, `falconpadded512`, `falcon1024`, `falconpadded1024`
+- **Falcon**: `falcon512`, `p256_falcon512`, `falconpadded512`, `falcon1024`, `falconpadded1024`
 - **MAYO**: `mayo1`, `mayo2`, `mayo3`, `mayo5`
-- **ML-DSA**: `mldsa65`, `mldsa87`
+- **ML-DSA**: `rsa3072_mldsa44`, `mldsa65`, `p384_mldsa65`, `mldsa87`
 - **SPHINCS-SHA2**: `sphincssha2128fsimple`, `sphincssha2128ssimple`, `sphincssha2192fsimple`, `sphincssha2192ssimple`, `sphincssha2256fsimple`, `sphincssha2256ssimple`
 - **SPHINCS-SHAKE**: `sphincsshake128fsimple`, `sphincsshake128ssimple`, `sphincsshake192fsimple`, `sphincsshake192ssimple`, `sphincsshake256fsimple`, `sphincsshake256ssimple`
 <!--- OQS_TEMPLATE_FRAGMENT_LIST_SIGS_END -->
 
-No hybrid signature algorithms are currently implemented. If those are needed for a project please use [OQS-provider](https://github.com/open-quantum-safe/oqs-provider) which supports them out of the box, or implement them and create a pull request, or [create an issue](https://github.com/open-quantum-safe/boringssl/issues).
+No [composite signature algorithms](https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/) are currently implemented. If you need those algorithms, please use the [OQS-provider](https://github.com/open-quantum-safe/oqs-provider) or implement them yourself and create a pull request.
 
 ## Quickstart
 
@@ -119,7 +120,7 @@ You will also need the latest version of the toolchain for the Go programming la
 Then, get the source code for this fork (`<BORINGSSL_DIR>` is a directory of your choosing):
 
 ```
-git clone --branch master https://github.com/open-quantum-safe/boringssl.git <BORINGSSL_DIR>
+git clone --branch master --single-branch --depth 1 https://github.com/open-quantum-safe/boringssl.git <BORINGSSL_DIR>
 ```
 
 #### Step 1: Build and install liboqs
@@ -148,8 +149,7 @@ cmake -GNinja ..
 ninja
 ```
 
-The fork can also be built with shared libraries, to do so, run `cmake -DBUILD_SHARED_LIBRARIES=ON -GNinja ..`.
-
+For additional build instructions, such as how to build OQS-BoringSSL as a shared library, please refer to [BUILDING.md](https://github.com/open-quantum-safe/boringssl/blob/master/BUILDING.md).
 
 #### Step 3: Run tests
 

@@ -614,6 +614,13 @@ static const CurveTest kCurveTests[] = {
     },
   },
   {
+    "bikel5:p521_bikel5",
+    {
+      SSL_GROUP_BIKEL5,
+      SSL_GROUP_P521_BIKEL5,
+    },
+  },
+  {
     "hqc128:p256_hqc128:x25519_hqc128",
     {
       SSL_GROUP_HQC128,
@@ -5728,8 +5735,12 @@ TEST(SSLTest, SignatureAlgorithmProperties) {
 ///// OQS_TEMPLATE_FRAGMENT_ADD_SIG_ALG_PROP_TESTS_START
   EXPECT_EQ(EVP_PKEY_MLDSA44,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_MLDSA44));
+  EXPECT_EQ(EVP_PKEY_RSA3072_MLDSA44,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_RSA3072_MLDSA44));
   EXPECT_EQ(EVP_PKEY_MLDSA65,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_MLDSA65));
+  EXPECT_EQ(EVP_PKEY_P384_MLDSA65,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_P384_MLDSA65));
   EXPECT_EQ(EVP_PKEY_MLDSA87,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_MLDSA87));
   EXPECT_EQ(EVP_PKEY_DILITHIUM2,
@@ -5740,6 +5751,8 @@ TEST(SSLTest, SignatureAlgorithmProperties) {
             SSL_get_signature_algorithm_key_type(SSL_SIGN_DILITHIUM5));
   EXPECT_EQ(EVP_PKEY_FALCON512,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_FALCON512));
+  EXPECT_EQ(EVP_PKEY_P256_FALCON512,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_P256_FALCON512));
   EXPECT_EQ(EVP_PKEY_FALCONPADDED512,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_FALCONPADDED512));
   EXPECT_EQ(EVP_PKEY_FALCON1024,
@@ -6105,12 +6118,15 @@ TEST(SSLTest, SigAlgs) {
        {SSL_SIGN_ED25519, SSL_SIGN_ECDSA_SECP384R1_SHA384}},
 ///// OQS_TEMPLATE_FRAGMENT_ADD_SIG_ALG_EQ_TESTS_START
       {{NID_sha256, EVP_PKEY_MLDSA44}, true, {SSL_SIGN_MLDSA44}},
+      {{NID_sha256, EVP_PKEY_RSA3072_MLDSA44}, true, {SSL_SIGN_RSA3072_MLDSA44}},
       {{NID_sha384, EVP_PKEY_MLDSA65}, true, {SSL_SIGN_MLDSA65}},
+      {{NID_sha384, EVP_PKEY_P384_MLDSA65}, true, {SSL_SIGN_P384_MLDSA65}},
       {{NID_sha512, EVP_PKEY_MLDSA87}, true, {SSL_SIGN_MLDSA87}},
       {{NID_sha256, EVP_PKEY_DILITHIUM2}, true, {SSL_SIGN_DILITHIUM2}},
       {{NID_sha384, EVP_PKEY_DILITHIUM3}, true, {SSL_SIGN_DILITHIUM3}},
       {{NID_sha512, EVP_PKEY_DILITHIUM5}, true, {SSL_SIGN_DILITHIUM5}},
       {{NID_sha256, EVP_PKEY_FALCON512}, true, {SSL_SIGN_FALCON512}},
+      {{NID_sha256, EVP_PKEY_P256_FALCON512}, true, {SSL_SIGN_P256_FALCON512}},
       {{NID_sha256, EVP_PKEY_FALCONPADDED512}, true, {SSL_SIGN_FALCONPADDED512}},
       {{NID_sha512, EVP_PKEY_FALCON1024}, true, {SSL_SIGN_FALCON1024}},
       {{NID_sha512, EVP_PKEY_FALCONPADDED1024}, true, {SSL_SIGN_FALCONPADDED1024}},
@@ -6189,12 +6205,15 @@ TEST(SSLTest, SigAlgsList) {
       {"PSS+SHA256", true, {SSL_SIGN_RSA_PSS_RSAE_SHA256}},
 ///// OQS_TEMPLATE_FRAGMENT_SIGALGS_LIST_TESTS_START
       {"mldsa44", true, {SSL_SIGN_MLDSA44}},
+      {"rsa3072_mldsa44", true, {SSL_SIGN_RSA3072_MLDSA44}},
       {"mldsa65", true, {SSL_SIGN_MLDSA65}},
+      {"p384_mldsa65", true, {SSL_SIGN_P384_MLDSA65}},
       {"mldsa87", true, {SSL_SIGN_MLDSA87}},
       {"dilithium2", true, {SSL_SIGN_DILITHIUM2}},
       {"dilithium3", true, {SSL_SIGN_DILITHIUM3}},
       {"dilithium5", true, {SSL_SIGN_DILITHIUM5}},
       {"falcon512", true, {SSL_SIGN_FALCON512}},
+      {"p256_falcon512", true, {SSL_SIGN_P256_FALCON512}},
       {"falconpadded512", true, {SSL_SIGN_FALCONPADDED512}},
       {"falcon1024", true, {SSL_SIGN_FALCON1024}},
       {"falconpadded1024", true, {SSL_SIGN_FALCONPADDED1024}},
@@ -8611,6 +8630,8 @@ static const TLSGroup kOQSGroups[] = {
     {NID_x25519_bikel1, SSL_GROUP_X25519_BIKEL1},
     {NID_bikel3, SSL_GROUP_BIKEL3},
     {NID_p384_bikel3, SSL_GROUP_P384_BIKEL3},
+    {NID_bikel5, SSL_GROUP_BIKEL5},
+    {NID_p521_bikel5, SSL_GROUP_P521_BIKEL5},
 ///// OQS_TEMPLATE_FRAGMENT_LIST_ALL_OQS_KEMS_END
 };
 
@@ -8703,12 +8724,15 @@ INSTANTIATE_TEST_SUITE_P(WithSignatureNIDs, OQSHandshakeTest,
                          testing::Values(
 ///// OQS_TEMPLATE_FRAGMENT_LIST_ALL_OQS_SIGS_START
                             NID_mldsa44,
+                            NID_rsa3072_mldsa44,
                             NID_mldsa65,
+                            NID_p384_mldsa65,
                             NID_mldsa87,
                             NID_dilithium2,
                             NID_dilithium3,
                             NID_dilithium5,
                             NID_falcon512,
+                            NID_p256_falcon512,
                             NID_falconpadded512,
                             NID_falcon1024,
                             NID_falconpadded1024,

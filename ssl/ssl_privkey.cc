@@ -79,12 +79,15 @@ bool ssl_is_key_type_supported(int key_type) {
          key_type == EVP_PKEY_ED25519 ||
 ///// OQS_TEMPLATE_FRAGMENT_CHECK_KEY_TYPE_START
          key_type == EVP_PKEY_MLDSA44 ||
+         key_type == EVP_PKEY_RSA3072_MLDSA44 ||
          key_type == EVP_PKEY_MLDSA65 ||
+         key_type == EVP_PKEY_P384_MLDSA65 ||
          key_type == EVP_PKEY_MLDSA87 ||
          key_type == EVP_PKEY_DILITHIUM2 ||
          key_type == EVP_PKEY_DILITHIUM3 ||
          key_type == EVP_PKEY_DILITHIUM5 ||
          key_type == EVP_PKEY_FALCON512 ||
+         key_type == EVP_PKEY_P256_FALCON512 ||
          key_type == EVP_PKEY_FALCONPADDED512 ||
          key_type == EVP_PKEY_FALCON1024 ||
          key_type == EVP_PKEY_FALCONPADDED1024 ||
@@ -170,12 +173,15 @@ static const SSL_SIGNATURE_ALGORITHM kSignatureAlgorithms[] = {
      /*client_only=*/false},
 ///// OQS_TEMPLATE_FRAGMENT_LIST_SSL_SIG_ALGS_START
     {SSL_SIGN_MLDSA44, EVP_PKEY_MLDSA44, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_RSA3072_MLDSA44, EVP_PKEY_RSA3072_MLDSA44, NID_undef, &EVP_sha256, false, true, true, false},
     {SSL_SIGN_MLDSA65, EVP_PKEY_MLDSA65, NID_undef, &EVP_sha384, false, true, true, false},
+    {SSL_SIGN_P384_MLDSA65, EVP_PKEY_P384_MLDSA65, NID_undef, &EVP_sha384, false, true, true, false},
     {SSL_SIGN_MLDSA87, EVP_PKEY_MLDSA87, NID_undef, &EVP_sha512, false, true, true, false},
     {SSL_SIGN_DILITHIUM2, EVP_PKEY_DILITHIUM2, NID_undef, &EVP_sha256, false, true, true, false},
     {SSL_SIGN_DILITHIUM3, EVP_PKEY_DILITHIUM3, NID_undef, &EVP_sha384, false, true, true, false},
     {SSL_SIGN_DILITHIUM5, EVP_PKEY_DILITHIUM5, NID_undef, &EVP_sha512, false, true, true, false},
     {SSL_SIGN_FALCON512, EVP_PKEY_FALCON512, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_P256_FALCON512, EVP_PKEY_P256_FALCON512, NID_undef, &EVP_sha256, false, true, true, false},
     {SSL_SIGN_FALCONPADDED512, EVP_PKEY_FALCONPADDED512, NID_undef, &EVP_sha256, false, true, true, false},
     {SSL_SIGN_FALCON1024, EVP_PKEY_FALCON1024, NID_undef, &EVP_sha512, false, true, true, false},
     {SSL_SIGN_FALCONPADDED1024, EVP_PKEY_FALCONPADDED1024, NID_undef, &EVP_sha512, false, true, true, false},
@@ -570,12 +576,15 @@ static const SignatureAlgorithmName kSignatureAlgorithmNames[] = {
     {SSL_SIGN_ED25519, "ed25519"},
 ///// OQS_TEMPLATE_FRAGMENT_NAME_SIG_ALG_START
     {SSL_SIGN_MLDSA44, "mldsa44"},
+    {SSL_SIGN_RSA3072_MLDSA44, "rsa3072_mldsa44"},
     {SSL_SIGN_MLDSA65, "mldsa65"},
+    {SSL_SIGN_P384_MLDSA65, "p384_mldsa65"},
     {SSL_SIGN_MLDSA87, "mldsa87"},
     {SSL_SIGN_DILITHIUM2, "dilithium2"},
     {SSL_SIGN_DILITHIUM3, "dilithium3"},
     {SSL_SIGN_DILITHIUM5, "dilithium5"},
     {SSL_SIGN_FALCON512, "falcon512"},
+    {SSL_SIGN_P256_FALCON512, "p256_falcon512"},
     {SSL_SIGN_FALCONPADDED512, "falconpadded512"},
     {SSL_SIGN_FALCON1024, "falcon1024"},
     {SSL_SIGN_FALCONPADDED1024, "falconpadded1024"},
@@ -774,12 +783,15 @@ static constexpr struct {
     {EVP_PKEY_ED25519, NID_undef, SSL_SIGN_ED25519},
 ///// OQS_TEMPLATE_FRAGMENT_ADD_SIG_ALG_MAPPINGS_START
     {EVP_PKEY_MLDSA44, NID_sha256, SSL_SIGN_MLDSA44},
+    {EVP_PKEY_RSA3072_MLDSA44, NID_sha256, SSL_SIGN_RSA3072_MLDSA44},
     {EVP_PKEY_MLDSA65, NID_sha384, SSL_SIGN_MLDSA65},
+    {EVP_PKEY_P384_MLDSA65, NID_sha384, SSL_SIGN_P384_MLDSA65},
     {EVP_PKEY_MLDSA87, NID_sha512, SSL_SIGN_MLDSA87},
     {EVP_PKEY_DILITHIUM2, NID_sha256, SSL_SIGN_DILITHIUM2},
     {EVP_PKEY_DILITHIUM3, NID_sha384, SSL_SIGN_DILITHIUM3},
     {EVP_PKEY_DILITHIUM5, NID_sha512, SSL_SIGN_DILITHIUM5},
     {EVP_PKEY_FALCON512, NID_sha256, SSL_SIGN_FALCON512},
+    {EVP_PKEY_P256_FALCON512, NID_sha256, SSL_SIGN_P256_FALCON512},
     {EVP_PKEY_FALCONPADDED512, NID_sha256, SSL_SIGN_FALCONPADDED512},
     {EVP_PKEY_FALCON1024, NID_sha512, SSL_SIGN_FALCON1024},
     {EVP_PKEY_FALCONPADDED1024, NID_sha512, SSL_SIGN_FALCONPADDED1024},

@@ -208,10 +208,20 @@ bool VerifySignedData(SignatureAlgorithm algorithm, der::Input signed_data,
       digest = EVP_sha256();
       cache_algorithm_name = "Mldsa44";
       break;
+    case SignatureAlgorithm::kRsa3072_mldsa44:
+      expected_pkey_id = EVP_PKEY_RSA3072_MLDSA44;
+      digest = EVP_sha256();
+      cache_algorithm_name = "Rsa3072_mldsa44";
+      break;
     case SignatureAlgorithm::kMldsa65:
       expected_pkey_id = EVP_PKEY_MLDSA65;
       digest = EVP_sha384();
       cache_algorithm_name = "Mldsa65";
+      break;
+    case SignatureAlgorithm::kP384_mldsa65:
+      expected_pkey_id = EVP_PKEY_P384_MLDSA65;
+      digest = EVP_sha384();
+      cache_algorithm_name = "P384_mldsa65";
       break;
     case SignatureAlgorithm::kMldsa87:
       expected_pkey_id = EVP_PKEY_MLDSA87;
@@ -237,6 +247,11 @@ bool VerifySignedData(SignatureAlgorithm algorithm, der::Input signed_data,
       expected_pkey_id = EVP_PKEY_FALCON512;
       digest = EVP_sha256();
       cache_algorithm_name = "Falcon512";
+      break;
+    case SignatureAlgorithm::kP256_falcon512:
+      expected_pkey_id = EVP_PKEY_P256_FALCON512;
+      digest = EVP_sha256();
+      cache_algorithm_name = "P256_falcon512";
       break;
     case SignatureAlgorithm::kFalconpadded512:
       expected_pkey_id = EVP_PKEY_FALCONPADDED512;
