@@ -1,4 +1,5 @@
-[![CircleCI](https://circleci.com/gh/open-quantum-safe/boringssl/tree/master.svg?style=svg)](https://circleci.com/gh/open-quantum-safe/boringssl/tree/master)
+![OQS-BoringSSL (Static)](https://github.com/open-quantum-safe/boringssl/actions/workflows/static.yml/badge.svg)
+![OQS-BoringSSL (Shared)](https://github.com/open-quantum-safe/boringssl/actions/workflows/shared.yml/badge.svg)
 
 OQS-BoringSSL
 ==================================
@@ -112,7 +113,7 @@ We've only tested the fork on the latest Ubuntu LTS and Windows. This fork has l
 On **Ubuntu**, you need to install the following packages:
 
 ```
-sudo apt install cmake gcc ninja-build libunwind-dev pkg-config python3 python3-psutil golang-go
+sudo apt install cmake gcc ninja-build libunwind-dev pkg-config python3 golang-go
 ```
 
 You will also need the latest version of the toolchain for the Go programming language, available [here](https://golang.org/dl/)

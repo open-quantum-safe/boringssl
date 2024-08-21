@@ -3,7 +3,6 @@
 # client and server can establish a handshake with the choices.
 
 import argparse
-import psutil
 import random
 import subprocess
 import time
@@ -96,7 +95,7 @@ sigs = [
 def try_handshake(bssl):
     random_sig = random.choice(sigs)
     server = subprocess.Popen([bssl, 'server',
-                                     '-accept', '0',
+                                     '-accept', '31416',
                                      '-sig-alg', random_sig],
                               stdout=subprocess.PIPE,
                               stderr=subprocess.STDOUT)
@@ -104,12 +103,11 @@ def try_handshake(bssl):
     # The server should (hopefully?) start
     # in 10 seconds.
     time.sleep(10)
-    server_port = psutil.Process(server.pid).connections()[0].laddr.port
 
     # Try to connect to it with the client
     random_kex = random.choice(kexs)
     client = subprocess.run([bssl, 'client',
-                                   '-connect', 'localhost:{}'.format(str(server_port)),
+                                   '-connect', 'localhost:31416',
                                    '-curves', random_kex],
                              stdout=subprocess.PIPE,
                              stderr=subprocess.STDOUT,

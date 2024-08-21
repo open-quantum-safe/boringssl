@@ -1,7 +1,7 @@
-Please do not send pull requests to the BoringSSL repository.
+Thank you for contributing to OQS-BoringSSL! Before submitting your pull request, please ensure the following:
 
-We do, however, take contributions gladly.
+1. Your changes include new tests or modifications to existing tests as needed.
 
-See https://boringssl.googlesource.com/boringssl/+/master/CONTRIBUTING.md
+2. You have tested the changes in a clean build environment.
 
-Thanks!
+3. Your changes do not break the build for projects that depend on OQS-BoringSSL.
