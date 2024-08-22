@@ -95,7 +95,7 @@ sigs = [
 def try_handshake(bssl):
     random_sig = random.choice(sigs)
     server = subprocess.Popen([bssl, 'server',
-                                     '-accept', '31416',
+                                     '-accept', '26150',
                                      '-sig-alg', random_sig],
                               stdout=subprocess.PIPE,
                               stderr=subprocess.STDOUT)
@@ -107,7 +107,7 @@ def try_handshake(bssl):
     # Try to connect to it with the client
     random_kex = random.choice(kexs)
     client = subprocess.run([bssl, 'client',
-                                   '-connect', 'localhost:31416',
+                                   '-connect', 'localhost:26150',
                                    '-curves', random_kex],
                              stdout=subprocess.PIPE,
                              stderr=subprocess.STDOUT,
