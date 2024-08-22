@@ -1,5 +1,5 @@
-![OQS-BoringSSL (Static)](https://github.com/open-quantum-safe/boringssl/actions/workflows/static.yml/badge.svg)
-![OQS-BoringSSL (Shared)](https://github.com/open-quantum-safe/boringssl/actions/workflows/shared.yml/badge.svg)
+[![OQS-BoringSSL (Static)](https://github.com/open-quantum-safe/boringssl/actions/workflows/static.yml/badge.svg)](https://github.com/open-quantum-safe/boringssl/actions/workflows/static.yml)
+[![OQS-BoringSSL (Shared)](https://github.com/open-quantum-safe/boringssl/actions/workflows/shared.yml/badge.svg)](https://github.com/open-quantum-safe/boringssl/actions/workflows/shared.yml)
 
 OQS-BoringSSL
 ==================================
