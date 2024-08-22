@@ -3,7 +3,7 @@ name: OQS-BoringSSL (Shared)
 on:
   push:
     branches:
-      - main
+      - master
     paths-ignore:
       - '**.md'
       - 'oqs_template/**'
