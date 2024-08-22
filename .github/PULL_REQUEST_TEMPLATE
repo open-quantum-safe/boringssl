@@ -4,4 +4,4 @@ Thank you for contributing to OQS-BoringSSL! Before submitting your pull request
 
 2. You have tested the changes in a clean build environment.
 
-3. Your changes do not break the build for projects that depend on OQS-BoringSSL.
+3. Your changes do not break the build for projects (i.e., NGINX-QUIC, cURL-QUIC, and Chromium) that depend on OQS-BoringSSL.
