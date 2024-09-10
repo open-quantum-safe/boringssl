@@ -478,7 +478,7 @@ OPENSSL_EXPORT int SSL_get_error(const SSL *ssl, int ret_code);
 #define SSL_ERROR_NONE 0
 
 // SSL_ERROR_SSL indicates the operation failed within the library. The caller
-// may inspect the error queue for more information.
+// may inspect the error queue (see |ERR_get_error|) for more information.
 #define SSL_ERROR_SSL 1
 
 // SSL_ERROR_WANT_READ indicates the operation failed attempting to read from
@@ -2579,6 +2579,7 @@ OPENSSL_EXPORT size_t SSL_CTX_get_num_tickets(const SSL_CTX *ctx);
 #define SSL_GROUP_SECP384R1 24
 #define SSL_GROUP_SECP521R1 25
 #define SSL_GROUP_X25519 29
+#define SSL_GROUP_X25519_MLKEM768 0x11ec
 #define SSL_GROUP_X25519_KYBER768_DRAFT00 0x6399
 ///// OQS_TEMPLATE_FRAGMENT_DEFINE_KEM_CURVEIDS_START
 #define SSL_GROUP_MLKEM512 583
@@ -2586,7 +2587,6 @@ OPENSSL_EXPORT size_t SSL_CTX_get_num_tickets(const SSL_CTX *ctx);
 #define SSL_GROUP_X25519_MLKEM512 12210
 #define SSL_GROUP_MLKEM768 584
 #define SSL_GROUP_P384_MLKEM768 12104
-#define SSL_GROUP_X25519_MLKEM768 12212
 #define SSL_GROUP_MLKEM1024 585
 #define SSL_GROUP_P521_MLKEM1024 12105
 #define SSL_GROUP_FRODO640AES 512
