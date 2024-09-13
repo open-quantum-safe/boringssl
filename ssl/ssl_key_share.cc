@@ -28,6 +28,7 @@
 #include <openssl/experimental/kyber.h>
 #include <openssl/hrss.h>
 #include <openssl/mem.h>
+#include <openssl/mlkem.h>
 #include <openssl/nid.h>
 #include <openssl/rand.h>
 #include <openssl/span.h>
@@ -194,6 +195,7 @@ class X25519KeyShare : public SSLKeyShare {
   uint8_t private_key_[32];
 };
 
+// draft-tls-westerbaan-xyber768d00-03
 class X25519Kyber768KeyShare : public SSLKeyShare {
  public:
   X25519Kyber768KeyShare() {}
@@ -227,9 +229,7 @@ class X25519Kyber768KeyShare : public SSLKeyShare {
     uint8_t x25519_public_key[32];
     X25519_keypair(x25519_public_key, x25519_private_key_);
     KYBER_public_key peer_kyber_pub;
-    CBS peer_key_cbs;
-    CBS peer_x25519_cbs;
-    CBS peer_kyber_cbs;
+    CBS peer_key_cbs, peer_x25519_cbs, peer_kyber_cbs;
     CBS_init(&peer_key_cbs, peer_key.data(), peer_key.size());
     if (!CBS_get_bytes(&peer_key_cbs, &peer_x25519_cbs, 32) ||
         !CBS_get_bytes(&peer_key_cbs, &peer_kyber_cbs,
@@ -282,6 +282,97 @@ class X25519Kyber768KeyShare : public SSLKeyShare {
  private:
   uint8_t x25519_private_key_[32];
   KYBER_private_key kyber_private_key_;
+};
+
+// draft-kwiatkowski-tls-ecdhe-mlkem-01
+class X25519MLKEM768KeyShare : public SSLKeyShare {
+ public:
+  X25519MLKEM768KeyShare() {}
+
+  uint16_t GroupID() const override { return SSL_GROUP_X25519_MLKEM768; }
+
+  bool Generate(CBB *out) override {
+    uint8_t mlkem_public_key[MLKEM768_PUBLIC_KEY_BYTES];
+    MLKEM768_generate_key(mlkem_public_key, /*optional_out_seed=*/nullptr,
+                          &mlkem_private_key_);
+
+    uint8_t x25519_public_key[X25519_PUBLIC_VALUE_LEN];
+    X25519_keypair(x25519_public_key, x25519_private_key_);
+
+    if (!CBB_add_bytes(out, mlkem_public_key, sizeof(mlkem_public_key)) ||
+        !CBB_add_bytes(out, x25519_public_key, sizeof(x25519_public_key))) {
+      return false;
+    }
+
+    return true;
+  }
+
+  bool Encap(CBB *out_ciphertext, Array<uint8_t> *out_secret,
+             uint8_t *out_alert, Span<const uint8_t> peer_key) override {
+    Array<uint8_t> secret;
+    if (!secret.Init(MLKEM_SHARED_SECRET_BYTES + X25519_SHARED_KEY_LEN)) {
+      return false;
+    }
+
+    MLKEM768_public_key peer_mlkem_pub;
+    uint8_t x25519_public_key[X25519_PUBLIC_VALUE_LEN];
+    X25519_keypair(x25519_public_key, x25519_private_key_);
+    CBS peer_key_cbs, peer_mlkem_cbs, peer_x25519_cbs;
+    CBS_init(&peer_key_cbs, peer_key.data(), peer_key.size());
+    if (!CBS_get_bytes(&peer_key_cbs, &peer_mlkem_cbs,
+                       MLKEM768_PUBLIC_KEY_BYTES) ||
+        !MLKEM768_parse_public_key(&peer_mlkem_pub, &peer_mlkem_cbs) ||
+        !CBS_get_bytes(&peer_key_cbs, &peer_x25519_cbs,
+                       X25519_PUBLIC_VALUE_LEN) ||
+        CBS_len(&peer_key_cbs) != 0 ||
+        !X25519(secret.data() + MLKEM_SHARED_SECRET_BYTES, x25519_private_key_,
+                CBS_data(&peer_x25519_cbs))) {
+      *out_alert = SSL_AD_DECODE_ERROR;
+      OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_ECPOINT);
+      return false;
+    }
+
+    uint8_t mlkem_ciphertext[MLKEM768_CIPHERTEXT_BYTES];
+    MLKEM768_encap(mlkem_ciphertext, secret.data(), &peer_mlkem_pub);
+
+    if (!CBB_add_bytes(out_ciphertext, mlkem_ciphertext,
+                       sizeof(mlkem_ciphertext)) ||
+        !CBB_add_bytes(out_ciphertext, x25519_public_key,
+                       sizeof(x25519_public_key))) {
+      return false;
+    }
+
+    *out_secret = std::move(secret);
+    return true;
+  }
+
+  bool Decap(Array<uint8_t> *out_secret, uint8_t *out_alert,
+             Span<const uint8_t> ciphertext) override {
+    *out_alert = SSL_AD_INTERNAL_ERROR;
+
+    Array<uint8_t> secret;
+    if (!secret.Init(MLKEM_SHARED_SECRET_BYTES + X25519_SHARED_KEY_LEN)) {
+      return false;
+    }
+
+    if (ciphertext.size() !=
+            MLKEM768_CIPHERTEXT_BYTES + X25519_PUBLIC_VALUE_LEN ||
+        !MLKEM768_decap(secret.data(), ciphertext.data(),
+                        MLKEM768_CIPHERTEXT_BYTES, &mlkem_private_key_) ||
+        !X25519(secret.data() + MLKEM_SHARED_SECRET_BYTES, x25519_private_key_,
+                ciphertext.data() + MLKEM768_CIPHERTEXT_BYTES)) {
+      *out_alert = SSL_AD_DECODE_ERROR;
+      OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_ECPOINT);
+      return false;
+    }
+
+    *out_secret = std::move(secret);
+    return true;
+  }
+
+ private:
+  uint8_t x25519_private_key_[32];
+  MLKEM768_private_key mlkem_private_key_;
 };
 
 // Class for key-exchange using OQS supplied
@@ -569,13 +660,13 @@ constexpr NamedGroup kNamedGroups[] = {
     {NID_X25519, SSL_GROUP_X25519, "X25519", "x25519"},
     {NID_X25519Kyber768Draft00, SSL_GROUP_X25519_KYBER768_DRAFT00,
      "X25519Kyber768Draft00", ""},
+    {NID_X25519MLKEM768, SSL_GROUP_X25519_MLKEM768, "X25519MLKEM768", ""},
 ///// OQS_TEMPLATE_FRAGMENT_DEF_NAMEDGROUPS_START
     {NID_mlkem512, SSL_GROUP_MLKEM512, "mlkem512", "mlkem512"},
     {NID_p256_mlkem512, SSL_GROUP_P256_MLKEM512, "p256_mlkem512", "p256_mlkem512"},
     {NID_x25519_mlkem512, SSL_GROUP_X25519_MLKEM512, "x25519_mlkem512", "x25519_mlkem512"},
     {NID_mlkem768, SSL_GROUP_MLKEM768, "mlkem768", "mlkem768"},
     {NID_p384_mlkem768, SSL_GROUP_P384_MLKEM768, "p384_mlkem768", "p384_mlkem768"},
-    {NID_x25519_mlkem768, SSL_GROUP_X25519_MLKEM768, "x25519_mlkem768", "x25519_mlkem768"},
     {NID_mlkem1024, SSL_GROUP_MLKEM1024, "mlkem1024", "mlkem1024"},
     {NID_p521_mlkem1024, SSL_GROUP_P521_MLKEM1024, "p521_mlkem1024", "p521_mlkem1024"},
     {NID_frodo640aes, SSL_GROUP_FRODO640AES, "frodo640aes", "frodo640aes"},
@@ -636,6 +727,8 @@ UniquePtr<SSLKeyShare> SSLKeyShare::Create(uint16_t group_id) {
       return MakeUnique<X25519KeyShare>();
     case SSL_GROUP_X25519_KYBER768_DRAFT00:
       return MakeUnique<X25519Kyber768KeyShare>();
+    case SSL_GROUP_X25519_MLKEM768:
+      return MakeUnique<X25519MLKEM768KeyShare>();
 ///// OQS_TEMPLATE_FRAGMENT_HANDLE_GROUP_IDS_START
     case SSL_GROUP_MLKEM512:
       return MakeUnique<OQSKeyShare>(SSL_GROUP_MLKEM512, OQS_KEM_alg_ml_kem_512);
@@ -647,8 +740,6 @@ UniquePtr<SSLKeyShare> SSLKeyShare::Create(uint16_t group_id) {
       return MakeUnique<OQSKeyShare>(SSL_GROUP_MLKEM768, OQS_KEM_alg_ml_kem_768);
     case SSL_GROUP_P384_MLKEM768:
       return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P384_MLKEM768, SSL_GROUP_SECP384R1, OQS_KEM_alg_ml_kem_768);
-    case SSL_GROUP_X25519_MLKEM768:
-      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_X25519_MLKEM768, SSL_GROUP_X25519, OQS_KEM_alg_ml_kem_768);
     case SSL_GROUP_MLKEM1024:
       return MakeUnique<OQSKeyShare>(SSL_GROUP_MLKEM1024, OQS_KEM_alg_ml_kem_1024);
     case SSL_GROUP_P521_MLKEM1024:

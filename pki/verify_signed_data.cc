@@ -18,7 +18,7 @@
 #include "parser.h"
 #include "signature_algorithm.h"
 
-namespace bssl {
+BSSL_NAMESPACE_BEGIN
 
 namespace {
 
@@ -443,4 +443,4 @@ bool VerifySignedData(SignatureAlgorithm algorithm, der::Input signed_data,
                           public_key.get(), cache);
 }
 
-}  // namespace bssl
+BSSL_NAMESPACE_END

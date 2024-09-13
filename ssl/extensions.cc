@@ -207,6 +207,7 @@ static bool tls1_check_duplicate_extensions(const CBS *cbs) {
 static bool is_post_quantum_group(uint16_t id) {
   switch (id) {
     case SSL_GROUP_X25519_KYBER768_DRAFT00:
+    case SSL_GROUP_X25519_MLKEM768:
       return true;
 ///// OQS_TEMPLATE_FRAGMENT_ADD_PQ_GROUPS_START
     case SSL_GROUP_MLKEM512:
@@ -218,8 +219,6 @@ static bool is_post_quantum_group(uint16_t id) {
     case SSL_GROUP_MLKEM768:
       return true;
     case SSL_GROUP_P384_MLKEM768:
-      return true;
-    case SSL_GROUP_X25519_MLKEM768:
       return true;
     case SSL_GROUP_MLKEM1024:
       return true;
@@ -423,7 +422,6 @@ static const uint16_t kAllSupportedGroups[] = {
     SSL_GROUP_X25519_MLKEM512,
     SSL_GROUP_MLKEM512,
     SSL_GROUP_P384_MLKEM768,
-    SSL_GROUP_X25519_MLKEM768,
     SSL_GROUP_MLKEM768,
     SSL_GROUP_P521_MLKEM1024,
     SSL_GROUP_MLKEM1024,

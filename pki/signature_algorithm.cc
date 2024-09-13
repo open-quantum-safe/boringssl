@@ -11,7 +11,7 @@
 #include "parse_values.h"
 #include "parser.h"
 
-namespace bssl {
+BSSL_NAMESPACE_BEGIN
 
 namespace {
 
@@ -581,4 +581,4 @@ std::optional<DigestAlgorithm> GetTlsServerEndpointDigestAlgorithm(
   return std::nullopt;
 }
 
-}  // namespace bssl
+BSSL_NAMESPACE_END
