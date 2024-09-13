@@ -66,24 +66,17 @@ If an algorithm is provided by liboqs but is not listed below, it might still be
 
 #### Key Exchange
 
-In addition to `X25519MLKEM768` and `X25519Kyber768Draft00` supported by BoringSSL, this fork also includes support for the following quantum-safe algorithms from liboqs (assuming they have been enabled in liboqs):
+Along with `X25519MLKEM768` and `X25519Kyber768Draft00` supported by BoringSSL through Google's implementations, this fork also incorporates support for additional quantum-safe algorithms from liboqs (provided they have been enabled in liboqs):
 
 <!--- OQS_TEMPLATE_FRAGMENT_LIST_KEXS_START -->
-- **BIKE**: `bikel1`, `bikel3`, `bikel5`
-- **CRYSTALS-Kyber**: `kyber512`, `kyber768`, `kyber1024`
-- **FrodoKEM**: `frodo640aes`, `frodo640shake`, `frodo976aes`, `frodo976shake`, `frodo1344aes`, `frodo1344shake`
-- **HQC**: `hqc128`, `hqc192`, `hqc256`†
-- **ML-KEM**: `mlkem768`, `mlkem1024`
+- **BIKE**: `bikel1`, `p256_bikel1`, `x25519_bikel1`, `bikel3`, `p384_bikel3`, `bikel5`, `p521_bikel5`
+- **CRYSTALS-Kyber**: `kyber512`, `p256_kyber512`, `x25519_kyber512`, `kyber768`, `p384_kyber768`, `kyber1024`, `p521_kyber1024`
+- **FrodoKEM**: `frodo640aes`, `p256_frodo640aes`, `x25519_frodo640aes`, `frodo640shake`, `p256_frodo640shake`, `x25519_frodo640shake`, `frodo976aes`, `p384_frodo976aes`, `frodo976shake`, `p384_frodo976shake`, `frodo1344aes`, `p521_frodo1344aes`, `frodo1344shake`, `p521_frodo1344shake`
+- **HQC**: `hqc128`, `p256_hqc128`, `x25519_hqc128`, `hqc192`, `p384_hqc192`, `hqc256`, `p521_hqc256`†
+- **ML-KEM**: `mlkem768`, `p384_mlkem768`, `mlkem1024`, `p521_mlkem1024`
 <!--- OQS_TEMPLATE_FRAGMENT_LIST_KEXS_END -->
 
-For each `<KEX>` listed above, the following hybrid algorithms are made available as follows:
-
-- If `<KEX>` has L1 security, the method `p256_<KEX>` is available, which combines `<KEX>` with ECDH using NIST's P256 curve
-- If `<KEX>` has L1 security, the method `x25519_<KEX>` is available, which combines `<KEX>` with ECDH using X25519 curve
-- If `<KEX>` has L3 security, the method `p384_<KEX>` is available, which combines `<KEX>` with ECDH using NIST's P384 curve
-- If `<KEX>` has L5 security, the method `p521_<KEX>` is available, which combines `<KEX>` with ECDH using NIST's P521 curve
-
-For example, since `kyber768` claims L3 security, the hybrid `p384_kyber768` is available. Be aware that hybrid algorithms utlizing `X448` are not supported. If those are needed for a project please use [OQS-provider](https://github.com/open-quantum-safe/oqs-provider) which supports them out of the box, or implement them and create a pull request, or [create an issue](https://github.com/open-quantum-safe/boringssl/issues).
+Be aware that hybrid algorithms utlizing `X448` are not supported. If those are needed for a project please use [OQS-provider](https://github.com/open-quantum-safe/oqs-provider) which supports them out of the box, or implement them and create a pull request, or [create an issue](https://github.com/open-quantum-safe/boringssl/issues).
 
 Note that algorithms marked with a dagger (†) have large stack usage and may cause failures when run on threads or in constrained environments.
 
