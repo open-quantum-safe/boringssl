@@ -526,10 +526,18 @@ class ClassicalWithOQSKeyShare : public SSLKeyShare {
       return false;
     }
 
-    if (!CBB_add_bytes(out, CBB_data(classical_offer.get()), CBB_len(classical_offer.get())) ||
-        !CBB_add_bytes(out, CBB_data(pq_offer.get()), CBB_len(pq_offer.get()))) {
-      OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
-      return false;
+    if (classical_group_id_ == SSL_GROUP_X25519) {
+      if (!CBB_add_bytes(out, CBB_data(pq_offer.get()), CBB_len(pq_offer.get())) ||
+          !CBB_add_bytes(out, CBB_data(classical_offer.get()), CBB_len(classical_offer.get()))) {
+        OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
+        return false;
+      }
+    } else {
+      if (!CBB_add_bytes(out, CBB_data(classical_offer.get()), CBB_len(classical_offer.get())) ||
+          !CBB_add_bytes(out, CBB_data(pq_offer.get()), CBB_len(pq_offer.get()))) {
+        OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
+        return false;
+      }
     }
 
     return true;
@@ -549,30 +557,51 @@ class ClassicalWithOQSKeyShare : public SSLKeyShare {
 
     ScopedCBB out_secret_cbb;
 
+    if (classical_group_id_ == SSL_GROUP_X25519) {
+      pq_pub_start_ = 0;
+      classical_pub_start_ = pq_kex_->length_public_key();
+    }
+
     if (!CBB_init(out_classical_public_key.get(), classical_pub_size_) ||
-        !classical_kex_->Encap(out_classical_public_key.get(), &out_classical_secret, out_alert, peer_key.subspan(0, classical_pub_size_)) ||
+        !classical_kex_->Encap(out_classical_public_key.get(), &out_classical_secret, out_alert, peer_key.subspan(classical_pub_start_, classical_pub_size_)) ||
         !CBB_flush(out_classical_public_key.get())) {
       return false;
     }
 
     if (!CBB_init(out_pq_ciphertext.get(), 0) ||
-        !pq_kex_->Encap(out_pq_ciphertext.get(), &out_pq_secret, out_alert, peer_key.subspan(classical_pub_size_, pq_kex_->length_public_key())) ||
+        !pq_kex_->Encap(out_pq_ciphertext.get(), &out_pq_secret, out_alert, peer_key.subspan(pq_pub_start_, pq_kex_->length_public_key())) ||
         !CBB_flush(out_pq_ciphertext.get())) {
       return false;
     }
 
-    if (!CBB_add_bytes(out_public_key, CBB_data(out_classical_public_key.get()), CBB_len(out_classical_public_key.get())) ||
-        !CBB_add_bytes(out_public_key, CBB_data(out_pq_ciphertext.get()), CBB_len(out_pq_ciphertext.get()))) {
-      OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
-      return false;
-    }
+    if (classical_group_id_ == SSL_GROUP_X25519) {
+      if (!CBB_add_bytes(out_public_key, CBB_data(out_pq_ciphertext.get()), CBB_len(out_pq_ciphertext.get())) ||
+          !CBB_add_bytes(out_public_key, CBB_data(out_classical_public_key.get()), CBB_len(out_classical_public_key.get()))) {
+        OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
+        return false;
+      }
 
-    if (!CBB_init(out_secret_cbb.get(), out_classical_secret.size() + out_pq_secret.size()) ||
-        !CBB_add_bytes(out_secret_cbb.get(), out_classical_secret.data(), out_classical_secret.size()) ||
-        !CBB_add_bytes(out_secret_cbb.get(), out_pq_secret.data(), out_pq_secret.size()) ||
-        !CBBFinishArray(out_secret_cbb.get(), out_secret)) {
-      OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
-      return false;
+      if (!CBB_init(out_secret_cbb.get(), out_classical_secret.size() + out_pq_secret.size()) ||
+          !CBB_add_bytes(out_secret_cbb.get(), out_pq_secret.data(), out_pq_secret.size()) ||
+          !CBB_add_bytes(out_secret_cbb.get(), out_classical_secret.data(), out_classical_secret.size()) ||
+          !CBBFinishArray(out_secret_cbb.get(), out_secret)) {
+        OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
+        return false;
+      }
+    } else {
+      if (!CBB_add_bytes(out_public_key, CBB_data(out_classical_public_key.get()), CBB_len(out_classical_public_key.get())) ||
+          !CBB_add_bytes(out_public_key, CBB_data(out_pq_ciphertext.get()), CBB_len(out_pq_ciphertext.get()))) {
+        OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
+        return false;
+      }
+
+      if (!CBB_init(out_secret_cbb.get(), out_classical_secret.size() + out_pq_secret.size()) ||
+          !CBB_add_bytes(out_secret_cbb.get(), out_classical_secret.data(), out_classical_secret.size()) ||
+          !CBB_add_bytes(out_secret_cbb.get(), out_pq_secret.data(), out_pq_secret.size()) ||
+          !CBBFinishArray(out_secret_cbb.get(), out_secret)) {
+        OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
+        return false;
+      }
     }
 
     return true;
@@ -589,19 +618,33 @@ class ClassicalWithOQSKeyShare : public SSLKeyShare {
     Array<uint8_t> out_classical_secret;
     Array<uint8_t> out_pq_secret;
 
-    if (!classical_kex_->Decap(&out_classical_secret, out_alert, peer_key.subspan(0, classical_pub_size_))) {
+    if (classical_group_id_ == SSL_GROUP_X25519) {
+      pq_pub_start_ = 0;
+      classical_pub_start_ = pq_kex_->length_ciphertext();
+    }
+
+    if (!classical_kex_->Decap(&out_classical_secret, out_alert, peer_key.subspan(classical_pub_start_, classical_pub_size_))) {
       return false;
     }
 
-    if (!pq_kex_->Decap(&out_pq_secret, out_alert, peer_key.subspan(classical_pub_size_, pq_kex_->length_ciphertext()))) {
+    if (!pq_kex_->Decap(&out_pq_secret, out_alert, peer_key.subspan(pq_pub_start_, pq_kex_->length_ciphertext()))) {
       return false;
     }
 
-    if (!CBB_init(out_secret_cbb.get(), out_classical_secret.size() + out_pq_secret.size()) ||
-        !CBB_add_bytes(out_secret_cbb.get(), out_classical_secret.data(), out_classical_secret.size()) ||
-        !CBB_add_bytes(out_secret_cbb.get(), out_pq_secret.data(), out_pq_secret.size()) ||
-        !CBBFinishArray(out_secret_cbb.get(), out_secret)) {
-      return false;
+    if (classical_group_id_ == SSL_GROUP_X25519) {
+      if (!CBB_init(out_secret_cbb.get(), out_classical_secret.size() + out_pq_secret.size()) ||
+          !CBB_add_bytes(out_secret_cbb.get(), out_pq_secret.data(), out_pq_secret.size()) ||
+          !CBB_add_bytes(out_secret_cbb.get(), out_classical_secret.data(), out_classical_secret.size()) ||
+          !CBBFinishArray(out_secret_cbb.get(), out_secret)) {
+        return false;
+      }
+    } else {
+      if (!CBB_init(out_secret_cbb.get(), out_classical_secret.size() + out_pq_secret.size()) ||
+          !CBB_add_bytes(out_secret_cbb.get(), out_classical_secret.data(), out_classical_secret.size()) ||
+          !CBB_add_bytes(out_secret_cbb.get(), out_pq_secret.data(), out_pq_secret.size()) ||
+          !CBBFinishArray(out_secret_cbb.get(), out_secret)) {
+        return false;
+      }
     }
 
     return true;
@@ -614,6 +657,7 @@ class ClassicalWithOQSKeyShare : public SSLKeyShare {
 
   UniquePtr<SSLKeyShare> classical_kex_ = nullptr;
   size_t classical_pub_size_ = 0;
+  size_t classical_pub_start_ = 0, pq_pub_start_ = 0;
 
   UniquePtr<OQSKeyShare> pq_kex_ = nullptr;
 
@@ -648,6 +692,7 @@ class ClassicalWithOQSKeyShare : public SSLKeyShare {
             return false;
         }
     }
+    pq_pub_start_ = classical_pub_size_;
     return true;
   }
 };
@@ -728,7 +773,7 @@ UniquePtr<SSLKeyShare> SSLKeyShare::Create(uint16_t group_id) {
     case SSL_GROUP_X25519_KYBER768_DRAFT00:
       return MakeUnique<X25519Kyber768KeyShare>();
     case SSL_GROUP_X25519_MLKEM768:
-      return MakeUnique<X25519MLKEM768KeyShare>();
+      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_X25519_MLKEM768, SSL_GROUP_X25519, OQS_KEM_alg_ml_kem_768);
 ///// OQS_TEMPLATE_FRAGMENT_HANDLE_GROUP_IDS_START
     case SSL_GROUP_MLKEM512:
       return MakeUnique<OQSKeyShare>(SSL_GROUP_MLKEM512, OQS_KEM_alg_ml_kem_512);
