@@ -105,6 +105,32 @@ static void oqs_free(EVP_PKEY *pkey) {
     return ALG##_set_priv_raw(out, CBS_data(&inner), CBS_len(&inner)); \
   }
 
+#define DEFINE_OQS_PRIV_ENCODE(ALG)                                           \
+  static int ALG##_priv_encode(CBB *out, const EVP_PKEY *pkey) {              \
+    const OQS_KEY *key = pkey->pkey;                                          \
+    if (!key->has_private) {                                                  \
+        OPENSSL_PUT_ERROR(EVP, EVP_R_NOT_A_PRIVATE_KEY);                      \
+        return 0;                                                             \
+    }                                                                         \
+                                                                              \
+    CBB pkcs8, algorithm, oid, private_key, inner;                            \
+    if (!CBB_add_asn1(out, &pkcs8, CBS_ASN1_SEQUENCE) ||                      \
+        !CBB_add_asn1_uint64(&pkcs8, 0 /* version */) ||                      \
+        !CBB_add_asn1(&pkcs8, &algorithm, CBS_ASN1_SEQUENCE) ||               \
+        !CBB_add_asn1(&algorithm, &oid, CBS_ASN1_OBJECT) ||                   \
+        !CBB_add_bytes(&oid, ALG##_asn1_meth.oid, ALG##_asn1_meth.oid_len) || \
+        !CBB_add_asn1(&pkcs8, &private_key, CBS_ASN1_OCTETSTRING) ||          \
+        !CBB_add_asn1(&private_key, &inner, CBS_ASN1_OCTETSTRING) ||          \
+        !CBB_add_bytes(&inner, key->priv,                                     \
+                       key->ctx->length_secret_key) ||                        \
+        !CBB_flush(out)) {                                                    \
+      OPENSSL_PUT_ERROR(EVP, EVP_R_ENCODE_ERROR);                             \
+      return 0;                                                               \
+    }                                                                         \
+                                                                              \
+    return 1;                                                                 \
+  }
+
 
 #define DEFINE_OQS_SET_PUB_RAW(ALG, OQS_METH)                     \
   static int ALG##_set_pub_raw(EVP_PKEY *pkey, const uint8_t *in, \
@@ -188,6 +214,7 @@ static size_t oqs_sig_size(const EVP_PKEY *pkey) {
   DEFINE_OQS_SET_PRIV_RAW(ALG, OQS_METH)                 \
   DEFINE_OQS_GET_PRIV_RAW(ALG, OQS_METH)                 \
   DEFINE_OQS_PRIV_DECODE(ALG)                            \
+  DEFINE_OQS_PRIV_ENCODE(ALG)                            \
   DEFINE_OQS_SET_PUB_RAW(ALG, OQS_METH)                  \
   DEFINE_OQS_PUB_DECODE(ALG)                             \
   DEFINE_OQS_PUB_ENCODE(ALG)
@@ -202,7 +229,7 @@ static size_t oqs_sig_size(const EVP_PKEY *pkey) {
       ALG##_pub_encode /* pub_encode */,                \
       oqs_pub_cmp,                                      \
       ALG##_priv_decode,                                \
-      NULL /* priv_encode */,                           \
+      ALG##_priv_encode,                                \
       ALG##_set_priv_raw,                               \
       ALG##_set_pub_raw,                                \
       ALG##_get_priv_raw,                               \
