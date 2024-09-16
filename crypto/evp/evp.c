@@ -221,14 +221,16 @@ static const EVP_PKEY_ASN1_METHOD *evp_pkey_asn1_find(int nid) {
 ///// OQS_TEMPLATE_FRAGMENT_PKEY_TO_ASN1_METH_START
     case EVP_PKEY_MLDSA44:
       return &mldsa44_asn1_meth;
-    case EVP_PKEY_RSA3072_MLDSA44:
-      return &rsa3072_mldsa44_asn1_meth;
+    case EVP_PKEY_P256_MLDSA44:
+      return &p256_mldsa44_asn1_meth;
     case EVP_PKEY_MLDSA65:
       return &mldsa65_asn1_meth;
     case EVP_PKEY_P384_MLDSA65:
       return &p384_mldsa65_asn1_meth;
     case EVP_PKEY_MLDSA87:
       return &mldsa87_asn1_meth;
+    case EVP_PKEY_P521_MLDSA87:
+      return &p521_mldsa87_asn1_meth;
     case EVP_PKEY_DILITHIUM2:
       return &dilithium2_asn1_meth;
     case EVP_PKEY_DILITHIUM3:
@@ -237,8 +239,8 @@ static const EVP_PKEY_ASN1_METHOD *evp_pkey_asn1_find(int nid) {
       return &dilithium5_asn1_meth;
     case EVP_PKEY_FALCON512:
       return &falcon512_asn1_meth;
-    case EVP_PKEY_P256_FALCON512:
-      return &p256_falcon512_asn1_meth;
+    case EVP_PKEY_RSA3072_FALCON512:
+      return &rsa3072_falcon512_asn1_meth;
     case EVP_PKEY_FALCONPADDED512:
       return &falconpadded512_asn1_meth;
     case EVP_PKEY_FALCON1024:
@@ -253,6 +255,8 @@ static const EVP_PKEY_ASN1_METHOD *evp_pkey_asn1_find(int nid) {
       return &mayo3_asn1_meth;
     case EVP_PKEY_MAYO5:
       return &mayo5_asn1_meth;
+    case EVP_PKEY_CROSSRSDP128BALANCED:
+      return &CROSSrsdp128balanced_asn1_meth;
     case EVP_PKEY_SPHINCSSHA2128FSIMPLE:
       return &sphincssha2128fsimple_asn1_meth;
     case EVP_PKEY_SPHINCSSHA2128SSIMPLE:

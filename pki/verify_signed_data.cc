@@ -208,10 +208,10 @@ bool VerifySignedData(SignatureAlgorithm algorithm, der::Input signed_data,
       digest = EVP_sha256();
       cache_algorithm_name = "Mldsa44";
       break;
-    case SignatureAlgorithm::kRsa3072_mldsa44:
-      expected_pkey_id = EVP_PKEY_RSA3072_MLDSA44;
+    case SignatureAlgorithm::kP256_mldsa44:
+      expected_pkey_id = EVP_PKEY_P256_MLDSA44;
       digest = EVP_sha256();
-      cache_algorithm_name = "Rsa3072_mldsa44";
+      cache_algorithm_name = "P256_mldsa44";
       break;
     case SignatureAlgorithm::kMldsa65:
       expected_pkey_id = EVP_PKEY_MLDSA65;
@@ -227,6 +227,11 @@ bool VerifySignedData(SignatureAlgorithm algorithm, der::Input signed_data,
       expected_pkey_id = EVP_PKEY_MLDSA87;
       digest = EVP_sha512();
       cache_algorithm_name = "Mldsa87";
+      break;
+    case SignatureAlgorithm::kP521_mldsa87:
+      expected_pkey_id = EVP_PKEY_P521_MLDSA87;
+      digest = EVP_sha512();
+      cache_algorithm_name = "P521_mldsa87";
       break;
     case SignatureAlgorithm::kDilithium2:
       expected_pkey_id = EVP_PKEY_DILITHIUM2;
@@ -248,10 +253,10 @@ bool VerifySignedData(SignatureAlgorithm algorithm, der::Input signed_data,
       digest = EVP_sha256();
       cache_algorithm_name = "Falcon512";
       break;
-    case SignatureAlgorithm::kP256_falcon512:
-      expected_pkey_id = EVP_PKEY_P256_FALCON512;
+    case SignatureAlgorithm::kRsa3072_falcon512:
+      expected_pkey_id = EVP_PKEY_RSA3072_FALCON512;
       digest = EVP_sha256();
-      cache_algorithm_name = "P256_falcon512";
+      cache_algorithm_name = "Rsa3072_falcon512";
       break;
     case SignatureAlgorithm::kFalconpadded512:
       expected_pkey_id = EVP_PKEY_FALCONPADDED512;
@@ -287,6 +292,11 @@ bool VerifySignedData(SignatureAlgorithm algorithm, der::Input signed_data,
       expected_pkey_id = EVP_PKEY_MAYO5;
       digest = EVP_sha512();
       cache_algorithm_name = "Mayo5";
+      break;
+    case SignatureAlgorithm::kCrossrsdp128balanced:
+      expected_pkey_id = EVP_PKEY_CROSSRSDP128BALANCED;
+      digest = EVP_sha256();
+      cache_algorithm_name = "Crossrsdp128balanced";
       break;
     case SignatureAlgorithm::kSphincssha2128fsimple:
       expected_pkey_id = EVP_PKEY_SPHINCSSHA2128FSIMPLE;

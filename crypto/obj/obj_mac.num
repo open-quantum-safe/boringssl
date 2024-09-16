@@ -996,7 +996,6 @@ p384_hqc192		1005
 hqc256		1006
 p521_hqc256		1007
 mldsa44		1008
-rsa3072_mldsa44		1009
 mldsa65		1010
 p384_mldsa65		1011
 mldsa87		1012
@@ -1004,7 +1003,6 @@ dilithium2		1013
 dilithium3		1014
 dilithium5		1015
 falcon512		1016
-p256_falcon512		1017
 falconpadded512		1018
 falcon1024		1019
 falconpadded1024		1020
@@ -1024,3 +1022,10 @@ sphincsshake192fsimple		1033
 sphincsshake192ssimple		1034
 sphincsshake256fsimple		1035
 sphincsshake256ssimple		1036
+p256_mlkem768		1037
+p384_mlkem1024		1038
+p256_kyber768		1039
+p256_mldsa44		1040
+p521_mldsa87		1041
+rsa3072_falcon512		1042
+CROSSrsdp128balanced		1043

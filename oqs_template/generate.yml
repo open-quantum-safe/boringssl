@@ -4,21 +4,22 @@ kems:
   -
     family: 'ML-KEM'
     name: 'mlkem512'
-    nid: '0x0247'
-    mix_with: [{'name': 'p256', 'mix_nid':'0x2F47', 'nid':'SSL_GROUP_SECP256R1'}, {'name': 'x25519', 'mix_nid':'0x2FB2', 'nid':'SSL_GROUP_X25519'}]
+    nid: '0x024A'
+    mix_with: [{'name': 'p256', 'mix_nid':'0x2F4B', 'nid':'SSL_GROUP_SECP256R1'}, {'name': 'x25519', 'mix_nid':'0x2FB6', 'nid':'SSL_GROUP_X25519'}]
     use_as_default_with: 'x25519'
     oqs_meth: 'OQS_KEM_alg_ml_kem_512'
   -
     family: 'ML-KEM'
     name: 'mlkem768'
-    nid: '0x0248'
-    mix_with: [{'name': 'p384', 'mix_nid':'0x2F48', 'nid':'SSL_GROUP_SECP384R1'}]
+    nid: '0x0768'
+    mix_with: [{'name': 'p256', 'mix_nid':'0x11EB', 'nid':'SSL_GROUP_SECP256R1'}, {'name': 'p384', 'mix_nid':'0x2F4C', 'nid':'SSL_GROUP_SECP384R1'}]
+    use_as_default_with: 'p256'
     oqs_meth: 'OQS_KEM_alg_ml_kem_768'
   -
     family: 'ML-KEM'
     name: 'mlkem1024'
-    nid: '0x0249'
-    mix_with: [{'name': 'p521', 'mix_nid':'0x2F49', 'nid':'SSL_GROUP_SECP521R1'}]
+    nid: '0x1024'
+    mix_with: [{'name': 'p384', 'mix_nid':'0x2F4E', 'nid':'SSL_GROUP_SECP384R1'}, {'name': 'p521', 'mix_nid':'0x2F4D', 'nid':'SSL_GROUP_SECP521R1'}]
     oqs_meth: 'OQS_KEM_alg_ml_kem_1024'
   -
     family: 'FrodoKEM'
@@ -69,7 +70,7 @@ kems:
     family: 'CRYSTALS-Kyber'
     name: 'kyber768'
     nid: '0x023C'
-    mix_with: [{'name': 'p384', 'mix_nid':'0x2F3C', 'nid':'SSL_GROUP_SECP384R1'}]
+    mix_with: [{'name': 'p256', 'mix_nid':'0x639A', 'nid':'SSL_GROUP_SECP256R1'}, {'name': 'p384', 'mix_nid':'0x2F3C', 'nid':'SSL_GROUP_SECP384R1'}]
     oqs_meth: 'OQS_KEM_alg_kyber_768'
   -
     family: 'CRYSTALS-Kyber'
@@ -130,11 +131,11 @@ sigs:
     claimed_security_level: '2'
   -
     family: 'ML-DSA'
-    name: 'rsa3072_mldsa44'
-    oid: '1 3 9999 7 2'
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x07, 0x02'
+    name: 'p256_mldsa44'
+    oid: '1 3 9999 7 1'
+    oid_encoded: '0x2B, 0xCE, 0x0F, 0x07, 0x01'
     oqs_meth: 'OQS_SIG_alg_ml_dsa_44'
-    code_point: '0xfed4'
+    code_point: '0xfed3'
     claimed_security_level: '2'
   -
     family: 'ML-DSA'
@@ -159,6 +160,14 @@ sigs:
     oid_encoded: '0x2B, 0x06, 0x01, 0x04, 0x01, 0x02, 0x82, 0x0B, 0x0C, 0x08, 0x07'
     oqs_meth: 'OQS_SIG_alg_ml_dsa_87'
     code_point: '0xfed2'
+    claimed_security_level: '5'
+  -
+    family: 'ML-DSA'
+    name: 'p521_mldsa87'
+    oid: '1 3 9999 7 4'
+    oid_encoded: '0x2B, 0xCE, 0x0F, 0x07, 0x04'
+    oqs_meth: 'OQS_SIG_alg_ml_dsa_87'
+    code_point: '0xfed6'
     claimed_security_level: '5'
   -
     family: 'CRYSTALS-DILITHIUM'
@@ -194,11 +203,11 @@ sigs:
     claimed_security_level: '1'
   -
     family: 'Falcon'
-    name: 'p256_falcon512'
-    oid: '1 3 9999 3 12'
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x03, 0x0C'
+    name: 'rsa3072_falcon512'
+    oid: '1 3 9999 3 13'
+    oid_encoded: '0x2B, 0xCE, 0x0F, 0x03, 0x0D'
     oqs_meth: 'OQS_SIG_alg_falcon_512'
-    code_point: '0xfed8'
+    code_point: '0xfed9'
     claimed_security_level: '1'
   -
     family: 'Falcon'
@@ -256,6 +265,14 @@ sigs:
     oqs_meth: 'OQS_SIG_alg_mayo_5'
     code_point: '0xfef1'
     claimed_security_level: '5'
+  -
+    family: 'CROSS'
+    name: 'CROSSrsdp128balanced'
+    oid: '1 3 6 1 4 1 62245 2 1 1'
+    oid_encoded: '0x2B, 0x06, 0x01, 0x04, 0x01, 0x83, 0xE6, 0x25, 0x02, 0x01, 0x01'
+    oqs_meth: 'OQS_SIG_alg_cross_rsdp_128_balanced'
+    code_point: '0xfef6'
+    claimed_security_level: '1'
   -
     family: 'SPHINCS-SHA2'
     name: 'sphincssha2128fsimple'

@@ -522,16 +522,18 @@ static const CurveTest kCurveTests[] = {
     },
   },
   {
-    "mlkem768:p384_mlkem768",
+    "mlkem768:p256_mlkem768:p384_mlkem768",
     {
       SSL_GROUP_MLKEM768,
+      SSL_GROUP_P256_MLKEM768,
       SSL_GROUP_P384_MLKEM768,
     },
   },
   {
-    "mlkem1024:p521_mlkem1024",
+    "mlkem1024:p384_mlkem1024:p521_mlkem1024",
     {
       SSL_GROUP_MLKEM1024,
+      SSL_GROUP_P384_MLKEM1024,
       SSL_GROUP_P521_MLKEM1024,
     },
   },
@@ -588,9 +590,10 @@ static const CurveTest kCurveTests[] = {
     },
   },
   {
-    "kyber768:p384_kyber768",
+    "kyber768:p256_kyber768:p384_kyber768",
     {
       SSL_GROUP_KYBER768,
+      SSL_GROUP_P256_KYBER768,
       SSL_GROUP_P384_KYBER768,
     },
   },
@@ -5863,14 +5866,16 @@ TEST(SSLTest, SignatureAlgorithmProperties) {
 ///// OQS_TEMPLATE_FRAGMENT_ADD_SIG_ALG_PROP_TESTS_START
   EXPECT_EQ(EVP_PKEY_MLDSA44,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_MLDSA44));
-  EXPECT_EQ(EVP_PKEY_RSA3072_MLDSA44,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_RSA3072_MLDSA44));
+  EXPECT_EQ(EVP_PKEY_P256_MLDSA44,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_P256_MLDSA44));
   EXPECT_EQ(EVP_PKEY_MLDSA65,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_MLDSA65));
   EXPECT_EQ(EVP_PKEY_P384_MLDSA65,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_P384_MLDSA65));
   EXPECT_EQ(EVP_PKEY_MLDSA87,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_MLDSA87));
+  EXPECT_EQ(EVP_PKEY_P521_MLDSA87,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_P521_MLDSA87));
   EXPECT_EQ(EVP_PKEY_DILITHIUM2,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_DILITHIUM2));
   EXPECT_EQ(EVP_PKEY_DILITHIUM3,
@@ -5879,8 +5884,8 @@ TEST(SSLTest, SignatureAlgorithmProperties) {
             SSL_get_signature_algorithm_key_type(SSL_SIGN_DILITHIUM5));
   EXPECT_EQ(EVP_PKEY_FALCON512,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_FALCON512));
-  EXPECT_EQ(EVP_PKEY_P256_FALCON512,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_P256_FALCON512));
+  EXPECT_EQ(EVP_PKEY_RSA3072_FALCON512,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_RSA3072_FALCON512));
   EXPECT_EQ(EVP_PKEY_FALCONPADDED512,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_FALCONPADDED512));
   EXPECT_EQ(EVP_PKEY_FALCON1024,
@@ -5895,6 +5900,8 @@ TEST(SSLTest, SignatureAlgorithmProperties) {
             SSL_get_signature_algorithm_key_type(SSL_SIGN_MAYO3));
   EXPECT_EQ(EVP_PKEY_MAYO5,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_MAYO5));
+  EXPECT_EQ(EVP_PKEY_CROSSRSDP128BALANCED,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_CROSSRSDP128BALANCED));
   EXPECT_EQ(EVP_PKEY_SPHINCSSHA2128FSIMPLE,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHA2128FSIMPLE));
   EXPECT_EQ(EVP_PKEY_SPHINCSSHA2128SSIMPLE,
@@ -6246,15 +6253,16 @@ TEST(SSLTest, SigAlgs) {
        {SSL_SIGN_ED25519, SSL_SIGN_ECDSA_SECP384R1_SHA384}},
 ///// OQS_TEMPLATE_FRAGMENT_ADD_SIG_ALG_EQ_TESTS_START
       {{NID_sha256, EVP_PKEY_MLDSA44}, true, {SSL_SIGN_MLDSA44}},
-      {{NID_sha256, EVP_PKEY_RSA3072_MLDSA44}, true, {SSL_SIGN_RSA3072_MLDSA44}},
+      {{NID_sha256, EVP_PKEY_P256_MLDSA44}, true, {SSL_SIGN_P256_MLDSA44}},
       {{NID_sha384, EVP_PKEY_MLDSA65}, true, {SSL_SIGN_MLDSA65}},
       {{NID_sha384, EVP_PKEY_P384_MLDSA65}, true, {SSL_SIGN_P384_MLDSA65}},
       {{NID_sha512, EVP_PKEY_MLDSA87}, true, {SSL_SIGN_MLDSA87}},
+      {{NID_sha512, EVP_PKEY_P521_MLDSA87}, true, {SSL_SIGN_P521_MLDSA87}},
       {{NID_sha256, EVP_PKEY_DILITHIUM2}, true, {SSL_SIGN_DILITHIUM2}},
       {{NID_sha384, EVP_PKEY_DILITHIUM3}, true, {SSL_SIGN_DILITHIUM3}},
       {{NID_sha512, EVP_PKEY_DILITHIUM5}, true, {SSL_SIGN_DILITHIUM5}},
       {{NID_sha256, EVP_PKEY_FALCON512}, true, {SSL_SIGN_FALCON512}},
-      {{NID_sha256, EVP_PKEY_P256_FALCON512}, true, {SSL_SIGN_P256_FALCON512}},
+      {{NID_sha256, EVP_PKEY_RSA3072_FALCON512}, true, {SSL_SIGN_RSA3072_FALCON512}},
       {{NID_sha256, EVP_PKEY_FALCONPADDED512}, true, {SSL_SIGN_FALCONPADDED512}},
       {{NID_sha512, EVP_PKEY_FALCON1024}, true, {SSL_SIGN_FALCON1024}},
       {{NID_sha512, EVP_PKEY_FALCONPADDED1024}, true, {SSL_SIGN_FALCONPADDED1024}},
@@ -6262,6 +6270,7 @@ TEST(SSLTest, SigAlgs) {
       {{NID_sha256, EVP_PKEY_MAYO2}, true, {SSL_SIGN_MAYO2}},
       {{NID_sha384, EVP_PKEY_MAYO3}, true, {SSL_SIGN_MAYO3}},
       {{NID_sha512, EVP_PKEY_MAYO5}, true, {SSL_SIGN_MAYO5}},
+      {{NID_sha256, EVP_PKEY_CROSSRSDP128BALANCED}, true, {SSL_SIGN_CROSSRSDP128BALANCED}},
       {{NID_sha256, EVP_PKEY_SPHINCSSHA2128FSIMPLE}, true, {SSL_SIGN_SPHINCSSHA2128FSIMPLE}},
       {{NID_sha256, EVP_PKEY_SPHINCSSHA2128SSIMPLE}, true, {SSL_SIGN_SPHINCSSHA2128SSIMPLE}},
       {{NID_sha384, EVP_PKEY_SPHINCSSHA2192FSIMPLE}, true, {SSL_SIGN_SPHINCSSHA2192FSIMPLE}},
@@ -6333,15 +6342,16 @@ TEST(SSLTest, SigAlgsList) {
       {"PSS+SHA256", true, {SSL_SIGN_RSA_PSS_RSAE_SHA256}},
 ///// OQS_TEMPLATE_FRAGMENT_SIGALGS_LIST_TESTS_START
       {"mldsa44", true, {SSL_SIGN_MLDSA44}},
-      {"rsa3072_mldsa44", true, {SSL_SIGN_RSA3072_MLDSA44}},
+      {"p256_mldsa44", true, {SSL_SIGN_P256_MLDSA44}},
       {"mldsa65", true, {SSL_SIGN_MLDSA65}},
       {"p384_mldsa65", true, {SSL_SIGN_P384_MLDSA65}},
       {"mldsa87", true, {SSL_SIGN_MLDSA87}},
+      {"p521_mldsa87", true, {SSL_SIGN_P521_MLDSA87}},
       {"dilithium2", true, {SSL_SIGN_DILITHIUM2}},
       {"dilithium3", true, {SSL_SIGN_DILITHIUM3}},
       {"dilithium5", true, {SSL_SIGN_DILITHIUM5}},
       {"falcon512", true, {SSL_SIGN_FALCON512}},
-      {"p256_falcon512", true, {SSL_SIGN_P256_FALCON512}},
+      {"rsa3072_falcon512", true, {SSL_SIGN_RSA3072_FALCON512}},
       {"falconpadded512", true, {SSL_SIGN_FALCONPADDED512}},
       {"falcon1024", true, {SSL_SIGN_FALCON1024}},
       {"falconpadded1024", true, {SSL_SIGN_FALCONPADDED1024}},
@@ -6349,6 +6359,7 @@ TEST(SSLTest, SigAlgsList) {
       {"mayo2", true, {SSL_SIGN_MAYO2}},
       {"mayo3", true, {SSL_SIGN_MAYO3}},
       {"mayo5", true, {SSL_SIGN_MAYO5}},
+      {"CROSSrsdp128balanced", true, {SSL_SIGN_CROSSRSDP128BALANCED}},
       {"sphincssha2128fsimple", true, {SSL_SIGN_SPHINCSSHA2128FSIMPLE}},
       {"sphincssha2128ssimple", true, {SSL_SIGN_SPHINCSSHA2128SSIMPLE}},
       {"sphincssha2192fsimple", true, {SSL_SIGN_SPHINCSSHA2192FSIMPLE}},
@@ -8728,8 +8739,10 @@ static const TLSGroup kOQSGroups[] = {
     {NID_p256_mlkem512, SSL_GROUP_P256_MLKEM512},
     {NID_x25519_mlkem512, SSL_GROUP_X25519_MLKEM512},
     {NID_mlkem768, SSL_GROUP_MLKEM768},
+    {NID_p256_mlkem768, SSL_GROUP_P256_MLKEM768},
     {NID_p384_mlkem768, SSL_GROUP_P384_MLKEM768},
     {NID_mlkem1024, SSL_GROUP_MLKEM1024},
+    {NID_p384_mlkem1024, SSL_GROUP_P384_MLKEM1024},
     {NID_p521_mlkem1024, SSL_GROUP_P521_MLKEM1024},
     {NID_frodo640aes, SSL_GROUP_FRODO640AES},
     {NID_p256_frodo640aes, SSL_GROUP_P256_FRODO640AES},
@@ -8749,6 +8762,7 @@ static const TLSGroup kOQSGroups[] = {
     {NID_p256_kyber512, SSL_GROUP_P256_KYBER512},
     {NID_x25519_kyber512, SSL_GROUP_X25519_KYBER512},
     {NID_kyber768, SSL_GROUP_KYBER768},
+    {NID_p256_kyber768, SSL_GROUP_P256_KYBER768},
     {NID_p384_kyber768, SSL_GROUP_P384_KYBER768},
     {NID_kyber1024, SSL_GROUP_KYBER1024},
     {NID_p521_kyber1024, SSL_GROUP_P521_KYBER1024},
@@ -8851,15 +8865,16 @@ INSTANTIATE_TEST_SUITE_P(WithSignatureNIDs, OQSHandshakeTest,
                          testing::Values(
 ///// OQS_TEMPLATE_FRAGMENT_LIST_ALL_OQS_SIGS_START
                             NID_mldsa44,
-                            NID_rsa3072_mldsa44,
+                            NID_p256_mldsa44,
                             NID_mldsa65,
                             NID_p384_mldsa65,
                             NID_mldsa87,
+                            NID_p521_mldsa87,
                             NID_dilithium2,
                             NID_dilithium3,
                             NID_dilithium5,
                             NID_falcon512,
-                            NID_p256_falcon512,
+                            NID_rsa3072_falcon512,
                             NID_falconpadded512,
                             NID_falcon1024,
                             NID_falconpadded1024,
@@ -8867,6 +8882,7 @@ INSTANTIATE_TEST_SUITE_P(WithSignatureNIDs, OQSHandshakeTest,
                             NID_mayo2,
                             NID_mayo3,
                             NID_mayo5,
+                            NID_CROSSrsdp128balanced,
                             NID_sphincssha2128fsimple,
                             NID_sphincssha2128ssimple,
                             NID_sphincssha2192fsimple,

@@ -4389,11 +4389,6 @@ extern "C" {
 #define NID_mldsa44 1008
 #define OBJ_mldsa44 1L, 3L, 6L, 1L, 4L, 1L, 2L, 267L, 12L, 4L, 4L
 
-#define SN_rsa3072_mldsa44 "rsa3072_mldsa44"
-#define LN_rsa3072_mldsa44 "rsa3072_mldsa44"
-#define NID_rsa3072_mldsa44 1009
-#define OBJ_rsa3072_mldsa44 1L, 3L, 9999L, 7L, 2L
-
 #define SN_mldsa65 "mldsa65"
 #define LN_mldsa65 "mldsa65"
 #define NID_mldsa65 1010
@@ -4428,11 +4423,6 @@ extern "C" {
 #define LN_falcon512 "falcon512"
 #define NID_falcon512 1016
 #define OBJ_falcon512 1L, 3L, 9999L, 3L, 11L
-
-#define SN_p256_falcon512 "p256_falcon512"
-#define LN_p256_falcon512 "p256_falcon512"
-#define NID_p256_falcon512 1017
-#define OBJ_p256_falcon512 1L, 3L, 9999L, 3L, 12L
 
 #define SN_falconpadded512 "falconpadded512"
 #define LN_falconpadded512 "falconpadded512"
@@ -4528,6 +4518,35 @@ extern "C" {
 #define LN_sphincsshake256ssimple "sphincsshake256ssimple"
 #define NID_sphincsshake256ssimple 1036
 #define OBJ_sphincsshake256ssimple 1L, 3L, 9999L, 6L, 9L, 12L
+
+#define SN_p256_mlkem768 "p256_mlkem768"
+#define NID_p256_mlkem768 1037
+
+#define SN_p384_mlkem1024 "p384_mlkem1024"
+#define NID_p384_mlkem1024 1038
+
+#define SN_p256_kyber768 "p256_kyber768"
+#define NID_p256_kyber768 1039
+
+#define SN_p256_mldsa44 "p256_mldsa44"
+#define LN_p256_mldsa44 "p256_mldsa44"
+#define NID_p256_mldsa44 1040
+#define OBJ_p256_mldsa44 1L, 3L, 9999L, 7L, 1L
+
+#define SN_p521_mldsa87 "p521_mldsa87"
+#define LN_p521_mldsa87 "p521_mldsa87"
+#define NID_p521_mldsa87 1041
+#define OBJ_p521_mldsa87 1L, 3L, 9999L, 7L, 4L
+
+#define SN_rsa3072_falcon512 "rsa3072_falcon512"
+#define LN_rsa3072_falcon512 "rsa3072_falcon512"
+#define NID_rsa3072_falcon512 1042
+#define OBJ_rsa3072_falcon512 1L, 3L, 9999L, 3L, 13L
+
+#define SN_CROSSrsdp128balanced "CROSSrsdp128balanced"
+#define LN_CROSSrsdp128balanced "CROSSrsdp128balanced"
+#define NID_CROSSrsdp128balanced 1043
+#define OBJ_CROSSrsdp128balanced 1L, 3L, 6L, 1L, 4L, 1L, 62245L, 2L, 1L, 1L
 
 
 #if defined(__cplusplus)
