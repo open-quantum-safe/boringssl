@@ -132,6 +132,32 @@ static void oqs_free(EVP_PKEY *pkey) {
   }
 
 
+#define DEFINE_OQS_GET_PUB_RAW(ALG, OQS_METH)                      \
+  static int ALG##_get_pub_raw(const EVP_PKEY *pkey, uint8_t *out, \
+                               size_t *out_len) {                  \
+    OQS_KEY *key = pkey->pkey;                                     \
+                                                                   \
+    key->ctx = OQS_SIG_new(OQS_METH);                              \
+    if (!key->ctx) {                                               \
+      OPENSSL_PUT_ERROR(EVP, ERR_R_MALLOC_FAILURE);                \
+      return 0;                                                    \
+    }                                                              \
+                                                                   \
+    if (!out) {                                                    \
+      *out_len = key->ctx->length_public_key;                      \
+      return 1;                                                    \
+    }                                                              \
+                                                                   \
+    if (*out_len < key->ctx->length_public_key) {                  \
+      OPENSSL_PUT_ERROR(EVP, EVP_R_BUFFER_TOO_SMALL);              \
+      return 0;                                                    \
+    }                                                              \
+                                                                   \
+    OPENSSL_memcpy(out, key->pub, key->ctx->length_public_key);    \
+    *out_len = key->ctx->length_public_key;                        \
+    return 1;                                                      \
+  }
+
 #define DEFINE_OQS_SET_PUB_RAW(ALG, OQS_METH)                     \
   static int ALG##_set_pub_raw(EVP_PKEY *pkey, const uint8_t *in, \
                                size_t len) {                      \
@@ -216,6 +242,7 @@ static size_t oqs_sig_size(const EVP_PKEY *pkey) {
   DEFINE_OQS_PRIV_DECODE(ALG)                            \
   DEFINE_OQS_PRIV_ENCODE(ALG)                            \
   DEFINE_OQS_SET_PUB_RAW(ALG, OQS_METH)                  \
+  DEFINE_OQS_GET_PUB_RAW(ALG, OQS_METH)                  \
   DEFINE_OQS_PUB_DECODE(ALG)                             \
   DEFINE_OQS_PUB_ENCODE(ALG)
 
@@ -233,7 +260,7 @@ static size_t oqs_sig_size(const EVP_PKEY *pkey) {
       ALG##_set_priv_raw,                               \
       ALG##_set_pub_raw,                                \
       ALG##_get_priv_raw,                               \
-      NULL /* get_pub_raw */,                           \
+      ALG##_get_pub_raw,                                \
       NULL /* int set1_tls_encodedpoint */,             \
       NULL /* size_t set1_tls_encodedpoint */,          \
       NULL /* pkey_opaque */,                           \
