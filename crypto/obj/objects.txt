@@ -1365,8 +1365,10 @@ secg-scheme 14 3 : dhSinglePass-cofactorDH-sha512kdf-scheme
  : p256_mlkem512
  : x25519_mlkem512
  : mlkem768
+ : p256_mlkem768
  : p384_mlkem768
  : mlkem1024
+ : p384_mlkem1024
  : p521_mlkem1024
  : frodo640aes
  : p256_frodo640aes
@@ -1386,6 +1388,7 @@ secg-scheme 14 3 : dhSinglePass-cofactorDH-sha512kdf-scheme
  : p256_kyber512
  : x25519_kyber512
  : kyber768
+ : p256_kyber768
  : p384_kyber768
  : kyber1024
  : p521_kyber1024
@@ -1407,15 +1410,16 @@ secg-scheme 14 3 : dhSinglePass-cofactorDH-sha512kdf-scheme
 
 ##### OQS_TEMPLATE_FRAGMENT_ASSIGN_OIDS_START
 1 3 6 1 4 1 2 267 12 4 4 : mldsa44 : mldsa44
-1 3 9999 7 2 : rsa3072_mldsa44 : rsa3072_mldsa44
+1 3 9999 7 1 : p256_mldsa44 : p256_mldsa44
 1 3 6 1 4 1 2 267 12 6 5 : mldsa65 : mldsa65
 1 3 9999 7 3 : p384_mldsa65 : p384_mldsa65
 1 3 6 1 4 1 2 267 12 8 7 : mldsa87 : mldsa87
+1 3 9999 7 4 : p521_mldsa87 : p521_mldsa87
 1 3 6 1 4 1 2 267 7 4 4 : dilithium2 : dilithium2
 1 3 6 1 4 1 2 267 7 6 5 : dilithium3 : dilithium3
 1 3 6 1 4 1 2 267 7 8 7 : dilithium5 : dilithium5
 1 3 9999 3 11 : falcon512 : falcon512
-1 3 9999 3 12 : p256_falcon512 : p256_falcon512
+1 3 9999 3 13 : rsa3072_falcon512 : rsa3072_falcon512
 1 3 9999 3 16 : falconpadded512 : falconpadded512
 1 3 9999 3 14 : falcon1024 : falcon1024
 1 3 9999 3 19 : falconpadded1024 : falconpadded1024
@@ -1423,6 +1427,7 @@ secg-scheme 14 3 : dhSinglePass-cofactorDH-sha512kdf-scheme
 1 3 9999 8 2 1 : mayo2 : mayo2
 1 3 9999 8 3 1 : mayo3 : mayo3
 1 3 9999 8 5 1 : mayo5 : mayo5
+1 3 6 1 4 1 62245 2 1 1 : CROSSrsdp128balanced : CROSSrsdp128balanced
 1 3 9999 6 4 13 : sphincssha2128fsimple : sphincssha2128fsimple
 1 3 9999 6 4 16 : sphincssha2128ssimple : sphincssha2128ssimple
 1 3 9999 6 5 10 : sphincssha2192fsimple : sphincssha2192fsimple

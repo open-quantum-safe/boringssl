@@ -186,15 +186,16 @@ OPENSSL_EXPORT DH *EVP_PKEY_get1_DH(const EVP_PKEY *pkey);
 
 ///// OQS_TEMPLATE_FRAGMENT_DEFINE_EVP_PKEYS_START
 #define EVP_PKEY_MLDSA44 NID_mldsa44
-#define EVP_PKEY_RSA3072_MLDSA44 NID_rsa3072_mldsa44
+#define EVP_PKEY_P256_MLDSA44 NID_p256_mldsa44
 #define EVP_PKEY_MLDSA65 NID_mldsa65
 #define EVP_PKEY_P384_MLDSA65 NID_p384_mldsa65
 #define EVP_PKEY_MLDSA87 NID_mldsa87
+#define EVP_PKEY_P521_MLDSA87 NID_p521_mldsa87
 #define EVP_PKEY_DILITHIUM2 NID_dilithium2
 #define EVP_PKEY_DILITHIUM3 NID_dilithium3
 #define EVP_PKEY_DILITHIUM5 NID_dilithium5
 #define EVP_PKEY_FALCON512 NID_falcon512
-#define EVP_PKEY_P256_FALCON512 NID_p256_falcon512
+#define EVP_PKEY_RSA3072_FALCON512 NID_rsa3072_falcon512
 #define EVP_PKEY_FALCONPADDED512 NID_falconpadded512
 #define EVP_PKEY_FALCON1024 NID_falcon1024
 #define EVP_PKEY_FALCONPADDED1024 NID_falconpadded1024
@@ -202,6 +203,7 @@ OPENSSL_EXPORT DH *EVP_PKEY_get1_DH(const EVP_PKEY *pkey);
 #define EVP_PKEY_MAYO2 NID_mayo2
 #define EVP_PKEY_MAYO3 NID_mayo3
 #define EVP_PKEY_MAYO5 NID_mayo5
+#define EVP_PKEY_CROSSRSDP128BALANCED NID_CROSSrsdp128balanced
 #define EVP_PKEY_SPHINCSSHA2128FSIMPLE NID_sphincssha2128fsimple
 #define EVP_PKEY_SPHINCSSHA2128SSIMPLE NID_sphincssha2128ssimple
 #define EVP_PKEY_SPHINCSSHA2192FSIMPLE NID_sphincssha2192fsimple
@@ -217,15 +219,16 @@ OPENSSL_EXPORT DH *EVP_PKEY_get1_DH(const EVP_PKEY *pkey);
 
 #define IS_OQS_PKEY(pkey_id) ( \
    (pkey_id == NID_mldsa44) || \
-   (pkey_id == NID_rsa3072_mldsa44) || \
+   (pkey_id == NID_p256_mldsa44) || \
    (pkey_id == NID_mldsa65) || \
    (pkey_id == NID_p384_mldsa65) || \
    (pkey_id == NID_mldsa87) || \
+   (pkey_id == NID_p521_mldsa87) || \
    (pkey_id == NID_dilithium2) || \
    (pkey_id == NID_dilithium3) || \
    (pkey_id == NID_dilithium5) || \
    (pkey_id == NID_falcon512) || \
-   (pkey_id == NID_p256_falcon512) || \
+   (pkey_id == NID_rsa3072_falcon512) || \
    (pkey_id == NID_falconpadded512) || \
    (pkey_id == NID_falcon1024) || \
    (pkey_id == NID_falconpadded1024) || \
@@ -233,6 +236,7 @@ OPENSSL_EXPORT DH *EVP_PKEY_get1_DH(const EVP_PKEY *pkey);
    (pkey_id == NID_mayo2) || \
    (pkey_id == NID_mayo3) || \
    (pkey_id == NID_mayo5) || \
+   (pkey_id == NID_CROSSrsdp128balanced) || \
    (pkey_id == NID_sphincssha2128fsimple) || \
    (pkey_id == NID_sphincssha2128ssimple) || \
    (pkey_id == NID_sphincssha2192fsimple) || \
