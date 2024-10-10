@@ -1126,6 +1126,35 @@ set(
 )
 
 set(
+  OQS_HEADERS
+
+  oqs/include/oqs/aes_ops.h
+  oqs/include/oqs/common.h
+  oqs/include/oqs/kem.h
+  oqs/include/oqs/kem_bike.h
+  oqs/include/oqs/kem_classic_mceliece.h
+  oqs/include/oqs/kem_frodokem.h
+  oqs/include/oqs/kem_hqc.h
+  oqs/include/oqs/kem_kyber.h
+  oqs/include/oqs/kem_ml_kem.h
+  oqs/include/oqs/kem_ntruprime.h
+  oqs/include/oqs/oqs.h
+  oqs/include/oqs/oqsconfig.h
+  oqs/include/oqs/rand.h
+  oqs/include/oqs/sha2_ops.h
+  oqs/include/oqs/sha3_ops.h
+  oqs/include/oqs/sha3x4_ops.h
+  oqs/include/oqs/sig.h
+  oqs/include/oqs/sig_cross.h
+  oqs/include/oqs/sig_dilithium.h
+  oqs/include/oqs/sig_falcon.h
+  oqs/include/oqs/sig_mayo.h
+  oqs/include/oqs/sig_ml_dsa.h
+  oqs/include/oqs/sig_sphincs.h
+  oqs/include/oqs/sig_stfl.h
+)
+
+set(
   PKI_SOURCES
 
   pki/cert_error_id.cc

@@ -1041,5 +1041,10 @@
             "rust/bssl-crypto/src/*.rs",
             "rust/bssl-crypto/src/*/*.rs"
         ]
+    },
+    "oqs": {
+        "hdrs": [
+            "oqs/include/oqs/*.h"
+        ]
     }
 }
