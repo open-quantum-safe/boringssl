@@ -685,14 +685,6 @@ constexpr NamedGroup kNamedGroups[] = {
     {NID_p521_frodo1344aes, SSL_GROUP_P521_FRODO1344AES, "p521_frodo1344aes", "p521_frodo1344aes"},
     {NID_frodo1344shake, SSL_GROUP_FRODO1344SHAKE, "frodo1344shake", "frodo1344shake"},
     {NID_p521_frodo1344shake, SSL_GROUP_P521_FRODO1344SHAKE, "p521_frodo1344shake", "p521_frodo1344shake"},
-    {NID_kyber512, SSL_GROUP_KYBER512, "kyber512", "kyber512"},
-    {NID_p256_kyber512, SSL_GROUP_P256_KYBER512, "p256_kyber512", "p256_kyber512"},
-    {NID_x25519_kyber512, SSL_GROUP_X25519_KYBER512, "x25519_kyber512", "x25519_kyber512"},
-    {NID_kyber768, SSL_GROUP_KYBER768, "kyber768", "kyber768"},
-    {NID_p256_kyber768, SSL_GROUP_P256_KYBER768, "p256_kyber768", "p256_kyber768"},
-    {NID_p384_kyber768, SSL_GROUP_P384_KYBER768, "p384_kyber768", "p384_kyber768"},
-    {NID_kyber1024, SSL_GROUP_KYBER1024, "kyber1024", "kyber1024"},
-    {NID_p521_kyber1024, SSL_GROUP_P521_KYBER1024, "p521_kyber1024", "p521_kyber1024"},
     {NID_bikel1, SSL_GROUP_BIKEL1, "bikel1", "bikel1"},
     {NID_p256_bikel1, SSL_GROUP_P256_BIKEL1, "p256_bikel1", "p256_bikel1"},
     {NID_x25519_bikel1, SSL_GROUP_X25519_BIKEL1, "x25519_bikel1", "x25519_bikel1"},
@@ -779,22 +771,6 @@ UniquePtr<SSLKeyShare> SSLKeyShare::Create(uint16_t group_id) {
       return MakeUnique<OQSKeyShare>(SSL_GROUP_FRODO1344SHAKE, OQS_KEM_alg_frodokem_1344_shake);
     case SSL_GROUP_P521_FRODO1344SHAKE:
       return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P521_FRODO1344SHAKE, SSL_GROUP_SECP521R1, OQS_KEM_alg_frodokem_1344_shake);
-    case SSL_GROUP_KYBER512:
-      return MakeUnique<OQSKeyShare>(SSL_GROUP_KYBER512, OQS_KEM_alg_kyber_512);
-    case SSL_GROUP_P256_KYBER512:
-      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P256_KYBER512, SSL_GROUP_SECP256R1, OQS_KEM_alg_kyber_512);
-    case SSL_GROUP_X25519_KYBER512:
-      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_X25519_KYBER512, SSL_GROUP_X25519, OQS_KEM_alg_kyber_512);
-    case SSL_GROUP_KYBER768:
-      return MakeUnique<OQSKeyShare>(SSL_GROUP_KYBER768, OQS_KEM_alg_kyber_768);
-    case SSL_GROUP_P256_KYBER768:
-      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P256_KYBER768, SSL_GROUP_SECP256R1, OQS_KEM_alg_kyber_768);
-    case SSL_GROUP_P384_KYBER768:
-      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P384_KYBER768, SSL_GROUP_SECP384R1, OQS_KEM_alg_kyber_768);
-    case SSL_GROUP_KYBER1024:
-      return MakeUnique<OQSKeyShare>(SSL_GROUP_KYBER1024, OQS_KEM_alg_kyber_1024);
-    case SSL_GROUP_P521_KYBER1024:
-      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P521_KYBER1024, SSL_GROUP_SECP521R1, OQS_KEM_alg_kyber_1024);
     case SSL_GROUP_BIKEL1:
       return MakeUnique<OQSKeyShare>(SSL_GROUP_BIKEL1, OQS_KEM_alg_bike_l1);
     case SSL_GROUP_P256_BIKEL1:

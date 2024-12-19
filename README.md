@@ -70,7 +70,6 @@ Along with `X25519MLKEM768` and `X25519Kyber768Draft00` supported by BoringSSL t
 
 <!--- OQS_TEMPLATE_FRAGMENT_LIST_KEXS_START -->
 - **BIKE**: `bikel1`, `p256_bikel1`, `x25519_bikel1`, `bikel3`, `p384_bikel3`, `bikel5`, `p521_bikel5`
-- **CRYSTALS-Kyber**: `kyber512`, `p256_kyber512`, `x25519_kyber512`, `kyber768`, `p256_kyber768`, `p384_kyber768`, `kyber1024`, `p521_kyber1024`
 - **FrodoKEM**: `frodo640aes`, `p256_frodo640aes`, `x25519_frodo640aes`, `frodo640shake`, `p256_frodo640shake`, `x25519_frodo640shake`, `frodo976aes`, `p384_frodo976aes`, `frodo976shake`, `p384_frodo976shake`, `frodo1344aes`, `p521_frodo1344aes`, `frodo1344shake`, `p521_frodo1344shake`
 - **HQC**: `hqc128`, `p256_hqc128`, `x25519_hqc128`, `hqc192`, `p384_hqc192`, `hqc256`, `p521_hqc256`†
 - **ML-KEM**: `mlkem768`, `p256_mlkem768`, `p384_mlkem768`, `mlkem1024`, `p384_mlkem1024`, `p521_mlkem1024`
@@ -86,7 +85,6 @@ The following quantum-safe digital signature algorithms from liboqs are supporte
 
 <!--- OQS_TEMPLATE_FRAGMENT_LIST_SIGS_START -->
 - **CROSS**: `CROSSrsdp128balanced`
-- **CRYSTALS-DILITHIUM**: `dilithium2`, `dilithium3`, `dilithium5`
 - **Falcon**: `falcon512`, `rsa3072_falcon512`, `falconpadded512`, `falcon1024`, `falconpadded1024`
 - **MAYO**: `mayo1`, `mayo2`, `mayo3`, `mayo5`
 - **ML-DSA**: `p256_mldsa44`, `mldsa65`, `p384_mldsa65`, `mldsa87`, `p521_mldsa87`

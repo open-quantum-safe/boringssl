@@ -4321,27 +4321,6 @@ extern "C" {
 #define SN_p521_frodo1344shake "p521_frodo1344shake"
 #define NID_p521_frodo1344shake 986
 
-#define SN_kyber512 "kyber512"
-#define NID_kyber512 987
-
-#define SN_p256_kyber512 "p256_kyber512"
-#define NID_p256_kyber512 988
-
-#define SN_x25519_kyber512 "x25519_kyber512"
-#define NID_x25519_kyber512 989
-
-#define SN_kyber768 "kyber768"
-#define NID_kyber768 990
-
-#define SN_p384_kyber768 "p384_kyber768"
-#define NID_p384_kyber768 991
-
-#define SN_kyber1024 "kyber1024"
-#define NID_kyber1024 992
-
-#define SN_p521_kyber1024 "p521_kyber1024"
-#define NID_p521_kyber1024 993
-
 #define SN_bikel1 "bikel1"
 #define NID_bikel1 994
 
@@ -4387,37 +4366,22 @@ extern "C" {
 #define SN_mldsa44 "mldsa44"
 #define LN_mldsa44 "mldsa44"
 #define NID_mldsa44 1008
-#define OBJ_mldsa44 1L, 3L, 6L, 1L, 4L, 1L, 2L, 267L, 12L, 4L, 4L
+#define OBJ_mldsa44 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 17L
 
 #define SN_mldsa65 "mldsa65"
 #define LN_mldsa65 "mldsa65"
 #define NID_mldsa65 1010
-#define OBJ_mldsa65 1L, 3L, 6L, 1L, 4L, 1L, 2L, 267L, 12L, 6L, 5L
+#define OBJ_mldsa65 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 18L
 
 #define SN_p384_mldsa65 "p384_mldsa65"
 #define LN_p384_mldsa65 "p384_mldsa65"
 #define NID_p384_mldsa65 1011
-#define OBJ_p384_mldsa65 1L, 3L, 9999L, 7L, 3L
+#define OBJ_p384_mldsa65 1L, 3L, 9999L, 7L, 7L
 
 #define SN_mldsa87 "mldsa87"
 #define LN_mldsa87 "mldsa87"
 #define NID_mldsa87 1012
-#define OBJ_mldsa87 1L, 3L, 6L, 1L, 4L, 1L, 2L, 267L, 12L, 8L, 7L
-
-#define SN_dilithium2 "dilithium2"
-#define LN_dilithium2 "dilithium2"
-#define NID_dilithium2 1013
-#define OBJ_dilithium2 1L, 3L, 6L, 1L, 4L, 1L, 2L, 267L, 7L, 4L, 4L
-
-#define SN_dilithium3 "dilithium3"
-#define LN_dilithium3 "dilithium3"
-#define NID_dilithium3 1014
-#define OBJ_dilithium3 1L, 3L, 6L, 1L, 4L, 1L, 2L, 267L, 7L, 6L, 5L
-
-#define SN_dilithium5 "dilithium5"
-#define LN_dilithium5 "dilithium5"
-#define NID_dilithium5 1015
-#define OBJ_dilithium5 1L, 3L, 6L, 1L, 4L, 1L, 2L, 267L, 7L, 8L, 7L
+#define OBJ_mldsa87 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 19L
 
 #define SN_falcon512 "falcon512"
 #define LN_falcon512 "falcon512"
@@ -4525,18 +4489,15 @@ extern "C" {
 #define SN_p384_mlkem1024 "p384_mlkem1024"
 #define NID_p384_mlkem1024 1038
 
-#define SN_p256_kyber768 "p256_kyber768"
-#define NID_p256_kyber768 1039
-
 #define SN_p256_mldsa44 "p256_mldsa44"
 #define LN_p256_mldsa44 "p256_mldsa44"
 #define NID_p256_mldsa44 1040
-#define OBJ_p256_mldsa44 1L, 3L, 9999L, 7L, 1L
+#define OBJ_p256_mldsa44 1L, 3L, 9999L, 7L, 5L
 
 #define SN_p521_mldsa87 "p521_mldsa87"
 #define LN_p521_mldsa87 "p521_mldsa87"
 #define NID_p521_mldsa87 1041
-#define OBJ_p521_mldsa87 1L, 3L, 9999L, 7L, 4L
+#define OBJ_p521_mldsa87 1L, 3L, 9999L, 7L, 8L
 
 #define SN_rsa3072_falcon512 "rsa3072_falcon512"
 #define LN_rsa3072_falcon512 "rsa3072_falcon512"

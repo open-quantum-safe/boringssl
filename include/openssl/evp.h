@@ -191,9 +191,6 @@ OPENSSL_EXPORT DH *EVP_PKEY_get1_DH(const EVP_PKEY *pkey);
 #define EVP_PKEY_P384_MLDSA65 NID_p384_mldsa65
 #define EVP_PKEY_MLDSA87 NID_mldsa87
 #define EVP_PKEY_P521_MLDSA87 NID_p521_mldsa87
-#define EVP_PKEY_DILITHIUM2 NID_dilithium2
-#define EVP_PKEY_DILITHIUM3 NID_dilithium3
-#define EVP_PKEY_DILITHIUM5 NID_dilithium5
 #define EVP_PKEY_FALCON512 NID_falcon512
 #define EVP_PKEY_RSA3072_FALCON512 NID_rsa3072_falcon512
 #define EVP_PKEY_FALCONPADDED512 NID_falconpadded512
@@ -224,9 +221,6 @@ OPENSSL_EXPORT DH *EVP_PKEY_get1_DH(const EVP_PKEY *pkey);
    (pkey_id == NID_p384_mldsa65) || \
    (pkey_id == NID_mldsa87) || \
    (pkey_id == NID_p521_mldsa87) || \
-   (pkey_id == NID_dilithium2) || \
-   (pkey_id == NID_dilithium3) || \
-   (pkey_id == NID_dilithium5) || \
    (pkey_id == NID_falcon512) || \
    (pkey_id == NID_rsa3072_falcon512) || \
    (pkey_id == NID_falconpadded512) || \
@@ -258,9 +252,6 @@ OPENSSL_EXPORT DH *EVP_PKEY_get1_DH(const EVP_PKEY *pkey);
    (pkey_id == NID_frodo976shake) || \
    (pkey_id == NID_frodo1344aes) || \
    (pkey_id == NID_frodo1344shake) || \
-   (pkey_id == NID_kyber512) || \
-   (pkey_id == NID_kyber768) || \
-   (pkey_id == NID_kyber1024) || \
    (pkey_id == NID_bikel1) || \
    (pkey_id == NID_bikel3) || \
    (pkey_id == NID_bikel5) || \
