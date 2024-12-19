@@ -201,8 +201,8 @@ static int pkey_oqs_sign_message(EVP_PKEY_CTX *ctx, uint8_t *sig,
     }
 
     size_t oqs_sig_len = 0;
-    if (OQS_SIG_sign(key->ctx, sig + index, &oqs_sig_len, tbs, tbslen,
-                     key->priv) != OQS_SUCCESS) {
+    if (OQS_SIG_sign_with_ctx_str(key->ctx, sig + index, &oqs_sig_len, tbs,
+                                  tbslen, NULL, 0, key->priv) != OQS_SUCCESS) {
       goto err;
     }
     *siglen = classical_sig_len + oqs_sig_len;
@@ -271,8 +271,9 @@ int oqs_verify_sig(EVP_PKEY *bssl_oqs_pkey, const uint8_t *sig, size_t siglen,
     EVP_PKEY_CTX_free(ctx_verify);
   }
 
-  if (OQS_SIG_verify(key->ctx, tbs, tbslen, sig + index,
-                     siglen - classical_sig_len, key->pub) != OQS_SUCCESS) {
+  if (OQS_SIG_verify_with_ctx_str(key->ctx, tbs, tbslen, sig + index,
+                                  siglen - classical_sig_len, NULL, 0,
+                                  key->pub) != OQS_SUCCESS) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_INVALID_SIGNATURE);
     return 0;
   }
