@@ -233,21 +233,6 @@ bool VerifySignedData(SignatureAlgorithm algorithm, der::Input signed_data,
       digest = EVP_sha512();
       cache_algorithm_name = "P521_mldsa87";
       break;
-    case SignatureAlgorithm::kDilithium2:
-      expected_pkey_id = EVP_PKEY_DILITHIUM2;
-      digest = EVP_sha256();
-      cache_algorithm_name = "Dilithium2";
-      break;
-    case SignatureAlgorithm::kDilithium3:
-      expected_pkey_id = EVP_PKEY_DILITHIUM3;
-      digest = EVP_sha384();
-      cache_algorithm_name = "Dilithium3";
-      break;
-    case SignatureAlgorithm::kDilithium5:
-      expected_pkey_id = EVP_PKEY_DILITHIUM5;
-      digest = EVP_sha512();
-      cache_algorithm_name = "Dilithium5";
-      break;
     case SignatureAlgorithm::kFalcon512:
       expected_pkey_id = EVP_PKEY_FALCON512;
       digest = EVP_sha256();

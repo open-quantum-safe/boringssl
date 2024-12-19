@@ -974,13 +974,6 @@ frodo1344aes		983
 p521_frodo1344aes		984
 frodo1344shake		985
 p521_frodo1344shake		986
-kyber512		987
-p256_kyber512		988
-x25519_kyber512		989
-kyber768		990
-p384_kyber768		991
-kyber1024		992
-p521_kyber1024		993
 bikel1		994
 p256_bikel1		995
 x25519_bikel1		996
@@ -999,9 +992,6 @@ mldsa44		1008
 mldsa65		1010
 p384_mldsa65		1011
 mldsa87		1012
-dilithium2		1013
-dilithium3		1014
-dilithium5		1015
 falcon512		1016
 falconpadded512		1018
 falcon1024		1019
@@ -1024,7 +1014,6 @@ sphincsshake256fsimple		1035
 sphincsshake256ssimple		1036
 p256_mlkem768		1037
 p384_mlkem1024		1038
-p256_kyber768		1039
 p256_mldsa44		1040
 p521_mldsa87		1041
 rsa3072_falcon512		1042

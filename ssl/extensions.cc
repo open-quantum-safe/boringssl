@@ -256,22 +256,6 @@ static bool is_post_quantum_group(uint16_t id) {
       return true;
     case SSL_GROUP_P521_FRODO1344SHAKE:
       return true;
-    case SSL_GROUP_KYBER512:
-      return true;
-    case SSL_GROUP_P256_KYBER512:
-      return true;
-    case SSL_GROUP_X25519_KYBER512:
-      return true;
-    case SSL_GROUP_KYBER768:
-      return true;
-    case SSL_GROUP_P256_KYBER768:
-      return true;
-    case SSL_GROUP_P384_KYBER768:
-      return true;
-    case SSL_GROUP_KYBER1024:
-      return true;
-    case SSL_GROUP_P521_KYBER1024:
-      return true;
     case SSL_GROUP_BIKEL1:
       return true;
     case SSL_GROUP_P256_BIKEL1:
@@ -408,7 +392,6 @@ static const uint16_t kDefaultGroups[] = {
     SSL_GROUP_P256_MLKEM768,
     SSL_GROUP_X25519_FRODO640AES,
     SSL_GROUP_X25519_FRODO640SHAKE,
-    SSL_GROUP_X25519_KYBER512,
     SSL_GROUP_X25519_BIKEL1,
     SSL_GROUP_X25519_HQC128,
 ///// OQS_TEMPLATE_FRAGMENT_ADD_DEFAULT_KEMS_END
@@ -448,14 +431,6 @@ static const uint16_t kAllSupportedGroups[] = {
     SSL_GROUP_FRODO1344AES,
     SSL_GROUP_P521_FRODO1344SHAKE,
     SSL_GROUP_FRODO1344SHAKE,
-    SSL_GROUP_P256_KYBER512,
-    SSL_GROUP_X25519_KYBER512,
-    SSL_GROUP_KYBER512,
-    SSL_GROUP_P256_KYBER768,
-    SSL_GROUP_P384_KYBER768,
-    SSL_GROUP_KYBER768,
-    SSL_GROUP_P521_KYBER1024,
-    SSL_GROUP_KYBER1024,
     SSL_GROUP_P256_BIKEL1,
     SSL_GROUP_X25519_BIKEL1,
     SSL_GROUP_BIKEL1,
@@ -558,9 +533,6 @@ static const uint16_t kVerifySignatureAlgorithms[] = {
     SSL_SIGN_P384_MLDSA65,
     SSL_SIGN_MLDSA87,
     SSL_SIGN_P521_MLDSA87,
-    SSL_SIGN_DILITHIUM2,
-    SSL_SIGN_DILITHIUM3,
-    SSL_SIGN_DILITHIUM5,
     SSL_SIGN_FALCON512,
     SSL_SIGN_RSA3072_FALCON512,
     SSL_SIGN_FALCONPADDED512,
@@ -612,9 +584,6 @@ static const uint16_t kSignSignatureAlgorithms[] = {
     SSL_SIGN_P384_MLDSA65,
     SSL_SIGN_MLDSA87,
     SSL_SIGN_P521_MLDSA87,
-    SSL_SIGN_DILITHIUM2,
-    SSL_SIGN_DILITHIUM3,
-    SSL_SIGN_DILITHIUM5,
     SSL_SIGN_FALCON512,
     SSL_SIGN_RSA3072_FALCON512,
     SSL_SIGN_FALCONPADDED512,
@@ -4385,9 +4354,6 @@ bool tls1_choose_signature_algorithm(SSL_HANDSHAKE *hs,
                                                SSL_SIGN_P384_MLDSA65,
                                                SSL_SIGN_MLDSA87,
                                                SSL_SIGN_P521_MLDSA87,
-                                               SSL_SIGN_DILITHIUM2,
-                                               SSL_SIGN_DILITHIUM3,
-                                               SSL_SIGN_DILITHIUM5,
                                                SSL_SIGN_FALCON512,
                                                SSL_SIGN_RSA3072_FALCON512,
                                                SSL_SIGN_FALCONPADDED512,

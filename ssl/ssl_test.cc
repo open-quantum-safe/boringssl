@@ -582,29 +582,6 @@ static const CurveTest kCurveTests[] = {
     },
   },
   {
-    "kyber512:p256_kyber512:x25519_kyber512",
-    {
-      SSL_GROUP_KYBER512,
-      SSL_GROUP_P256_KYBER512,
-      SSL_GROUP_X25519_KYBER512,
-    },
-  },
-  {
-    "kyber768:p256_kyber768:p384_kyber768",
-    {
-      SSL_GROUP_KYBER768,
-      SSL_GROUP_P256_KYBER768,
-      SSL_GROUP_P384_KYBER768,
-    },
-  },
-  {
-    "kyber1024:p521_kyber1024",
-    {
-      SSL_GROUP_KYBER1024,
-      SSL_GROUP_P521_KYBER1024,
-    },
-  },
-  {
     "bikel1:p256_bikel1:x25519_bikel1",
     {
       SSL_GROUP_BIKEL1,
@@ -5876,12 +5853,6 @@ TEST(SSLTest, SignatureAlgorithmProperties) {
             SSL_get_signature_algorithm_key_type(SSL_SIGN_MLDSA87));
   EXPECT_EQ(EVP_PKEY_P521_MLDSA87,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_P521_MLDSA87));
-  EXPECT_EQ(EVP_PKEY_DILITHIUM2,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_DILITHIUM2));
-  EXPECT_EQ(EVP_PKEY_DILITHIUM3,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_DILITHIUM3));
-  EXPECT_EQ(EVP_PKEY_DILITHIUM5,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_DILITHIUM5));
   EXPECT_EQ(EVP_PKEY_FALCON512,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_FALCON512));
   EXPECT_EQ(EVP_PKEY_RSA3072_FALCON512,
@@ -6258,9 +6229,6 @@ TEST(SSLTest, SigAlgs) {
       {{NID_sha384, EVP_PKEY_P384_MLDSA65}, true, {SSL_SIGN_P384_MLDSA65}},
       {{NID_sha512, EVP_PKEY_MLDSA87}, true, {SSL_SIGN_MLDSA87}},
       {{NID_sha512, EVP_PKEY_P521_MLDSA87}, true, {SSL_SIGN_P521_MLDSA87}},
-      {{NID_sha256, EVP_PKEY_DILITHIUM2}, true, {SSL_SIGN_DILITHIUM2}},
-      {{NID_sha384, EVP_PKEY_DILITHIUM3}, true, {SSL_SIGN_DILITHIUM3}},
-      {{NID_sha512, EVP_PKEY_DILITHIUM5}, true, {SSL_SIGN_DILITHIUM5}},
       {{NID_sha256, EVP_PKEY_FALCON512}, true, {SSL_SIGN_FALCON512}},
       {{NID_sha256, EVP_PKEY_RSA3072_FALCON512}, true, {SSL_SIGN_RSA3072_FALCON512}},
       {{NID_sha256, EVP_PKEY_FALCONPADDED512}, true, {SSL_SIGN_FALCONPADDED512}},
@@ -6347,9 +6315,6 @@ TEST(SSLTest, SigAlgsList) {
       {"p384_mldsa65", true, {SSL_SIGN_P384_MLDSA65}},
       {"mldsa87", true, {SSL_SIGN_MLDSA87}},
       {"p521_mldsa87", true, {SSL_SIGN_P521_MLDSA87}},
-      {"dilithium2", true, {SSL_SIGN_DILITHIUM2}},
-      {"dilithium3", true, {SSL_SIGN_DILITHIUM3}},
-      {"dilithium5", true, {SSL_SIGN_DILITHIUM5}},
       {"falcon512", true, {SSL_SIGN_FALCON512}},
       {"rsa3072_falcon512", true, {SSL_SIGN_RSA3072_FALCON512}},
       {"falconpadded512", true, {SSL_SIGN_FALCONPADDED512}},
@@ -8758,14 +8723,6 @@ static const TLSGroup kOQSGroups[] = {
     {NID_p521_frodo1344aes, SSL_GROUP_P521_FRODO1344AES},
     {NID_frodo1344shake, SSL_GROUP_FRODO1344SHAKE},
     {NID_p521_frodo1344shake, SSL_GROUP_P521_FRODO1344SHAKE},
-    {NID_kyber512, SSL_GROUP_KYBER512},
-    {NID_p256_kyber512, SSL_GROUP_P256_KYBER512},
-    {NID_x25519_kyber512, SSL_GROUP_X25519_KYBER512},
-    {NID_kyber768, SSL_GROUP_KYBER768},
-    {NID_p256_kyber768, SSL_GROUP_P256_KYBER768},
-    {NID_p384_kyber768, SSL_GROUP_P384_KYBER768},
-    {NID_kyber1024, SSL_GROUP_KYBER1024},
-    {NID_p521_kyber1024, SSL_GROUP_P521_KYBER1024},
     {NID_bikel1, SSL_GROUP_BIKEL1},
     {NID_p256_bikel1, SSL_GROUP_P256_BIKEL1},
     {NID_x25519_bikel1, SSL_GROUP_X25519_BIKEL1},
@@ -8870,9 +8827,6 @@ INSTANTIATE_TEST_SUITE_P(WithSignatureNIDs, OQSHandshakeTest,
                             NID_p384_mldsa65,
                             NID_mldsa87,
                             NID_p521_mldsa87,
-                            NID_dilithium2,
-                            NID_dilithium3,
-                            NID_dilithium5,
                             NID_falcon512,
                             NID_rsa3072_falcon512,
                             NID_falconpadded512,
