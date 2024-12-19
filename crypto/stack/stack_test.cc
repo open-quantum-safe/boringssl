@@ -1,4 +1,4 @@
-/* Copyright (c) 2018, Google Inc.
+/* Copyright 2018 The BoringSSL Authors
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -47,6 +47,8 @@ static bssl::UniquePtr<TEST_INT> TEST_INT_new(int x) {
 }
 
 DEFINE_STACK_OF(TEST_INT)
+
+namespace {
 
 struct ShallowStackDeleter {
   void operator()(STACK_OF(TEST_INT) *sk) const { sk_TEST_INT_free(sk); }
@@ -529,3 +531,5 @@ TEST(StackTest, NullIsEmpty) {
   size_t index;
   EXPECT_FALSE(sk_TEST_INT_find(nullptr, &index, value.get()));
 }
+
+}  // namespace

@@ -1,4 +1,4 @@
-/* Copyright (c) 2018, Google Inc.
+/* Copyright 2018 The BoringSSL Authors
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -18,6 +18,8 @@
 
 #include <gtest/gtest.h>
 
+
+namespace {
 
 TEST(ARMLinuxTest, CPUInfo) {
   struct CPUInfoTest {
@@ -146,3 +148,5 @@ TEST(ARMLinuxTest, CPUInfo) {
     EXPECT_EQ(t.hwcap2, crypto_get_arm_hwcap2_from_cpuinfo(&sp));
   }
 }
+
+}  // namespace

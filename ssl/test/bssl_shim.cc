@@ -1,4 +1,4 @@
-/* Copyright (c) 2014, Google Inc.
+/* Copyright 2014 The BoringSSL Authors
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -65,6 +65,10 @@ OPENSSL_MSVC_PRAGMA(comment(lib, "Ws2_32.lib"))
 #include "settings_writer.h"
 #include "test_config.h"
 #include "test_state.h"
+
+#if defined(OPENSSL_LINUX)
+#include <sys/prctl.h>
+#endif
 
 
 #if !defined(OPENSSL_WINDOWS)
@@ -217,19 +221,10 @@ static int DoRead(SSL *ssl, uint8_t *out, size_t max_out) {
   }
   int ret;
   do {
-    if (config->async) {
-      // The DTLS retransmit logic silently ignores write failures. So the test
-      // may progress, allow writes through synchronously. |SSL_read| may
-      // trigger a retransmit, so disconnect the write quota.
-      AsyncBioEnforceWriteQuota(test_state->async_bio, false);
-    }
     ret = CheckIdempotentError("SSL_peek/SSL_read", ssl, [&]() -> int {
       return config->peek_then_read ? SSL_peek(ssl, out, max_out)
                                     : SSL_read(ssl, out, max_out);
     });
-    if (config->async) {
-      AsyncBioEnforceWriteQuota(test_state->async_bio, true);
-    }
 
     // Run the exporter after each read. This is to test that the exporter fails
     // during a renegotiation.
@@ -656,7 +651,7 @@ static bool CheckHandshakeProperties(SSL *ssl, bool is_resume,
   }
 
   // The early data status is only applicable after the handshake is confirmed.
-  if (!SSL_in_early_data(ssl)) {
+  if (!SSL_in_early_data(ssl) && !SSL_is_dtls(ssl)) {
     if ((config->expect_accept_early_data && !SSL_early_data_accepted(ssl)) ||
         (config->expect_reject_early_data && SSL_early_data_accepted(ssl))) {
       fprintf(stderr,
@@ -673,6 +668,12 @@ static bool CheckHandshakeProperties(SSL *ssl, bool is_resume,
               early_data_reason, config->expect_early_data_reason.c_str());
       return false;
     }
+  }
+
+  if (SSL_is_dtls(ssl) && SSL_in_early_data(ssl)) {
+    // TODO(crbug.com/381113363): Support early data for DTLS 1.3.
+    fprintf(stderr, "DTLS unexpectedly in early data\n");
+    return false;
   }
 
   if (!config->psk.empty()) {
@@ -834,7 +835,14 @@ static bool DoConnection(bssl::UniquePtr<SSL_SESSION> *out_session,
   }
 
   if (config->is_dtls) {
-    bssl::UniquePtr<BIO> packeted = PacketedBioCreate(GetClock());
+    bssl::UniquePtr<BIO> packeted = PacketedBioCreate(
+        GetClock(),
+        [ssl_raw = ssl.get()](timeval *out) -> bool {
+          return DTLSv1_get_timeout(ssl_raw, out);
+        },
+        [ssl_raw = ssl.get()](uint32_t mtu) -> bool {
+          return SSL_set_mtu(ssl_raw, mtu);
+        });
     if (!packeted) {
       return false;
     }
@@ -952,6 +960,9 @@ static bool DoConnection(bssl::UniquePtr<SSL_SESSION> *out_session,
     int ssl_err = SSL_get_error(ssl.get(), -1);
     if (ssl_err != SSL_ERROR_NONE) {
       fprintf(stderr, "SSL error: %s\n", SSL_error_description(ssl_err));
+      if (ssl_err == SSL_ERROR_SYSCALL) {
+        PrintSocketError("OS error");
+      }
     }
     return false;
   }
@@ -1185,6 +1196,12 @@ static bool DoExchange(bssl::UniquePtr<SSL_SESSION> *out_session,
     }
     if (!config->shim_shuts_down) {
       for (;;) {
+        if (config->key_update_before_read &&
+            !SSL_key_update(ssl, SSL_KEY_UPDATE_NOT_REQUESTED)) {
+          fprintf(stderr, "SSL_key_update failed.\n");
+          return false;
+        }
+
         // Read only 512 bytes at a time in TLS to ensure records may be
         // returned in multiple reads.
         size_t read_size = config->is_dtls ? 16384 : 512;
@@ -1264,8 +1281,7 @@ static bool DoExchange(bssl::UniquePtr<SSL_SESSION> *out_session,
     return false;
   }
 
-  if (GetProtocolVersion(ssl) >= TLS1_3_VERSION && !SSL_is_dtls(ssl) &&
-      !config->is_server) {
+  if (GetProtocolVersion(ssl) >= TLS1_3_VERSION && !config->is_server) {
     bool expect_new_session =
         !config->expect_no_session && !config->shim_shuts_down;
     if (expect_new_session != test_state->got_new_session) {
@@ -1395,6 +1411,9 @@ int main(int argc, char **argv) {
     fprintf(stderr, "-wait-for-debugger is not supported on Windows.\n");
     return 1;
 #else
+#if defined(OPENSSL_LINUX)
+    prctl(PR_SET_PTRACER, PR_SET_PTRACER_ANY);
+#endif
     // The debugger will resume the process.
     raise(SIGSTOP);
 #endif

@@ -126,16 +126,6 @@
 #include <stdlib.h>
 #endif
 
-#if !defined(__cplusplus)
-#if !defined(__STDC_VERSION__) || __STDC_VERSION__ < 201112L
-// BoringSSL requires C11 to build the library. The most likely cause of
-// pre-C11 modes is stale -std=c99 or -std=gnu99 flags in build configuration.
-// Such flags can be removed. If building with MSVC, build with /std:c11.
-#error "BoringSSL must be built in C11 mode or higher."
-#endif
-#include <stdalign.h>
-#endif
-
 #if defined(OPENSSL_THREADS) && \
     (!defined(OPENSSL_WINDOWS) || defined(__MINGW32__))
 #include <pthread.h>
@@ -147,29 +137,11 @@
 #define OPENSSL_WINDOWS_THREADS
 #endif
 
-// Determine the atomics implementation to use with C.
-#if !defined(__cplusplus)
-#if !defined(OPENSSL_C11_ATOMIC) && defined(OPENSSL_THREADS) && \
-    !defined(__STDC_NO_ATOMICS__)
-#define OPENSSL_C11_ATOMIC
+#if defined(OPENSSL_THREADS)
+#include <atomic>
 #endif
 
-#if defined(OPENSSL_C11_ATOMIC)
-#include <stdatomic.h>
-#endif
-
-// Older MSVC does not support C11 atomics, so we fallback to the Windows APIs.
-// When both are available (e.g. clang-cl), we prefer the C11 ones. The Windows
-// APIs don't allow some operations to be implemented as efficiently. This can
-// be removed once we can rely on
-// https://devblogs.microsoft.com/cppblog/c11-atomics-in-visual-studio-2022-version-17-5-preview-2/
-#if !defined(OPENSSL_C11_ATOMIC) && defined(OPENSSL_THREADS) && \
-    defined(OPENSSL_WINDOWS)
-#define OPENSSL_WINDOWS_ATOMIC
-#endif
-#endif  // !__cplusplus
-
-#if defined(OPENSSL_WINDOWS_THREADS) || defined(OPENSSL_WINDOWS_ATOMIC)
+#if defined(OPENSSL_WINDOWS_THREADS)
 OPENSSL_MSVC_PRAGMA(warning(push, 3))
 #include <windows.h>
 OPENSSL_MSVC_PRAGMA(warning(pop))
@@ -195,7 +167,7 @@ void OPENSSL_cpuid_setup(void);
 // needed. This function is idempotent and may be called concurrently.
 void OPENSSL_init_cpuid(void);
 #else
-OPENSSL_INLINE void OPENSSL_init_cpuid(void) {}
+inline void OPENSSL_init_cpuid(void) {}
 #endif
 
 #if (defined(OPENSSL_ARM) || defined(OPENSSL_AARCH64)) && \
@@ -219,34 +191,18 @@ typedef __uint128_t uint128_t;
 // These may be bugs in the toolchain definition, but just disable it for now.
 // EDK2's toolchain is missing __udivti3 (b/339380897) so cannot support
 // 128-bit division currently.
-#if !defined(_MSC_VER) && !defined(OPENSSL_NANOLIBC) && !defined(__EDK2_BORINGSSL__)
+#if !defined(_MSC_VER) && !defined(OPENSSL_NANOLIBC) && \
+    !defined(__EDK2_BORINGSSL__)
 #define BORINGSSL_CAN_DIVIDE_UINT128
 #endif
 #endif
 
 #define OPENSSL_ARRAY_SIZE(array) (sizeof(array) / sizeof((array)[0]))
 
-// Have a generic fall-through for different versions of C/C++.
-#if defined(__cplusplus) && __cplusplus >= 201703L
-#define OPENSSL_FALLTHROUGH [[fallthrough]]
-#elif defined(__cplusplus) && __cplusplus >= 201103L && defined(__clang__)
-#define OPENSSL_FALLTHROUGH [[clang::fallthrough]]
-#elif defined(__cplusplus) && __cplusplus >= 201103L && defined(__GNUC__) && \
-    __GNUC__ >= 7
-#define OPENSSL_FALLTHROUGH [[gnu::fallthrough]]
-#elif defined(__GNUC__) && __GNUC__ >= 7 // gcc 7
-#define OPENSSL_FALLTHROUGH __attribute__ ((fallthrough))
-#elif defined(__clang__)
-#if __has_attribute(fallthrough) && __clang_major__ >= 5
-// Clang 3.5, at least, complains about "error: declaration does not declare
-// anything", possibily because we put a semicolon after this macro in
-// practice. Thus limit it to >= Clang 5, which does work.
-#define OPENSSL_FALLTHROUGH __attribute__ ((fallthrough))
-#else // clang versions that do not support fallthrough.
-#define OPENSSL_FALLTHROUGH
+#if defined(__clang__) && __clang_major__ >= 5
+#if __has_attribute(fallthrough)
+#define OPENSSL_CAN_USE_ATTR_FALLTHROUGH
 #endif
-#else // C++11 on gcc 6, and all other cases
-#define OPENSSL_FALLTHROUGH
 #endif
 
 // GCC-like compilers indicate SSE2 with |__SSE2__|. MSVC leaves the caller to
@@ -296,9 +252,9 @@ OPENSSL_EXPORT void OPENSSL_disable_malloc_failures_for_testing(void);
 // re-enables simulated malloc failures.
 OPENSSL_EXPORT void OPENSSL_enable_malloc_failures_for_testing(void);
 #else
-OPENSSL_INLINE void OPENSSL_reset_malloc_counter_for_testing(void) {}
-OPENSSL_INLINE void OPENSSL_disable_malloc_failures_for_testing(void) {}
-OPENSSL_INLINE void OPENSSL_enable_malloc_failures_for_testing(void) {}
+inline void OPENSSL_reset_malloc_counter_for_testing(void) {}
+inline void OPENSSL_disable_malloc_failures_for_testing(void) {}
+inline void OPENSSL_enable_malloc_failures_for_testing(void) {}
 #endif
 
 #if defined(__has_builtin)
@@ -311,8 +267,8 @@ OPENSSL_INLINE void OPENSSL_enable_malloc_failures_for_testing(void) {}
 // Pointer utility functions.
 
 // buffers_alias returns one if |a| and |b| alias and zero otherwise.
-static inline int buffers_alias(const void *a, size_t a_bytes,
-                                const void *b, size_t b_bytes) {
+static inline int buffers_alias(const void *a, size_t a_bytes, const void *b,
+                                size_t b_bytes) {
   // Cast |a| and |b| to integers. In C, pointer comparisons between unrelated
   // objects are undefined whereas pointer to integer conversions are merely
   // implementation-defined. We assume the implementation defined it in a sane
@@ -448,7 +404,7 @@ static inline crypto_word_t constant_time_lt_w(crypto_word_t a,
   // (assert (not (= (= #x00000001 (bvlshr (lt a b) #x0000001f)) (bvult a b))))
   // (check-sat)
   // (get-model)
-  return constant_time_msb_w(a^((a^b)|((a-b)^a)));
+  return constant_time_msb_w(a ^ ((a ^ b) | ((a - b) ^ a)));
 }
 
 // constant_time_lt_8 acts like |constant_time_lt_w| but returns an 8-bit
@@ -479,9 +435,8 @@ static inline crypto_word_t constant_time_is_zero_w(crypto_word_t a) {
   //
   // (declare-fun a () (_ BitVec 32))
   //
-  // (assert (not (= (= #x00000001 (bvlshr (is_zero a) #x0000001f)) (= a #x00000000))))
-  // (check-sat)
-  // (get-model)
+  // (assert (not (= (= #x00000001 (bvlshr (is_zero a) #x0000001f)) (= a
+  // #x00000000)))) (check-sat) (get-model)
   return constant_time_msb_w(~a & (a - 1));
 }
 
@@ -577,10 +532,10 @@ static inline void constant_time_conditional_memxor(void *dst, const void *src,
 #if defined(__GNUC__) && !defined(__clang__)
   // gcc 13.2.0 doesn't automatically vectorize this loop regardless of barrier
   typedef uint8_t v32u8 __attribute__((vector_size(32), aligned(1), may_alias));
-  size_t n_vec = n&~(size_t)31;
-  v32u8 masks = ((uint8_t)mask-(v32u8){}); // broadcast
+  size_t n_vec = n & ~(size_t)31;
+  v32u8 masks = ((uint8_t)mask - (v32u8){});  // broadcast
   for (size_t i = 0; i < n_vec; i += 32) {
-    *(v32u8*)&out[i] ^= masks & *(v32u8*)&in[i];
+    *(v32u8 *)&out[i] ^= masks & *(v32u8 *)&in[i];
   }
   out += n_vec;
   n -= n_vec;
@@ -671,82 +626,36 @@ OPENSSL_EXPORT void CRYPTO_once(CRYPTO_once_t *once, void (*init)(void));
 // The following functions provide an API analogous to <stdatomic.h> from C11
 // and abstract between a few variations on atomics we need to support.
 
-#if defined(__cplusplus)
+#if defined(OPENSSL_THREADS)
 
-// In C++, we can't easily detect whether C will use |OPENSSL_C11_ATOMIC| or
-// |OPENSSL_WINDOWS_ATOMIC|. Instead, we define a layout-compatible type without
-// the corresponding functions. When we can rely on C11 atomics in MSVC, that
-// will no longer be a concern.
-typedef uint32_t CRYPTO_atomic_u32;
+using CRYPTO_atomic_u32 = std::atomic<uint32_t>;
 
-#elif defined(OPENSSL_C11_ATOMIC)
+static_assert(sizeof(CRYPTO_atomic_u32) == sizeof(uint32_t), "");
 
-typedef _Atomic uint32_t CRYPTO_atomic_u32;
-
-// This should be const, but the |OPENSSL_WINDOWS_ATOMIC| implementation is not
-// const due to Windows limitations. When we can rely on C11 atomics, make this
-// const-correct.
-OPENSSL_INLINE uint32_t CRYPTO_atomic_load_u32(CRYPTO_atomic_u32 *val) {
-  return atomic_load(val);
+inline uint32_t CRYPTO_atomic_load_u32(const CRYPTO_atomic_u32 *val) {
+  return val->load(std::memory_order_seq_cst);
 }
 
-OPENSSL_INLINE int CRYPTO_atomic_compare_exchange_weak_u32(
-    CRYPTO_atomic_u32 *val, uint32_t *expected, uint32_t desired) {
-  return atomic_compare_exchange_weak(val, expected, desired);
+inline bool CRYPTO_atomic_compare_exchange_weak_u32(CRYPTO_atomic_u32 *val,
+                                                    uint32_t *expected,
+                                                    uint32_t desired) {
+  return val->compare_exchange_weak(
+      *expected, desired, std::memory_order_seq_cst, std::memory_order_seq_cst);
 }
 
-OPENSSL_INLINE void CRYPTO_atomic_store_u32(CRYPTO_atomic_u32 *val,
-                                            uint32_t desired) {
-  atomic_store(val, desired);
+inline void CRYPTO_atomic_store_u32(CRYPTO_atomic_u32 *val, uint32_t desired) {
+  val->store(desired, std::memory_order_seq_cst);
 }
 
-#elif defined(OPENSSL_WINDOWS_ATOMIC)
-
-typedef LONG CRYPTO_atomic_u32;
-
-OPENSSL_INLINE uint32_t CRYPTO_atomic_load_u32(volatile CRYPTO_atomic_u32 *val) {
-  // This is not ideal because it still writes to a cacheline. MSVC is not able
-  // to optimize this to a true atomic read, and Windows does not provide an
-  // InterlockedLoad function.
-  //
-  // The Windows documentation [1] does say "Simple reads and writes to
-  // properly-aligned 32-bit variables are atomic operations", but this is not
-  // phrased in terms of the C11 and C++11 memory models, and indeed a read or
-  // write seems to produce slightly different code on MSVC than a sequentially
-  // consistent std::atomic::load in C++. Moreover, it is unclear if non-MSVC
-  // compilers on Windows provide the same guarantees. Thus we avoid relying on
-  // this and instead still use an interlocked function. This is still
-  // preferable a global mutex, and eventually this code will be replaced by
-  // [2]. Additionally, on clang-cl, we'll use the |OPENSSL_C11_ATOMIC| path.
-  //
-  // [1] https://learn.microsoft.com/en-us/windows/win32/sync/interlocked-variable-access
-  // [2] https://devblogs.microsoft.com/cppblog/c11-atomics-in-visual-studio-2022-version-17-5-preview-2/
-  return (uint32_t)InterlockedCompareExchange(val, 0, 0);
-}
-
-OPENSSL_INLINE int CRYPTO_atomic_compare_exchange_weak_u32(
-    volatile CRYPTO_atomic_u32 *val, uint32_t *expected32, uint32_t desired) {
-  LONG expected = (LONG)*expected32;
-  LONG actual = InterlockedCompareExchange(val, (LONG)desired, expected);
-  *expected32 = (uint32_t)actual;
-  return actual == expected;
-}
-
-OPENSSL_INLINE void CRYPTO_atomic_store_u32(volatile CRYPTO_atomic_u32 *val,
-                                            uint32_t desired) {
-  InterlockedExchange(val, (LONG)desired);
-}
-
-#elif !defined(OPENSSL_THREADS)
+#else
 
 typedef uint32_t CRYPTO_atomic_u32;
 
-OPENSSL_INLINE uint32_t CRYPTO_atomic_load_u32(CRYPTO_atomic_u32 *val) {
-  return *val;
-}
+inline uint32_t CRYPTO_atomic_load_u32(CRYPTO_atomic_u32 *val) { return *val; }
 
-OPENSSL_INLINE int CRYPTO_atomic_compare_exchange_weak_u32(
-    CRYPTO_atomic_u32 *val, uint32_t *expected, uint32_t desired) {
+inline int CRYPTO_atomic_compare_exchange_weak_u32(CRYPTO_atomic_u32 *val,
+                                                   uint32_t *expected,
+                                                   uint32_t desired) {
   if (*val != *expected) {
     *expected = *val;
     return 0;
@@ -755,16 +664,9 @@ OPENSSL_INLINE int CRYPTO_atomic_compare_exchange_weak_u32(
   return 1;
 }
 
-OPENSSL_INLINE void CRYPTO_atomic_store_u32(CRYPTO_atomic_u32 *val,
-                                            uint32_t desired) {
+inline void CRYPTO_atomic_store_u32(CRYPTO_atomic_u32 *val, uint32_t desired) {
   *val = desired;
 }
-
-#else
-
-// Require some atomics implementation. Contact BoringSSL maintainers if you
-// have a platform with fails this check.
-#error "Thread-compatible configurations require atomics"
 
 #endif
 
@@ -803,7 +705,8 @@ OPENSSL_EXPORT int CRYPTO_refcount_dec_and_test_zero(CRYPTO_refcount_t *count);
 typedef struct crypto_mutex_st {
   char padding;  // Empty structs have different sizes in C and C++.
 } CRYPTO_MUTEX;
-#define CRYPTO_MUTEX_INIT { 0 }
+#define CRYPTO_MUTEX_INIT \
+  { 0 }
 #elif defined(OPENSSL_WINDOWS_THREADS)
 typedef SRWLOCK CRYPTO_MUTEX;
 #define CRYPTO_MUTEX_INIT SRWLOCK_INIT
@@ -868,7 +771,7 @@ using MutexReadLock =
 
 BSSL_NAMESPACE_END
 
-}  // extern "C++"
+}       // extern "C++"
 #endif  // defined(__cplusplus)
 
 
@@ -932,9 +835,10 @@ typedef struct {
   uint8_t num_reserved;
 } CRYPTO_EX_DATA_CLASS;
 
-#define CRYPTO_EX_DATA_CLASS_INIT {CRYPTO_MUTEX_INIT, NULL, NULL, 0, 0}
+#define CRYPTO_EX_DATA_CLASS_INIT \
+  { CRYPTO_MUTEX_INIT, NULL, NULL, {}, 0 }
 #define CRYPTO_EX_DATA_CLASS_INIT_WITH_APP_DATA \
-    {CRYPTO_MUTEX_INIT, NULL, NULL, 0, 1}
+  { CRYPTO_MUTEX_INIT, NULL, NULL, {}, 1 }
 
 // CRYPTO_get_ex_new_index_ex allocates a new index for |ex_data_class|. Each
 // class of object should provide a wrapper function that uses the correct
@@ -980,21 +884,13 @@ OPENSSL_MSVC_PRAGMA(warning(push, 3))
 #include <stdlib.h>
 OPENSSL_MSVC_PRAGMA(warning(pop))
 #pragma intrinsic(_byteswap_uint64, _byteswap_ulong, _byteswap_ushort)
-static inline uint16_t CRYPTO_bswap2(uint16_t x) {
-  return _byteswap_ushort(x);
-}
+static inline uint16_t CRYPTO_bswap2(uint16_t x) { return _byteswap_ushort(x); }
 
-static inline uint32_t CRYPTO_bswap4(uint32_t x) {
-  return _byteswap_ulong(x);
-}
+static inline uint32_t CRYPTO_bswap4(uint32_t x) { return _byteswap_ulong(x); }
 
-static inline uint64_t CRYPTO_bswap8(uint64_t x) {
-  return _byteswap_uint64(x);
-}
+static inline uint64_t CRYPTO_bswap8(uint64_t x) { return _byteswap_uint64(x); }
 #else
-static inline uint16_t CRYPTO_bswap2(uint16_t x) {
-  return (x >> 8) | (x << 8);
-}
+static inline uint16_t CRYPTO_bswap2(uint16_t x) { return (x >> 8) | (x << 8); }
 
 static inline uint32_t CRYPTO_bswap4(uint32_t x) {
   x = (x >> 16) | (x << 16);
@@ -1041,7 +937,7 @@ static inline void *OPENSSL_memchr(void *s, int c, size_t n) {
   return memchr(s, c, n);
 }
 
-}  // extern "C++"
+}      // extern "C++"
 #else  // __cplusplus
 
 static inline void *OPENSSL_memchr(const void *s, int c, size_t n) {
@@ -1092,6 +988,17 @@ static inline void *OPENSSL_memset(void *dst, int c, size_t n) {
 // The following functions load and store sized integers with the specified
 // endianness. They use |memcpy|, and so avoid alignment or strict aliasing
 // requirements on the input and output pointers.
+
+static inline uint16_t CRYPTO_load_u16_be(const void *in) {
+  uint16_t v;
+  OPENSSL_memcpy(&v, in, sizeof(v));
+  return CRYPTO_bswap2(v);
+}
+
+static inline void CRYPTO_store_u16_be(void *out, uint16_t v) {
+  v = CRYPTO_bswap2(v);
+  OPENSSL_memcpy(out, &v, sizeof(v));
+}
 
 static inline uint32_t CRYPTO_load_u32_le(const void *in) {
   uint32_t v;
@@ -1197,117 +1104,6 @@ static inline uint64_t CRYPTO_rotr_u64(uint64_t value, int shift) {
 }
 
 
-// Arithmetic functions.
-
-// The most efficient versions of these functions on GCC and Clang depend on C11
-// |_Generic|. If we ever need to call these from C++, we'll need to add a
-// variant that uses C++ overloads instead.
-#if !defined(__cplusplus)
-
-// CRYPTO_addc_* returns |x + y + carry|, and sets |*out_carry| to the carry
-// bit. |carry| must be zero or one.
-#if OPENSSL_HAS_BUILTIN(__builtin_addc)
-
-#define CRYPTO_GENERIC_ADDC(x, y, carry, out_carry) \
-  (_Generic((x),                                    \
-      unsigned: __builtin_addc,                     \
-      unsigned long: __builtin_addcl,               \
-      unsigned long long: __builtin_addcll))((x), (y), (carry), (out_carry))
-
-static inline uint32_t CRYPTO_addc_u32(uint32_t x, uint32_t y, uint32_t carry,
-                                       uint32_t *out_carry) {
-  declassify_assert(carry <= 1);
-  return CRYPTO_GENERIC_ADDC(x, y, carry, out_carry);
-}
-
-static inline uint64_t CRYPTO_addc_u64(uint64_t x, uint64_t y, uint64_t carry,
-                                       uint64_t *out_carry) {
-  declassify_assert(carry <= 1);
-  return CRYPTO_GENERIC_ADDC(x, y, carry, out_carry);
-}
-
-#else
-
-static inline uint32_t CRYPTO_addc_u32(uint32_t x, uint32_t y, uint32_t carry,
-                                       uint32_t *out_carry) {
-  declassify_assert(carry <= 1);
-  uint64_t ret = carry;
-  ret += (uint64_t)x + y;
-  *out_carry = (uint32_t)(ret >> 32);
-  return (uint32_t)ret;
-}
-
-static inline uint64_t CRYPTO_addc_u64(uint64_t x, uint64_t y, uint64_t carry,
-                                       uint64_t *out_carry) {
-  declassify_assert(carry <= 1);
-#if defined(BORINGSSL_HAS_UINT128)
-  uint128_t ret = carry;
-  ret += (uint128_t)x + y;
-  *out_carry = (uint64_t)(ret >> 64);
-  return (uint64_t)ret;
-#else
-  x += carry;
-  carry = x < carry;
-  uint64_t ret = x + y;
-  carry += ret < x;
-  *out_carry = carry;
-  return ret;
-#endif
-}
-#endif
-
-// CRYPTO_subc_* returns |x - y - borrow|, and sets |*out_borrow| to the borrow
-// bit. |borrow| must be zero or one.
-#if OPENSSL_HAS_BUILTIN(__builtin_subc)
-
-#define CRYPTO_GENERIC_SUBC(x, y, borrow, out_borrow) \
-  (_Generic((x),                                      \
-      unsigned: __builtin_subc,                       \
-      unsigned long: __builtin_subcl,                 \
-      unsigned long long: __builtin_subcll))((x), (y), (borrow), (out_borrow))
-
-static inline uint32_t CRYPTO_subc_u32(uint32_t x, uint32_t y, uint32_t borrow,
-                                       uint32_t *out_borrow) {
-  declassify_assert(borrow <= 1);
-  return CRYPTO_GENERIC_SUBC(x, y, borrow, out_borrow);
-}
-
-static inline uint64_t CRYPTO_subc_u64(uint64_t x, uint64_t y, uint64_t borrow,
-                                       uint64_t *out_borrow) {
-  declassify_assert(borrow <= 1);
-  return CRYPTO_GENERIC_SUBC(x, y, borrow, out_borrow);
-}
-
-#else
-
-static inline uint32_t CRYPTO_subc_u32(uint32_t x, uint32_t y, uint32_t borrow,
-                                       uint32_t *out_borrow) {
-  declassify_assert(borrow <= 1);
-  uint32_t ret = x - y - borrow;
-  *out_borrow = (x < y) | ((x == y) & borrow);
-  return ret;
-}
-
-static inline uint64_t CRYPTO_subc_u64(uint64_t x, uint64_t y, uint64_t borrow,
-                                       uint64_t *out_borrow) {
-  declassify_assert(borrow <= 1);
-  uint64_t ret = x - y - borrow;
-  *out_borrow = (x < y) | ((x == y) & borrow);
-  return ret;
-}
-#endif
-
-#if defined(OPENSSL_64_BIT)
-#define CRYPTO_addc_w CRYPTO_addc_u64
-#define CRYPTO_subc_w CRYPTO_subc_u64
-#else
-#define CRYPTO_addc_w CRYPTO_addc_u32
-#define CRYPTO_subc_w CRYPTO_subc_u32
-#endif
-
-#endif  // !__cplusplus
-
-
 // FIPS functions.
 
 #if defined(BORINGSSL_FIPS)
@@ -1341,9 +1137,9 @@ void boringssl_ensure_ffdh_self_test(void);
 
 // Outside of FIPS mode, the lazy tests are no-ops.
 
-OPENSSL_INLINE void boringssl_ensure_rsa_self_test(void) {}
-OPENSSL_INLINE void boringssl_ensure_ecc_self_test(void) {}
-OPENSSL_INLINE void boringssl_ensure_ffdh_self_test(void) {}
+inline void boringssl_ensure_rsa_self_test(void) {}
+inline void boringssl_ensure_ecc_self_test(void) {}
+inline void boringssl_ensure_ffdh_self_test(void) {}
 
 #endif  // FIPS
 
@@ -1359,18 +1155,16 @@ int boringssl_self_test_hmac_sha256(void);
 #if defined(BORINGSSL_FIPS_COUNTERS)
 void boringssl_fips_inc_counter(enum fips_counter_t counter);
 #else
-OPENSSL_INLINE void boringssl_fips_inc_counter(enum fips_counter_t counter) {}
+inline void boringssl_fips_inc_counter(enum fips_counter_t counter) {}
 #endif
 
 #if defined(BORINGSSL_FIPS_BREAK_TESTS)
-OPENSSL_INLINE int boringssl_fips_break_test(const char *test) {
+inline int boringssl_fips_break_test(const char *test) {
   const char *const value = getenv("BORINGSSL_FIPS_BREAK_TEST");
   return value != NULL && strcmp(value, test) == 0;
 }
 #else
-OPENSSL_INLINE int boringssl_fips_break_test(const char *test) {
-  return 0;
-}
+inline int boringssl_fips_break_test(const char *test) { return 0; }
 #endif  // BORINGSSL_FIPS_BREAK_TESTS
 
 
@@ -1410,7 +1204,7 @@ OPENSSL_ATTR_CONST uint32_t OPENSSL_get_ia32cap(int idx);
 
 // See Intel manual, volume 2A, table 3-11.
 
-OPENSSL_INLINE int CRYPTO_is_FXSR_capable(void) {
+inline int CRYPTO_is_FXSR_capable(void) {
 #if defined(__FXSR__)
   return 1;
 #else
@@ -1418,14 +1212,14 @@ OPENSSL_INLINE int CRYPTO_is_FXSR_capable(void) {
 #endif
 }
 
-OPENSSL_INLINE int CRYPTO_is_intel_cpu(void) {
+inline int CRYPTO_is_intel_cpu(void) {
   // The reserved bit 30 is used to indicate an Intel CPU.
   return (OPENSSL_get_ia32cap(0) & (1u << 30)) != 0;
 }
 
 // See Intel manual, volume 2A, table 3-10.
 
-OPENSSL_INLINE int CRYPTO_is_PCLMUL_capable(void) {
+inline int CRYPTO_is_PCLMUL_capable(void) {
 #if defined(__PCLMUL__)
   return 1;
 #else
@@ -1433,7 +1227,7 @@ OPENSSL_INLINE int CRYPTO_is_PCLMUL_capable(void) {
 #endif
 }
 
-OPENSSL_INLINE int CRYPTO_is_SSSE3_capable(void) {
+inline int CRYPTO_is_SSSE3_capable(void) {
 #if defined(__SSSE3__)
   return 1;
 #else
@@ -1441,7 +1235,7 @@ OPENSSL_INLINE int CRYPTO_is_SSSE3_capable(void) {
 #endif
 }
 
-OPENSSL_INLINE int CRYPTO_is_SSE4_1_capable(void) {
+inline int CRYPTO_is_SSE4_1_capable(void) {
 #if defined(__SSE4_1__)
   return 1;
 #else
@@ -1449,7 +1243,7 @@ OPENSSL_INLINE int CRYPTO_is_SSE4_1_capable(void) {
 #endif
 }
 
-OPENSSL_INLINE int CRYPTO_is_MOVBE_capable(void) {
+inline int CRYPTO_is_MOVBE_capable(void) {
 #if defined(__MOVBE__)
   return 1;
 #else
@@ -1457,7 +1251,7 @@ OPENSSL_INLINE int CRYPTO_is_MOVBE_capable(void) {
 #endif
 }
 
-OPENSSL_INLINE int CRYPTO_is_AESNI_capable(void) {
+inline int CRYPTO_is_AESNI_capable(void) {
 #if defined(__AES__)
   return 1;
 #else
@@ -1468,7 +1262,7 @@ OPENSSL_INLINE int CRYPTO_is_AESNI_capable(void) {
 // We intentionally avoid defining a |CRYPTO_is_XSAVE_capable| function. See
 // |CRYPTO_cpu_perf_is_like_silvermont|.
 
-OPENSSL_INLINE int CRYPTO_is_AVX_capable(void) {
+inline int CRYPTO_is_AVX_capable(void) {
 #if defined(__AVX__)
   return 1;
 #else
@@ -1476,7 +1270,7 @@ OPENSSL_INLINE int CRYPTO_is_AVX_capable(void) {
 #endif
 }
 
-OPENSSL_INLINE int CRYPTO_is_RDRAND_capable(void) {
+inline int CRYPTO_is_RDRAND_capable(void) {
   // We intentionally do not check |__RDRND__| here. On some AMD processors, we
   // will act as if the hardware is RDRAND-incapable, even it actually supports
   // it. See cpu_intel.c.
@@ -1485,7 +1279,7 @@ OPENSSL_INLINE int CRYPTO_is_RDRAND_capable(void) {
 
 // See Intel manual, volume 2A, table 3-8.
 
-OPENSSL_INLINE int CRYPTO_is_BMI1_capable(void) {
+inline int CRYPTO_is_BMI1_capable(void) {
 #if defined(__BMI__)
   return 1;
 #else
@@ -1493,7 +1287,7 @@ OPENSSL_INLINE int CRYPTO_is_BMI1_capable(void) {
 #endif
 }
 
-OPENSSL_INLINE int CRYPTO_is_AVX2_capable(void) {
+inline int CRYPTO_is_AVX2_capable(void) {
 #if defined(__AVX2__)
   return 1;
 #else
@@ -1501,7 +1295,7 @@ OPENSSL_INLINE int CRYPTO_is_AVX2_capable(void) {
 #endif
 }
 
-OPENSSL_INLINE int CRYPTO_is_BMI2_capable(void) {
+inline int CRYPTO_is_BMI2_capable(void) {
 #if defined(__BMI2__)
   return 1;
 #else
@@ -1509,7 +1303,7 @@ OPENSSL_INLINE int CRYPTO_is_BMI2_capable(void) {
 #endif
 }
 
-OPENSSL_INLINE int CRYPTO_is_ADX_capable(void) {
+inline int CRYPTO_is_ADX_capable(void) {
 #if defined(__ADX__)
   return 1;
 #else
@@ -1518,7 +1312,7 @@ OPENSSL_INLINE int CRYPTO_is_ADX_capable(void) {
 }
 
 // SHA-1 and SHA-256 are defined as a single extension.
-OPENSSL_INLINE int CRYPTO_is_x86_SHA_capable(void) {
+inline int CRYPTO_is_x86_SHA_capable(void) {
   // We should check __SHA__ here, but for now we ignore it. We've run into a
   // few places where projects build with -march=goldmont, but need a build that
   // does not require SHA extensions:
@@ -1552,7 +1346,7 @@ OPENSSL_INLINE int CRYPTO_is_x86_SHA_capable(void) {
 // isn't matched by this. Various sources indicate AMD first implemented MOVBE
 // and XSAVE at the same time in Jaguar, so it seems like AMD chips will not be
 // matched by this. That seems to be the case for other x86(-64) CPUs.
-OPENSSL_INLINE int CRYPTO_cpu_perf_is_like_silvermont(void) {
+inline int CRYPTO_cpu_perf_is_like_silvermont(void) {
   // WARNING: This MUST NOT be used to guard the execution of the XSAVE
   // instruction. This is the "hardware supports XSAVE" bit, not the OSXSAVE bit
   // that indicates whether we can safely execute XSAVE. This bit may be set
@@ -1566,7 +1360,7 @@ OPENSSL_INLINE int CRYPTO_cpu_perf_is_like_silvermont(void) {
   return !hardware_supports_xsave && CRYPTO_is_MOVBE_capable();
 }
 
-OPENSSL_INLINE int CRYPTO_is_AVX512BW_capable(void) {
+inline int CRYPTO_is_AVX512BW_capable(void) {
 #if defined(__AVX512BW__)
   return 1;
 #else
@@ -1574,7 +1368,7 @@ OPENSSL_INLINE int CRYPTO_is_AVX512BW_capable(void) {
 #endif
 }
 
-OPENSSL_INLINE int CRYPTO_is_AVX512VL_capable(void) {
+inline int CRYPTO_is_AVX512VL_capable(void) {
 #if defined(__AVX512VL__)
   return 1;
 #else
@@ -1586,11 +1380,11 @@ OPENSSL_INLINE int CRYPTO_is_AVX512VL_capable(void) {
 // should not be used even if the CPU supports them.
 //
 // Note that this reuses the bit for the removed MPX feature.
-OPENSSL_INLINE int CRYPTO_cpu_avoid_zmm_registers(void) {
+inline int CRYPTO_cpu_avoid_zmm_registers(void) {
   return (OPENSSL_get_ia32cap(2) & (1u << 14)) != 0;
 }
 
-OPENSSL_INLINE int CRYPTO_is_VAES_capable(void) {
+inline int CRYPTO_is_VAES_capable(void) {
 #if defined(__VAES__)
   return 1;
 #else
@@ -1598,7 +1392,7 @@ OPENSSL_INLINE int CRYPTO_is_VAES_capable(void) {
 #endif
 }
 
-OPENSSL_INLINE int CRYPTO_is_VPCLMULQDQ_capable(void) {
+inline int CRYPTO_is_VPCLMULQDQ_capable(void) {
 #if defined(__VPCLMULQDQ__)
   return 1;
 #else
@@ -1645,7 +1439,7 @@ OPENSSL_ATTR_CONST uint32_t OPENSSL_get_armcap(void);
 
 // CRYPTO_is_NEON_capable returns true if the current CPU has a NEON unit. If
 // this is known statically, it is a constant inline function.
-OPENSSL_INLINE int CRYPTO_is_NEON_capable(void) {
+inline int CRYPTO_is_NEON_capable(void) {
 #if defined(OPENSSL_STATIC_ARMCAP_NEON) || defined(__ARM_NEON)
   return 1;
 #elif defined(OPENSSL_STATIC_ARMCAP)
@@ -1655,7 +1449,7 @@ OPENSSL_INLINE int CRYPTO_is_NEON_capable(void) {
 #endif
 }
 
-OPENSSL_INLINE int CRYPTO_is_ARMv8_AES_capable(void) {
+inline int CRYPTO_is_ARMv8_AES_capable(void) {
 #if defined(OPENSSL_STATIC_ARMCAP_AES) || defined(__ARM_FEATURE_AES)
   return 1;
 #elif defined(OPENSSL_STATIC_ARMCAP)
@@ -1665,7 +1459,7 @@ OPENSSL_INLINE int CRYPTO_is_ARMv8_AES_capable(void) {
 #endif
 }
 
-OPENSSL_INLINE int CRYPTO_is_ARMv8_PMULL_capable(void) {
+inline int CRYPTO_is_ARMv8_PMULL_capable(void) {
 #if defined(OPENSSL_STATIC_ARMCAP_PMULL) || defined(__ARM_FEATURE_AES)
   return 1;
 #elif defined(OPENSSL_STATIC_ARMCAP)
@@ -1675,7 +1469,7 @@ OPENSSL_INLINE int CRYPTO_is_ARMv8_PMULL_capable(void) {
 #endif
 }
 
-OPENSSL_INLINE int CRYPTO_is_ARMv8_SHA1_capable(void) {
+inline int CRYPTO_is_ARMv8_SHA1_capable(void) {
   // SHA-1 and SHA-2 (only) share |__ARM_FEATURE_SHA2| but otherwise
   // are dealt with independently.
 #if defined(OPENSSL_STATIC_ARMCAP_SHA1) || defined(__ARM_FEATURE_SHA2)
@@ -1687,7 +1481,7 @@ OPENSSL_INLINE int CRYPTO_is_ARMv8_SHA1_capable(void) {
 #endif
 }
 
-OPENSSL_INLINE int CRYPTO_is_ARMv8_SHA256_capable(void) {
+inline int CRYPTO_is_ARMv8_SHA256_capable(void) {
   // SHA-1 and SHA-2 (only) share |__ARM_FEATURE_SHA2| but otherwise
   // are dealt with independently.
 #if defined(OPENSSL_STATIC_ARMCAP_SHA256) || defined(__ARM_FEATURE_SHA2)
@@ -1699,7 +1493,7 @@ OPENSSL_INLINE int CRYPTO_is_ARMv8_SHA256_capable(void) {
 #endif
 }
 
-OPENSSL_INLINE int CRYPTO_is_ARMv8_SHA512_capable(void) {
+inline int CRYPTO_is_ARMv8_SHA512_capable(void) {
   // There is no |OPENSSL_STATIC_ARMCAP_SHA512|.
 #if defined(__ARM_FEATURE_SHA512)
   return 1;
@@ -1723,7 +1517,9 @@ OPENSSL_INLINE int CRYPTO_is_ARMv8_SHA512_capable(void) {
 //   3: aes_hw_set_encrypt_key
 //   4: vpaes_encrypt
 //   5: vpaes_set_encrypt_key
-extern uint8_t BORINGSSL_function_hit[7];
+//   6: aes_gcm_enc_update_vaes_avx10_256
+//   7: aes_gcm_enc_update_vaes_avx10_512
+extern uint8_t BORINGSSL_function_hit[8];
 #endif  // BORINGSSL_DISPATCH_TEST
 
 // OPENSSL_vasprintf_internal is just like |vasprintf(3)|. If |system_malloc| is
@@ -1737,5 +1533,132 @@ OPENSSL_EXPORT int OPENSSL_vasprintf_internal(char **str, const char *format,
 #if defined(__cplusplus)
 }  // extern C
 #endif
+
+// Arithmetic functions.
+
+// CRYPTO_addc_* returns |x + y + carry|, and sets |*out_carry| to the carry
+// bit. |carry| must be zero or one.
+#if OPENSSL_HAS_BUILTIN(__builtin_addc)
+
+inline unsigned int CRYPTO_addc_impl(unsigned int x, unsigned int y,
+                                     unsigned int carry,
+                                     unsigned int *out_carry) {
+  return __builtin_addc(x, y, carry, out_carry);
+}
+
+inline unsigned long CRYPTO_addc_impl(unsigned long x, unsigned long y,
+                                      unsigned long carry,
+                                      unsigned long *out_carry) {
+  return __builtin_addcl(x, y, carry, out_carry);
+}
+
+inline unsigned long long CRYPTO_addc_impl(unsigned long long x,
+                                           unsigned long long y,
+                                           unsigned long long carry,
+                                           unsigned long long *out_carry) {
+  return __builtin_addcll(x, y, carry, out_carry);
+}
+
+inline uint32_t CRYPTO_addc_u32(uint32_t x, uint32_t y, uint32_t carry,
+                                uint32_t *out_carry) {
+  return CRYPTO_addc_impl(x, y, carry, out_carry);
+}
+
+inline uint64_t CRYPTO_addc_u64(uint64_t x, uint64_t y, uint64_t carry,
+                                uint64_t *out_carry) {
+  return CRYPTO_addc_impl(x, y, carry, out_carry);
+}
+
+#else
+
+static inline uint32_t CRYPTO_addc_u32(uint32_t x, uint32_t y, uint32_t carry,
+                                       uint32_t *out_carry) {
+  declassify_assert(carry <= 1);
+  uint64_t ret = carry;
+  ret += (uint64_t)x + y;
+  *out_carry = (uint32_t)(ret >> 32);
+  return (uint32_t)ret;
+}
+
+static inline uint64_t CRYPTO_addc_u64(uint64_t x, uint64_t y, uint64_t carry,
+                                       uint64_t *out_carry) {
+  declassify_assert(carry <= 1);
+#if defined(BORINGSSL_HAS_UINT128)
+  uint128_t ret = carry;
+  ret += (uint128_t)x + y;
+  *out_carry = (uint64_t)(ret >> 64);
+  return (uint64_t)ret;
+#else
+  x += carry;
+  carry = x < carry;
+  uint64_t ret = x + y;
+  carry += ret < x;
+  *out_carry = carry;
+  return ret;
+#endif
+}
+#endif
+
+
+// CRYPTO_subc_* returns |x - y - borrow|, and sets |*out_borrow| to the borrow
+// bit. |borrow| must be zero or one.
+#if OPENSSL_HAS_BUILTIN(__builtin_subc)
+
+inline unsigned int CRYPTO_subc_impl(unsigned int x, unsigned int y,
+                                     unsigned int borrow,
+                                     unsigned int *out_borrow) {
+  return __builtin_subc(x, y, borrow, out_borrow);
+}
+
+inline unsigned long CRYPTO_subc_impl(unsigned long x, unsigned long y,
+                                      unsigned long borrow,
+                                      unsigned long *out_borrow) {
+  return __builtin_subcl(x, y, borrow, out_borrow);
+}
+
+inline unsigned long long CRYPTO_subc_impl(unsigned long long x,
+                                           unsigned long long y,
+                                           unsigned long long borrow,
+                                           unsigned long long *out_borrow) {
+  return __builtin_subcll(x, y, borrow, out_borrow);
+}
+
+inline uint32_t CRYPTO_subc_u32(uint32_t x, uint32_t y, uint32_t borrow,
+                                uint32_t *out_borrow) {
+  return CRYPTO_subc_impl(x, y, borrow, out_borrow);
+}
+
+inline uint64_t CRYPTO_subc_u64(uint64_t x, uint64_t y, uint64_t borrow,
+                                uint64_t *out_borrow) {
+  return CRYPTO_subc_impl(x, y, borrow, out_borrow);
+}
+
+#else
+
+static inline uint32_t CRYPTO_subc_u32(uint32_t x, uint32_t y, uint32_t borrow,
+                                       uint32_t *out_borrow) {
+  declassify_assert(borrow <= 1);
+  uint32_t ret = x - y - borrow;
+  *out_borrow = (x < y) | ((x == y) & borrow);
+  return ret;
+}
+
+static inline uint64_t CRYPTO_subc_u64(uint64_t x, uint64_t y, uint64_t borrow,
+                                       uint64_t *out_borrow) {
+  declassify_assert(borrow <= 1);
+  uint64_t ret = x - y - borrow;
+  *out_borrow = (x < y) | ((x == y) & borrow);
+  return ret;
+}
+#endif
+
+#if defined(OPENSSL_64_BIT)
+#define CRYPTO_addc_w CRYPTO_addc_u64
+#define CRYPTO_subc_w CRYPTO_subc_u64
+#else
+#define CRYPTO_addc_w CRYPTO_addc_u32
+#define CRYPTO_subc_w CRYPTO_subc_u32
+#endif
+
 
 #endif  // OPENSSL_HEADER_CRYPTO_INTERNAL_H

@@ -1,6 +1,6 @@
 # coding=utf8
 
-# Copyright (c) 2015, Google Inc.
+# Copyright 2015 The BoringSSL Authors
 #
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -31,7 +31,7 @@ def PathOf(x):
   return x if not PREFIX else os.path.join(PREFIX, x)
 
 
-LICENSE_TEMPLATE = """Copyright (c) 2015, Google Inc.
+LICENSE_TEMPLATE = """Copyright 2015 The BoringSSL Authors
 
 Permission to use, copy, modify, and/or distribute this software for any
 purpose with or without fee is hereby granted, provided that the above
@@ -403,7 +403,7 @@ class CMake(object):
     self.header = LicenseHeader("#") + R'''
 # This file is created by generate_build_files.py. Do not edit manually.
 
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.16)
 
 project(BoringSSL LANGUAGES C CXX)
 

@@ -1,4 +1,4 @@
-/* Copyright (c) 2015, Google Inc.
+/* Copyright 2015 The BoringSSL Authors
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -33,8 +33,8 @@
 #include <openssl/rand.h>
 #include <openssl/span.h>
 
-#include "internal.h"
 #include "../crypto/internal.h"
+#include "internal.h"
 
 #include <oqs/oqs.h>
 
@@ -96,7 +96,7 @@ class ECKeyShare : public SSLKeyShare {
         !EC_POINT_oct2point(group_, peer_point.get(), ciphertext.data(),
                             ciphertext.size(), /*ctx=*/nullptr)) {
       OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_ECPOINT);
-      *out_alert = SSL_AD_DECODE_ERROR;
+      *out_alert = SSL_AD_ILLEGAL_PARAMETER;
       return false;
     }
 
@@ -110,7 +110,7 @@ class ECKeyShare : public SSLKeyShare {
 
     // Encode the x-coordinate left-padded with zeros.
     Array<uint8_t> secret;
-    if (!secret.Init((EC_GROUP_get_degree(group_) + 7) / 8) ||
+    if (!secret.InitForOverwrite((EC_GROUP_get_degree(group_) + 7) / 8) ||
         !BN_bn2bin_padded(secret.data(), secret.size(), x.get())) {
       return false;
     }
@@ -164,13 +164,13 @@ class X25519KeyShare : public SSLKeyShare {
     *out_alert = SSL_AD_INTERNAL_ERROR;
 
     Array<uint8_t> secret;
-    if (!secret.Init(32)) {
+    if (!secret.InitForOverwrite(32)) {
       return false;
     }
 
     if (ciphertext.size() != 32 ||  //
         !X25519(secret.data(), private_key_, ciphertext.data())) {
-      *out_alert = SSL_AD_DECODE_ERROR;
+      *out_alert = SSL_AD_ILLEGAL_PARAMETER;
       OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_ECPOINT);
       return false;
     }
@@ -222,7 +222,7 @@ class X25519Kyber768KeyShare : public SSLKeyShare {
   bool Encap(CBB *out_ciphertext, Array<uint8_t> *out_secret,
              uint8_t *out_alert, Span<const uint8_t> peer_key) override {
     Array<uint8_t> secret;
-    if (!secret.Init(32 + KYBER_SHARED_SECRET_BYTES)) {
+    if (!secret.InitForOverwrite(32 + KYBER_SHARED_SECRET_BYTES)) {
       return false;
     }
 
@@ -238,7 +238,7 @@ class X25519Kyber768KeyShare : public SSLKeyShare {
         !X25519(secret.data(), x25519_private_key_,
                 CBS_data(&peer_x25519_cbs)) ||
         !KYBER_parse_public_key(&peer_kyber_pub, &peer_kyber_cbs)) {
-      *out_alert = SSL_AD_DECODE_ERROR;
+      *out_alert = SSL_AD_ILLEGAL_PARAMETER;
       OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_ECPOINT);
       return false;
     }
@@ -262,13 +262,13 @@ class X25519Kyber768KeyShare : public SSLKeyShare {
     *out_alert = SSL_AD_INTERNAL_ERROR;
 
     Array<uint8_t> secret;
-    if (!secret.Init(32 + KYBER_SHARED_SECRET_BYTES)) {
+    if (!secret.InitForOverwrite(32 + KYBER_SHARED_SECRET_BYTES)) {
       return false;
     }
 
     if (ciphertext.size() != 32 + KYBER_CIPHERTEXT_BYTES ||
         !X25519(secret.data(), x25519_private_key_, ciphertext.data())) {
-      *out_alert = SSL_AD_DECODE_ERROR;
+      *out_alert = SSL_AD_ILLEGAL_PARAMETER;
       OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_ECPOINT);
       return false;
     }
@@ -310,7 +310,8 @@ class X25519MLKEM768KeyShare : public SSLKeyShare {
   bool Encap(CBB *out_ciphertext, Array<uint8_t> *out_secret,
              uint8_t *out_alert, Span<const uint8_t> peer_key) override {
     Array<uint8_t> secret;
-    if (!secret.Init(MLKEM_SHARED_SECRET_BYTES + X25519_SHARED_KEY_LEN)) {
+    if (!secret.InitForOverwrite(MLKEM_SHARED_SECRET_BYTES +
+                                 X25519_SHARED_KEY_LEN)) {
       return false;
     }
 
@@ -327,7 +328,7 @@ class X25519MLKEM768KeyShare : public SSLKeyShare {
         CBS_len(&peer_key_cbs) != 0 ||
         !X25519(secret.data() + MLKEM_SHARED_SECRET_BYTES, x25519_private_key_,
                 CBS_data(&peer_x25519_cbs))) {
-      *out_alert = SSL_AD_DECODE_ERROR;
+      *out_alert = SSL_AD_ILLEGAL_PARAMETER;
       OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_ECPOINT);
       return false;
     }
@@ -351,7 +352,8 @@ class X25519MLKEM768KeyShare : public SSLKeyShare {
     *out_alert = SSL_AD_INTERNAL_ERROR;
 
     Array<uint8_t> secret;
-    if (!secret.Init(MLKEM_SHARED_SECRET_BYTES + X25519_SHARED_KEY_LEN)) {
+    if (!secret.InitForOverwrite(MLKEM_SHARED_SECRET_BYTES +
+                                 X25519_SHARED_KEY_LEN)) {
       return false;
     }
 
@@ -361,7 +363,7 @@ class X25519MLKEM768KeyShare : public SSLKeyShare {
                         MLKEM768_CIPHERTEXT_BYTES, &mlkem_private_key_) ||
         !X25519(secret.data() + MLKEM_SHARED_SECRET_BYTES, x25519_private_key_,
                 ciphertext.data() + MLKEM768_CIPHERTEXT_BYTES)) {
-      *out_alert = SSL_AD_DECODE_ERROR;
+      *out_alert = SSL_AD_ILLEGAL_PARAMETER;
       OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_ECPOINT);
       return false;
     }
@@ -815,9 +817,10 @@ bool ssl_nid_to_group_id(uint16_t *out_group_id, int nid) {
   return false;
 }
 
-bool ssl_name_to_group_id(uint16_t *out_group_id, const char *name, size_t len) {
+bool ssl_name_to_group_id(uint16_t *out_group_id, const char *name,
+                          size_t len) {
   for (const auto &group : kNamedGroups) {
-    if (len == strlen(group.name) &&
+    if (len == strlen(group.name) &&  //
         !strncmp(group.name, name, len)) {
       *out_group_id = group.group_id;
       return true;
@@ -844,7 +847,7 @@ BSSL_NAMESPACE_END
 
 using namespace bssl;
 
-const char* SSL_get_group_name(uint16_t group_id) {
+const char *SSL_get_group_name(uint16_t group_id) {
   for (const auto &group : kNamedGroups) {
     if (group.group_id == group_id) {
       return group.name;

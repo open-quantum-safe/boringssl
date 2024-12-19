@@ -1069,12 +1069,19 @@ func (m *clientHelloMsg) unmarshal(data []byte) bool {
 
 func decodeClientHelloInner(config *Config, encoded []byte, helloOuter *clientHelloMsg) (*clientHelloMsg, error) {
 	reader := cryptobyte.String(encoded)
-	var versAndRandom, sessionID, cipherSuites, compressionMethods []byte
+	var versAndRandom, sessionID, cookie, cipherSuites, compressionMethods []byte
 	var extensions cryptobyte.String
 	if !reader.ReadBytes(&versAndRandom, 2+32) ||
 		!readUint8LengthPrefixedBytes(&reader, &sessionID) ||
-		len(sessionID) != 0 || // Copied from |helloOuter|
-		!readUint16LengthPrefixedBytes(&reader, &cipherSuites) ||
+		len(sessionID) != 0 { // Copied from |helloOuter|
+		return nil, errors.New("tls: error parsing EncodedClientHelloInner")
+	}
+	if helloOuter.isDTLS {
+		if !readUint8LengthPrefixedBytes(&reader, &cookie) || len(cookie) != 0 {
+			return nil, errors.New("tls: error parsing EncodedClientHelloInner")
+		}
+	}
+	if !readUint16LengthPrefixedBytes(&reader, &cipherSuites) ||
 		!readUint8LengthPrefixedBytes(&reader, &compressionMethods) ||
 		!reader.ReadUint16LengthPrefixed(&extensions) {
 		return nil, errors.New("tls: error parsing EncodedClientHelloInner")
@@ -1093,6 +1100,9 @@ func decodeClientHelloInner(config *Config, encoded []byte, helloOuter *clientHe
 	builder.AddUint24LengthPrefixed(func(body *cryptobyte.Builder) {
 		body.AddBytes(versAndRandom)
 		addUint8LengthPrefixedBytes(body, helloOuter.sessionID)
+		if helloOuter.isDTLS {
+			addUint8LengthPrefixedBytes(body, cookie)
+		}
 		addUint16LengthPrefixedBytes(body, cipherSuites)
 		addUint8LengthPrefixedBytes(body, compressionMethods)
 		body.AddUint16LengthPrefixed(func(newExtensions *cryptobyte.Builder) {
@@ -1171,7 +1181,7 @@ func decodeClientHelloInner(config *Config, encoded []byte, helloOuter *clientHe
 		}
 	}
 
-	ret := new(clientHelloMsg)
+	ret := &clientHelloMsg{isDTLS: helloOuter.isDTLS}
 	if !ret.unmarshal(bytes) {
 		return nil, errors.New("tls: error parsing reconstructed ClientHello")
 	}
@@ -1792,6 +1802,7 @@ func (m *clientEncryptedExtensionsMsg) unmarshal(data []byte) bool {
 }
 
 type helloRetryRequestMsg struct {
+	isDTLS                bool
 	raw                   []byte
 	vers                  uint16
 	sessionID             []byte
@@ -1814,7 +1825,11 @@ func (m *helloRetryRequestMsg) marshal() []byte {
 	retryRequestMsg := cryptobyte.NewBuilder(nil)
 	retryRequestMsg.AddUint8(typeServerHello)
 	retryRequestMsg.AddUint24LengthPrefixed(func(retryRequest *cryptobyte.Builder) {
-		retryRequest.AddUint16(VersionTLS12)
+		legacyVersion := uint16(VersionTLS12)
+		if m.isDTLS {
+			legacyVersion = VersionDTLS12
+		}
+		retryRequest.AddUint16(legacyVersion)
 		retryRequest.AddBytes(tls13HelloRetryRequest)
 		addUint8LengthPrefixedBytes(retryRequest, m.sessionID)
 		retryRequest.AddUint16(m.cipherSuite)

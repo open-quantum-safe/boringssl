@@ -1,4 +1,4 @@
-/* Copyright (c) 2022, Google Inc.
+/* Copyright 2022 The BoringSSL Authors
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -25,8 +25,6 @@
 extern "C" {
 #endif
 
-
-#define OPENSSL_DH_MAX_MODULUS_BITS 10000
 
 struct dh_st {
   BIGNUM *p;

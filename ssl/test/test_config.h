@@ -1,4 +1,4 @@
-/* Copyright (c) 2014, Google Inc.
+/* Copyright 2014 The BoringSSL Authors
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -15,6 +15,7 @@
 #ifndef HEADER_TEST_CONFIG
 #define HEADER_TEST_CONFIG
 
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
@@ -96,7 +97,7 @@ struct TestConfig {
   bool select_empty_alpn = false;
   bool defer_alps = false;
   std::vector<std::pair<std::string, std::string>> application_settings;
-  std::unique_ptr<std::string> expect_peer_application_settings;
+  std::optional<std::string> expect_peer_application_settings;
   bool alps_use_new_codepoint = false;
   std::string quic_transport_params;
   std::string expect_quic_transport_params;
@@ -137,7 +138,9 @@ struct TestConfig {
   bool expect_no_offer_early_data = false;
   bool expect_no_server_name = false;
   bool use_ticket_callback = false;
+  bool use_ticket_aead_callback = false;
   bool renew_ticket = false;
+  bool skip_ticket = false;
   bool enable_early_data = false;
   std::string ocsp_response;
   bool check_close_notify = false;
@@ -207,6 +210,7 @@ struct TestConfig {
   bool server_preference = false;
   bool export_traffic_secrets = false;
   bool key_update = false;
+  bool key_update_before_read = false;
   std::string expect_early_data_reason;
   bool expect_hrr = false;
   bool expect_no_hrr = false;
@@ -220,6 +224,7 @@ struct TestConfig {
   bool no_check_ecdsa_curve = false;
   int expect_selected_credential = -1;
   std::vector<CredentialConfig> credentials;
+  int private_key_delay_ms = 0;
 
   std::vector<const char*> handshaker_args;
 

@@ -1,4 +1,4 @@
-/* Copyright (c) 2020, Google Inc.
+/* Copyright 2020 The BoringSSL Authors
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -41,8 +41,6 @@ struct dsa_st {
   CRYPTO_refcount_t references;
   CRYPTO_EX_DATA ex_data;
 };
-
-#define OPENSSL_DSA_MAX_MODULUS_BITS 10000
 
 // dsa_check_key performs cheap self-checks on |dsa|, and ensures it is within
 // DoS bounds. It returns one on success and zero on error.

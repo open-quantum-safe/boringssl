@@ -1,4 +1,4 @@
-/* Copyright (c) 2023, Google Inc.
+/* Copyright 2023 The BoringSSL Authors
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -18,14 +18,18 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/hex"
-	"golang.org/x/crypto/sha3"
+	"flag"
 	"os"
 	"strings"
 	"testing"
+
+	"golang.org/x/crypto/sha3"
 )
 
+var testVectorsPath = flag.String("test-vectors", "../../../../crypto/kyber/kyber_tests.txt", "The path to the test vectors to use")
+
 func TestVectors(t *testing.T) {
-	in, err := os.Open("../../../../crypto/kyber/kyber_tests.txt")
+	in, err := os.Open(*testVectorsPath)
 	if err != nil {
 		t.Error(err)
 		return

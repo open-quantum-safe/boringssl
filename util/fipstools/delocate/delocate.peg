@@ -1,4 +1,4 @@
-# Copyright (c) 2017, Google Inc.
+# Copyright 2017 The BoringSSL Authors
 #
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -77,8 +77,10 @@ AVX512Token <- WS? '{' '%'? [0-9a-z]* '}'
 TOCRefHigh <- '.TOC.-' ('0b' / ('.L' [a-zA-Z_0-9]+)) "@ha"
 TOCRefLow <- '.TOC.-' ('0b' / ('.L' [a-zA-Z_0-9]+)) "@l"
 IndirectionIndicator <- '*'
+Float <- [0-9]+ '.' [0-9]*
 RegisterOrConstant <- (('%'[[A-Z]][[A-Z0-9]]*) /
                        ('$'? ((Offset Offset) / Offset)) /
+                       ('#' Float ) /
                        ('#' Offset ('*' [0-9]+ ('-' [0-9] [0-9]*)?)? ) /
                        ('#' '~'? '(' [0-9] WS? "<<" WS? [0-9] ')' ) /
                        ARMRegister)
