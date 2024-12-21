@@ -126,6 +126,8 @@ BSSL_NAMESPACE_BEGIN
 
 SSL_HANDSHAKE::SSL_HANDSHAKE(SSL *ssl_arg)
     : ssl(ssl_arg),
+      transcript(SSL_is_dtls(ssl_arg)),
+      inner_transcript(SSL_is_dtls(ssl_arg)),
       ech_is_inner(false),
       ech_authenticated_reject(false),
       scts_requested(false),
@@ -140,6 +142,7 @@ SSL_HANDSHAKE::SSL_HANDSHAKE(SSL *ssl_arg)
       early_data_offered(false),
       can_early_read(false),
       can_early_write(false),
+      is_early_version(false),
       next_proto_neg_seen(false),
       ticket_expected(false),
       extended_master_secret(false),
@@ -149,7 +152,8 @@ SSL_HANDSHAKE::SSL_HANDSHAKE(SSL *ssl_arg)
       cert_compression_negotiated(false),
       apply_jdk11_workaround(false),
       can_release_private_key(false),
-      channel_id_negotiated(false) {
+      channel_id_negotiated(false),
+      received_hello_verify_request(false) {
   assert(ssl);
 
   // Draw entropy for all GREASE values at once. This avoids calling
@@ -163,13 +167,6 @@ SSL_HANDSHAKE::~SSL_HANDSHAKE() {
   ssl->ctx->x509_method->hs_flush_cached_ca_names(this);
 }
 
-void SSL_HANDSHAKE::ResizeSecrets(size_t hash_len) {
-  if (hash_len > SSL_MAX_MD_SIZE) {
-    abort();
-  }
-  hash_len_ = hash_len;
-}
-
 bool SSL_HANDSHAKE::GetClientHello(SSLMessage *out_msg,
                                    SSL_CLIENT_HELLO *out_client_hello) {
   if (!ech_client_hello_buf.empty()) {
@@ -177,7 +174,9 @@ bool SSL_HANDSHAKE::GetClientHello(SSLMessage *out_msg,
     out_msg->is_v2_hello = false;
     out_msg->type = SSL3_MT_CLIENT_HELLO;
     out_msg->raw = CBS(ech_client_hello_buf);
-    out_msg->body = MakeConstSpan(ech_client_hello_buf).subspan(4);
+    size_t header_len =
+        SSL_is_dtls(ssl) ? DTLS1_HM_HEADER_LENGTH : SSL3_HM_HEADER_LENGTH;
+    out_msg->body = MakeConstSpan(ech_client_hello_buf).subspan(header_len);
   } else if (!ssl->method->get_message(ssl, out_msg)) {
     // The message has already been read, so this cannot fail.
     OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
@@ -496,18 +495,18 @@ enum ssl_hs_wait_t ssl_get_finished(SSL_HANDSHAKE *hs) {
   }
 
   // Copy the Finished so we can use it for renegotiation checks.
-  if (finished_len > sizeof(ssl->s3->previous_client_finished) ||
-      finished_len > sizeof(ssl->s3->previous_server_finished)) {
+  if (finished_len > ssl->s3->previous_client_finished.capacity() ||
+      finished_len > ssl->s3->previous_server_finished.capacity()) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
     return ssl_hs_error;
   }
 
   if (ssl->server) {
-    OPENSSL_memcpy(ssl->s3->previous_client_finished, finished, finished_len);
-    ssl->s3->previous_client_finished_len = finished_len;
+    ssl->s3->previous_client_finished.CopyFrom(
+        MakeConstSpan(finished, finished_len));
   } else {
-    OPENSSL_memcpy(ssl->s3->previous_server_finished, finished, finished_len);
-    ssl->s3->previous_server_finished_len = finished_len;
+    ssl->s3->previous_server_finished.CopyFrom(
+        MakeConstSpan(finished, finished_len));
   }
 
   // The Finished message should be the end of a flight.
@@ -525,38 +524,32 @@ bool ssl_send_finished(SSL_HANDSHAKE *hs) {
   SSL *const ssl = hs->ssl;
   const SSL_SESSION *session = ssl_handshake_session(hs);
 
-  uint8_t finished[EVP_MAX_MD_SIZE];
+  uint8_t finished_buf[EVP_MAX_MD_SIZE];
   size_t finished_len;
-  if (!hs->transcript.GetFinishedMAC(finished, &finished_len, session,
+  if (!hs->transcript.GetFinishedMAC(finished_buf, &finished_len, session,
                                      ssl->server)) {
     return false;
   }
+  auto finished = MakeConstSpan(finished_buf, finished_len);
 
   // Log the master secret, if logging is enabled.
-  if (!ssl_log_secret(ssl, "CLIENT_RANDOM",
-                      MakeConstSpan(session->secret, session->secret_length))) {
+  if (!ssl_log_secret(ssl, "CLIENT_RANDOM", session->secret)) {
     return false;
   }
 
   // Copy the Finished so we can use it for renegotiation checks.
-  if (finished_len > sizeof(ssl->s3->previous_client_finished) ||
-      finished_len > sizeof(ssl->s3->previous_server_finished)) {
+  bool ok = ssl->server
+                ? ssl->s3->previous_server_finished.TryCopyFrom(finished)
+                : ssl->s3->previous_client_finished.TryCopyFrom(finished);
+  if (!ok) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
-    return false;
-  }
-
-  if (ssl->server) {
-    OPENSSL_memcpy(ssl->s3->previous_server_finished, finished, finished_len);
-    ssl->s3->previous_server_finished_len = finished_len;
-  } else {
-    OPENSSL_memcpy(ssl->s3->previous_client_finished, finished, finished_len);
-    ssl->s3->previous_client_finished_len = finished_len;
+    return ssl_hs_error;
   }
 
   ScopedCBB cbb;
   CBB body;
   if (!ssl->method->init_message(ssl, cbb.get(), &body, SSL3_MT_FINISHED) ||
-      !CBB_add_bytes(&body, finished, finished_len) ||
+      !CBB_add_bytes(&body, finished.data(), finished.size()) ||
       !ssl_add_message_cbb(ssl, cbb.get())) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
     return false;
@@ -600,6 +593,16 @@ const SSL_SESSION *ssl_handshake_session(const SSL_HANDSHAKE *hs) {
 int ssl_run_handshake(SSL_HANDSHAKE *hs, bool *out_early_return) {
   SSL *const ssl = hs->ssl;
   for (;;) {
+    // If a timeout during the handshake triggered a DTLS ACK or retransmit, we
+    // resolve that first. E.g., if |ssl_hs_private_key_operation| is slow, the
+    // ACK timer may fire.
+    if (hs->wait != ssl_hs_error && SSL_is_dtls(ssl)) {
+      int ret = ssl->method->flush(ssl);
+      if (ret <= 0) {
+        return ret;
+      }
+    }
+
     // Resolve the operation the handshake was waiting on. Each condition may
     // halt the handshake by returning, or continue executing if the handshake
     // may immediately proceed. Cases which halt the handshake can clear
@@ -611,7 +614,7 @@ int ssl_run_handshake(SSL_HANDSHAKE *hs, bool *out_early_return) {
         return -1;
 
       case ssl_hs_flush: {
-        int ret = ssl->method->flush_flight(ssl);
+        int ret = ssl->method->flush(ssl);
         if (ret <= 0) {
           return ret;
         }
@@ -621,7 +624,7 @@ int ssl_run_handshake(SSL_HANDSHAKE *hs, bool *out_early_return) {
       case ssl_hs_read_server_hello:
       case ssl_hs_read_message:
       case ssl_hs_read_change_cipher_spec: {
-        if (ssl->quic_method) {
+        if (SSL_is_quic(ssl)) {
           // QUIC has no ChangeCipherSpec messages.
           assert(hs->wait != ssl_hs_read_change_cipher_spec);
           // The caller should call |SSL_provide_quic_data|. Clear |hs->wait| so
@@ -689,7 +692,7 @@ int ssl_run_handshake(SSL_HANDSHAKE *hs, bool *out_early_return) {
         return -1;
 
       case ssl_hs_handback: {
-        int ret = ssl->method->flush_flight(ssl);
+        int ret = ssl->method->flush(ssl);
         if (ret <= 0) {
           return ret;
         }
@@ -761,9 +764,14 @@ int ssl_run_handshake(SSL_HANDSHAKE *hs, bool *out_early_return) {
       *out_early_return = false;
       return 1;
     }
+    // If the handshake returns |ssl_hs_flush|, implicitly finish the flight.
+    // This is a convenience so we do not need to manually insert this
+    // throughout the handshake.
+    if (hs->wait == ssl_hs_flush) {
+      ssl->method->finish_flight(ssl);
+    }
 
-    // Otherwise, loop to the beginning and resolve what was blocking the
-    // handshake.
+    // Loop to the beginning and resolve what was blocking the handshake.
   }
 }
 

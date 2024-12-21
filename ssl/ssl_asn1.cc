@@ -216,9 +216,10 @@ static int SSL_SESSION_to_bytes_full(const SSL_SESSION *in, CBB *cbb,
       !CBB_add_asn1(&session, &child, CBS_ASN1_OCTETSTRING) ||
       !CBB_add_u16(&child, (uint16_t)(in->cipher->id & 0xffff)) ||
       // The session ID is irrelevant for a session ticket.
-      !CBB_add_asn1_octet_string(&session, in->session_id,
-                                 for_ticket ? 0 : in->session_id_length) ||
-      !CBB_add_asn1_octet_string(&session, in->secret, in->secret_length) ||
+      !CBB_add_asn1_octet_string(&session, in->session_id.data(),
+                                 for_ticket ? 0 : in->session_id.size()) ||
+      !CBB_add_asn1_octet_string(&session, in->secret.data(),
+                                 in->secret.size()) ||
       !CBB_add_asn1(&session, &child, kTimeTag) ||
       !CBB_add_asn1_uint64(&child, in->time) ||
       !CBB_add_asn1(&session, &child, kTimeoutTag) ||
@@ -240,7 +241,8 @@ static int SSL_SESSION_to_bytes_full(const SSL_SESSION *in, CBB *cbb,
   // Although it is OPTIONAL and usually empty, OpenSSL has
   // historically always encoded the sid_ctx.
   if (!CBB_add_asn1(&session, &child, kSessionIDContextTag) ||
-      !CBB_add_asn1_octet_string(&child, in->sid_ctx, in->sid_ctx_length)) {
+      !CBB_add_asn1_octet_string(&child, in->sid_ctx.data(),
+                                 in->sid_ctx.size())) {
     return 0;
   }
 
@@ -283,10 +285,10 @@ static int SSL_SESSION_to_bytes_full(const SSL_SESSION *in, CBB *cbb,
     }
   }
 
-  if (in->original_handshake_hash_len > 0) {
+  if (!in->original_handshake_hash.empty()) {
     if (!CBB_add_asn1(&session, &child, kOriginalHandshakeHashTag) ||
-        !CBB_add_asn1_octet_string(&child, in->original_handshake_hash,
-                                   in->original_handshake_hash_len)) {
+        !CBB_add_asn1_octet_string(&child, in->original_handshake_hash.data(),
+                                   in->original_handshake_hash.size())) {
       return 0;
     }
   }
@@ -316,16 +318,16 @@ static int SSL_SESSION_to_bytes_full(const SSL_SESSION *in, CBB *cbb,
     }
   }
 
-  if (in->group_id > 0 &&
-      (!CBB_add_asn1(&session, &child, kGroupIDTag) ||
+  if (in->group_id > 0 &&                               //
+      (!CBB_add_asn1(&session, &child, kGroupIDTag) ||  //
        !CBB_add_asn1_uint64(&child, in->group_id))) {
     return 0;
   }
 
   // The certificate chain is only serialized if the leaf's SHA-256 isn't
   // serialized instead.
-  if (in->certs != NULL &&
-      !in->peer_sha256_valid &&
+  if (in->certs != NULL &&       //
+      !in->peer_sha256_valid &&  //
       sk_CRYPTO_BUFFER_num(in->certs.get()) >= 2) {
     if (!CBB_add_asn1(&session, &child, kCertChainTag)) {
       return 0;
@@ -473,23 +475,6 @@ static int SSL_SESSION_parse_crypto_buffer(CBS *cbs,
   return 1;
 }
 
-// SSL_SESSION_parse_bounded_octet_string parses an optional ASN.1 OCTET STRING
-// explicitly tagged with |tag| of size at most |max_out|.
-static int SSL_SESSION_parse_bounded_octet_string(CBS *cbs, uint8_t *out,
-                                                  uint8_t *out_len,
-                                                  uint8_t max_out,
-                                                  CBS_ASN1_TAG tag) {
-  CBS value;
-  if (!CBS_get_optional_asn1_octet_string(cbs, &value, NULL, tag) ||
-      CBS_len(&value) > max_out) {
-    OPENSSL_PUT_ERROR(SSL, SSL_R_INVALID_SSL_SESSION);
-    return 0;
-  }
-  OPENSSL_memcpy(out, CBS_data(&value), CBS_len(&value));
-  *out_len = static_cast<uint8_t>(CBS_len(&value));
-  return 1;
-}
-
 static int SSL_SESSION_parse_long(CBS *cbs, long *out, CBS_ASN1_TAG tag,
                                   long default_value) {
   uint64_t value;
@@ -540,15 +525,15 @@ UniquePtr<SSL_SESSION> SSL_SESSION_parse(CBS *cbs,
   CBS session;
   uint64_t version, ssl_version;
   uint16_t unused;
-  if (!CBS_get_asn1(cbs, &session, CBS_ASN1_SEQUENCE) ||
-      !CBS_get_asn1_uint64(&session, &version) ||
-      version != kVersion ||
-      !CBS_get_asn1_uint64(&session, &ssl_version) ||
+  if (!CBS_get_asn1(cbs, &session, CBS_ASN1_SEQUENCE) ||  //
+      !CBS_get_asn1_uint64(&session, &version) ||         //
+      version != kVersion ||                              //
+      !CBS_get_asn1_uint64(&session, &ssl_version) ||     //
       // Require sessions have versions valid in either TLS or DTLS. The session
       // will not be used by the handshake if not applicable, but, for
       // simplicity, never parse a session that does not pass
       // |ssl_protocol_version_from_wire|.
-      ssl_version > UINT16_MAX ||
+      ssl_version > UINT16_MAX ||  //
       !ssl_protocol_version_from_wire(&unused, ssl_version)) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_INVALID_SSL_SESSION);
     return nullptr;
@@ -557,8 +542,8 @@ UniquePtr<SSL_SESSION> SSL_SESSION_parse(CBS *cbs,
 
   CBS cipher;
   uint16_t cipher_value;
-  if (!CBS_get_asn1(&session, &cipher, CBS_ASN1_OCTETSTRING) ||
-      !CBS_get_u16(&cipher, &cipher_value) ||
+  if (!CBS_get_asn1(&session, &cipher, CBS_ASN1_OCTETSTRING) ||  //
+      !CBS_get_u16(&cipher, &cipher_value) ||                    //
       CBS_len(&cipher) != 0) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_INVALID_SSL_SESSION);
     return nullptr;
@@ -569,29 +554,16 @@ UniquePtr<SSL_SESSION> SSL_SESSION_parse(CBS *cbs,
     return nullptr;
   }
 
-  CBS session_id, secret;
-  if (!CBS_get_asn1(&session, &session_id, CBS_ASN1_OCTETSTRING) ||
-      CBS_len(&session_id) > SSL3_MAX_SSL_SESSION_ID_LENGTH ||
-      !CBS_get_asn1(&session, &secret, CBS_ASN1_OCTETSTRING) ||
-      CBS_len(&secret) > SSL_MAX_MASTER_KEY_LENGTH) {
-    OPENSSL_PUT_ERROR(SSL, SSL_R_INVALID_SSL_SESSION);
-    return nullptr;
-  }
-  OPENSSL_memcpy(ret->session_id, CBS_data(&session_id), CBS_len(&session_id));
-  static_assert(SSL3_MAX_SSL_SESSION_ID_LENGTH <= UINT8_MAX,
-                "max session ID is too large");
-  ret->session_id_length = static_cast<uint8_t>(CBS_len(&session_id));
-  OPENSSL_memcpy(ret->secret, CBS_data(&secret), CBS_len(&secret));
-  static_assert(SSL_MAX_MASTER_KEY_LENGTH <= UINT8_MAX,
-                "max secret is too large");
-  ret->secret_length = static_cast<uint8_t>(CBS_len(&secret));
-
-  CBS child;
+  CBS session_id, secret, child;
   uint64_t timeout;
-  if (!CBS_get_asn1(&session, &child, kTimeTag) ||
+  if (!CBS_get_asn1(&session, &session_id, CBS_ASN1_OCTETSTRING) ||
+      !ret->session_id.TryCopyFrom(session_id) ||
+      !CBS_get_asn1(&session, &secret, CBS_ASN1_OCTETSTRING) ||
+      !ret->secret.TryCopyFrom(secret) ||
+      !CBS_get_asn1(&session, &child, kTimeTag) ||
       !CBS_get_asn1_uint64(&child, &ret->time) ||
       !CBS_get_asn1(&session, &child, kTimeoutTag) ||
-      !CBS_get_asn1_uint64(&child, &timeout) ||
+      !CBS_get_asn1_uint64(&child, &timeout) ||  //
       timeout > UINT32_MAX) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_INVALID_SSL_SESSION);
     return nullptr;
@@ -608,9 +580,10 @@ UniquePtr<SSL_SESSION> SSL_SESSION_parse(CBS *cbs,
   }
   // |peer| is processed with the certificate chain.
 
-  if (!SSL_SESSION_parse_bounded_octet_string(
-          &session, ret->sid_ctx, &ret->sid_ctx_length, sizeof(ret->sid_ctx),
-          kSessionIDContextTag) ||
+  CBS sid_ctx;
+  if (!CBS_get_optional_asn1_octet_string(
+          &session, &sid_ctx, /*out_present=*/nullptr, kSessionIDContextTag) ||
+      !ret->sid_ctx.TryCopyFrom(sid_ctx) ||
       !SSL_SESSION_parse_long(&session, &ret->verify_result, kVerifyResultTag,
                               X509_V_OK)) {
     return nullptr;
@@ -648,10 +621,11 @@ UniquePtr<SSL_SESSION> SSL_SESSION_parse(CBS *cbs,
     ret->peer_sha256_valid = false;
   }
 
-  if (!SSL_SESSION_parse_bounded_octet_string(
-          &session, ret->original_handshake_hash,
-          &ret->original_handshake_hash_len,
-          sizeof(ret->original_handshake_hash), kOriginalHandshakeHashTag) ||
+  CBS original_handshake_hash;
+  if (!CBS_get_optional_asn1_octet_string(&session, &original_handshake_hash,
+                                          /*out_present=*/nullptr,
+                                          kOriginalHandshakeHashTag) ||
+      !ret->original_handshake_hash.TryCopyFrom(original_handshake_hash) ||
       !SSL_SESSION_parse_crypto_buffer(&session,
                                        &ret->signed_cert_timestamp_list,
                                        kSignedCertTimestampListTag, pool) ||
@@ -695,7 +669,7 @@ UniquePtr<SSL_SESSION> SSL_SESSION_parse(CBS *cbs,
 
     if (has_peer) {
       UniquePtr<CRYPTO_BUFFER> buffer(CRYPTO_BUFFER_new_from_CBS(&peer, pool));
-      if (!buffer ||
+      if (!buffer ||  //
           !PushToStack(ret->certs.get(), std::move(buffer))) {
         return nullptr;
       }
@@ -721,8 +695,8 @@ UniquePtr<SSL_SESSION> SSL_SESSION_parse(CBS *cbs,
   int age_add_present;
   if (!CBS_get_optional_asn1_octet_string(&session, &age_add, &age_add_present,
                                           kTicketAgeAddTag) ||
-      (age_add_present &&
-       !CBS_get_u32(&age_add, &ret->ticket_age_add)) ||
+      (age_add_present &&                                //
+       !CBS_get_u32(&age_add, &ret->ticket_age_add)) ||  //
       CBS_len(&age_add) != 0) {
     return nullptr;
   }

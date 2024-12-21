@@ -1,4 +1,4 @@
-/* Copyright (c) 2019, Google Inc.
+/* Copyright 2019 The BoringSSL Authors
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -15,12 +15,14 @@
 #include <gtest/gtest.h>
 #include <stdlib.h>
 
+#include <optional>
+
 #include <openssl/bytestring.h>
 #include <openssl/ctrdrbg.h>
 #include <openssl/rand.h>
 
-#include "getrandom_fillin.h"
 #include "../internal.h"
+#include "getrandom_fillin.h"
 
 
 // OQS note: Check top level CMakeLists.txt for the reason for OQS_RUN_URANDOM_TESTS
@@ -37,6 +39,8 @@
 #include <sys/uio.h>
 #include <sys/un.h>
 #include <sys/user.h>
+
+namespace {
 
 #if !defined(PTRACE_O_EXITKILL)
 #define PTRACE_O_EXITKILL (1 << 20)
@@ -79,8 +83,9 @@ struct Event {
   explicit Event(Syscall syscall) : type(syscall) {}
 
   bool operator==(const Event &other) const {
-    return type == other.type && length == other.length &&
-           flags == other.flags &&
+    return type == other.type &&      //
+           length == other.length &&  //
+           flags == other.flags &&    //
            filename == other.filename;
   }
 
@@ -304,30 +309,6 @@ static bool regs_break_syscall(int child_pid, const struct regs *orig_regs) {
 
 #endif
 
-// SyscallResult is like std::optional<int>.
-// TODO: use std::optional when we can use C++17.
-class SyscallResult {
- public:
-  SyscallResult &operator=(int value) {
-    has_value_ = true;
-    value_ = value;
-    return *this;
-  }
-
-  int value() const {
-    if (!has_value_) {
-      abort();
-    }
-    return value_;
-  }
-
-  bool has_value() const { return has_value_; }
-
- private:
-  bool has_value_ = false;
-  int value_ = 0;
-};
-
 // memcpy_to_remote copies |n| bytes from |in_src| in the local address space,
 // to |dest| in the address space of |child_pid|.
 static void memcpy_to_remote(int child_pid, uint64_t dest, const void *in_src,
@@ -470,7 +451,7 @@ static void GetTrace(std::vector<Event> *out_trace, unsigned flags,
     // force_result is unset to indicate that the system call should run
     // normally. Otherwise it's, e.g. -EINVAL, to indicate that the system call
     // should not run and that the given value should be injected on return.
-    SyscallResult force_result;
+    std::optional<int> force_result;
 
     switch (regs.syscall) {
       case __NR_getrandom:
@@ -494,7 +475,8 @@ static void GetTrace(std::vector<Event> *out_trace, unsigned flags,
       {
         uintptr_t filename_ptr =
             (regs.syscall == __NR_openat) ? regs.args[1] : regs.args[0];
-        const std::string filename = get_string_from_remote(child_pid, filename_ptr);
+        const std::string filename =
+            get_string_from_remote(child_pid, filename_ptr);
         if (filename.find("/dev/__properties__/") == 0) {
           // Android may try opening these files as part of SELinux support.
           // They are ignored here.
@@ -724,7 +706,7 @@ static std::vector<Event> TestFunctionPRNGModel(unsigned flags) {
       }
       used_daemon = kUsesDaemon && AppendDaemonEvents(&ret, flags);
     }
-    if (// Initialise CRNGT.
+    if (  // Initialise CRNGT.
         (!used_daemon && !sysrand(true, kSeedLength + (kIsFIPS ? 16 : 0))) ||
         // Personalisation draw if the daemon was used.
         (used_daemon && !sysrand(false, CTR_DRBG_ENTROPY_LEN)) ||
@@ -796,7 +778,7 @@ TEST(URandomTest, Test) {
     }
 
     if (!has_getrandom && !(flags & NO_GETRANDOM)) {
-        continue;
+      continue;
     }
 
     TRACE_FLAG(NO_GETRANDOM);
@@ -820,6 +802,8 @@ TEST(URandomTest, Test) {
     }
   }
 }
+
+}  // namespace
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);

@@ -1,4 +1,4 @@
-/* Copyright (c) 2015, Google Inc.
+/* Copyright 2015 The BoringSSL Authors
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -316,9 +316,7 @@ TEST(AESTest, ABI) {
         CHECK_ABI(vpaes_cbc_encrypt, buf, buf, AES_BLOCK_SIZE * blocks, &key,
                   block, AES_ENCRYPT);
 #endif
-#if defined(VPAES_CTR32)
         CHECK_ABI(vpaes_ctr32_encrypt_blocks, buf, buf, blocks, &key, block);
-#endif
       }
 
       ASSERT_EQ(CHECK_ABI(vpaes_set_decrypt_key, kKey, bits, &key), 0);

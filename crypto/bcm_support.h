@@ -1,4 +1,4 @@
-/* Copyright (c) 2024, Google Inc.
+/* Copyright 2024 The BoringSSL Authors
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -16,6 +16,8 @@
 #define OPENSSL_HEADER_CRYPTO_BCM_SUPPORT_H
 
 #include <openssl/base.h>
+
+#include <stdio.h>
 
 // Provided by libcrypto, called from BCM
 
@@ -104,6 +106,10 @@ OPENSSL_EXPORT uint64_t CRYPTO_get_fork_generation(void);
 // used for testing purposes.
 OPENSSL_EXPORT void CRYPTO_fork_detect_force_madv_wipeonfork_for_testing(
     int on);
+
+// CRYPTO_get_stderr returns stderr. This function exists to avoid BCM needing
+// a data dependency on libc.
+FILE *CRYPTO_get_stderr(void);
 
 
 #if defined(__cplusplus)
