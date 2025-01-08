@@ -158,6 +158,11 @@ OPENSSL_EXPORT int CBS_get_u16_length_prefixed(CBS *cbs, CBS *out);
 // returns one on success and zero on error.
 OPENSSL_EXPORT int CBS_get_u24_length_prefixed(CBS *cbs, CBS *out);
 
+// CBS_get_u32_length_prefixed sets |*out| to the contents of a 32-bit,
+// big-endian, length-prefixed value from |cbs| and advances |cbs| over it. It
+// returns one on success and zero on error.
+OPENSSL_EXPORT int CBS_get_u32_length_prefixed(CBS *cbs, CBS *out);
+
 // CBS_get_until_first finds the first instance of |c| in |cbs|. If found, it
 // sets |*out| to the text before the match, advances |cbs| over it, and returns
 // one. Otherwise, it returns zero and leaves |cbs| unmodified.
@@ -519,6 +524,11 @@ OPENSSL_EXPORT int CBB_add_u16_length_prefixed(CBB *cbb, CBB *out_contents);
 // The data written to |*out_contents| will be prefixed in |cbb| with a 24-bit,
 // big-endian length. It returns one on success or zero on error.
 OPENSSL_EXPORT int CBB_add_u24_length_prefixed(CBB *cbb, CBB *out_contents);
+
+// CBB_add_u32_length_prefixed sets |*out_contents| to a new child of |cbb|.
+// The data written to |*out_contents| will be prefixed in |cbb| with a 32-bit,
+// big-endian length. It returns one on success or zero on error.
+OPENSSL_EXPORT int CBB_add_u32_length_prefixed(CBB *cbb, CBB *out_contents);
 
 // CBB_add_asn1 sets |*out_contents| to a |CBB| into which the contents of an
 // ASN.1 object can be written. The |tag| argument will be used as the tag for

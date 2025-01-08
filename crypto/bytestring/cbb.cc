@@ -335,6 +335,10 @@ int CBB_add_u24_length_prefixed(CBB *cbb, CBB *out_contents) {
   return cbb_add_length_prefixed(cbb, out_contents, 3);
 }
 
+int CBB_add_u32_length_prefixed(CBB *cbb, CBB *out_contents) {
+  return cbb_add_length_prefixed(cbb, out_contents, 4);
+}
+
 // add_base128_integer encodes |v| as a big-endian base-128 integer where the
 // high bit of each byte indicates where there is more data. This is the
 // encoding used in DER for both high tag number form and OID components.

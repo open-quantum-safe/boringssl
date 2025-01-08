@@ -124,6 +124,64 @@ void oqs_pkey_ctx_free(OQS_KEY *key) {
     return ALG##_set_priv_raw(out, CBS_data(&inner), CBS_len(&inner));         \
   }
 
+#define DEFINE_OQS_PRIV_ENCODE(ALG)                                            \
+  static int ALG##_priv_encode(CBB *out, const EVP_PKEY *pkey) {               \
+    const OQS_KEY *key = reinterpret_cast<const OQS_KEY *>(pkey->pkey);        \
+    if (!key->has_private) {                                                   \
+      OPENSSL_PUT_ERROR(EVP, EVP_R_NOT_A_PRIVATE_KEY);                         \
+      return 0;                                                                \
+    }                                                                          \
+    int is_hybrid = (key->classical_pkey != NULL);                             \
+    CBB pkcs8, alg, oid, private_key, inner;                                   \
+    uint8_t *classical_key = NULL;                                             \
+    size_t classical_key_size = 0;                                             \
+    if (is_hybrid) {                                                           \
+      CBB classical, child;                                                    \
+      uint8_t *tmp = NULL;                                                     \
+      int tmp_int = i2d_PrivateKey(key->classical_pkey, &tmp);                 \
+      if (tmp_int < 0) {                                                       \
+        OPENSSL_PUT_ERROR(EVP, EVP_R_ENCODE_ERROR);                            \
+        return 0;                                                              \
+      }                                                                        \
+      classical_key_size = tmp_int;                                            \
+      if (!CBB_init(&classical, 128 /* initial capacity */) ||                 \
+          !CBB_add_u32_length_prefixed(&classical, &child) ||                  \
+          !CBB_add_bytes(&child, tmp, classical_key_size) ||                   \
+          !CBB_finish(&classical, &classical_key, &classical_key_size)) {      \
+        OPENSSL_PUT_ERROR(EVP, EVP_R_ENCODE_ERROR);                            \
+        OPENSSL_free(tmp);                                                     \
+        return 0;                                                              \
+      }                                                                        \
+      OPENSSL_free(tmp);                                                       \
+    }                                                                          \
+    if (!CBB_add_asn1(out, &pkcs8, CBS_ASN1_SEQUENCE) ||                       \
+        !CBB_add_asn1_uint64(&pkcs8, 0 /* version */) ||                       \
+        !CBB_add_asn1(&pkcs8, &alg, CBS_ASN1_SEQUENCE) ||                      \
+        !CBB_add_asn1(&alg, &oid, CBS_ASN1_OBJECT) ||                          \
+        !CBB_add_bytes(&oid, ALG##_asn1_meth.oid, ALG##_asn1_meth.oid_len) ||  \
+        !CBB_add_asn1(&pkcs8, &private_key, CBS_ASN1_OCTETSTRING) ||           \
+        !CBB_add_asn1(&private_key, &inner, CBS_ASN1_OCTETSTRING)) {           \
+      OPENSSL_PUT_ERROR(EVP, EVP_R_ENCODE_ERROR);                              \
+      OPENSSL_free(classical_key);                                             \
+      return 0;                                                                \
+    }                                                                          \
+    if (is_hybrid &&                                                           \
+        !CBB_add_bytes(&inner, classical_key, classical_key_size)) {           \
+      OPENSSL_PUT_ERROR(EVP, EVP_R_ENCODE_ERROR);                              \
+      OPENSSL_free(classical_key);                                             \
+      return 0;                                                                \
+    }                                                                          \
+    if (!CBB_add_bytes(&inner, key->priv, key->ctx->length_secret_key) ||      \
+        !CBB_add_bytes(&inner, key->pub, key->ctx->length_public_key) ||       \
+        !CBB_flush(out)) {                                                     \
+      OPENSSL_PUT_ERROR(EVP, EVP_R_ENCODE_ERROR);                              \
+      OPENSSL_free(classical_key);                                             \
+      return 0;                                                                \
+    }                                                                          \
+    OPENSSL_free(classical_key);                                               \
+    return 1;                                                                  \
+  }
+
 #define DEFINE_OQS_SET_PUB_RAW(ALG, OQS_METH)                                  \
   static int ALG##_set_pub_raw(EVP_PKEY *pkey, const uint8_t *in,              \
                                size_t len) {                                   \
@@ -408,6 +466,7 @@ end:
 #define DEFINE_OQS_ASN1_METHODS(ALG, OQS_METH, ALG_PKEY)                       \
   DEFINE_OQS_SET_PRIV_RAW(ALG, OQS_METH)                                       \
   DEFINE_OQS_PRIV_DECODE(ALG)                                                  \
+  DEFINE_OQS_PRIV_ENCODE(ALG)                                                  \
   DEFINE_OQS_SET_PUB_RAW(ALG, OQS_METH)                                        \
   DEFINE_OQS_PUB_DECODE(ALG)                                                   \
   DEFINE_OQS_PUB_ENCODE(ALG)
@@ -422,11 +481,11 @@ end:
       ALG##_pub_encode /* pub_encode */,                                       \
       oqs_pub_cmp,                                                             \
       ALG##_priv_decode,                                                       \
-      NULL /* priv_encode */,                                                  \
+      ALG##_priv_encode,                                                       \
       ALG##_set_priv_raw,                                                      \
       ALG##_set_pub_raw,                                                       \
       NULL /* get_priv_raw */,                                                 \
-      NULL /* get_pub_raw */,                                                  \
+      NULL,                                                       \
       NULL /* int set1_tls_encodedpoint */,                                    \
       NULL /* size_t set1_tls_encodedpoint */,                                 \
       NULL /* pkey_opaque */,                                                  \

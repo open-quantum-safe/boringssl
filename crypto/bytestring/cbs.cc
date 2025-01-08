@@ -204,6 +204,10 @@ int CBS_get_u24_length_prefixed(CBS *cbs, CBS *out) {
   return cbs_get_length_prefixed(cbs, out, 3);
 }
 
+int CBS_get_u32_length_prefixed(CBS *cbs, CBS *out) {
+  return cbs_get_length_prefixed(cbs, out, 4);
+}
+
 int CBS_get_until_first(CBS *cbs, CBS *out, uint8_t c) {
   const uint8_t *split = reinterpret_cast<const uint8_t *>(
       OPENSSL_memchr(CBS_data(cbs), c, CBS_len(cbs)));
