@@ -249,6 +249,7 @@ set(
   tool/file.cc
   tool/generate_ech.cc
   tool/generate_ed25519.cc
+  tool/genpkey.cc
   tool/genrsa.cc
   tool/pkcs12.cc
   tool/rand.cc

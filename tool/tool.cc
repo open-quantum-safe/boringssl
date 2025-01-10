@@ -48,6 +48,7 @@ static const Tool kTools[] = {
   { "isfips", IsFIPS },
   { "generate-ech", GenerateECH},
   { "generate-ed25519", GenerateEd25519Key },
+  { "genpkey", GeneratePKey },
   { "genrsa", GenerateRSAKey },
   { "md5sum", MD5Sum },
   { "pkcs12", DoPKCS12 },

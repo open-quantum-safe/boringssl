@@ -128,6 +128,7 @@ bool Client(const std::vector<std::string> &args);
 bool DoPKCS12(const std::vector<std::string> &args);
 bool GenerateECH(const std::vector<std::string> &args);
 bool GenerateEd25519Key(const std::vector<std::string> &args);
+bool GeneratePKey(const std::vector<std::string> &args);
 bool GenerateRSAKey(const std::vector<std::string> &args);
 bool MD5Sum(const std::vector<std::string> &args);
 bool Rand(const std::vector<std::string> &args);
