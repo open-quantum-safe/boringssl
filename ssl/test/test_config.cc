@@ -963,9 +963,8 @@ static int AlpnSelectCallback(SSL *ssl, const uint8_t **out, uint8_t *outlen,
   }
 
   if (!config->expect_advertised_alpn.empty() &&
-      (config->expect_advertised_alpn.size() != inlen ||
-       OPENSSL_memcmp(config->expect_advertised_alpn.data(), in, inlen) !=
-           0)) {
+      bssl::StringAsBytes(config->expect_advertised_alpn) !=
+          bssl::Span(in, inlen)) {
     fprintf(stderr, "bad ALPN select callback inputs.\n");
     exit(1);
   }
@@ -1241,7 +1240,7 @@ static int AsyncTicketSeal(SSL *ssl, uint8_t *out, size_t *out_len,
     return 1;
   }
 
-  auto out_span = bssl::MakeSpan(out, max_out_len);
+  auto out_span = bssl::Span(out, max_out_len);
   // Encrypt the ticket with the all zero key and a random nonce.
   static const uint8_t kKey[16] = {0};
   const EVP_AEAD *aead = EVP_aead_aes_128_gcm_siv();
@@ -1270,7 +1269,7 @@ static ssl_ticket_aead_result_t AsyncTicketOpen(SSL *ssl, uint8_t *out,
                                                 size_t max_out_len,
                                                 const uint8_t *in,
                                                 size_t in_len) {
-  auto in_span = bssl::MakeSpan(in, in_len);
+  auto in_span = bssl::Span(in, in_len);
   const TestConfig *test_config = GetTestConfig(ssl);
   TestState *test_state = GetTestState(ssl);
   if (test_state->ticket_decrypt_done) {
@@ -1579,10 +1578,8 @@ static bool CheckCertificateRequest(SSL *ssl) {
     const uint8_t *certificate_types;
     size_t certificate_types_len =
         SSL_get0_certificate_types(ssl, &certificate_types);
-    if (certificate_types_len != config->expect_certificate_types.size() ||
-        OPENSSL_memcmp(certificate_types,
-                       config->expect_certificate_types.data(),
-                       certificate_types_len) != 0) {
+    if (bssl::StringAsBytes(config->expect_certificate_types) !=
+        bssl::Span(certificate_types, certificate_types_len)) {
       fprintf(stderr, "certificate types mismatch.\n");
       return false;
     }

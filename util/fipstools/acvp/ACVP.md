@@ -57,6 +57,8 @@ The other commands are as follows. (Note that you only need to implement the com
 | AES-CTR/encrypt      | Key, plaintexttext, initial counter, constant 1 | Ciphertext |
 | AES-GCM/open         | Tag length, key, ciphertext, nonce, ad | One-byte success flag, plaintext or empty |
 | AES-GCM/seal         | Tag length, key, plaintext, nonce, ad | Ciphertext |
+| AES-GCM-randnonce/open | Tag length, key, ciphertext (with rand nonce appended), nonce (empty), ad | One-byte success flag, plaintext or empty |
+| AES-GCM-randnonce/seal | Tag length, key, plaintext, nonce (empty), ad | Ciphertext (with rand nonce appended) |
 | AES-KW/open          | (dummy), key, ciphertext, (dummy), (dummy) | One-byte success flag, plaintext or empty |
 | AES-KW/seal          | (dummy), key, plaintext, (dummy), (dummy) | Ciphertext |
 | AES-KWP/open         | (dummy), key, ciphertext, (dummy), (dummy) | One-byte success flag, plaintext or empty |
@@ -94,7 +96,7 @@ The other commands are as follows. (Note that you only need to implement the com
 | hmacDRBG/&lt;HASH&gt;| Output length, entropy, personalisation, ad1, ad2, nonce | Output |
 | hmacDRBG-reseed/&lt;HASH&gt;| Output length, entropy, personalisation, reseedAD, reseedEntropy, ad1, ad2, nonce | Output |
 | hmacDRBG-pr/&lt;HASH&gt;| Output length, entropy, personalisation, ad1, entropy1, ad2, entropy2, nonce | Output |
-| KDF-counter          | Number output bytes, PRF name, counter location string, key, number of counter bits | Counter, output |
+| KDF-counter          | Number output bytes, PRF name, counter location string, key (or empty), number of counter bits | key, counter, derived key |
 | RSA/keyGen           | Modulus bit-size | e, p, q, n, d |
 | RSA/sigGen/&lt;HASH&gt;/pkcs1v1.5 | Modulus bit-size | n, e, signature |
 | RSA/sigGen/&lt;HASH&gt;/pss       | Modulus bit-size | n, e, signature |
@@ -136,6 +138,11 @@ The other commands are as follows. (Note that you only need to implement the com
 | ML-KEM-XX/keyGen     | Seed | Public key, private key |
 | ML-KEM-XX/encap      | Public key, entropy | Ciphertext, shared secret |
 | ML-KEM-XX/decap      | Private key, ciphertext | Shared secret |
+| SLH-DSA-XX/keyGen    | Seed | Private key, public key |
+| SLH-DSA-XX/sigGen    | Private key, message, entropy or empty | Signature |
+| SLH-DSA-XX/sigVer    | Public key, message, signature | Single-byte validity flag |
+| SSHKDF/&lt;HASH&gt;/client | K, H, SessionID, cipher algorithm | client IV key, client encryption key, client integrity key |
+| SSHKDF/&lt;HASH&gt;/server | K, H, SessionID, cipher algorithm | server IV key, server encryption key, server integrity key |
 
 ¹ The iterated tests would result in excessive numbers of round trips if the module wrapper handled only basic operations. Thus some ACVP logic is pushed down for these tests so that the inner loop can be handled locally. Either read the NIST documentation ([block-ciphers](https://pages.nist.gov/ACVP/draft-celi-acvp-symmetric.html#name-monte-carlo-tests-for-block) [hashes](https://pages.nist.gov/ACVP/draft-celi-acvp-sha.html#name-monte-carlo-tests-for-sha-1)) to understand the iteration count and return values or, probably more fruitfully, see how these functions are handled in the `modulewrapper` directory.
 

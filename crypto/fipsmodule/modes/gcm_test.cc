@@ -82,27 +82,44 @@ TEST(GCMTest, ABI) {
       }
     }
     if (CRYPTO_is_VAES_capable() && CRYPTO_is_VPCLMULQDQ_capable() &&
+        CRYPTO_is_AVX2_capable()) {
+      AES_KEY aes_key;
+      static const uint8_t kKey[16] = {0};
+      uint8_t iv[16] = {0};
+
+      CHECK_ABI_SEH(gcm_init_vpclmulqdq_avx2, Htable, kH);
+      CHECK_ABI_SEH(gcm_gmult_vpclmulqdq_avx2, X, Htable);
+      for (size_t blocks : kBlockCounts) {
+        CHECK_ABI_SEH(gcm_ghash_vpclmulqdq_avx2, X, Htable, buf, 16 * blocks);
+      }
+
+      aes_hw_set_encrypt_key(kKey, 128, &aes_key);
+      for (size_t blocks : kBlockCounts) {
+        CHECK_ABI_SEH(aes_gcm_enc_update_vaes_avx2, buf, buf, blocks * 16,
+                      &aes_key, iv, Htable, X);
+      }
+      aes_hw_set_decrypt_key(kKey, 128, &aes_key);
+      for (size_t blocks : kBlockCounts) {
+        CHECK_ABI_SEH(aes_gcm_dec_update_vaes_avx2, buf, buf, blocks * 16,
+                      &aes_key, iv, Htable, X);
+      }
+    }
+    if (CRYPTO_is_VAES_capable() && CRYPTO_is_VPCLMULQDQ_capable() &&
         CRYPTO_is_AVX512BW_capable() && CRYPTO_is_AVX512VL_capable() &&
         CRYPTO_is_BMI2_capable()) {
       AES_KEY aes_key;
       static const uint8_t kKey[16] = {0};
       uint8_t iv[16] = {0};
 
-      CHECK_ABI_SEH(gcm_init_vpclmulqdq_avx10, Htable, kH);
+      CHECK_ABI_SEH(gcm_init_vpclmulqdq_avx10_512, Htable, kH);
       CHECK_ABI_SEH(gcm_gmult_vpclmulqdq_avx10, X, Htable);
       for (size_t blocks : kBlockCounts) {
-        CHECK_ABI_SEH(gcm_ghash_vpclmulqdq_avx10_256, X, Htable, buf,
-                      16 * blocks);
         CHECK_ABI_SEH(gcm_ghash_vpclmulqdq_avx10_512, X, Htable, buf,
                       16 * blocks);
       }
 
       aes_hw_set_encrypt_key(kKey, 128, &aes_key);
       for (size_t blocks : kBlockCounts) {
-        CHECK_ABI_SEH(aes_gcm_enc_update_vaes_avx10_256, buf, buf, blocks * 16,
-                      &aes_key, iv, Htable, X);
-        CHECK_ABI_SEH(aes_gcm_enc_update_vaes_avx10_256, buf, buf,
-                      blocks * 16 + 7, &aes_key, iv, Htable, X);
         CHECK_ABI_SEH(aes_gcm_enc_update_vaes_avx10_512, buf, buf, blocks * 16,
                       &aes_key, iv, Htable, X);
         CHECK_ABI_SEH(aes_gcm_enc_update_vaes_avx10_512, buf, buf,
@@ -110,10 +127,6 @@ TEST(GCMTest, ABI) {
       }
       aes_hw_set_decrypt_key(kKey, 128, &aes_key);
       for (size_t blocks : kBlockCounts) {
-        CHECK_ABI_SEH(aes_gcm_dec_update_vaes_avx10_256, buf, buf, blocks * 16,
-                      &aes_key, iv, Htable, X);
-        CHECK_ABI_SEH(aes_gcm_dec_update_vaes_avx10_256, buf, buf,
-                      blocks * 16 + 7, &aes_key, iv, Htable, X);
         CHECK_ABI_SEH(aes_gcm_dec_update_vaes_avx10_512, buf, buf, blocks * 16,
                       &aes_key, iv, Htable, X);
         CHECK_ABI_SEH(aes_gcm_dec_update_vaes_avx10_512, buf, buf,
