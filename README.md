@@ -28,7 +28,7 @@ Both liboqs and this fork are part of the **Open Quantum Safe (OQS) project**, w
 
 ## Status
 
-This fork is built on top of [commit d4b6eb5](https://github.com/open-quantum-safe/boringssl/commit/d4b6eb542d4fd109baacd550935efd00c521e674), and adds:
+This fork is built on top of [commit d3f26f8](https://github.com/google/boringssl/commit/d3f26f8af0853b4d337d2405281f91fdfbe64465), and adds:
 
 - quantum-safe key exchange
 - hybrid (quantum-safe + elliptic curve) key exchange
@@ -66,7 +66,7 @@ If an algorithm is provided by liboqs but is not listed below, it might still be
 
 #### Key Exchange
 
-Along with `X25519MLKEM768` and `X25519Kyber768Draft00` supported by BoringSSL through Google's implementations, this fork also incorporates support for additional quantum-safe algorithms from liboqs (provided they have been enabled in liboqs):
+Along with `X25519MLKEM768` supported by BoringSSL through Google's implementations, this fork also incorporates support for additional quantum-safe algorithms from liboqs (provided they have been enabled in liboqs):
 
 <!--- OQS_TEMPLATE_FRAGMENT_LIST_KEXS_START -->
 - **BIKE**: `bikel1`, `p256_bikel1`, `x25519_bikel1`, `bikel3`, `p384_bikel3`, `bikel5`, `p521_bikel5`
