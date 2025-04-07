@@ -142,7 +142,9 @@ static int dsa_priv_encode(CBB *out, const EVP_PKEY *key) {
   return 1;
 }
 
-static int int_dsa_size(const EVP_PKEY *pkey) {
+// OQS note: We have renamed this from "int_dsa_size"
+// to "size_t_dsa_size"
+static size_t size_t_dsa_size(const EVP_PKEY *pkey) {
   const DSA *dsa = reinterpret_cast<const DSA *>(pkey->pkey);
   return DSA_size(dsa);
 }
@@ -197,7 +199,9 @@ static int dsa_pub_cmp(const EVP_PKEY *a, const EVP_PKEY *b) {
   return BN_cmp(DSA_get0_pub_key(b_dsa), DSA_get0_pub_key(a_dsa)) == 0;
 }
 
-static void int_dsa_free(EVP_PKEY *pkey) {
+// OQS note: We have renamed this from "int_dsa_free"
+// to "size_t_dsa_free"
+static void size_t_dsa_free(EVP_PKEY *pkey) {
   DSA_free(reinterpret_cast<DSA *>(pkey->pkey));
   pkey->pkey = nullptr;
 }
@@ -226,14 +230,14 @@ const EVP_PKEY_ASN1_METHOD dsa_asn1_meth = {
 
     /*pkey_opaque=*/nullptr,
 
-    int_dsa_size,
+    size_t_dsa_size,
     dsa_bits,
 
     dsa_missing_parameters,
     dsa_copy_parameters,
     dsa_cmp_parameters,
 
-    int_dsa_free,
+    size_t_dsa_free,
 };
 
 int EVP_PKEY_CTX_set_dsa_paramgen_bits(EVP_PKEY_CTX *ctx, int nbits) {

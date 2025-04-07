@@ -153,7 +153,9 @@ static size_t eckey_get1_tls_encodedpoint(const EVP_PKEY *pkey,
   return EC_KEY_key2buf(ec_key, POINT_CONVERSION_UNCOMPRESSED, out_ptr, NULL);
 }
 
-static int int_ec_size(const EVP_PKEY *pkey) {
+// OQS note: We have renamed this from "int_ec_size"
+// to "size_t_ec_size"
+static size_t size_t_ec_size(const EVP_PKEY *pkey) {
   const EC_KEY *ec_key = reinterpret_cast<const EC_KEY *>(pkey->pkey);
   return ECDSA_size(ec_key);
 }
@@ -245,7 +247,7 @@ const EVP_PKEY_ASN1_METHOD ec_asn1_meth = {
 
     eckey_opaque,
 
-    int_ec_size,
+    size_t_ec_size,
     ec_bits,
 
     ec_missing_parameters,

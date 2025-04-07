@@ -170,6 +170,7 @@ struct TestConfig {
   bool renegotiate_explicit = false;
   bool forbid_renegotiation_after_handshake = false;
   uint16_t expect_peer_signature_algorithm = 0;
+  bool enable_all_curves = false;
   uint16_t expect_curve_id = 0;
   bool use_old_client_cert_callback = false;
   int initial_timeout_duration_ms = 0;

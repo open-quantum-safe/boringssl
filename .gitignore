@@ -39,3 +39,8 @@
 
 # Ignore target under any directory.
 target/
+util/bot/yasm-win32.exe
+
+oqs/
+
+tags

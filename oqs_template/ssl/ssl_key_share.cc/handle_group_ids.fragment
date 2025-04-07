@@ -1,0 +1,9 @@
+{% for kem in config['kems'] %}
+    case SSL_GROUP_{{ kem['name']|upper }}:
+      return MakeUnique<OQSKeyShare>(SSL_GROUP_{{ kem['name']|upper }}, {{ kem['oqs_meth'] }});
+    {%- for classical_alg in kem['mix_with'] %}
+    case SSL_GROUP_{{ classical_alg['name']|upper }}_{{ kem['name']|upper }}:
+      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_{{ classical_alg['name']|upper}}_{{ kem['name']|upper }}, {{ classical_alg['nid'] }}, {{ kem['oqs_meth'] }});
+    {%- endfor %}
+{%- endfor %}
+

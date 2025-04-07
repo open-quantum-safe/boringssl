@@ -27,7 +27,7 @@ static void dh_free(EVP_PKEY *pkey) {
   pkey->pkey = NULL;
 }
 
-static int dh_size(const EVP_PKEY *pkey) {
+static size_t dh_size(const EVP_PKEY *pkey) {
   return DH_size(reinterpret_cast<const DH *>(pkey->pkey));
 }
 

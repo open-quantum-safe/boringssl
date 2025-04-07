@@ -50,8 +50,45 @@ int x509_digest_sign_algorithm(EVP_MD_CTX *ctx, X509_ALGOR *algor) {
     }
   }
 
-  if (EVP_PKEY_id(pkey) == EVP_PKEY_ED25519) {
-    return X509_ALGOR_set0(algor, OBJ_nid2obj(NID_ED25519), V_ASN1_UNDEF, NULL);
+  int pkey_id = EVP_PKEY_id(pkey);
+  if (pkey_id == EVP_PKEY_ED25519 ||
+///// OQS_TEMPLATE_FRAGMENT_CHECK_PKEY_ID_START
+      pkey_id == EVP_PKEY_MLDSA44 ||
+      pkey_id == EVP_PKEY_P256_MLDSA44 ||
+      pkey_id == EVP_PKEY_MLDSA65 ||
+      pkey_id == EVP_PKEY_P384_MLDSA65 ||
+      pkey_id == EVP_PKEY_MLDSA87 ||
+      pkey_id == EVP_PKEY_P521_MLDSA87 ||
+      pkey_id == EVP_PKEY_FALCON512 ||
+      pkey_id == EVP_PKEY_RSA3072_FALCON512 ||
+      pkey_id == EVP_PKEY_FALCONPADDED512 ||
+      pkey_id == EVP_PKEY_FALCON1024 ||
+      pkey_id == EVP_PKEY_FALCONPADDED1024 ||
+      pkey_id == EVP_PKEY_MAYO1 ||
+      pkey_id == EVP_PKEY_MAYO2 ||
+      pkey_id == EVP_PKEY_MAYO3 ||
+      pkey_id == EVP_PKEY_MAYO5 ||
+      pkey_id == EVP_PKEY_OV_IS_PKC ||
+      pkey_id == EVP_PKEY_OV_IP_PKC ||
+      pkey_id == EVP_PKEY_OV_IS_PKC_SKC ||
+      pkey_id == EVP_PKEY_OV_IP_PKC_SKC ||
+      pkey_id == EVP_PKEY_CROSSRSDP128BALANCED ||
+      pkey_id == EVP_PKEY_SPHINCSSHA2128FSIMPLE ||
+      pkey_id == EVP_PKEY_SPHINCSSHA2128SSIMPLE ||
+      pkey_id == EVP_PKEY_SPHINCSSHA2192FSIMPLE ||
+      pkey_id == EVP_PKEY_SPHINCSSHA2192SSIMPLE ||
+      pkey_id == EVP_PKEY_SPHINCSSHA2256FSIMPLE ||
+      pkey_id == EVP_PKEY_SPHINCSSHA2256SSIMPLE ||
+      pkey_id == EVP_PKEY_SPHINCSSHAKE128FSIMPLE ||
+      pkey_id == EVP_PKEY_SPHINCSSHAKE128SSIMPLE ||
+      pkey_id == EVP_PKEY_SPHINCSSHAKE192FSIMPLE ||
+      pkey_id == EVP_PKEY_SPHINCSSHAKE192SSIMPLE ||
+      pkey_id == EVP_PKEY_SPHINCSSHAKE256FSIMPLE ||
+      pkey_id == EVP_PKEY_SPHINCSSHAKE256SSIMPLE
+///// OQS_TEMPLATE_FRAGMENT_CHECK_PKEY_ID_END
+      ) {
+    // The NID == EVP_PKEY_id for ED25519 and the OQS schemes
+    return X509_ALGOR_set0(algor, OBJ_nid2obj(pkey_id), V_ASN1_UNDEF, NULL);
   }
 
   // Default behavior: look up the OID for the algorithm/hash pair and encode

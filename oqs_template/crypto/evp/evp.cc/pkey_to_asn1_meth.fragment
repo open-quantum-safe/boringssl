@@ -1,0 +1,5 @@
+{% for sig in config['sigs'] %}
+    case EVP_PKEY_{{ sig['name']|upper }}:
+      return &{{ sig['name'] }}_asn1_meth;
+{%- endfor %}
+

@@ -1,0 +1,4 @@
+{%- for family, sigs in config['sigs'][1:] | groupby('family') %}
+- **{{ family }}**: {% for sig in sigs -%} `{{ sig['name'] }}` {%- if not loop.last %}, {% endif -%}{%- endfor -%}
+{%- endfor %}
+

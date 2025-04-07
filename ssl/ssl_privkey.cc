@@ -34,7 +34,41 @@ BSSL_NAMESPACE_BEGIN
 
 bool ssl_is_key_type_supported(int key_type) {
   return key_type == EVP_PKEY_RSA || key_type == EVP_PKEY_EC ||
-         key_type == EVP_PKEY_ED25519;
+         key_type == EVP_PKEY_ED25519 ||
+///// OQS_TEMPLATE_FRAGMENT_CHECK_KEY_TYPE_START
+         key_type == EVP_PKEY_MLDSA44 ||
+         key_type == EVP_PKEY_P256_MLDSA44 ||
+         key_type == EVP_PKEY_MLDSA65 ||
+         key_type == EVP_PKEY_P384_MLDSA65 ||
+         key_type == EVP_PKEY_MLDSA87 ||
+         key_type == EVP_PKEY_P521_MLDSA87 ||
+         key_type == EVP_PKEY_FALCON512 ||
+         key_type == EVP_PKEY_RSA3072_FALCON512 ||
+         key_type == EVP_PKEY_FALCONPADDED512 ||
+         key_type == EVP_PKEY_FALCON1024 ||
+         key_type == EVP_PKEY_FALCONPADDED1024 ||
+         key_type == EVP_PKEY_MAYO1 ||
+         key_type == EVP_PKEY_MAYO2 ||
+         key_type == EVP_PKEY_MAYO3 ||
+         key_type == EVP_PKEY_MAYO5 ||
+         key_type == EVP_PKEY_OV_IS_PKC ||
+         key_type == EVP_PKEY_OV_IP_PKC ||
+         key_type == EVP_PKEY_OV_IS_PKC_SKC ||
+         key_type == EVP_PKEY_OV_IP_PKC_SKC ||
+         key_type == EVP_PKEY_CROSSRSDP128BALANCED ||
+         key_type == EVP_PKEY_SPHINCSSHA2128FSIMPLE ||
+         key_type == EVP_PKEY_SPHINCSSHA2128SSIMPLE ||
+         key_type == EVP_PKEY_SPHINCSSHA2192FSIMPLE ||
+         key_type == EVP_PKEY_SPHINCSSHA2192SSIMPLE ||
+         key_type == EVP_PKEY_SPHINCSSHA2256FSIMPLE ||
+         key_type == EVP_PKEY_SPHINCSSHA2256SSIMPLE ||
+         key_type == EVP_PKEY_SPHINCSSHAKE128FSIMPLE ||
+         key_type == EVP_PKEY_SPHINCSSHAKE128SSIMPLE ||
+         key_type == EVP_PKEY_SPHINCSSHAKE192FSIMPLE ||
+         key_type == EVP_PKEY_SPHINCSSHAKE192SSIMPLE ||
+         key_type == EVP_PKEY_SPHINCSSHAKE256FSIMPLE ||
+         key_type == EVP_PKEY_SPHINCSSHAKE256SSIMPLE;
+///// OQS_TEMPLATE_FRAGMENT_CHECK_KEY_TYPE_END
 }
 
 typedef struct {
@@ -98,6 +132,40 @@ static const SSL_SIGNATURE_ALGORITHM kSignatureAlgorithms[] = {
     {SSL_SIGN_ED25519, EVP_PKEY_ED25519, NID_undef, nullptr,
      /*is_rsa_pss=*/false, /*tls12_ok=*/true, /*tls13_ok=*/true,
      /*client_only=*/false},
+///// OQS_TEMPLATE_FRAGMENT_LIST_SSL_SIG_ALGS_START
+    {SSL_SIGN_MLDSA44, EVP_PKEY_MLDSA44, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_P256_MLDSA44, EVP_PKEY_P256_MLDSA44, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_MLDSA65, EVP_PKEY_MLDSA65, NID_undef, &EVP_sha384, false, true, true, false},
+    {SSL_SIGN_P384_MLDSA65, EVP_PKEY_P384_MLDSA65, NID_undef, &EVP_sha384, false, true, true, false},
+    {SSL_SIGN_MLDSA87, EVP_PKEY_MLDSA87, NID_undef, &EVP_sha512, false, true, true, false},
+    {SSL_SIGN_P521_MLDSA87, EVP_PKEY_P521_MLDSA87, NID_undef, &EVP_sha512, false, true, true, false},
+    {SSL_SIGN_FALCON512, EVP_PKEY_FALCON512, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_RSA3072_FALCON512, EVP_PKEY_RSA3072_FALCON512, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_FALCONPADDED512, EVP_PKEY_FALCONPADDED512, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_FALCON1024, EVP_PKEY_FALCON1024, NID_undef, &EVP_sha512, false, true, true, false},
+    {SSL_SIGN_FALCONPADDED1024, EVP_PKEY_FALCONPADDED1024, NID_undef, &EVP_sha512, false, true, true, false},
+    {SSL_SIGN_MAYO1, EVP_PKEY_MAYO1, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_MAYO2, EVP_PKEY_MAYO2, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_MAYO3, EVP_PKEY_MAYO3, NID_undef, &EVP_sha384, false, true, true, false},
+    {SSL_SIGN_MAYO5, EVP_PKEY_MAYO5, NID_undef, &EVP_sha512, false, true, true, false},
+    {SSL_SIGN_OV_IS_PKC, EVP_PKEY_OV_IS_PKC, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_OV_IP_PKC, EVP_PKEY_OV_IP_PKC, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_OV_IS_PKC_SKC, EVP_PKEY_OV_IS_PKC_SKC, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_OV_IP_PKC_SKC, EVP_PKEY_OV_IP_PKC_SKC, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_CROSSRSDP128BALANCED, EVP_PKEY_CROSSRSDP128BALANCED, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_SPHINCSSHA2128FSIMPLE, EVP_PKEY_SPHINCSSHA2128FSIMPLE, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_SPHINCSSHA2128SSIMPLE, EVP_PKEY_SPHINCSSHA2128SSIMPLE, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_SPHINCSSHA2192FSIMPLE, EVP_PKEY_SPHINCSSHA2192FSIMPLE, NID_undef, &EVP_sha384, false, true, true, false},
+    {SSL_SIGN_SPHINCSSHA2192SSIMPLE, EVP_PKEY_SPHINCSSHA2192SSIMPLE, NID_undef, &EVP_sha384, false, true, true, false},
+    {SSL_SIGN_SPHINCSSHA2256FSIMPLE, EVP_PKEY_SPHINCSSHA2256FSIMPLE, NID_undef, &EVP_sha512, false, true, true, false},
+    {SSL_SIGN_SPHINCSSHA2256SSIMPLE, EVP_PKEY_SPHINCSSHA2256SSIMPLE, NID_undef, &EVP_sha512, false, true, true, false},
+    {SSL_SIGN_SPHINCSSHAKE128FSIMPLE, EVP_PKEY_SPHINCSSHAKE128FSIMPLE, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_SPHINCSSHAKE128SSIMPLE, EVP_PKEY_SPHINCSSHAKE128SSIMPLE, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_SPHINCSSHAKE192FSIMPLE, EVP_PKEY_SPHINCSSHAKE192FSIMPLE, NID_undef, &EVP_sha384, false, true, true, false},
+    {SSL_SIGN_SPHINCSSHAKE192SSIMPLE, EVP_PKEY_SPHINCSSHAKE192SSIMPLE, NID_undef, &EVP_sha384, false, true, true, false},
+    {SSL_SIGN_SPHINCSSHAKE256FSIMPLE, EVP_PKEY_SPHINCSSHAKE256FSIMPLE, NID_undef, &EVP_sha512, false, true, true, false},
+    {SSL_SIGN_SPHINCSSHAKE256SSIMPLE, EVP_PKEY_SPHINCSSHAKE256SSIMPLE, NID_undef, &EVP_sha512, false, true, true, false},
+///// OQS_TEMPLATE_FRAGMENT_LIST_SSL_SIG_ALGS_END
 };
 
 static const SSL_SIGNATURE_ALGORITHM *get_signature_algorithm(uint16_t sigalg) {
@@ -443,7 +511,9 @@ void SSL_CTX_set_private_key_method(SSL_CTX *ctx,
       ctx->cert->legacy_credential.get(), key_method));
 }
 
-static constexpr size_t kMaxSignatureAlgorithmNameLen = 24;
+// OQS note: This was changed from 24 to 30 to accommodate
+// large algorithm names (such as "Rainbow-IIIc-Cyclic-Compressed").
+static constexpr size_t kMaxSignatureAlgorithmNameLen = 30;
 
 struct SignatureAlgorithmName {
   uint16_t signature_algorithm;
@@ -467,6 +537,40 @@ static const SignatureAlgorithmName kSignatureAlgorithmNames[] = {
     {SSL_SIGN_RSA_PSS_RSAE_SHA384, "rsa_pss_rsae_sha384"},
     {SSL_SIGN_RSA_PSS_RSAE_SHA512, "rsa_pss_rsae_sha512"},
     {SSL_SIGN_ED25519, "ed25519"},
+///// OQS_TEMPLATE_FRAGMENT_NAME_SIG_ALG_START
+    {SSL_SIGN_MLDSA44, "mldsa44"},
+    {SSL_SIGN_P256_MLDSA44, "p256_mldsa44"},
+    {SSL_SIGN_MLDSA65, "mldsa65"},
+    {SSL_SIGN_P384_MLDSA65, "p384_mldsa65"},
+    {SSL_SIGN_MLDSA87, "mldsa87"},
+    {SSL_SIGN_P521_MLDSA87, "p521_mldsa87"},
+    {SSL_SIGN_FALCON512, "falcon512"},
+    {SSL_SIGN_RSA3072_FALCON512, "rsa3072_falcon512"},
+    {SSL_SIGN_FALCONPADDED512, "falconpadded512"},
+    {SSL_SIGN_FALCON1024, "falcon1024"},
+    {SSL_SIGN_FALCONPADDED1024, "falconpadded1024"},
+    {SSL_SIGN_MAYO1, "mayo1"},
+    {SSL_SIGN_MAYO2, "mayo2"},
+    {SSL_SIGN_MAYO3, "mayo3"},
+    {SSL_SIGN_MAYO5, "mayo5"},
+    {SSL_SIGN_OV_IS_PKC, "OV_Is_pkc"},
+    {SSL_SIGN_OV_IP_PKC, "OV_Ip_pkc"},
+    {SSL_SIGN_OV_IS_PKC_SKC, "OV_Is_pkc_skc"},
+    {SSL_SIGN_OV_IP_PKC_SKC, "OV_Ip_pkc_skc"},
+    {SSL_SIGN_CROSSRSDP128BALANCED, "CROSSrsdp128balanced"},
+    {SSL_SIGN_SPHINCSSHA2128FSIMPLE, "sphincssha2128fsimple"},
+    {SSL_SIGN_SPHINCSSHA2128SSIMPLE, "sphincssha2128ssimple"},
+    {SSL_SIGN_SPHINCSSHA2192FSIMPLE, "sphincssha2192fsimple"},
+    {SSL_SIGN_SPHINCSSHA2192SSIMPLE, "sphincssha2192ssimple"},
+    {SSL_SIGN_SPHINCSSHA2256FSIMPLE, "sphincssha2256fsimple"},
+    {SSL_SIGN_SPHINCSSHA2256SSIMPLE, "sphincssha2256ssimple"},
+    {SSL_SIGN_SPHINCSSHAKE128FSIMPLE, "sphincsshake128fsimple"},
+    {SSL_SIGN_SPHINCSSHAKE128SSIMPLE, "sphincsshake128ssimple"},
+    {SSL_SIGN_SPHINCSSHAKE192FSIMPLE, "sphincsshake192fsimple"},
+    {SSL_SIGN_SPHINCSSHAKE192SSIMPLE, "sphincsshake192ssimple"},
+    {SSL_SIGN_SPHINCSSHAKE256FSIMPLE, "sphincsshake256fsimple"},
+    {SSL_SIGN_SPHINCSSHAKE256SSIMPLE, "sphincsshake256ssimple"},
+///// OQS_TEMPLATE_FRAGMENT_NAME_SIG_ALG_END
 };
 
 const char *SSL_get_signature_algorithm_name(uint16_t sigalg,
@@ -630,6 +734,40 @@ static constexpr struct {
     {EVP_PKEY_EC, NID_sha384, SSL_SIGN_ECDSA_SECP384R1_SHA384},
     {EVP_PKEY_EC, NID_sha512, SSL_SIGN_ECDSA_SECP521R1_SHA512},
     {EVP_PKEY_ED25519, NID_undef, SSL_SIGN_ED25519},
+///// OQS_TEMPLATE_FRAGMENT_ADD_SIG_ALG_MAPPINGS_START
+    {EVP_PKEY_MLDSA44, NID_sha256, SSL_SIGN_MLDSA44},
+    {EVP_PKEY_P256_MLDSA44, NID_sha256, SSL_SIGN_P256_MLDSA44},
+    {EVP_PKEY_MLDSA65, NID_sha384, SSL_SIGN_MLDSA65},
+    {EVP_PKEY_P384_MLDSA65, NID_sha384, SSL_SIGN_P384_MLDSA65},
+    {EVP_PKEY_MLDSA87, NID_sha512, SSL_SIGN_MLDSA87},
+    {EVP_PKEY_P521_MLDSA87, NID_sha512, SSL_SIGN_P521_MLDSA87},
+    {EVP_PKEY_FALCON512, NID_sha256, SSL_SIGN_FALCON512},
+    {EVP_PKEY_RSA3072_FALCON512, NID_sha256, SSL_SIGN_RSA3072_FALCON512},
+    {EVP_PKEY_FALCONPADDED512, NID_sha256, SSL_SIGN_FALCONPADDED512},
+    {EVP_PKEY_FALCON1024, NID_sha512, SSL_SIGN_FALCON1024},
+    {EVP_PKEY_FALCONPADDED1024, NID_sha512, SSL_SIGN_FALCONPADDED1024},
+    {EVP_PKEY_MAYO1, NID_sha256, SSL_SIGN_MAYO1},
+    {EVP_PKEY_MAYO2, NID_sha256, SSL_SIGN_MAYO2},
+    {EVP_PKEY_MAYO3, NID_sha384, SSL_SIGN_MAYO3},
+    {EVP_PKEY_MAYO5, NID_sha512, SSL_SIGN_MAYO5},
+    {EVP_PKEY_OV_IS_PKC, NID_sha256, SSL_SIGN_OV_IS_PKC},
+    {EVP_PKEY_OV_IP_PKC, NID_sha256, SSL_SIGN_OV_IP_PKC},
+    {EVP_PKEY_OV_IS_PKC_SKC, NID_sha256, SSL_SIGN_OV_IS_PKC_SKC},
+    {EVP_PKEY_OV_IP_PKC_SKC, NID_sha256, SSL_SIGN_OV_IP_PKC_SKC},
+    {EVP_PKEY_CROSSRSDP128BALANCED, NID_sha256, SSL_SIGN_CROSSRSDP128BALANCED},
+    {EVP_PKEY_SPHINCSSHA2128FSIMPLE, NID_sha256, SSL_SIGN_SPHINCSSHA2128FSIMPLE},
+    {EVP_PKEY_SPHINCSSHA2128SSIMPLE, NID_sha256, SSL_SIGN_SPHINCSSHA2128SSIMPLE},
+    {EVP_PKEY_SPHINCSSHA2192FSIMPLE, NID_sha384, SSL_SIGN_SPHINCSSHA2192FSIMPLE},
+    {EVP_PKEY_SPHINCSSHA2192SSIMPLE, NID_sha384, SSL_SIGN_SPHINCSSHA2192SSIMPLE},
+    {EVP_PKEY_SPHINCSSHA2256FSIMPLE, NID_sha512, SSL_SIGN_SPHINCSSHA2256FSIMPLE},
+    {EVP_PKEY_SPHINCSSHA2256SSIMPLE, NID_sha512, SSL_SIGN_SPHINCSSHA2256SSIMPLE},
+    {EVP_PKEY_SPHINCSSHAKE128FSIMPLE, NID_sha256, SSL_SIGN_SPHINCSSHAKE128FSIMPLE},
+    {EVP_PKEY_SPHINCSSHAKE128SSIMPLE, NID_sha256, SSL_SIGN_SPHINCSSHAKE128SSIMPLE},
+    {EVP_PKEY_SPHINCSSHAKE192FSIMPLE, NID_sha384, SSL_SIGN_SPHINCSSHAKE192FSIMPLE},
+    {EVP_PKEY_SPHINCSSHAKE192SSIMPLE, NID_sha384, SSL_SIGN_SPHINCSSHAKE192SSIMPLE},
+    {EVP_PKEY_SPHINCSSHAKE256FSIMPLE, NID_sha512, SSL_SIGN_SPHINCSSHAKE256FSIMPLE},
+    {EVP_PKEY_SPHINCSSHAKE256SSIMPLE, NID_sha512, SSL_SIGN_SPHINCSSHAKE256SSIMPLE},
+///// OQS_TEMPLATE_FRAGMENT_ADD_SIG_ALG_MAPPINGS_END
 };
 
 static bool parse_sigalg_pairs(Array<uint16_t> *out, const int *values,

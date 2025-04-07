@@ -25,7 +25,9 @@
 #include "getrandom_fillin.h"
 
 
+// OQS note: Check top level CMakeLists.txt for the reason for OQS_RUN_URANDOM_TESTS
 #if (defined(OPENSSL_X86_64) || defined(OPENSSL_AARCH64)) &&               \
+    defined(OQS_RUN_URANDOM_TESTS) &&                                      \
     !defined(BORINGSSL_SHARED_LIBRARY) && defined(OPENSSL_RAND_URANDOM) && \
     defined(USE_NR_getrandom)
 

@@ -1,0 +1,4 @@
+{%- for sig in config['sigs'] %}
+DEFINE_OQS_PKEY_METHODS({{ sig['name'] }}, {{ sig['oqs_meth'] }}, EVP_PKEY_{{ sig['name']|upper }})
+{%- endfor %}
+

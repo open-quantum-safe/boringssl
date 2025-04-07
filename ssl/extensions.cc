@@ -103,6 +103,82 @@ static bool is_post_quantum_group(uint16_t id) {
     case SSL_GROUP_X25519_KYBER768_DRAFT00:
     case SSL_GROUP_X25519_MLKEM768:
       return true;
+///// OQS_TEMPLATE_FRAGMENT_ADD_PQ_GROUPS_START
+    case SSL_GROUP_MLKEM512:
+      return true;
+    case SSL_GROUP_P256_MLKEM512:
+      return true;
+    case SSL_GROUP_X25519_MLKEM512:
+      return true;
+    case SSL_GROUP_MLKEM768:
+      return true;
+    case SSL_GROUP_P256_MLKEM768:
+      return true;
+    case SSL_GROUP_P384_MLKEM768:
+      return true;
+    case SSL_GROUP_MLKEM1024:
+      return true;
+    case SSL_GROUP_P384_MLKEM1024:
+      return true;
+    case SSL_GROUP_P521_MLKEM1024:
+      return true;
+    case SSL_GROUP_FRODO640AES:
+      return true;
+    case SSL_GROUP_P256_FRODO640AES:
+      return true;
+    case SSL_GROUP_X25519_FRODO640AES:
+      return true;
+    case SSL_GROUP_FRODO640SHAKE:
+      return true;
+    case SSL_GROUP_P256_FRODO640SHAKE:
+      return true;
+    case SSL_GROUP_X25519_FRODO640SHAKE:
+      return true;
+    case SSL_GROUP_FRODO976AES:
+      return true;
+    case SSL_GROUP_P384_FRODO976AES:
+      return true;
+    case SSL_GROUP_FRODO976SHAKE:
+      return true;
+    case SSL_GROUP_P384_FRODO976SHAKE:
+      return true;
+    case SSL_GROUP_FRODO1344AES:
+      return true;
+    case SSL_GROUP_P521_FRODO1344AES:
+      return true;
+    case SSL_GROUP_FRODO1344SHAKE:
+      return true;
+    case SSL_GROUP_P521_FRODO1344SHAKE:
+      return true;
+    case SSL_GROUP_BIKEL1:
+      return true;
+    case SSL_GROUP_P256_BIKEL1:
+      return true;
+    case SSL_GROUP_X25519_BIKEL1:
+      return true;
+    case SSL_GROUP_BIKEL3:
+      return true;
+    case SSL_GROUP_P384_BIKEL3:
+      return true;
+    case SSL_GROUP_BIKEL5:
+      return true;
+    case SSL_GROUP_P521_BIKEL5:
+      return true;
+    case SSL_GROUP_HQC128:
+      return true;
+    case SSL_GROUP_P256_HQC128:
+      return true;
+    case SSL_GROUP_X25519_HQC128:
+      return true;
+    case SSL_GROUP_HQC192:
+      return true;
+    case SSL_GROUP_P384_HQC192:
+      return true;
+    case SSL_GROUP_HQC256:
+      return true;
+    case SSL_GROUP_P521_HQC256:
+      return true;
+///// OQS_TEMPLATE_FRAGMENT_ADD_PQ_GROUPS_END
     default:
       return false;
   }
@@ -203,6 +279,65 @@ static const uint16_t kDefaultGroups[] = {
     SSL_GROUP_X25519,
     SSL_GROUP_SECP256R1,
     SSL_GROUP_SECP384R1,
+///// OQS_TEMPLATE_FRAGMENT_ADD_DEFAULT_KEMS_START
+    SSL_GROUP_X25519_MLKEM512,
+    SSL_GROUP_P256_MLKEM768,
+    SSL_GROUP_X25519_FRODO640AES,
+    SSL_GROUP_X25519_FRODO640SHAKE,
+    SSL_GROUP_X25519_BIKEL1,
+    SSL_GROUP_X25519_HQC128,
+///// OQS_TEMPLATE_FRAGMENT_ADD_DEFAULT_KEMS_END
+};
+
+// OQS note: since it would be too unwieldy to add the
+// group IDs and keyshares of all of liboqs's alogrithms
+// (and their corresponding hybrid variants) to the ClientHello,
+// we only list the level-1 P-256 hybrids in kDefaultGroups, and
+// list all supported algorithms here. Algorithms that appear
+// only in this list can be used through SSL_CTX_set1_curves_list().
+static const uint16_t kAllSupportedGroups[] = {
+    SSL_GROUP_X25519,
+    SSL_GROUP_SECP256R1,
+    SSL_GROUP_SECP384R1,
+///// OQS_TEMPLATE_FRAGMENT_ADD_ALL_KEMS_START
+    SSL_GROUP_P256_MLKEM512,
+    SSL_GROUP_X25519_MLKEM512,
+    SSL_GROUP_MLKEM512,
+    SSL_GROUP_P256_MLKEM768,
+    SSL_GROUP_P384_MLKEM768,
+    SSL_GROUP_MLKEM768,
+    SSL_GROUP_P384_MLKEM1024,
+    SSL_GROUP_P521_MLKEM1024,
+    SSL_GROUP_MLKEM1024,
+    SSL_GROUP_P256_FRODO640AES,
+    SSL_GROUP_X25519_FRODO640AES,
+    SSL_GROUP_FRODO640AES,
+    SSL_GROUP_P256_FRODO640SHAKE,
+    SSL_GROUP_X25519_FRODO640SHAKE,
+    SSL_GROUP_FRODO640SHAKE,
+    SSL_GROUP_P384_FRODO976AES,
+    SSL_GROUP_FRODO976AES,
+    SSL_GROUP_P384_FRODO976SHAKE,
+    SSL_GROUP_FRODO976SHAKE,
+    SSL_GROUP_P521_FRODO1344AES,
+    SSL_GROUP_FRODO1344AES,
+    SSL_GROUP_P521_FRODO1344SHAKE,
+    SSL_GROUP_FRODO1344SHAKE,
+    SSL_GROUP_P256_BIKEL1,
+    SSL_GROUP_X25519_BIKEL1,
+    SSL_GROUP_BIKEL1,
+    SSL_GROUP_P384_BIKEL3,
+    SSL_GROUP_BIKEL3,
+    SSL_GROUP_P521_BIKEL5,
+    SSL_GROUP_BIKEL5,
+    SSL_GROUP_P256_HQC128,
+    SSL_GROUP_X25519_HQC128,
+    SSL_GROUP_HQC128,
+    SSL_GROUP_P384_HQC192,
+    SSL_GROUP_HQC192,
+    SSL_GROUP_P521_HQC256,
+    SSL_GROUP_HQC256,
+///// OQS_TEMPLATE_FRAGMENT_ADD_ALL_KEMS_END
 };
 
 Span<const uint16_t> tls1_get_grouplist(const SSL_HANDSHAKE *hs) {
@@ -225,7 +360,14 @@ bool tls1_get_shared_group(SSL_HANDSHAKE *hs, uint16_t *out_group_id) {
   // support our favoured group. Thus we do not special-case an emtpy
   // |peer_supported_group_list|.
 
-  Span<const uint16_t> groups = tls1_get_grouplist(hs);
+  // OQS note: We have removed the call to tls1_get_grouplist()
+  Span<const uint16_t> groups;
+  if(!hs->config->supported_group_list.empty()) {
+    groups = hs->config->supported_group_list;
+  } else {
+    groups = Span<const uint16_t>(kAllSupportedGroups);
+  }
+
   Span<const uint16_t> pref, supp;
   if (ssl->options & SSL_OP_CIPHER_SERVER_PREFERENCE) {
     pref = groups;
@@ -276,6 +418,41 @@ bool tls1_check_group_id(const SSL_HANDSHAKE *hs, uint16_t group_id) {
 // algorithms for verifying.
 static const uint16_t kVerifySignatureAlgorithms[] = {
     // List our preferred algorithms first.
+///// OQS_TEMPLATE_FRAGMENT_LIST_VERIFY_SIG_ALGS_START
+    SSL_SIGN_MLDSA44,
+    SSL_SIGN_P256_MLDSA44,
+    SSL_SIGN_MLDSA65,
+    SSL_SIGN_P384_MLDSA65,
+    SSL_SIGN_MLDSA87,
+    SSL_SIGN_P521_MLDSA87,
+    SSL_SIGN_FALCON512,
+    SSL_SIGN_RSA3072_FALCON512,
+    SSL_SIGN_FALCONPADDED512,
+    SSL_SIGN_FALCON1024,
+    SSL_SIGN_FALCONPADDED1024,
+    SSL_SIGN_MAYO1,
+    SSL_SIGN_MAYO2,
+    SSL_SIGN_MAYO3,
+    SSL_SIGN_MAYO5,
+    SSL_SIGN_OV_IS_PKC,
+    SSL_SIGN_OV_IP_PKC,
+    SSL_SIGN_OV_IS_PKC_SKC,
+    SSL_SIGN_OV_IP_PKC_SKC,
+    SSL_SIGN_CROSSRSDP128BALANCED,
+    SSL_SIGN_SPHINCSSHA2128FSIMPLE,
+    SSL_SIGN_SPHINCSSHA2128SSIMPLE,
+    SSL_SIGN_SPHINCSSHA2192FSIMPLE,
+    SSL_SIGN_SPHINCSSHA2192SSIMPLE,
+    SSL_SIGN_SPHINCSSHA2256FSIMPLE,
+    SSL_SIGN_SPHINCSSHA2256SSIMPLE,
+    SSL_SIGN_SPHINCSSHAKE128FSIMPLE,
+    SSL_SIGN_SPHINCSSHAKE128SSIMPLE,
+    SSL_SIGN_SPHINCSSHAKE192FSIMPLE,
+    SSL_SIGN_SPHINCSSHAKE192SSIMPLE,
+    SSL_SIGN_SPHINCSSHAKE256FSIMPLE,
+    SSL_SIGN_SPHINCSSHAKE256SSIMPLE,
+///// OQS_TEMPLATE_FRAGMENT_LIST_VERIFY_SIG_ALGS_END
+
     SSL_SIGN_ECDSA_SECP256R1_SHA256,
     SSL_SIGN_RSA_PSS_RSAE_SHA256,
     SSL_SIGN_RSA_PKCS1_SHA256,
@@ -296,6 +473,41 @@ static const uint16_t kVerifySignatureAlgorithms[] = {
 // algorithms for signing.
 static const uint16_t kSignSignatureAlgorithms[] = {
     // List our preferred algorithms first.
+///// OQS_TEMPLATE_FRAGMENT_LIST_SIGN_SIG_ALGS_START
+    SSL_SIGN_MLDSA44,
+    SSL_SIGN_P256_MLDSA44,
+    SSL_SIGN_MLDSA65,
+    SSL_SIGN_P384_MLDSA65,
+    SSL_SIGN_MLDSA87,
+    SSL_SIGN_P521_MLDSA87,
+    SSL_SIGN_FALCON512,
+    SSL_SIGN_RSA3072_FALCON512,
+    SSL_SIGN_FALCONPADDED512,
+    SSL_SIGN_FALCON1024,
+    SSL_SIGN_FALCONPADDED1024,
+    SSL_SIGN_MAYO1,
+    SSL_SIGN_MAYO2,
+    SSL_SIGN_MAYO3,
+    SSL_SIGN_MAYO5,
+    SSL_SIGN_OV_IS_PKC,
+    SSL_SIGN_OV_IP_PKC,
+    SSL_SIGN_OV_IS_PKC_SKC,
+    SSL_SIGN_OV_IP_PKC_SKC,
+    SSL_SIGN_CROSSRSDP128BALANCED,
+    SSL_SIGN_SPHINCSSHA2128FSIMPLE,
+    SSL_SIGN_SPHINCSSHA2128SSIMPLE,
+    SSL_SIGN_SPHINCSSHA2192FSIMPLE,
+    SSL_SIGN_SPHINCSSHA2192SSIMPLE,
+    SSL_SIGN_SPHINCSSHA2256FSIMPLE,
+    SSL_SIGN_SPHINCSSHA2256SSIMPLE,
+    SSL_SIGN_SPHINCSSHAKE128FSIMPLE,
+    SSL_SIGN_SPHINCSSHAKE128SSIMPLE,
+    SSL_SIGN_SPHINCSSHAKE192FSIMPLE,
+    SSL_SIGN_SPHINCSSHAKE192SSIMPLE,
+    SSL_SIGN_SPHINCSSHAKE256FSIMPLE,
+    SSL_SIGN_SPHINCSSHAKE256SSIMPLE,
+///// OQS_TEMPLATE_FRAGMENT_LIST_SIGN_SIG_ALGS_END
+
     SSL_SIGN_ED25519,
     SSL_SIGN_ECDSA_SECP256R1_SHA256,
     SSL_SIGN_RSA_PSS_RSAE_SHA256,
@@ -4539,7 +4751,42 @@ bool tls1_choose_signature_algorithm(SSL_HANDSHAKE *hs,
       // interpreted as SHA-1. See
       // http://tools.ietf.org/html/rfc5246#section-7.4.1.4.1
       static const uint16_t kTLS12Default[] = {SSL_SIGN_RSA_PKCS1_SHA1,
-                                               SSL_SIGN_ECDSA_SHA1};
+                                               SSL_SIGN_ECDSA_SHA1,
+///// OQS_TEMPLATE_FRAGMENT_LIST_DEFAULT_SIG_ALGS_START
+                                               SSL_SIGN_MLDSA44,
+                                               SSL_SIGN_P256_MLDSA44,
+                                               SSL_SIGN_MLDSA65,
+                                               SSL_SIGN_P384_MLDSA65,
+                                               SSL_SIGN_MLDSA87,
+                                               SSL_SIGN_P521_MLDSA87,
+                                               SSL_SIGN_FALCON512,
+                                               SSL_SIGN_RSA3072_FALCON512,
+                                               SSL_SIGN_FALCONPADDED512,
+                                               SSL_SIGN_FALCON1024,
+                                               SSL_SIGN_FALCONPADDED1024,
+                                               SSL_SIGN_MAYO1,
+                                               SSL_SIGN_MAYO2,
+                                               SSL_SIGN_MAYO3,
+                                               SSL_SIGN_MAYO5,
+                                               SSL_SIGN_OV_IS_PKC,
+                                               SSL_SIGN_OV_IP_PKC,
+                                               SSL_SIGN_OV_IS_PKC_SKC,
+                                               SSL_SIGN_OV_IP_PKC_SKC,
+                                               SSL_SIGN_CROSSRSDP128BALANCED,
+                                               SSL_SIGN_SPHINCSSHA2128FSIMPLE,
+                                               SSL_SIGN_SPHINCSSHA2128SSIMPLE,
+                                               SSL_SIGN_SPHINCSSHA2192FSIMPLE,
+                                               SSL_SIGN_SPHINCSSHA2192SSIMPLE,
+                                               SSL_SIGN_SPHINCSSHA2256FSIMPLE,
+                                               SSL_SIGN_SPHINCSSHA2256SSIMPLE,
+                                               SSL_SIGN_SPHINCSSHAKE128FSIMPLE,
+                                               SSL_SIGN_SPHINCSSHAKE128SSIMPLE,
+                                               SSL_SIGN_SPHINCSSHAKE192FSIMPLE,
+                                               SSL_SIGN_SPHINCSSHAKE192SSIMPLE,
+                                               SSL_SIGN_SPHINCSSHAKE256FSIMPLE,
+                                               SSL_SIGN_SPHINCSSHAKE256SSIMPLE,
+///// OQS_TEMPLATE_FRAGMENT_LIST_DEFAULT_SIG_ALGS_END
+    };
       peer_sigalgs = kTLS12Default;
     }
   }

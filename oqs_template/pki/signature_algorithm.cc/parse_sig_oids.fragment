@@ -1,0 +1,6 @@
+{% for sig in config['sigs'] %}
+  if (oid == der::Input(kOid{{ sig['name']|capitalize }})) {
+    return SignatureAlgorithm::k{{ sig['name']|capitalize }};
+  }
+{%- endfor %}
+

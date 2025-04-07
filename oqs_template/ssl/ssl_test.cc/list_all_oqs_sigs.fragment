@@ -1,0 +1,4 @@
+{%- for sig in config['sigs'] %}
+                            NID_{{ sig['name'] }} {%- if not loop.last -%},{%- endif -%}
+{%- endfor %}
+

@@ -504,6 +504,33 @@ add_subdirectory(ssl/test)
 add_subdirectory(util/fipstools)
 add_subdirectory(util/fipstools/acvp/modulewrapper)
 
+if(NOT DEFINED LIBOQS_DIR)
+    set(LIBOQS_DIR ${CMAKE_SOURCE_DIR}/oqs)
+endif()
+if(NOT DEFINED LIBOQS_SHARED)
+    set(LIBOQS_SHARED OFF)
+endif()
+
+if(LIBOQS_SHARED)
+    set(LIBOQS ${LIBOQS_DIR}/lib/liboqs.so)
+else()
+    set(LIBOQS ${LIBOQS_DIR}/lib/liboqs.a)
+endif()
+if(NOT EXISTS ${LIBOQS})
+    set(LIBOQS ${LIBOQS_DIR}/lib/oqs.lib)
+endif()
+if(NOT EXISTS ${LIBOQS})
+    message(FATAL_ERROR "This fork requires liboqs.")
+else()
+    include_directories(${LIBOQS_DIR}/include)
+endif()
+# CircleCI reports
+# "getrandom: Operation not permitted"
+# when trying to run fipsmodule/rand/urandom_test.cc
+if(NOT DEFINED ENV{CIRCLE_BUILD_NUM})
+    add_definitions(-DOQS_RUN_URANDOM_TESTS)
+endif()
+
 if(OPENSSL_ASM)
   set(CRYPTO_SOURCES_ASM_USED ${CRYPTO_SOURCES_ASM})
   set(BCM_SOURCES_ASM_USED ${BCM_SOURCES_ASM})
@@ -647,13 +674,14 @@ endif()
 if(USE_CUSTOM_LIBCXX)
   target_link_libraries(crypto libcxx)
 endif()
+target_link_libraries(crypto ${LIBOQS})
 
 add_library(ssl ${SSL_SOURCES})
 # Although libssl also provides headers that require an include directory, the
 # flag is already specified by libcrypto, so we omit target_include_directories
 # here.
 set_property(TARGET ssl PROPERTY EXPORT_NAME SSL)
-target_link_libraries(ssl crypto)
+target_link_libraries(ssl crypto ${LIBOQS})
 
 add_library(decrepit ${DECREPIT_SOURCES})
 target_link_libraries(decrepit ssl crypto)

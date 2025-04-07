@@ -19,6 +19,8 @@
 
 #include <openssl/rsa.h>
 
+#include <oqs/oqs.h>
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
@@ -29,7 +31,7 @@ typedef struct evp_pkey_method_st EVP_PKEY_METHOD;
 
 struct evp_pkey_asn1_method_st {
   int pkey_id;
-  uint8_t oid[9];
+  uint8_t oid[12]; // OQS note: increased length (was 9) to accomodate larger PQ OIDs
   uint8_t oid_len;
 
   const EVP_PKEY_METHOD *pkey_method;
@@ -79,7 +81,10 @@ struct evp_pkey_asn1_method_st {
   // custom implementations which do not expose key material and parameters.
   int (*pkey_opaque)(const EVP_PKEY *pk);
 
-  int (*pkey_size)(const EVP_PKEY *pk);
+  // OQS note: We've changed the return type from "int" to "size_t"
+  // to allow for PQ algorithms with large signatures.
+  size_t (*pkey_size)(const EVP_PKEY *pk);
+
   int (*pkey_bits)(const EVP_PKEY *pk);
 
   int (*param_missing)(const EVP_PKEY *pk);
@@ -242,12 +247,78 @@ typedef struct {
   char has_private;
 } X25519_KEY;
 
+typedef struct {
+    OQS_SIG *ctx;
+    uint8_t *pub;
+    uint8_t *priv;
+    char has_private;
+    int nid;
+    EVP_PKEY *classical_pkey;
+} OQS_KEY;
+
+typedef enum {
+    KEY_TYPE_PUBLIC,
+    KEY_TYPE_PRIVATE,
+} oqs_key_type_t;
+
+#define SIZE_OF_UINT32 4
+
+#define ENCODE_UINT32(pbuf, i)  (pbuf)[0] = (unsigned char)((i>>24) & 0xff); \
+                                (pbuf)[1] = (unsigned char)((i>>16) & 0xff); \
+                                (pbuf)[2] = (unsigned char)((i>> 8) & 0xff); \
+                                (pbuf)[3] = (unsigned char)((i    ) & 0xff)
+
+#define DECODE_UINT32(i, pbuf)  i  = ((uint32_t) (pbuf)[0]) << 24; \
+                                i |= ((uint32_t) (pbuf)[1]) << 16; \
+                                i |= ((uint32_t) (pbuf)[2]) <<  8; \
+                                i |= ((uint32_t) (pbuf)[3])
+
+void oqs_pkey_ctx_free(OQS_KEY* key);
+int get_classical_nid(int hybrid_id);
+int is_oqs_hybrid_alg(int hybrid_nid);
+int is_EC_nid(int nid);
+int get_classical_sig_len(int classical_id);
+
 extern const EVP_PKEY_ASN1_METHOD dsa_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD ec_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD rsa_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD ed25519_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD x25519_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD dh_asn1_meth;
+///// OQS_TEMPLATE_FRAGMENT_DECLARE_ASN1_METHS_START
+extern const EVP_PKEY_ASN1_METHOD mldsa44_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD p256_mldsa44_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD mldsa65_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD p384_mldsa65_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD mldsa87_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD p521_mldsa87_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD falcon512_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD rsa3072_falcon512_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD falconpadded512_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD falcon1024_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD falconpadded1024_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD mayo1_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD mayo2_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD mayo3_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD mayo5_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD OV_Is_pkc_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD OV_Ip_pkc_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD OV_Is_pkc_skc_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD OV_Ip_pkc_skc_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD CROSSrsdp128balanced_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD sphincssha2128fsimple_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD sphincssha2128ssimple_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD sphincssha2192fsimple_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD sphincssha2192ssimple_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD sphincssha2256fsimple_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD sphincssha2256ssimple_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD sphincsshake128fsimple_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD sphincsshake128ssimple_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD sphincsshake192fsimple_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD sphincsshake192ssimple_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD sphincsshake256fsimple_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD sphincsshake256ssimple_asn1_meth;
+///// OQS_TEMPLATE_FRAGMENT_DECLARE_ASN1_METHS_END
 
 extern const EVP_PKEY_METHOD rsa_pkey_meth;
 extern const EVP_PKEY_METHOD ec_pkey_meth;
@@ -255,6 +326,40 @@ extern const EVP_PKEY_METHOD ed25519_pkey_meth;
 extern const EVP_PKEY_METHOD x25519_pkey_meth;
 extern const EVP_PKEY_METHOD hkdf_pkey_meth;
 extern const EVP_PKEY_METHOD dh_pkey_meth;
+///// OQS_TEMPLATE_FRAGMENT_DECLARE_PKEY_METHS_START
+extern const EVP_PKEY_METHOD mldsa44_pkey_meth;
+extern const EVP_PKEY_METHOD p256_mldsa44_pkey_meth;
+extern const EVP_PKEY_METHOD mldsa65_pkey_meth;
+extern const EVP_PKEY_METHOD p384_mldsa65_pkey_meth;
+extern const EVP_PKEY_METHOD mldsa87_pkey_meth;
+extern const EVP_PKEY_METHOD p521_mldsa87_pkey_meth;
+extern const EVP_PKEY_METHOD falcon512_pkey_meth;
+extern const EVP_PKEY_METHOD rsa3072_falcon512_pkey_meth;
+extern const EVP_PKEY_METHOD falconpadded512_pkey_meth;
+extern const EVP_PKEY_METHOD falcon1024_pkey_meth;
+extern const EVP_PKEY_METHOD falconpadded1024_pkey_meth;
+extern const EVP_PKEY_METHOD mayo1_pkey_meth;
+extern const EVP_PKEY_METHOD mayo2_pkey_meth;
+extern const EVP_PKEY_METHOD mayo3_pkey_meth;
+extern const EVP_PKEY_METHOD mayo5_pkey_meth;
+extern const EVP_PKEY_METHOD OV_Is_pkc_pkey_meth;
+extern const EVP_PKEY_METHOD OV_Ip_pkc_pkey_meth;
+extern const EVP_PKEY_METHOD OV_Is_pkc_skc_pkey_meth;
+extern const EVP_PKEY_METHOD OV_Ip_pkc_skc_pkey_meth;
+extern const EVP_PKEY_METHOD CROSSrsdp128balanced_pkey_meth;
+extern const EVP_PKEY_METHOD sphincssha2128fsimple_pkey_meth;
+extern const EVP_PKEY_METHOD sphincssha2128ssimple_pkey_meth;
+extern const EVP_PKEY_METHOD sphincssha2192fsimple_pkey_meth;
+extern const EVP_PKEY_METHOD sphincssha2192ssimple_pkey_meth;
+extern const EVP_PKEY_METHOD sphincssha2256fsimple_pkey_meth;
+extern const EVP_PKEY_METHOD sphincssha2256ssimple_pkey_meth;
+extern const EVP_PKEY_METHOD sphincsshake128fsimple_pkey_meth;
+extern const EVP_PKEY_METHOD sphincsshake128ssimple_pkey_meth;
+extern const EVP_PKEY_METHOD sphincsshake192fsimple_pkey_meth;
+extern const EVP_PKEY_METHOD sphincsshake192ssimple_pkey_meth;
+extern const EVP_PKEY_METHOD sphincsshake256fsimple_pkey_meth;
+extern const EVP_PKEY_METHOD sphincsshake256ssimple_pkey_meth;
+///// OQS_TEMPLATE_FRAGMENT_DECLARE_PKEY_METHS_END
 
 // evp_pkey_set_method behaves like |EVP_PKEY_set_type|, but takes a pointer to
 // a method table. This avoids depending on every |EVP_PKEY_ASN1_METHOD|.

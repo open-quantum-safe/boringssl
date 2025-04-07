@@ -266,7 +266,8 @@ func addKeyUpdateTests() {
 		config: Config{
 			MaxVersion: VersionTLS13,
 			Bugs: ProtocolBugs{
-				MaxPacketLength: 512,
+				// OQS note: Adjust the DTLS maximum packet length to accommodate the addition of quantum-safe algs.
+				MaxPacketLength: 1536,
 				ACKFlightDTLS: func(c *DTLSController, prev, received []DTLSMessage, records []DTLSRecordNumberInfo) {
 					if received[0].Type != typeKeyUpdate {
 						c.WriteACK(c.OutEpoch(), records)

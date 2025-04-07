@@ -262,6 +262,8 @@
             "crypto/evp/p_ed25519.cc",
             "crypto/evp/p_ed25519_asn1.cc",
             "crypto/evp/p_hkdf.cc",
+            "crypto/evp/p_oqs.cc",
+            "crypto/evp/p_oqs_asn1.cc",
             "crypto/evp/p_rsa.cc",
             "crypto/evp/p_rsa_asn1.cc",
             "crypto/evp/p_x25519.cc",
@@ -1047,6 +1049,11 @@
         "srcs": [
             "rust/bssl-crypto/src/*.rs",
             "rust/bssl-crypto/src/*/*.rs"
+        ]
+    },
+    "oqs": {
+        "hdrs": [
+            "oqs/include/oqs/*.h"
         ]
     }
 }

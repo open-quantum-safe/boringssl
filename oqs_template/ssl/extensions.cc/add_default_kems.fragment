@@ -1,0 +1,6 @@
+{% for kem in config['kems'] %}
+    {%- if kem['use_as_default_with'] %}
+    SSL_GROUP_{{ kem['use_as_default_with']|upper }}_{{ kem['name']|upper }},
+    {%- endif -%}
+{%- endfor %}
+

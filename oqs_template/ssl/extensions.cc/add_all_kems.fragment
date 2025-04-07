@@ -1,0 +1,7 @@
+{% for kem in config['kems'] %}
+    {%- for classical_alg in kem['mix_with'] %}
+    SSL_GROUP_{{ classical_alg['name']|upper }}_{{ kem['name']|upper }},
+    {%- endfor %}
+    SSL_GROUP_{{ kem['name']|upper }},
+{%- endfor %}
+

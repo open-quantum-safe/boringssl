@@ -1,0 +1,4 @@
+{% for sig in config['sigs'] %}
+extern const EVP_PKEY_ASN1_METHOD {{ sig['name'] }}_asn1_meth;
+{%- endfor %}
+
