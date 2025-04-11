@@ -41,13 +41,6 @@ kexs = [
         'p384_bikel3',
         'bikel5',
         'p521_bikel5',
-        'hqc128',
-        'p256_hqc128',
-        'x25519_hqc128',
-        'hqc192',
-        'p384_hqc192',
-        'hqc256',
-        'p521_hqc256',
 ##### OQS_TEMPLATE_FRAGMENT_LIST_ALL_KEMS_END
 ]
 

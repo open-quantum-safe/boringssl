@@ -7,6 +7,9 @@ from tempfile import NamedTemporaryFile
 
 kexs = [
 ##### OQS_TEMPLATE_FRAGMENT_LIST_KEMS_START
+        'mlkem512',
+        'p256_mlkem512',
+        'x25519_mlkem512',
         'mlkem768',
         'p256_mlkem768',
         'p384_mlkem768',
@@ -34,13 +37,6 @@ kexs = [
         'p384_bikel3',
         'bikel5',
         'p521_bikel5',
-        'hqc128',
-        'p256_hqc128',
-        'x25519_hqc128',
-        'hqc192',
-        'p384_hqc192',
-        'hqc256',
-        'p521_hqc256',
 ##### OQS_TEMPLATE_FRAGMENT_LIST_KEMS_END
 ]
 

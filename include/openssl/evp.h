@@ -221,9 +221,6 @@ OPENSSL_EXPORT DH *EVP_PKEY_get1_DH(const EVP_PKEY *pkey);
    (pkey_id == NID_bikel1) || \
    (pkey_id == NID_bikel3) || \
    (pkey_id == NID_bikel5) || \
-   (pkey_id == NID_hqc128) || \
-   (pkey_id == NID_hqc192) || \
-   (pkey_id == NID_hqc256) || \
 0 )
 ///// OQS_TEMPLATE_FRAGMENT_DEFINE_EVP_PKEYS_END
 

@@ -2500,9 +2500,6 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
         NID_bikel1, NID_p256_bikel1, NID_x25519_bikel1,
         NID_bikel3, NID_p384_bikel3,
         NID_bikel5, NID_p521_bikel5,
-        NID_hqc128, NID_p256_hqc128, NID_x25519_hqc128,
-        NID_hqc192, NID_p384_hqc192,
-        NID_hqc256, NID_p521_hqc256,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_PQ_CURVEIDS_END
     };
     if (!SSL_set1_curves(ssl.get(), kAllCurves,

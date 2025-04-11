@@ -4300,27 +4300,6 @@ extern "C" {
 #define SN_p521_bikel5 "p521_bikel5"
 #define NID_p521_bikel5 1000
 
-#define SN_hqc128 "hqc128"
-#define NID_hqc128 1001
-
-#define SN_p256_hqc128 "p256_hqc128"
-#define NID_p256_hqc128 1002
-
-#define SN_x25519_hqc128 "x25519_hqc128"
-#define NID_x25519_hqc128 1003
-
-#define SN_hqc192 "hqc192"
-#define NID_hqc192 1004
-
-#define SN_p384_hqc192 "p384_hqc192"
-#define NID_p384_hqc192 1005
-
-#define SN_hqc256 "hqc256"
-#define NID_hqc256 1006
-
-#define SN_p521_hqc256 "p521_hqc256"
-#define NID_p521_hqc256 1007
-
 #define SN_mldsa44 "mldsa44"
 #define LN_mldsa44 "mldsa44"
 #define NID_mldsa44 1008

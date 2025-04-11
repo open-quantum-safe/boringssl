@@ -483,14 +483,7 @@ class TLSFuzzer {
         SSL_GROUP_BIKEL3,
         SSL_GROUP_P384_BIKEL3,
         SSL_GROUP_BIKEL5,
-        SSL_GROUP_P521_BIKEL5,
-        SSL_GROUP_HQC128,
-        SSL_GROUP_P256_HQC128,
-        SSL_GROUP_X25519_HQC128,
-        SSL_GROUP_HQC192,
-        SSL_GROUP_P384_HQC192,
-        SSL_GROUP_HQC256,
-        SSL_GROUP_P521_HQC256
+        SSL_GROUP_P521_BIKEL5
 ///// OQS_TEMPLATE_FRAGMENT_LIST_GROUPS_END
     };
     if (!SSL_CTX_set1_group_ids(ctx_.get(), kGroups,

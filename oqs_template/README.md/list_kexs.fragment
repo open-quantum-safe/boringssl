@@ -1,4 +1,4 @@
-{%- for family, kems in config['kems'][1:] | groupby('family') %}
+{%- for family, kems in config['kems'] | groupby('family') %}
 - **{{ family }}**: {% for kem in kems -%} {%- if not loop.first %}, {% endif -%} `{{ kem['name'] }}` {%- for classical_alg in kem['mix_with'] %}, `{{ classical_alg['name'] }}_{{ kem['name'] }}` {%- endfor %} {%- if loop.last and family == 'HQC' -%}†{%- endif -%}{%- endfor -%}
 {%- endfor %}
 

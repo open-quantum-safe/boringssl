@@ -78,25 +78,6 @@ kems:
     nid: '0x0243'
     mix_with: [{'name': 'p521', 'mix_nid':'0x2F43', 'nid':'SSL_GROUP_SECP521R1'}]
     oqs_meth: 'OQS_KEM_alg_bike_l5'
-  -
-    family: 'HQC'
-    name: 'hqc128'
-    nid: '0x0244'
-    mix_with: [{'name': 'p256', 'mix_nid':'0x2F44', 'nid':'SSL_GROUP_SECP256R1'}, {'name': 'x25519', 'mix_nid':'0x2FB0', 'nid':'SSL_GROUP_X25519'}]
-    use_as_default_with: 'x25519'
-    oqs_meth: 'OQS_KEM_alg_hqc_128'
-  -
-    family: 'HQC'
-    name: 'hqc192'
-    nid: '0x0245'
-    mix_with: [{'name': 'p384', 'mix_nid':'0x2F45', 'nid':'SSL_GROUP_SECP384R1'}]
-    oqs_meth: 'OQS_KEM_alg_hqc_192'
-  -
-    family: 'HQC'
-    name: 'hqc256'
-    nid: '0x0246'
-    mix_with: [{'name': 'p521', 'mix_nid':'0x2F46', 'nid':'SSL_GROUP_SECP521R1'}]
-    oqs_meth: 'OQS_KEM_alg_hqc_256'
 
 
 # N.B: Code points and OIDs must match those used

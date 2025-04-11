@@ -71,8 +71,7 @@ Along with `X25519MLKEM768` supported by BoringSSL through Google's implementati
 <!--- OQS_TEMPLATE_FRAGMENT_LIST_KEXS_START -->
 - **BIKE**: `bikel1`, `p256_bikel1`, `x25519_bikel1`, `bikel3`, `p384_bikel3`, `bikel5`, `p521_bikel5`
 - **FrodoKEM**: `frodo640aes`, `p256_frodo640aes`, `x25519_frodo640aes`, `frodo640shake`, `p256_frodo640shake`, `x25519_frodo640shake`, `frodo976aes`, `p384_frodo976aes`, `frodo976shake`, `p384_frodo976shake`, `frodo1344aes`, `p521_frodo1344aes`, `frodo1344shake`, `p521_frodo1344shake`
-- **HQC**: `hqc128`, `p256_hqc128`, `x25519_hqc128`, `hqc192`, `p384_hqc192`, `hqc256`, `p521_hqc256`†
-- **ML-KEM**: `mlkem768`, `p256_mlkem768`, `p384_mlkem768`, `mlkem1024`, `p384_mlkem1024`, `p521_mlkem1024`
+- **ML-KEM**: `mlkem512`, `p256_mlkem512`, `x25519_mlkem512`, `mlkem768`, `p256_mlkem768`, `p384_mlkem768`, `mlkem1024`, `p384_mlkem1024`, `p521_mlkem1024`
 <!--- OQS_TEMPLATE_FRAGMENT_LIST_KEXS_END -->
 
 Be aware that hybrid algorithms utlizing `X448` are not supported. If those are needed for a project please use [OQS-provider](https://github.com/open-quantum-safe/oqs-provider) which supports them out of the box, or implement them and create a pull request, or [create an issue](https://github.com/open-quantum-safe/boringssl/issues).
@@ -87,7 +86,7 @@ The following quantum-safe digital signature algorithms from liboqs are supporte
 - **CROSS**: `CROSSrsdp128balanced`
 - **Falcon**: `falcon512`, `rsa3072_falcon512`, `falconpadded512`, `falcon1024`, `falconpadded1024`
 - **MAYO**: `mayo1`, `mayo2`, `mayo3`, `mayo5`
-- **ML-DSA**: `p256_mldsa44`, `mldsa65`, `p384_mldsa65`, `mldsa87`, `p521_mldsa87`
+- **ML-DSA**: `mldsa44`, `p256_mldsa44`, `mldsa65`, `p384_mldsa65`, `mldsa87`, `p521_mldsa87`
 - **SPHINCS-SHA2**: `sphincssha2128fsimple`, `sphincssha2128ssimple`, `sphincssha2192fsimple`, `sphincssha2192ssimple`, `sphincssha2256fsimple`, `sphincssha2256ssimple`
 - **SPHINCS-SHAKE**: `sphincsshake128fsimple`, `sphincsshake128ssimple`, `sphincsshake192fsimple`, `sphincsshake192ssimple`, `sphincsshake256fsimple`, `sphincsshake256ssimple`
 - **UOV**: `OV_Is_pkc`, `OV_Ip_pkc`, `OV_Is_pkc_skc`, `OV_Ip_pkc_skc`

@@ -694,13 +694,6 @@ constexpr NamedGroup kNamedGroups[] = {
     {NID_p384_bikel3, SSL_GROUP_P384_BIKEL3, "p384_bikel3", "p384_bikel3"},
     {NID_bikel5, SSL_GROUP_BIKEL5, "bikel5", "bikel5"},
     {NID_p521_bikel5, SSL_GROUP_P521_BIKEL5, "p521_bikel5", "p521_bikel5"},
-    {NID_hqc128, SSL_GROUP_HQC128, "hqc128", "hqc128"},
-    {NID_p256_hqc128, SSL_GROUP_P256_HQC128, "p256_hqc128", "p256_hqc128"},
-    {NID_x25519_hqc128, SSL_GROUP_X25519_HQC128, "x25519_hqc128", "x25519_hqc128"},
-    {NID_hqc192, SSL_GROUP_HQC192, "hqc192", "hqc192"},
-    {NID_p384_hqc192, SSL_GROUP_P384_HQC192, "p384_hqc192", "p384_hqc192"},
-    {NID_hqc256, SSL_GROUP_HQC256, "hqc256", "hqc256"},
-    {NID_p521_hqc256, SSL_GROUP_P521_HQC256, "p521_hqc256", "p521_hqc256"},
 ///// OQS_TEMPLATE_FRAGMENT_DEF_NAMEDGROUPS_END
 };
 
@@ -785,20 +778,6 @@ UniquePtr<SSLKeyShare> SSLKeyShare::Create(uint16_t group_id) {
       return MakeUnique<OQSKeyShare>(SSL_GROUP_BIKEL5, OQS_KEM_alg_bike_l5);
     case SSL_GROUP_P521_BIKEL5:
       return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P521_BIKEL5, SSL_GROUP_SECP521R1, OQS_KEM_alg_bike_l5);
-    case SSL_GROUP_HQC128:
-      return MakeUnique<OQSKeyShare>(SSL_GROUP_HQC128, OQS_KEM_alg_hqc_128);
-    case SSL_GROUP_P256_HQC128:
-      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P256_HQC128, SSL_GROUP_SECP256R1, OQS_KEM_alg_hqc_128);
-    case SSL_GROUP_X25519_HQC128:
-      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_X25519_HQC128, SSL_GROUP_X25519, OQS_KEM_alg_hqc_128);
-    case SSL_GROUP_HQC192:
-      return MakeUnique<OQSKeyShare>(SSL_GROUP_HQC192, OQS_KEM_alg_hqc_192);
-    case SSL_GROUP_P384_HQC192:
-      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P384_HQC192, SSL_GROUP_SECP384R1, OQS_KEM_alg_hqc_192);
-    case SSL_GROUP_HQC256:
-      return MakeUnique<OQSKeyShare>(SSL_GROUP_HQC256, OQS_KEM_alg_hqc_256);
-    case SSL_GROUP_P521_HQC256:
-      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P521_HQC256, SSL_GROUP_SECP521R1, OQS_KEM_alg_hqc_256);
 ///// OQS_TEMPLATE_FRAGMENT_HANDLE_GROUP_IDS_END
     default:
       return nullptr;

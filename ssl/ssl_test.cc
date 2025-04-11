@@ -605,28 +605,6 @@ static const CurveTest kCurveTests[] = {
             SSL_GROUP_P521_BIKEL5,
         },
     },
-    {
-        "hqc128:p256_hqc128:x25519_hqc128",
-        {
-            SSL_GROUP_HQC128,
-            SSL_GROUP_P256_HQC128,
-            SSL_GROUP_X25519_HQC128,
-        },
-    },
-    {
-        "hqc192:p384_hqc192",
-        {
-            SSL_GROUP_HQC192,
-            SSL_GROUP_P384_HQC192,
-        },
-    },
-    {
-        "hqc256:p521_hqc256",
-        {
-            SSL_GROUP_HQC256,
-            SSL_GROUP_P521_HQC256,
-        },
-    },
 ///// OQS_TEMPLATE_FRAGMENT_ADD_CURVETEST_END
 };
 

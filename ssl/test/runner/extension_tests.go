@@ -1942,7 +1942,7 @@ func addExtensionTests() {
 				// the ClientHello size needs to be recalculated.
 				// The calculation method can be found here:
 				// https://github.com/open-quantum-safe/boringssl/pull/100#issuecomment-1592853839
-				RequireClientHelloSize: 1234,
+				RequireClientHelloSize: 1232,
 			},
 		},
 		// This hostname just needs to be long enough to push the

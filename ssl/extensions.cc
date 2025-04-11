@@ -164,20 +164,6 @@ static bool is_post_quantum_group(uint16_t id) {
       return true;
     case SSL_GROUP_P521_BIKEL5:
       return true;
-    case SSL_GROUP_HQC128:
-      return true;
-    case SSL_GROUP_P256_HQC128:
-      return true;
-    case SSL_GROUP_X25519_HQC128:
-      return true;
-    case SSL_GROUP_HQC192:
-      return true;
-    case SSL_GROUP_P384_HQC192:
-      return true;
-    case SSL_GROUP_HQC256:
-      return true;
-    case SSL_GROUP_P521_HQC256:
-      return true;
 ///// OQS_TEMPLATE_FRAGMENT_ADD_PQ_GROUPS_END
     default:
       return false;
@@ -285,7 +271,6 @@ static const uint16_t kDefaultGroups[] = {
     SSL_GROUP_X25519_FRODO640AES,
     SSL_GROUP_X25519_FRODO640SHAKE,
     SSL_GROUP_X25519_BIKEL1,
-    SSL_GROUP_X25519_HQC128,
 ///// OQS_TEMPLATE_FRAGMENT_ADD_DEFAULT_KEMS_END
 };
 
@@ -330,13 +315,6 @@ static const uint16_t kAllSupportedGroups[] = {
     SSL_GROUP_BIKEL3,
     SSL_GROUP_P521_BIKEL5,
     SSL_GROUP_BIKEL5,
-    SSL_GROUP_P256_HQC128,
-    SSL_GROUP_X25519_HQC128,
-    SSL_GROUP_HQC128,
-    SSL_GROUP_P384_HQC192,
-    SSL_GROUP_HQC192,
-    SSL_GROUP_P521_HQC256,
-    SSL_GROUP_HQC256,
 ///// OQS_TEMPLATE_FRAGMENT_ADD_ALL_KEMS_END
 };
 
