@@ -1,0 +1,4 @@
+{%- for sig in config['sigs'] %}
+      {"{{ sig['name'] }}", true, {SSL_SIGN_{{ sig['name']|upper }} {%- raw -%} }} {%- endraw -%},
+{%- endfor %}
+

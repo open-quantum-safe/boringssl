@@ -1,0 +1,4 @@
+{% for sig in config['sigs'] %}
+{{ sig['oid'] }} : {{ sig['name'] }} : {{ sig['name'] }}
+{%- endfor %}
+

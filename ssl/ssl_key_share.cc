@@ -36,6 +36,8 @@
 #include "../crypto/internal.h"
 #include "internal.h"
 
+#include <oqs/oqs.h>
+
 BSSL_NAMESPACE_BEGIN
 
 namespace {
@@ -375,6 +377,283 @@ class X25519MLKEM768KeyShare : public SSLKeyShare {
   MLKEM768_private_key mlkem_private_key_;
 };
 
+// Class for key-exchange using OQS supplied
+// post-quantum algorithms.
+class OQSKeyShare : public SSLKeyShare {
+ public:
+  // While oqs_meth can be determined from the group_id,
+  // we pass both in as the translation from group_id to
+  // oqs_meth is already done by SSLKeyShare::Create to
+  // to determine if oqs_meth is enabled in liboqs and
+  // and return nullptr if not. It is easier to handle
+  // the error in there as opposed to in this constructor.
+  OQSKeyShare(uint16_t group_id, const char *oqs_meth) : group_id_(group_id) {
+    oqs_kex_ = OQS_KEM_new(oqs_meth);
+  }
+
+  uint16_t GroupID() const override { return group_id_; }
+
+  size_t length_public_key() {
+    return oqs_kex_->length_public_key;
+  }
+
+  size_t length_ciphertext() {
+    return oqs_kex_->length_ciphertext;
+  }
+
+  // Client sends its public key to server
+  bool Generate(CBB *out) override {
+    Array<uint8_t> public_key;
+
+    if (!public_key.Init(oqs_kex_->length_public_key) ||
+        !private_key_.Init(oqs_kex_->length_secret_key)) {
+      OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
+      return false;
+    }
+    if (OQS_KEM_keypair(oqs_kex_, public_key.data(), private_key_.data()) != OQS_SUCCESS) {
+      OPENSSL_PUT_ERROR(SSL, SSL_R_PRIVATE_KEY_OPERATION_FAILED);
+      return false;
+    }
+
+    if (!CBB_add_bytes(out, public_key.data(), public_key.size())) {
+      return false;
+    }
+
+    return true;
+  }
+
+  // Server computes shared secret under client's public key
+  // and sends a ciphertext to client
+  bool Encap(CBB *out_public_key, Array<uint8_t> *out_secret,
+              uint8_t *out_alert, Span<const uint8_t> peer_key) override {
+    Array<uint8_t> shared_secret;
+    Array<uint8_t> ciphertext;
+
+    if (peer_key.size() != oqs_kex_->length_public_key) {
+      *out_alert = SSL_AD_DECODE_ERROR;
+      OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_ECPOINT);
+      return false;
+    }
+
+    if (!shared_secret.Init(oqs_kex_->length_shared_secret) ||
+        !ciphertext.Init(oqs_kex_->length_ciphertext)) {
+      OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
+      return false;
+    }
+
+    if (OQS_KEM_encaps(oqs_kex_, ciphertext.data(), shared_secret.data(), peer_key.data()) != OQS_SUCCESS) {
+      *out_alert = SSL_AD_DECODE_ERROR;
+      OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_ECPOINT);
+      return false;
+    }
+
+    if (!CBB_add_bytes(out_public_key, ciphertext.data(), oqs_kex_->length_ciphertext)) {
+      return false;
+    }
+
+    *out_secret = std::move(shared_secret);
+
+    return true;
+  }
+
+  // Client decapsulates the ciphertext using its
+  // private key to obtain the shared secret.
+  bool Decap(Array<uint8_t> *out_secret, uint8_t *out_alert,
+              Span<const uint8_t> peer_key) override {
+    Array<uint8_t> shared_secret;
+
+    if (peer_key.size() != oqs_kex_->length_ciphertext) {
+      *out_alert = SSL_AD_DECODE_ERROR;
+      OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_ECPOINT);
+      return false;
+    }
+
+    if (!shared_secret.Init(oqs_kex_->length_shared_secret)) {
+      OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
+      return false;
+    }
+
+    if (OQS_KEM_decaps(oqs_kex_, shared_secret.data(), peer_key.data(), private_key_.data()) != OQS_SUCCESS) {
+      *out_alert = SSL_AD_DECODE_ERROR;
+      OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_ECPOINT);
+      return false;
+    }
+
+    *out_secret = std::move(shared_secret);
+
+    return true;
+  }
+
+  ~OQSKeyShare() {
+      OQS_KEM_free(oqs_kex_);
+  }
+
+ private:
+  uint16_t group_id_;
+
+  OQS_KEM *oqs_kex_;
+  Array<uint8_t> private_key_;
+};
+
+// Class for key-exchange using a classical key-exchange
+// algorithm in hybrid mode with OQS supplied post-quantum
+// algorithms. Following https://tools.ietf.org/html/draft-ietf-tls-hybrid-design-01#section-3.2
+// hybrid messages are encoded as follows:
+// classical_artifact | pq_artifact
+class ClassicalWithOQSKeyShare : public SSLKeyShare {
+ public:
+  ClassicalWithOQSKeyShare(uint16_t group_id, uint16_t classical_group_id, const char *oqs_meth) : group_id_(group_id), classical_group_id_(classical_group_id), oqs_meth_(oqs_meth) {}
+
+  uint16_t GroupID() const override { return group_id_; }
+
+  bool Generate(CBB *out) override {
+    if (!initCheck()) {
+        return false;
+    }
+
+    ScopedCBB classical_offer;
+    ScopedCBB pq_offer;
+
+    if (!CBB_init(classical_offer.get(), 0) ||
+        !classical_kex_->Generate(classical_offer.get()) ||
+        !CBB_flush(classical_offer.get())) {
+      // classical_kex_ will set the appropriate error on failure
+      return false;
+    }
+
+    if (!CBB_init(pq_offer.get(), 0) ||
+        !pq_kex_->Generate(pq_offer.get()) ||
+        !CBB_flush(pq_offer.get())) {
+      // pq_kex_ will set the appropriate error on failure
+      return false;
+    }
+
+    if (!CBB_add_bytes(out, CBB_data(classical_offer.get()), CBB_len(classical_offer.get())) ||
+        !CBB_add_bytes(out, CBB_data(pq_offer.get()), CBB_len(pq_offer.get()))) {
+      OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
+      return false;
+    }
+
+    return true;
+  }
+
+  bool Encap(CBB *out_public_key, Array<uint8_t> *out_secret,
+              uint8_t *out_alert, Span<const uint8_t> peer_key) override {
+    if (!initCheck()) {
+        return false;
+    }
+
+    Array<uint8_t> out_classical_secret;
+    ScopedCBB out_classical_public_key;
+
+    Array<uint8_t> out_pq_secret;
+    ScopedCBB out_pq_ciphertext;
+
+    ScopedCBB out_secret_cbb;
+
+    if (!CBB_init(out_classical_public_key.get(), classical_pub_size_) ||
+        !classical_kex_->Encap(out_classical_public_key.get(), &out_classical_secret, out_alert, peer_key.subspan(0, classical_pub_size_)) ||
+        !CBB_flush(out_classical_public_key.get())) {
+      return false;
+    }
+
+    if (!CBB_init(out_pq_ciphertext.get(), 0) ||
+        !pq_kex_->Encap(out_pq_ciphertext.get(), &out_pq_secret, out_alert, peer_key.subspan(classical_pub_size_, pq_kex_->length_public_key())) ||
+        !CBB_flush(out_pq_ciphertext.get())) {
+      return false;
+    }
+
+    if (!CBB_add_bytes(out_public_key, CBB_data(out_classical_public_key.get()), CBB_len(out_classical_public_key.get())) ||
+        !CBB_add_bytes(out_public_key, CBB_data(out_pq_ciphertext.get()), CBB_len(out_pq_ciphertext.get()))) {
+      OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
+      return false;
+    }
+
+    if (!CBB_init(out_secret_cbb.get(), out_classical_secret.size() + out_pq_secret.size()) ||
+        !CBB_add_bytes(out_secret_cbb.get(), out_classical_secret.data(), out_classical_secret.size()) ||
+        !CBB_add_bytes(out_secret_cbb.get(), out_pq_secret.data(), out_pq_secret.size()) ||
+        !CBBFinishArray(out_secret_cbb.get(), out_secret)) {
+      OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
+      return false;
+    }
+
+    return true;
+  }
+
+  bool Decap(Array<uint8_t> *out_secret, uint8_t *out_alert,
+              Span<const uint8_t> peer_key) override {
+    if (!initCheck()) {
+        return false;
+    }
+
+    ScopedCBB out_secret_cbb;
+
+    Array<uint8_t> out_classical_secret;
+    Array<uint8_t> out_pq_secret;
+
+    if (!classical_kex_->Decap(&out_classical_secret, out_alert, peer_key.subspan(0, classical_pub_size_))) {
+      return false;
+    }
+
+    if (!pq_kex_->Decap(&out_pq_secret, out_alert, peer_key.subspan(classical_pub_size_, pq_kex_->length_ciphertext()))) {
+      return false;
+    }
+
+    if (!CBB_init(out_secret_cbb.get(), out_classical_secret.size() + out_pq_secret.size()) ||
+        !CBB_add_bytes(out_secret_cbb.get(), out_classical_secret.data(), out_classical_secret.size()) ||
+        !CBB_add_bytes(out_secret_cbb.get(), out_pq_secret.data(), out_pq_secret.size()) ||
+        !CBBFinishArray(out_secret_cbb.get(), out_secret)) {
+      return false;
+    }
+
+    return true;
+  }
+
+ private:
+  uint16_t group_id_;
+  uint16_t classical_group_id_;
+  const char *oqs_meth_;
+
+  UniquePtr<SSLKeyShare> classical_kex_ = nullptr;
+  size_t classical_pub_size_ = 0;
+
+  UniquePtr<OQSKeyShare> pq_kex_ = nullptr;
+
+  bool initCheck() {
+    if (!classical_kex_) {
+        classical_kex_ = SSLKeyShare::Create(classical_group_id_);
+        if (!classical_kex_) {
+            OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
+            return false;
+        }
+    }
+    if (!pq_kex_) {
+        pq_kex_ = MakeUnique<OQSKeyShare>(0, oqs_meth_); //We don't need pq_kex_->GroupID()
+        if (!pq_kex_) {
+            OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
+            return false;
+        }
+    }
+    if (!classical_pub_size_) {
+        // TODO(oqs): This is hacky, but seems like the easiest way to go from
+        // classical group ID -> classical public key size.
+        UniquePtr<SSLKeyShare> tmp_kex = SSLKeyShare::Create(classical_group_id_);
+        ScopedCBB tmp;
+        if (!CBB_init(tmp.get(), 0) ||
+            !tmp_kex->Generate(tmp.get()) ||
+            !CBB_flush(tmp.get())) {
+          OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
+          return false;
+        }
+        classical_pub_size_ = CBB_len(tmp.get());
+        if(!classical_pub_size_) {
+            return false;
+        }
+    }
+    return true;
+  }
+};
+
 constexpr NamedGroup kNamedGroups[] = {
     {NID_secp224r1, SSL_GROUP_SECP224R1, "P-224", "secp224r1"},
     {NID_X9_62_prime256v1, SSL_GROUP_SECP256R1, "P-256", "prime256v1"},
@@ -384,6 +663,38 @@ constexpr NamedGroup kNamedGroups[] = {
     {NID_X25519Kyber768Draft00, SSL_GROUP_X25519_KYBER768_DRAFT00,
      "X25519Kyber768Draft00", ""},
     {NID_X25519MLKEM768, SSL_GROUP_X25519_MLKEM768, "X25519MLKEM768", ""},
+///// OQS_TEMPLATE_FRAGMENT_DEF_NAMEDGROUPS_START
+    {NID_mlkem512, SSL_GROUP_MLKEM512, "mlkem512", "mlkem512"},
+    {NID_p256_mlkem512, SSL_GROUP_P256_MLKEM512, "p256_mlkem512", "p256_mlkem512"},
+    {NID_x25519_mlkem512, SSL_GROUP_X25519_MLKEM512, "x25519_mlkem512", "x25519_mlkem512"},
+    {NID_mlkem768, SSL_GROUP_MLKEM768, "mlkem768", "mlkem768"},
+    {NID_p256_mlkem768, SSL_GROUP_P256_MLKEM768, "p256_mlkem768", "p256_mlkem768"},
+    {NID_p384_mlkem768, SSL_GROUP_P384_MLKEM768, "p384_mlkem768", "p384_mlkem768"},
+    {NID_mlkem1024, SSL_GROUP_MLKEM1024, "mlkem1024", "mlkem1024"},
+    {NID_p384_mlkem1024, SSL_GROUP_P384_MLKEM1024, "p384_mlkem1024", "p384_mlkem1024"},
+    {NID_p521_mlkem1024, SSL_GROUP_P521_MLKEM1024, "p521_mlkem1024", "p521_mlkem1024"},
+    {NID_frodo640aes, SSL_GROUP_FRODO640AES, "frodo640aes", "frodo640aes"},
+    {NID_p256_frodo640aes, SSL_GROUP_P256_FRODO640AES, "p256_frodo640aes", "p256_frodo640aes"},
+    {NID_x25519_frodo640aes, SSL_GROUP_X25519_FRODO640AES, "x25519_frodo640aes", "x25519_frodo640aes"},
+    {NID_frodo640shake, SSL_GROUP_FRODO640SHAKE, "frodo640shake", "frodo640shake"},
+    {NID_p256_frodo640shake, SSL_GROUP_P256_FRODO640SHAKE, "p256_frodo640shake", "p256_frodo640shake"},
+    {NID_x25519_frodo640shake, SSL_GROUP_X25519_FRODO640SHAKE, "x25519_frodo640shake", "x25519_frodo640shake"},
+    {NID_frodo976aes, SSL_GROUP_FRODO976AES, "frodo976aes", "frodo976aes"},
+    {NID_p384_frodo976aes, SSL_GROUP_P384_FRODO976AES, "p384_frodo976aes", "p384_frodo976aes"},
+    {NID_frodo976shake, SSL_GROUP_FRODO976SHAKE, "frodo976shake", "frodo976shake"},
+    {NID_p384_frodo976shake, SSL_GROUP_P384_FRODO976SHAKE, "p384_frodo976shake", "p384_frodo976shake"},
+    {NID_frodo1344aes, SSL_GROUP_FRODO1344AES, "frodo1344aes", "frodo1344aes"},
+    {NID_p521_frodo1344aes, SSL_GROUP_P521_FRODO1344AES, "p521_frodo1344aes", "p521_frodo1344aes"},
+    {NID_frodo1344shake, SSL_GROUP_FRODO1344SHAKE, "frodo1344shake", "frodo1344shake"},
+    {NID_p521_frodo1344shake, SSL_GROUP_P521_FRODO1344SHAKE, "p521_frodo1344shake", "p521_frodo1344shake"},
+    {NID_bikel1, SSL_GROUP_BIKEL1, "bikel1", "bikel1"},
+    {NID_p256_bikel1, SSL_GROUP_P256_BIKEL1, "p256_bikel1", "p256_bikel1"},
+    {NID_x25519_bikel1, SSL_GROUP_X25519_BIKEL1, "x25519_bikel1", "x25519_bikel1"},
+    {NID_bikel3, SSL_GROUP_BIKEL3, "bikel3", "bikel3"},
+    {NID_p384_bikel3, SSL_GROUP_P384_BIKEL3, "p384_bikel3", "p384_bikel3"},
+    {NID_bikel5, SSL_GROUP_BIKEL5, "bikel5", "bikel5"},
+    {NID_p521_bikel5, SSL_GROUP_P521_BIKEL5, "p521_bikel5", "p521_bikel5"},
+///// OQS_TEMPLATE_FRAGMENT_DEF_NAMEDGROUPS_END
 };
 
 }  // namespace
@@ -406,6 +717,68 @@ UniquePtr<SSLKeyShare> SSLKeyShare::Create(uint16_t group_id) {
       return MakeUnique<X25519Kyber768KeyShare>();
     case SSL_GROUP_X25519_MLKEM768:
       return MakeUnique<X25519MLKEM768KeyShare>();
+///// OQS_TEMPLATE_FRAGMENT_HANDLE_GROUP_IDS_START
+    case SSL_GROUP_MLKEM512:
+      return MakeUnique<OQSKeyShare>(SSL_GROUP_MLKEM512, OQS_KEM_alg_ml_kem_512);
+    case SSL_GROUP_P256_MLKEM512:
+      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P256_MLKEM512, SSL_GROUP_SECP256R1, OQS_KEM_alg_ml_kem_512);
+    case SSL_GROUP_X25519_MLKEM512:
+      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_X25519_MLKEM512, SSL_GROUP_X25519, OQS_KEM_alg_ml_kem_512);
+    case SSL_GROUP_MLKEM768:
+      return MakeUnique<OQSKeyShare>(SSL_GROUP_MLKEM768, OQS_KEM_alg_ml_kem_768);
+    case SSL_GROUP_P256_MLKEM768:
+      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P256_MLKEM768, SSL_GROUP_SECP256R1, OQS_KEM_alg_ml_kem_768);
+    case SSL_GROUP_P384_MLKEM768:
+      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P384_MLKEM768, SSL_GROUP_SECP384R1, OQS_KEM_alg_ml_kem_768);
+    case SSL_GROUP_MLKEM1024:
+      return MakeUnique<OQSKeyShare>(SSL_GROUP_MLKEM1024, OQS_KEM_alg_ml_kem_1024);
+    case SSL_GROUP_P384_MLKEM1024:
+      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P384_MLKEM1024, SSL_GROUP_SECP384R1, OQS_KEM_alg_ml_kem_1024);
+    case SSL_GROUP_P521_MLKEM1024:
+      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P521_MLKEM1024, SSL_GROUP_SECP521R1, OQS_KEM_alg_ml_kem_1024);
+    case SSL_GROUP_FRODO640AES:
+      return MakeUnique<OQSKeyShare>(SSL_GROUP_FRODO640AES, OQS_KEM_alg_frodokem_640_aes);
+    case SSL_GROUP_P256_FRODO640AES:
+      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P256_FRODO640AES, SSL_GROUP_SECP256R1, OQS_KEM_alg_frodokem_640_aes);
+    case SSL_GROUP_X25519_FRODO640AES:
+      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_X25519_FRODO640AES, SSL_GROUP_X25519, OQS_KEM_alg_frodokem_640_aes);
+    case SSL_GROUP_FRODO640SHAKE:
+      return MakeUnique<OQSKeyShare>(SSL_GROUP_FRODO640SHAKE, OQS_KEM_alg_frodokem_640_shake);
+    case SSL_GROUP_P256_FRODO640SHAKE:
+      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P256_FRODO640SHAKE, SSL_GROUP_SECP256R1, OQS_KEM_alg_frodokem_640_shake);
+    case SSL_GROUP_X25519_FRODO640SHAKE:
+      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_X25519_FRODO640SHAKE, SSL_GROUP_X25519, OQS_KEM_alg_frodokem_640_shake);
+    case SSL_GROUP_FRODO976AES:
+      return MakeUnique<OQSKeyShare>(SSL_GROUP_FRODO976AES, OQS_KEM_alg_frodokem_976_aes);
+    case SSL_GROUP_P384_FRODO976AES:
+      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P384_FRODO976AES, SSL_GROUP_SECP384R1, OQS_KEM_alg_frodokem_976_aes);
+    case SSL_GROUP_FRODO976SHAKE:
+      return MakeUnique<OQSKeyShare>(SSL_GROUP_FRODO976SHAKE, OQS_KEM_alg_frodokem_976_shake);
+    case SSL_GROUP_P384_FRODO976SHAKE:
+      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P384_FRODO976SHAKE, SSL_GROUP_SECP384R1, OQS_KEM_alg_frodokem_976_shake);
+    case SSL_GROUP_FRODO1344AES:
+      return MakeUnique<OQSKeyShare>(SSL_GROUP_FRODO1344AES, OQS_KEM_alg_frodokem_1344_aes);
+    case SSL_GROUP_P521_FRODO1344AES:
+      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P521_FRODO1344AES, SSL_GROUP_SECP521R1, OQS_KEM_alg_frodokem_1344_aes);
+    case SSL_GROUP_FRODO1344SHAKE:
+      return MakeUnique<OQSKeyShare>(SSL_GROUP_FRODO1344SHAKE, OQS_KEM_alg_frodokem_1344_shake);
+    case SSL_GROUP_P521_FRODO1344SHAKE:
+      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P521_FRODO1344SHAKE, SSL_GROUP_SECP521R1, OQS_KEM_alg_frodokem_1344_shake);
+    case SSL_GROUP_BIKEL1:
+      return MakeUnique<OQSKeyShare>(SSL_GROUP_BIKEL1, OQS_KEM_alg_bike_l1);
+    case SSL_GROUP_P256_BIKEL1:
+      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P256_BIKEL1, SSL_GROUP_SECP256R1, OQS_KEM_alg_bike_l1);
+    case SSL_GROUP_X25519_BIKEL1:
+      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_X25519_BIKEL1, SSL_GROUP_X25519, OQS_KEM_alg_bike_l1);
+    case SSL_GROUP_BIKEL3:
+      return MakeUnique<OQSKeyShare>(SSL_GROUP_BIKEL3, OQS_KEM_alg_bike_l3);
+    case SSL_GROUP_P384_BIKEL3:
+      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P384_BIKEL3, SSL_GROUP_SECP384R1, OQS_KEM_alg_bike_l3);
+    case SSL_GROUP_BIKEL5:
+      return MakeUnique<OQSKeyShare>(SSL_GROUP_BIKEL5, OQS_KEM_alg_bike_l5);
+    case SSL_GROUP_P521_BIKEL5:
+      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P521_BIKEL5, SSL_GROUP_SECP521R1, OQS_KEM_alg_bike_l5);
+///// OQS_TEMPLATE_FRAGMENT_HANDLE_GROUP_IDS_END
     default:
       return nullptr;
   }

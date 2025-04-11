@@ -1,0 +1,4 @@
+{% for sig in config['sigs'] %}
+#define SSL_SIGN_{{ sig['name']|upper }} {{ sig['code_point'] }}
+{%- endfor %}
+

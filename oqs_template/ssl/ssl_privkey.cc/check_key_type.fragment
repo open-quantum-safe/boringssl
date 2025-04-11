@@ -1,0 +1,4 @@
+{%- for sig in config['sigs'] %}
+         key_type == EVP_PKEY_{{ sig['name']|upper }} {%- if loop.last -%} ; {%- else %} || {%- endif -%}
+{%- endfor %}
+

@@ -1,0 +1,4 @@
+{%- for sig in config['sigs'] %}
+      pkey_id == EVP_PKEY_{{ sig['name']|upper }}{%- if not loop.last %} || {%- endif -%}
+{%- endfor %}
+

@@ -1,0 +1,5 @@
+{%- for sig in config['sigs'] %}
+  EXPECT_EQ(EVP_PKEY_{{ sig['name']|upper }},
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_{{ sig['name']|upper }}));
+{%- endfor %}
+

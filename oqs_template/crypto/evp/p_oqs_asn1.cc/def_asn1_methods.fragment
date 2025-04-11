@@ -1,0 +1,6 @@
+
+{% for sig in config['sigs'] -%}
+DEFINE_OQS_ASN1_METHODS({{ sig['name'] }}, {{ sig['oqs_meth'] }}, EVP_PKEY_{{ sig['name']|upper }})
+DEFINE_OQS_PKEY_ASN1_METHOD({{ sig['name'] }}, EVP_PKEY_{{ sig['name']|upper }}, OID({{ sig['oid_encoded'] }}))
+
+{% endfor -%}

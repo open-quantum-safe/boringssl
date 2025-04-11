@@ -301,7 +301,10 @@ func addCertCompressionTests() {
 			expectedError: ":CERT_DECOMPRESSION_FAILED:",
 		})
 
-		testCases = append(testCases, testCase{
+        // OQS note: We've disabled this test as we've increased
+        // SSL_MAX_CERT_LIST_DEFAULT to the maximum permissible
+        // value.
+	/*	testCases = append(testCases, testCase{
 			testType: clientTest,
 			name:     "CertCompressionTooLargeClient-" + ver.name,
 			flags:    []string{"-install-cert-compression-algs"},
@@ -318,6 +321,6 @@ func addCertCompressionTests() {
 			},
 			shouldFail:    true,
 			expectedError: ":UNCOMPRESSED_CERT_TOO_LARGE:",
-		})
+		}) */
 	}
 }

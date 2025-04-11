@@ -1,0 +1,10 @@
+
+{% for sig in config['sigs'] -%}
+    {%- if sig['claimed_security_level'] == '1' or sig['claimed_security_level'] == '2' -%}
+      {%- raw %}      {{ {%- endraw -%} NID_sha256, EVP_PKEY_{{ sig['name']|upper }}}, true, {SSL_SIGN_{{ sig['name']|upper }} {%- raw -%} }} {%- endraw -%},
+    {%- elif sig['claimed_security_level'] == '3' or sig['claimed_security_level'] == '4' -%}
+      {%- raw %}      {{ {%- endraw -%} NID_sha384, EVP_PKEY_{{ sig['name']|upper }}}, true, {SSL_SIGN_{{ sig['name']|upper }} {%- raw -%} }} {%- endraw -%},
+    {%- else -%} {# claimed_security_level == '5' #}
+      {%- raw %}      {{ {%- endraw -%} NID_sha512, EVP_PKEY_{{ sig['name']|upper }}}, true, {SSL_SIGN_{{ sig['name']|upper }} {%- raw -%} }} {%- endraw -%},
+    {%- endif %}
+{% endfor %}

@@ -1,0 +1,4 @@
+{% for kem in config['kems'] %}
+        NID_{{ kem['name'] }}, {%- for classical_alg in kem['mix_with'] %} NID_{{ classical_alg['name'] }}_{{ kem['name'] }}, {%- endfor -%}
+{%- endfor %}
+

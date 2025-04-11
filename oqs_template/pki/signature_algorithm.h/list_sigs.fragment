@@ -1,0 +1,4 @@
+{% for sig in config['sigs'] %}
+  k{{ sig['name']|capitalize }},
+{%- endfor %}
+

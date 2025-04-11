@@ -1,0 +1,10 @@
+{% for sig in config['sigs'] %}
+    {%- if sig['claimed_security_level'] == '1' or sig['claimed_security_level'] == '2' %}
+    {NID_{{ sig['name'] }}, NID_sha256, NID_{{ sig['name'] }}},
+    {%- elif sig['claimed_security_level'] == '3' or sig['claimed_security_level'] == '4' %}
+    {NID_{{ sig['name'] }}, NID_sha384, NID_{{ sig['name'] }}},
+    {%- else %}{# claimed_security_level == '5' #}
+    {NID_{{ sig['name'] }}, NID_sha512, NID_{{ sig['name'] }}},
+    {%- endif %}
+{%- endfor %}
+

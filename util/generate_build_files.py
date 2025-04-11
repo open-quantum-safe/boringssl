@@ -345,6 +345,9 @@ class GN(object):
       self.PrintVariableSection(out, 'pki_headers', files['pki_headers'])
       self.PrintVariableSection(out, 'tool_sources',
                                 files['tool'] + files['tool_headers'])
+      # OQS note: This is for building with Chromium.
+      self.PrintVariableSection(out, 'oqs_headers',
+                                files['oqs_headers'])
 
       fuzzers = [os.path.splitext(os.path.basename(fuzzer))[0]
                  for fuzzer in files['fuzz']]
@@ -615,6 +618,9 @@ def main(platforms):
   with open(os.path.join('src', 'gen', 'sources.json')) as f:
     sources = json.load(f)
 
+  # OQS note: This is for building with Chromium.
+  oqs_h_files = FindHeaderFiles(os.path.join('src', 'oqs', 'include', 'oqs'), NoTests)
+
   # TODO(crbug.com/boringssl/542): generate_build_files.py historically reported
   # all the assembly files as part of libcrypto. Merge them for now, but we
   # should split them out later.
@@ -653,6 +659,7 @@ def main(platforms):
       'test_support_headers':
           PrefixWithSrc(sources['test_support']['internal_hdrs']),
       'urandom_test': PrefixWithSrc(sources['urandom_test']['srcs']),
+      'oqs_headers': oqs_h_files,
   }
 
   for platform in platforms:

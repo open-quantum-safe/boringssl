@@ -141,7 +141,10 @@ int EVP_PKEY_missing_parameters(const EVP_PKEY *pkey) {
   return 0;
 }
 
-int EVP_PKEY_size(const EVP_PKEY *pkey) {
+// OQS note: We've changed the return type
+// from "int" to "size_t" to allow for PQ
+// algorithms with large signatures.
+size_t EVP_PKEY_size(const EVP_PKEY *pkey) {
   if (pkey && pkey->ameth && pkey->ameth->pkey_size) {
     return pkey->ameth->pkey_size(pkey);
   }
@@ -172,6 +175,72 @@ static const EVP_PKEY_ASN1_METHOD *evp_pkey_asn1_find(int nid) {
       return &ed25519_asn1_meth;
     case EVP_PKEY_X25519:
       return &x25519_asn1_meth;
+///// OQS_TEMPLATE_FRAGMENT_PKEY_TO_ASN1_METH_START
+    case EVP_PKEY_MLDSA44:
+      return &mldsa44_asn1_meth;
+    case EVP_PKEY_P256_MLDSA44:
+      return &p256_mldsa44_asn1_meth;
+    case EVP_PKEY_MLDSA65:
+      return &mldsa65_asn1_meth;
+    case EVP_PKEY_P384_MLDSA65:
+      return &p384_mldsa65_asn1_meth;
+    case EVP_PKEY_MLDSA87:
+      return &mldsa87_asn1_meth;
+    case EVP_PKEY_P521_MLDSA87:
+      return &p521_mldsa87_asn1_meth;
+    case EVP_PKEY_FALCON512:
+      return &falcon512_asn1_meth;
+    case EVP_PKEY_RSA3072_FALCON512:
+      return &rsa3072_falcon512_asn1_meth;
+    case EVP_PKEY_FALCONPADDED512:
+      return &falconpadded512_asn1_meth;
+    case EVP_PKEY_FALCON1024:
+      return &falcon1024_asn1_meth;
+    case EVP_PKEY_FALCONPADDED1024:
+      return &falconpadded1024_asn1_meth;
+    case EVP_PKEY_MAYO1:
+      return &mayo1_asn1_meth;
+    case EVP_PKEY_MAYO2:
+      return &mayo2_asn1_meth;
+    case EVP_PKEY_MAYO3:
+      return &mayo3_asn1_meth;
+    case EVP_PKEY_MAYO5:
+      return &mayo5_asn1_meth;
+    case EVP_PKEY_OV_IS_PKC:
+      return &OV_Is_pkc_asn1_meth;
+    case EVP_PKEY_OV_IP_PKC:
+      return &OV_Ip_pkc_asn1_meth;
+    case EVP_PKEY_OV_IS_PKC_SKC:
+      return &OV_Is_pkc_skc_asn1_meth;
+    case EVP_PKEY_OV_IP_PKC_SKC:
+      return &OV_Ip_pkc_skc_asn1_meth;
+    case EVP_PKEY_CROSSRSDP128BALANCED:
+      return &CROSSrsdp128balanced_asn1_meth;
+    case EVP_PKEY_SPHINCSSHA2128FSIMPLE:
+      return &sphincssha2128fsimple_asn1_meth;
+    case EVP_PKEY_SPHINCSSHA2128SSIMPLE:
+      return &sphincssha2128ssimple_asn1_meth;
+    case EVP_PKEY_SPHINCSSHA2192FSIMPLE:
+      return &sphincssha2192fsimple_asn1_meth;
+    case EVP_PKEY_SPHINCSSHA2192SSIMPLE:
+      return &sphincssha2192ssimple_asn1_meth;
+    case EVP_PKEY_SPHINCSSHA2256FSIMPLE:
+      return &sphincssha2256fsimple_asn1_meth;
+    case EVP_PKEY_SPHINCSSHA2256SSIMPLE:
+      return &sphincssha2256ssimple_asn1_meth;
+    case EVP_PKEY_SPHINCSSHAKE128FSIMPLE:
+      return &sphincsshake128fsimple_asn1_meth;
+    case EVP_PKEY_SPHINCSSHAKE128SSIMPLE:
+      return &sphincsshake128ssimple_asn1_meth;
+    case EVP_PKEY_SPHINCSSHAKE192FSIMPLE:
+      return &sphincsshake192fsimple_asn1_meth;
+    case EVP_PKEY_SPHINCSSHAKE192SSIMPLE:
+      return &sphincsshake192ssimple_asn1_meth;
+    case EVP_PKEY_SPHINCSSHAKE256FSIMPLE:
+      return &sphincsshake256fsimple_asn1_meth;
+    case EVP_PKEY_SPHINCSSHAKE256SSIMPLE:
+      return &sphincsshake256ssimple_asn1_meth;
+///// OQS_TEMPLATE_FRAGMENT_PKEY_TO_ASN1_METH_END
     default:
       return NULL;
   }

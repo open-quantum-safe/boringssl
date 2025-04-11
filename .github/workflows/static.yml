@@ -1,0 +1,51 @@
+name: OQS-BoringSSL (Static)
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+      - 'oqs_template/**'
+  pull_request:
+    paths-ignore:
+      - '**.md'
+      - 'oqs_template/**'
+  schedule:
+    - cron: '2 7 18,28 * *'
+  workflow_dispatch:
+  repository_dispatch:
+    types: ["*"]
+
+jobs:
+  build-static:
+    name: Build Static
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: 'stable'
+    - name: Install all dependencies
+      run: sudo apt update && sudo apt install cmake g++ ninja-build libunwind-dev pkg-config python3 -y
+    - name: Download and configure liboqs
+      run: |
+        git clone --branch main --single-branch --depth 1 https://github.com/open-quantum-safe/liboqs.git
+        cd liboqs && mkdir build && cd build && cmake -G"Ninja" -DCMAKE_INSTALL_PREFIX=../../oqs -DOQS_USE_OPENSSL=OFF ..
+      shell: bash
+    - name: Build and install liboqs
+      working-directory: ./liboqs/build
+      run: ninja && ninja install
+      shell: bash
+    - name: Configure OQS-BoringSSL
+      run: mkdir build && cd build && cmake -GNinja ..
+      shell: bash
+    - name: Build OQS-BoringSSL
+      working-directory: ./build
+      run: ninja
+      shell: bash
+    - name: Run tests
+      working-directory: ./build
+      run: ninja run_tests && cd .. && python3 oqs_scripts/try_handshake.py
+      shell: bash

@@ -83,7 +83,9 @@ OPENSSL_EXPORT int EVP_PKEY_missing_parameters(const EVP_PKEY *pkey);
 // |pkey|. For an RSA key, this returns the number of bytes needed to represent
 // the modulus. For an EC key, this returns the maximum size of a DER-encoded
 // ECDSA signature.
-OPENSSL_EXPORT int EVP_PKEY_size(const EVP_PKEY *pkey);
+// OQS note: We've changed the return type from "int" to "size_t" to allow for
+// PQ algorithms with large signatures.
+OPENSSL_EXPORT size_t EVP_PKEY_size(const EVP_PKEY *pkey);
 
 // EVP_PKEY_bits returns the "size", in bits, of |pkey|. For an RSA key, this
 // returns the bit length of the modulus. For an EC key, this returns the bit
@@ -139,6 +141,92 @@ OPENSSL_EXPORT DH *EVP_PKEY_get1_DH(const EVP_PKEY *pkey);
 #define EVP_PKEY_X25519 NID_X25519
 #define EVP_PKEY_HKDF NID_hkdf
 #define EVP_PKEY_DH NID_dhKeyAgreement
+
+///// OQS_TEMPLATE_FRAGMENT_DEFINE_EVP_PKEYS_START
+#define EVP_PKEY_MLDSA44 NID_mldsa44
+#define EVP_PKEY_P256_MLDSA44 NID_p256_mldsa44
+#define EVP_PKEY_MLDSA65 NID_mldsa65
+#define EVP_PKEY_P384_MLDSA65 NID_p384_mldsa65
+#define EVP_PKEY_MLDSA87 NID_mldsa87
+#define EVP_PKEY_P521_MLDSA87 NID_p521_mldsa87
+#define EVP_PKEY_FALCON512 NID_falcon512
+#define EVP_PKEY_RSA3072_FALCON512 NID_rsa3072_falcon512
+#define EVP_PKEY_FALCONPADDED512 NID_falconpadded512
+#define EVP_PKEY_FALCON1024 NID_falcon1024
+#define EVP_PKEY_FALCONPADDED1024 NID_falconpadded1024
+#define EVP_PKEY_MAYO1 NID_mayo1
+#define EVP_PKEY_MAYO2 NID_mayo2
+#define EVP_PKEY_MAYO3 NID_mayo3
+#define EVP_PKEY_MAYO5 NID_mayo5
+#define EVP_PKEY_OV_IS_PKC NID_OV_Is_pkc
+#define EVP_PKEY_OV_IP_PKC NID_OV_Ip_pkc
+#define EVP_PKEY_OV_IS_PKC_SKC NID_OV_Is_pkc_skc
+#define EVP_PKEY_OV_IP_PKC_SKC NID_OV_Ip_pkc_skc
+#define EVP_PKEY_CROSSRSDP128BALANCED NID_CROSSrsdp128balanced
+#define EVP_PKEY_SPHINCSSHA2128FSIMPLE NID_sphincssha2128fsimple
+#define EVP_PKEY_SPHINCSSHA2128SSIMPLE NID_sphincssha2128ssimple
+#define EVP_PKEY_SPHINCSSHA2192FSIMPLE NID_sphincssha2192fsimple
+#define EVP_PKEY_SPHINCSSHA2192SSIMPLE NID_sphincssha2192ssimple
+#define EVP_PKEY_SPHINCSSHA2256FSIMPLE NID_sphincssha2256fsimple
+#define EVP_PKEY_SPHINCSSHA2256SSIMPLE NID_sphincssha2256ssimple
+#define EVP_PKEY_SPHINCSSHAKE128FSIMPLE NID_sphincsshake128fsimple
+#define EVP_PKEY_SPHINCSSHAKE128SSIMPLE NID_sphincsshake128ssimple
+#define EVP_PKEY_SPHINCSSHAKE192FSIMPLE NID_sphincsshake192fsimple
+#define EVP_PKEY_SPHINCSSHAKE192SSIMPLE NID_sphincsshake192ssimple
+#define EVP_PKEY_SPHINCSSHAKE256FSIMPLE NID_sphincsshake256fsimple
+#define EVP_PKEY_SPHINCSSHAKE256SSIMPLE NID_sphincsshake256ssimple
+
+#define IS_OQS_PKEY(pkey_id) ( \
+   (pkey_id == NID_mldsa44) || \
+   (pkey_id == NID_p256_mldsa44) || \
+   (pkey_id == NID_mldsa65) || \
+   (pkey_id == NID_p384_mldsa65) || \
+   (pkey_id == NID_mldsa87) || \
+   (pkey_id == NID_p521_mldsa87) || \
+   (pkey_id == NID_falcon512) || \
+   (pkey_id == NID_rsa3072_falcon512) || \
+   (pkey_id == NID_falconpadded512) || \
+   (pkey_id == NID_falcon1024) || \
+   (pkey_id == NID_falconpadded1024) || \
+   (pkey_id == NID_mayo1) || \
+   (pkey_id == NID_mayo2) || \
+   (pkey_id == NID_mayo3) || \
+   (pkey_id == NID_mayo5) || \
+   (pkey_id == NID_OV_Is_pkc) || \
+   (pkey_id == NID_OV_Ip_pkc) || \
+   (pkey_id == NID_OV_Is_pkc_skc) || \
+   (pkey_id == NID_OV_Ip_pkc_skc) || \
+   (pkey_id == NID_CROSSrsdp128balanced) || \
+   (pkey_id == NID_sphincssha2128fsimple) || \
+   (pkey_id == NID_sphincssha2128ssimple) || \
+   (pkey_id == NID_sphincssha2192fsimple) || \
+   (pkey_id == NID_sphincssha2192ssimple) || \
+   (pkey_id == NID_sphincssha2256fsimple) || \
+   (pkey_id == NID_sphincssha2256ssimple) || \
+   (pkey_id == NID_sphincsshake128fsimple) || \
+   (pkey_id == NID_sphincsshake128ssimple) || \
+   (pkey_id == NID_sphincsshake192fsimple) || \
+   (pkey_id == NID_sphincsshake192ssimple) || \
+   (pkey_id == NID_sphincsshake256fsimple) || \
+   (pkey_id == NID_sphincsshake256ssimple) || \
+   (pkey_id == NID_mlkem512) || \
+   (pkey_id == NID_mlkem768) || \
+   (pkey_id == NID_mlkem1024) || \
+   (pkey_id == NID_frodo640aes) || \
+   (pkey_id == NID_frodo640shake) || \
+   (pkey_id == NID_frodo976aes) || \
+   (pkey_id == NID_frodo976shake) || \
+   (pkey_id == NID_frodo1344aes) || \
+   (pkey_id == NID_frodo1344shake) || \
+   (pkey_id == NID_bikel1) || \
+   (pkey_id == NID_bikel3) || \
+   (pkey_id == NID_bikel5) || \
+0 )
+///// OQS_TEMPLATE_FRAGMENT_DEFINE_EVP_PKEYS_END
+
+OPENSSL_EXPORT int oqs_verify_sig(EVP_PKEY *bssl_oqs_pkey, const uint8_t *sig,
+                                  size_t siglen, const uint8_t *tbs,
+                                  size_t tbslen);
 
 // EVP_PKEY_set_type sets the type of |pkey| to |type|. It returns one if
 // successful or zero if the |type| argument is not one of the |EVP_PKEY_*|

@@ -1,0 +1,11 @@
+{% for kem in config['kems'] %}
+    case SSL_GROUP_{{ kem['name']|upper }}:
+      return true;
+    {%- set last_kem = loop.last -%}
+    {%- for classical_alg in kem['mix_with'] %}
+        {%- set last_hybrid = loop.last %}
+    case SSL_GROUP_{{ classical_alg['name']|upper }}_{{ kem['name']|upper }}:
+      return true;
+    {%- endfor %}
+{%- endfor %}
+
