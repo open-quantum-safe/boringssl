@@ -68,11 +68,14 @@ int x509_digest_sign_algorithm(EVP_MD_CTX *ctx, X509_ALGOR *algor) {
       pkey_id == EVP_PKEY_MAYO2 ||
       pkey_id == EVP_PKEY_MAYO3 ||
       pkey_id == EVP_PKEY_MAYO5 ||
-      pkey_id == EVP_PKEY_OV_IS_PKC ||
       pkey_id == EVP_PKEY_OV_IP_PKC ||
-      pkey_id == EVP_PKEY_OV_IS_PKC_SKC ||
       pkey_id == EVP_PKEY_OV_IP_PKC_SKC ||
       pkey_id == EVP_PKEY_CROSSRSDP128BALANCED ||
+      pkey_id == EVP_PKEY_SNOVA2454 ||
+      pkey_id == EVP_PKEY_SNOVA2454ESK ||
+      pkey_id == EVP_PKEY_SNOVA37172 ||
+      pkey_id == EVP_PKEY_SNOVA2455 ||
+      pkey_id == EVP_PKEY_SNOVA2965 ||
       pkey_id == EVP_PKEY_SPHINCSSHA2128FSIMPLE ||
       pkey_id == EVP_PKEY_SPHINCSSHA2128SSIMPLE ||
       pkey_id == EVP_PKEY_SPHINCSSHA2192FSIMPLE ||

@@ -6135,16 +6135,22 @@ TEST(SSLTest, SignatureAlgorithmProperties) {
             SSL_get_signature_algorithm_key_type(SSL_SIGN_MAYO3));
   EXPECT_EQ(EVP_PKEY_MAYO5,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_MAYO5));
-  EXPECT_EQ(EVP_PKEY_OV_IS_PKC,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_OV_IS_PKC));
   EXPECT_EQ(EVP_PKEY_OV_IP_PKC,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_OV_IP_PKC));
-  EXPECT_EQ(EVP_PKEY_OV_IS_PKC_SKC,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_OV_IS_PKC_SKC));
   EXPECT_EQ(EVP_PKEY_OV_IP_PKC_SKC,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_OV_IP_PKC_SKC));
   EXPECT_EQ(EVP_PKEY_CROSSRSDP128BALANCED,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_CROSSRSDP128BALANCED));
+  EXPECT_EQ(EVP_PKEY_SNOVA2454,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_SNOVA2454));
+  EXPECT_EQ(EVP_PKEY_SNOVA2454ESK,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_SNOVA2454ESK));
+  EXPECT_EQ(EVP_PKEY_SNOVA37172,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_SNOVA37172));
+  EXPECT_EQ(EVP_PKEY_SNOVA2455,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_SNOVA2455));
+  EXPECT_EQ(EVP_PKEY_SNOVA2965,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_SNOVA2965));
   EXPECT_EQ(EVP_PKEY_SPHINCSSHA2128FSIMPLE,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHA2128FSIMPLE));
   EXPECT_EQ(EVP_PKEY_SPHINCSSHA2128SSIMPLE,
@@ -6510,11 +6516,14 @@ TEST(SSLTest, SigAlgs) {
       {{NID_sha256, EVP_PKEY_MAYO2}, true, {SSL_SIGN_MAYO2}},
       {{NID_sha384, EVP_PKEY_MAYO3}, true, {SSL_SIGN_MAYO3}},
       {{NID_sha512, EVP_PKEY_MAYO5}, true, {SSL_SIGN_MAYO5}},
-      {{NID_sha256, EVP_PKEY_OV_IS_PKC}, true, {SSL_SIGN_OV_IS_PKC}},
       {{NID_sha256, EVP_PKEY_OV_IP_PKC}, true, {SSL_SIGN_OV_IP_PKC}},
-      {{NID_sha256, EVP_PKEY_OV_IS_PKC_SKC}, true, {SSL_SIGN_OV_IS_PKC_SKC}},
       {{NID_sha256, EVP_PKEY_OV_IP_PKC_SKC}, true, {SSL_SIGN_OV_IP_PKC_SKC}},
       {{NID_sha256, EVP_PKEY_CROSSRSDP128BALANCED}, true, {SSL_SIGN_CROSSRSDP128BALANCED}},
+      {{NID_sha256, EVP_PKEY_SNOVA2454}, true, {SSL_SIGN_SNOVA2454}},
+      {{NID_sha256, EVP_PKEY_SNOVA2454ESK}, true, {SSL_SIGN_SNOVA2454ESK}},
+      {{NID_sha256, EVP_PKEY_SNOVA37172}, true, {SSL_SIGN_SNOVA37172}},
+      {{NID_sha384, EVP_PKEY_SNOVA2455}, true, {SSL_SIGN_SNOVA2455}},
+      {{NID_sha512, EVP_PKEY_SNOVA2965}, true, {SSL_SIGN_SNOVA2965}},
       {{NID_sha256, EVP_PKEY_SPHINCSSHA2128FSIMPLE}, true, {SSL_SIGN_SPHINCSSHA2128FSIMPLE}},
       {{NID_sha256, EVP_PKEY_SPHINCSSHA2128SSIMPLE}, true, {SSL_SIGN_SPHINCSSHA2128SSIMPLE}},
       {{NID_sha384, EVP_PKEY_SPHINCSSHA2192FSIMPLE}, true, {SSL_SIGN_SPHINCSSHA2192FSIMPLE}},
@@ -6600,11 +6609,14 @@ TEST(SSLTest, SigAlgsList) {
       {"mayo2", true, {SSL_SIGN_MAYO2}},
       {"mayo3", true, {SSL_SIGN_MAYO3}},
       {"mayo5", true, {SSL_SIGN_MAYO5}},
-      {"OV_Is_pkc", true, {SSL_SIGN_OV_IS_PKC}},
       {"OV_Ip_pkc", true, {SSL_SIGN_OV_IP_PKC}},
-      {"OV_Is_pkc_skc", true, {SSL_SIGN_OV_IS_PKC_SKC}},
       {"OV_Ip_pkc_skc", true, {SSL_SIGN_OV_IP_PKC_SKC}},
       {"CROSSrsdp128balanced", true, {SSL_SIGN_CROSSRSDP128BALANCED}},
+      {"snova2454", true, {SSL_SIGN_SNOVA2454}},
+      {"snova2454esk", true, {SSL_SIGN_SNOVA2454ESK}},
+      {"snova37172", true, {SSL_SIGN_SNOVA37172}},
+      {"snova2455", true, {SSL_SIGN_SNOVA2455}},
+      {"snova2965", true, {SSL_SIGN_SNOVA2965}},
       {"sphincssha2128fsimple", true, {SSL_SIGN_SPHINCSSHA2128FSIMPLE}},
       {"sphincssha2128ssimple", true, {SSL_SIGN_SPHINCSSHA2128SSIMPLE}},
       {"sphincssha2192fsimple", true, {SSL_SIGN_SPHINCSSHA2192FSIMPLE}},
@@ -9077,11 +9089,14 @@ INSTANTIATE_TEST_SUITE_P(WithSignatureNIDs, OQSHandshakeTest,
                             NID_mayo2,
                             NID_mayo3,
                             NID_mayo5,
-                            NID_OV_Is_pkc,
                             NID_OV_Ip_pkc,
-                            NID_OV_Is_pkc_skc,
                             NID_OV_Ip_pkc_skc,
                             NID_CROSSrsdp128balanced,
+                            NID_snova2454,
+                            NID_snova2454esk,
+                            NID_snova37172,
+                            NID_snova2455,
+                            NID_snova2965,
                             NID_sphincssha2128fsimple,
                             NID_sphincssha2128ssimple,
                             NID_sphincssha2192fsimple,

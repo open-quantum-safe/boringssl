@@ -149,11 +149,14 @@ const uint8_t kOidMayo1[] = {0x2b, 0xce, 0x0f, 0x08, 0x01, 0x03};
 const uint8_t kOidMayo2[] = {0x2b, 0xce, 0x0f, 0x08, 0x02, 0x03};
 const uint8_t kOidMayo3[] = {0x2b, 0xce, 0x0f, 0x08, 0x03, 0x03};
 const uint8_t kOidMayo5[] = {0x2b, 0xce, 0x0f, 0x08, 0x05, 0x03};
-const uint8_t kOidOv_is_pkc[] = {0x2b, 0xce, 0x0f, 0x09, 0x05, 0x01};
 const uint8_t kOidOv_ip_pkc[] = {0x2b, 0xce, 0x0f, 0x09, 0x06, 0x01};
-const uint8_t kOidOv_is_pkc_skc[] = {0x2b, 0xce, 0x0f, 0x09, 0x09, 0x01};
 const uint8_t kOidOv_ip_pkc_skc[] = {0x2b, 0xce, 0x0f, 0x09, 0x0a, 0x01};
 const uint8_t kOidCrossrsdp128balanced[] = {0x2b, 0x06, 0x01, 0x04, 0x01, 0x83, 0xe6, 0x25, 0x02, 0x01, 0x01, 0x02};
+const uint8_t kOidSnova2454[] = {0x2b, 0xce, 0x0f, 0x0a, 0x01, 0x01};
+const uint8_t kOidSnova2454esk[] = {0x2b, 0xce, 0x0f, 0x0a, 0x03, 0x01};
+const uint8_t kOidSnova37172[] = {0x2b, 0xce, 0x0f, 0x0a, 0x05, 0x01};
+const uint8_t kOidSnova2455[] = {0x2b, 0xce, 0x0f, 0x0a, 0x0a, 0x01};
+const uint8_t kOidSnova2965[] = {0x2b, 0xce, 0x0f, 0x0a, 0x0c, 0x01};
 const uint8_t kOidSphincssha2128fsimple[] = {0x2b, 0xce, 0x0f, 0x06, 0x04, 0x0d};
 const uint8_t kOidSphincssha2128ssimple[] = {0x2b, 0xce, 0x0f, 0x06, 0x04, 0x10};
 const uint8_t kOidSphincssha2192fsimple[] = {0x2b, 0xce, 0x0f, 0x06, 0x05, 0x0a};
@@ -467,20 +470,29 @@ std::optional<SignatureAlgorithm> ParseSignatureAlgorithm(
   if (oid == der::Input(kOidMayo5)) {
     return SignatureAlgorithm::kMayo5;
   }
-  if (oid == der::Input(kOidOv_is_pkc)) {
-    return SignatureAlgorithm::kOv_is_pkc;
-  }
   if (oid == der::Input(kOidOv_ip_pkc)) {
     return SignatureAlgorithm::kOv_ip_pkc;
-  }
-  if (oid == der::Input(kOidOv_is_pkc_skc)) {
-    return SignatureAlgorithm::kOv_is_pkc_skc;
   }
   if (oid == der::Input(kOidOv_ip_pkc_skc)) {
     return SignatureAlgorithm::kOv_ip_pkc_skc;
   }
   if (oid == der::Input(kOidCrossrsdp128balanced)) {
     return SignatureAlgorithm::kCrossrsdp128balanced;
+  }
+  if (oid == der::Input(kOidSnova2454)) {
+    return SignatureAlgorithm::kSnova2454;
+  }
+  if (oid == der::Input(kOidSnova2454esk)) {
+    return SignatureAlgorithm::kSnova2454esk;
+  }
+  if (oid == der::Input(kOidSnova37172)) {
+    return SignatureAlgorithm::kSnova37172;
+  }
+  if (oid == der::Input(kOidSnova2455)) {
+    return SignatureAlgorithm::kSnova2455;
+  }
+  if (oid == der::Input(kOidSnova2965)) {
+    return SignatureAlgorithm::kSnova2965;
   }
   if (oid == der::Input(kOidSphincssha2128fsimple)) {
     return SignatureAlgorithm::kSphincssha2128fsimple;
@@ -561,11 +573,12 @@ std::optional<DigestAlgorithm> GetTlsServerEndpointDigestAlgorithm(
     case SignatureAlgorithm::kFalconpadded512:
     case SignatureAlgorithm::kMayo1:
     case SignatureAlgorithm::kMayo2:
-    case SignatureAlgorithm::kOv_is_pkc:
     case SignatureAlgorithm::kOv_ip_pkc:
-    case SignatureAlgorithm::kOv_is_pkc_skc:
     case SignatureAlgorithm::kOv_ip_pkc_skc:
     case SignatureAlgorithm::kCrossrsdp128balanced:
+    case SignatureAlgorithm::kSnova2454:
+    case SignatureAlgorithm::kSnova2454esk:
+    case SignatureAlgorithm::kSnova37172:
     case SignatureAlgorithm::kSphincssha2128fsimple:
     case SignatureAlgorithm::kSphincssha2128ssimple:
     case SignatureAlgorithm::kSphincsshake128fsimple:
@@ -575,6 +588,7 @@ std::optional<DigestAlgorithm> GetTlsServerEndpointDigestAlgorithm(
     case SignatureAlgorithm::kMldsa65:
     case SignatureAlgorithm::kP384_mldsa65:
     case SignatureAlgorithm::kMayo3:
+    case SignatureAlgorithm::kSnova2455:
     case SignatureAlgorithm::kSphincssha2192fsimple:
     case SignatureAlgorithm::kSphincssha2192ssimple:
     case SignatureAlgorithm::kSphincsshake192fsimple:
@@ -586,6 +600,7 @@ std::optional<DigestAlgorithm> GetTlsServerEndpointDigestAlgorithm(
     case SignatureAlgorithm::kFalcon1024:
     case SignatureAlgorithm::kFalconpadded1024:
     case SignatureAlgorithm::kMayo5:
+    case SignatureAlgorithm::kSnova2965:
     case SignatureAlgorithm::kSphincssha2256fsimple:
     case SignatureAlgorithm::kSphincssha2256ssimple:
     case SignatureAlgorithm::kSphincsshake256fsimple:

@@ -103,11 +103,14 @@ bool SimplePathBuilderDelegate::IsSignatureAlgorithmAcceptable(
     case SignatureAlgorithm::kMayo2:
     case SignatureAlgorithm::kMayo3:
     case SignatureAlgorithm::kMayo5:
-    case SignatureAlgorithm::kOv_is_pkc:
     case SignatureAlgorithm::kOv_ip_pkc:
-    case SignatureAlgorithm::kOv_is_pkc_skc:
     case SignatureAlgorithm::kOv_ip_pkc_skc:
     case SignatureAlgorithm::kCrossrsdp128balanced:
+    case SignatureAlgorithm::kSnova2454:
+    case SignatureAlgorithm::kSnova2454esk:
+    case SignatureAlgorithm::kSnova37172:
+    case SignatureAlgorithm::kSnova2455:
+    case SignatureAlgorithm::kSnova2965:
     case SignatureAlgorithm::kSphincssha2128fsimple:
     case SignatureAlgorithm::kSphincssha2128ssimple:
     case SignatureAlgorithm::kSphincssha2192fsimple:
