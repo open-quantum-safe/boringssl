@@ -283,7 +283,7 @@ int oqs_verify_sig(EVP_PKEY *bssl_oqs_pkey, const uint8_t *sig, size_t siglen,
 static int pkey_oqs_verify_message(EVP_PKEY_CTX *ctx, const uint8_t *sig,
                                    size_t siglen, const uint8_t *tbs,
                                    size_t tbslen) {
-  return oqs_verify_sig(ctx->pkey, sig, siglen, tbs, tbslen);
+  return oqs_verify_sig(ctx->pkey.get(), sig, siglen, tbs, tbslen);
 }
 
 static int pkey_oqs_ctrl(EVP_PKEY_CTX *ctx, int type, int p1, void *p2) {

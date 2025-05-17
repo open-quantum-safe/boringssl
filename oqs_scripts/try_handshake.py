@@ -116,7 +116,7 @@ if __name__ == '__main__':
     parser.add_argument('bssl', type=str,
                                 nargs='?',
                                 const='1',
-                                default='build/tool/bssl',
+                                default='build/bssl',
                                 help='Path to the bssl executable')
 
     args = parser.parse_args()

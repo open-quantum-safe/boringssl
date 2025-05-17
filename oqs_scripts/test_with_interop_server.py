@@ -95,7 +95,7 @@ errorPorts = []
 for lines in lineMatches:
     cellMatches = cellPattern.findall(lines)
     if len(cellMatches) > 2 and cellMatches[0] in sigs and cellMatches[1] in kexs:
-        if os.system("../build/tool/bssl client -root-certs " + rootCert + " -curves " + cellMatches[1] + " -connect test.openquantumsafe.org:" + cellMatches[2] + " </dev/null\n") != 0:
+        if os.system("../build/bssl client -root-certs " + rootCert + " -curves " + cellMatches[1] + " -connect test.openquantumsafe.org:" + cellMatches[2] + " </dev/null\n") != 0:
             errorPorts.append(cellMatches[2])
 
 os.unlink(rootCert)
