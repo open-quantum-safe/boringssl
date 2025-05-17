@@ -51,11 +51,14 @@ bool ssl_is_key_type_supported(int key_type) {
          key_type == EVP_PKEY_MAYO2 ||
          key_type == EVP_PKEY_MAYO3 ||
          key_type == EVP_PKEY_MAYO5 ||
-         key_type == EVP_PKEY_OV_IS_PKC ||
          key_type == EVP_PKEY_OV_IP_PKC ||
-         key_type == EVP_PKEY_OV_IS_PKC_SKC ||
          key_type == EVP_PKEY_OV_IP_PKC_SKC ||
          key_type == EVP_PKEY_CROSSRSDP128BALANCED ||
+         key_type == EVP_PKEY_SNOVA2454 ||
+         key_type == EVP_PKEY_SNOVA2454ESK ||
+         key_type == EVP_PKEY_SNOVA37172 ||
+         key_type == EVP_PKEY_SNOVA2455 ||
+         key_type == EVP_PKEY_SNOVA2965 ||
          key_type == EVP_PKEY_SPHINCSSHA2128FSIMPLE ||
          key_type == EVP_PKEY_SPHINCSSHA2128SSIMPLE ||
          key_type == EVP_PKEY_SPHINCSSHA2192FSIMPLE ||
@@ -148,11 +151,14 @@ static const SSL_SIGNATURE_ALGORITHM kSignatureAlgorithms[] = {
     {SSL_SIGN_MAYO2, EVP_PKEY_MAYO2, NID_undef, &EVP_sha256, false, true, true, false},
     {SSL_SIGN_MAYO3, EVP_PKEY_MAYO3, NID_undef, &EVP_sha384, false, true, true, false},
     {SSL_SIGN_MAYO5, EVP_PKEY_MAYO5, NID_undef, &EVP_sha512, false, true, true, false},
-    {SSL_SIGN_OV_IS_PKC, EVP_PKEY_OV_IS_PKC, NID_undef, &EVP_sha256, false, true, true, false},
     {SSL_SIGN_OV_IP_PKC, EVP_PKEY_OV_IP_PKC, NID_undef, &EVP_sha256, false, true, true, false},
-    {SSL_SIGN_OV_IS_PKC_SKC, EVP_PKEY_OV_IS_PKC_SKC, NID_undef, &EVP_sha256, false, true, true, false},
     {SSL_SIGN_OV_IP_PKC_SKC, EVP_PKEY_OV_IP_PKC_SKC, NID_undef, &EVP_sha256, false, true, true, false},
     {SSL_SIGN_CROSSRSDP128BALANCED, EVP_PKEY_CROSSRSDP128BALANCED, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_SNOVA2454, EVP_PKEY_SNOVA2454, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_SNOVA2454ESK, EVP_PKEY_SNOVA2454ESK, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_SNOVA37172, EVP_PKEY_SNOVA37172, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_SNOVA2455, EVP_PKEY_SNOVA2455, NID_undef, &EVP_sha384, false, true, true, false},
+    {SSL_SIGN_SNOVA2965, EVP_PKEY_SNOVA2965, NID_undef, &EVP_sha512, false, true, true, false},
     {SSL_SIGN_SPHINCSSHA2128FSIMPLE, EVP_PKEY_SPHINCSSHA2128FSIMPLE, NID_undef, &EVP_sha256, false, true, true, false},
     {SSL_SIGN_SPHINCSSHA2128SSIMPLE, EVP_PKEY_SPHINCSSHA2128SSIMPLE, NID_undef, &EVP_sha256, false, true, true, false},
     {SSL_SIGN_SPHINCSSHA2192FSIMPLE, EVP_PKEY_SPHINCSSHA2192FSIMPLE, NID_undef, &EVP_sha384, false, true, true, false},
@@ -553,11 +559,14 @@ static const SignatureAlgorithmName kSignatureAlgorithmNames[] = {
     {SSL_SIGN_MAYO2, "mayo2"},
     {SSL_SIGN_MAYO3, "mayo3"},
     {SSL_SIGN_MAYO5, "mayo5"},
-    {SSL_SIGN_OV_IS_PKC, "OV_Is_pkc"},
     {SSL_SIGN_OV_IP_PKC, "OV_Ip_pkc"},
-    {SSL_SIGN_OV_IS_PKC_SKC, "OV_Is_pkc_skc"},
     {SSL_SIGN_OV_IP_PKC_SKC, "OV_Ip_pkc_skc"},
     {SSL_SIGN_CROSSRSDP128BALANCED, "CROSSrsdp128balanced"},
+    {SSL_SIGN_SNOVA2454, "snova2454"},
+    {SSL_SIGN_SNOVA2454ESK, "snova2454esk"},
+    {SSL_SIGN_SNOVA37172, "snova37172"},
+    {SSL_SIGN_SNOVA2455, "snova2455"},
+    {SSL_SIGN_SNOVA2965, "snova2965"},
     {SSL_SIGN_SPHINCSSHA2128FSIMPLE, "sphincssha2128fsimple"},
     {SSL_SIGN_SPHINCSSHA2128SSIMPLE, "sphincssha2128ssimple"},
     {SSL_SIGN_SPHINCSSHA2192FSIMPLE, "sphincssha2192fsimple"},
@@ -750,11 +759,14 @@ static constexpr struct {
     {EVP_PKEY_MAYO2, NID_sha256, SSL_SIGN_MAYO2},
     {EVP_PKEY_MAYO3, NID_sha384, SSL_SIGN_MAYO3},
     {EVP_PKEY_MAYO5, NID_sha512, SSL_SIGN_MAYO5},
-    {EVP_PKEY_OV_IS_PKC, NID_sha256, SSL_SIGN_OV_IS_PKC},
     {EVP_PKEY_OV_IP_PKC, NID_sha256, SSL_SIGN_OV_IP_PKC},
-    {EVP_PKEY_OV_IS_PKC_SKC, NID_sha256, SSL_SIGN_OV_IS_PKC_SKC},
     {EVP_PKEY_OV_IP_PKC_SKC, NID_sha256, SSL_SIGN_OV_IP_PKC_SKC},
     {EVP_PKEY_CROSSRSDP128BALANCED, NID_sha256, SSL_SIGN_CROSSRSDP128BALANCED},
+    {EVP_PKEY_SNOVA2454, NID_sha256, SSL_SIGN_SNOVA2454},
+    {EVP_PKEY_SNOVA2454ESK, NID_sha256, SSL_SIGN_SNOVA2454ESK},
+    {EVP_PKEY_SNOVA37172, NID_sha256, SSL_SIGN_SNOVA37172},
+    {EVP_PKEY_SNOVA2455, NID_sha384, SSL_SIGN_SNOVA2455},
+    {EVP_PKEY_SNOVA2965, NID_sha512, SSL_SIGN_SNOVA2965},
     {EVP_PKEY_SPHINCSSHA2128FSIMPLE, NID_sha256, SSL_SIGN_SPHINCSSHA2128FSIMPLE},
     {EVP_PKEY_SPHINCSSHA2128SSIMPLE, NID_sha256, SSL_SIGN_SPHINCSSHA2128SSIMPLE},
     {EVP_PKEY_SPHINCSSHA2192FSIMPLE, NID_sha384, SSL_SIGN_SPHINCSSHA2192FSIMPLE},

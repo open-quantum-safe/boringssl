@@ -179,18 +179,20 @@ OPENSSL_EXPORT int EVP_PKEY_CTX_ctrl(EVP_PKEY_CTX *ctx, int keytype, int optype,
 #define EVP_PKEY_CTRL_DH_PAD (EVP_PKEY_ALG_CTRL + 19)
 
 struct evp_pkey_ctx_st {
+  ~evp_pkey_ctx_st();
+
   // Method associated with this operation
-  const EVP_PKEY_METHOD *pmeth;
-  // Engine that implements this method or NULL if builtin
-  ENGINE *engine;
-  // Key: may be NULL
-  EVP_PKEY *pkey;
-  // Peer key for key agreement, may be NULL
-  EVP_PKEY *peerkey;
+  const EVP_PKEY_METHOD *pmeth = nullptr;
+  // Engine that implements this method or nullptr if builtin
+  ENGINE *engine = nullptr;
+  // Key: may be nullptr
+  bssl::UniquePtr<EVP_PKEY> pkey;
+  // Peer key for key agreement, may be nullptr
+  bssl::UniquePtr<EVP_PKEY> peerkey;
   // operation contains one of the |EVP_PKEY_OP_*| values.
-  int operation;
+  int operation = EVP_PKEY_OP_UNDEFINED;
   // Algorithm specific data
-  void *data;
+  void *data = nullptr;
 } /* EVP_PKEY_CTX */;
 
 struct evp_pkey_method_st {
@@ -301,11 +303,14 @@ extern const EVP_PKEY_ASN1_METHOD mayo1_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD mayo2_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD mayo3_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD mayo5_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD OV_Is_pkc_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD OV_Ip_pkc_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD OV_Is_pkc_skc_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD OV_Ip_pkc_skc_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD CROSSrsdp128balanced_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD snova2454_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD snova2454esk_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD snova37172_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD snova2455_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD snova2965_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD sphincssha2128fsimple_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD sphincssha2128ssimple_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD sphincssha2192fsimple_asn1_meth;
@@ -342,11 +347,14 @@ extern const EVP_PKEY_METHOD mayo1_pkey_meth;
 extern const EVP_PKEY_METHOD mayo2_pkey_meth;
 extern const EVP_PKEY_METHOD mayo3_pkey_meth;
 extern const EVP_PKEY_METHOD mayo5_pkey_meth;
-extern const EVP_PKEY_METHOD OV_Is_pkc_pkey_meth;
 extern const EVP_PKEY_METHOD OV_Ip_pkc_pkey_meth;
-extern const EVP_PKEY_METHOD OV_Is_pkc_skc_pkey_meth;
 extern const EVP_PKEY_METHOD OV_Ip_pkc_skc_pkey_meth;
 extern const EVP_PKEY_METHOD CROSSrsdp128balanced_pkey_meth;
+extern const EVP_PKEY_METHOD snova2454_pkey_meth;
+extern const EVP_PKEY_METHOD snova2454esk_pkey_meth;
+extern const EVP_PKEY_METHOD snova37172_pkey_meth;
+extern const EVP_PKEY_METHOD snova2455_pkey_meth;
+extern const EVP_PKEY_METHOD snova2965_pkey_meth;
 extern const EVP_PKEY_METHOD sphincssha2128fsimple_pkey_meth;
 extern const EVP_PKEY_METHOD sphincssha2128ssimple_pkey_meth;
 extern const EVP_PKEY_METHOD sphincssha2192fsimple_pkey_meth;

@@ -1011,7 +1011,10 @@ p256_mldsa44		1040
 p521_mldsa87		1041
 rsa3072_falcon512		1042
 CROSSrsdp128balanced		1043
-OV_Is_pkc		1044
 OV_Ip_pkc		1045
-OV_Is_pkc_skc		1046
 OV_Ip_pkc_skc		1047
+snova2454		1048
+snova2454esk		1049
+snova37172		1050
+snova2455		1051
+snova2965		1052

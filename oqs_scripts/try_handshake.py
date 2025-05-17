@@ -62,11 +62,14 @@ sigs = [
         'mayo2',
         'mayo3',
         'mayo5',
-        'OV_Is_pkc',
         'OV_Ip_pkc',
-        'OV_Is_pkc_skc',
         'OV_Ip_pkc_skc',
         'CROSSrsdp128balanced',
+        'snova2454',
+        'snova2454esk',
+        'snova37172',
+        'snova2455',
+        'snova2965',
         'sphincssha2128fsimple',
         'sphincssha2128ssimple',
         'sphincssha2192fsimple',
@@ -116,7 +119,7 @@ if __name__ == '__main__':
     parser.add_argument('bssl', type=str,
                                 nargs='?',
                                 const='1',
-                                default='build/tool/bssl',
+                                default='build/bssl',
                                 help='Path to the bssl executable')
 
     args = parser.parse_args()

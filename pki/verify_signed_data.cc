@@ -288,20 +288,10 @@ bool VerifySignedData(SignatureAlgorithm algorithm, der::Input signed_data,
       digest = EVP_sha512();
       cache_algorithm_name = "Mayo5";
       break;
-    case SignatureAlgorithm::kOv_is_pkc:
-      expected_pkey_id = EVP_PKEY_OV_IS_PKC;
-      digest = EVP_sha256();
-      cache_algorithm_name = "Ov_is_pkc";
-      break;
     case SignatureAlgorithm::kOv_ip_pkc:
       expected_pkey_id = EVP_PKEY_OV_IP_PKC;
       digest = EVP_sha256();
       cache_algorithm_name = "Ov_ip_pkc";
-      break;
-    case SignatureAlgorithm::kOv_is_pkc_skc:
-      expected_pkey_id = EVP_PKEY_OV_IS_PKC_SKC;
-      digest = EVP_sha256();
-      cache_algorithm_name = "Ov_is_pkc_skc";
       break;
     case SignatureAlgorithm::kOv_ip_pkc_skc:
       expected_pkey_id = EVP_PKEY_OV_IP_PKC_SKC;
@@ -312,6 +302,31 @@ bool VerifySignedData(SignatureAlgorithm algorithm, der::Input signed_data,
       expected_pkey_id = EVP_PKEY_CROSSRSDP128BALANCED;
       digest = EVP_sha256();
       cache_algorithm_name = "Crossrsdp128balanced";
+      break;
+    case SignatureAlgorithm::kSnova2454:
+      expected_pkey_id = EVP_PKEY_SNOVA2454;
+      digest = EVP_sha256();
+      cache_algorithm_name = "Snova2454";
+      break;
+    case SignatureAlgorithm::kSnova2454esk:
+      expected_pkey_id = EVP_PKEY_SNOVA2454ESK;
+      digest = EVP_sha256();
+      cache_algorithm_name = "Snova2454esk";
+      break;
+    case SignatureAlgorithm::kSnova37172:
+      expected_pkey_id = EVP_PKEY_SNOVA37172;
+      digest = EVP_sha256();
+      cache_algorithm_name = "Snova37172";
+      break;
+    case SignatureAlgorithm::kSnova2455:
+      expected_pkey_id = EVP_PKEY_SNOVA2455;
+      digest = EVP_sha384();
+      cache_algorithm_name = "Snova2455";
+      break;
+    case SignatureAlgorithm::kSnova2965:
+      expected_pkey_id = EVP_PKEY_SNOVA2965;
+      digest = EVP_sha512();
+      cache_algorithm_name = "Snova2965";
       break;
     case SignatureAlgorithm::kSphincssha2128fsimple:
       expected_pkey_id = EVP_PKEY_SPHINCSSHA2128FSIMPLE;

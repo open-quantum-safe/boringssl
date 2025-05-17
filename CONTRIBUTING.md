@@ -41,7 +41,7 @@ To upload a change, push it to the special `refs/for/main` target:
     git push origin HEAD:refs/for/main
 
 The output will then give you a link to the change. Add `agl@google.com`,
-`davidben@google.com`, and `bbe@google.com` as reviewers.
+`davidben@google.com` as reviewers.
 
 Pushing a commit with the same Change-Id as an existing change will upload a new
 version of it. (Use the `git rebase` or `git commit --amend` commands.)
