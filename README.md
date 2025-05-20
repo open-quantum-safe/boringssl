@@ -4,6 +4,14 @@
 OQS-BoringSSL
 ==================================
 
+## 🚨 Deprecation Notice: `master` Branch
+
+**THIS BRANCH** is **no longer maintained** and **will not receive any updates** going forward.
+
+Development has moved to the `main` branch. To continue receiving the latest features, bug fixes, and security updates, **please update your workflows, scripts, and bookmarks to use the `main` branch**.
+
+---
+
 [BoringSSL](https://boringssl.googlesource.com/boringssl/) is a fork, maintained by Google, of the [OpenSSL](https://www.openssl.org/) cryptographic library. ([View the original README](README).)
 
 OQS-BoringSSL is a fork of BoringSSL that adds quantum-safe key exchange and authentication algorithms using [liboqs](https://github.com/open-quantum-safe/liboqs) for prototyping and evaluation purposes. This fork is not endorsed by Google.
