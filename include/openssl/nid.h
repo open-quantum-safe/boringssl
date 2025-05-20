@@ -4446,25 +4446,40 @@ extern "C" {
 #define NID_CROSSrsdp128balanced 1043
 #define OBJ_CROSSrsdp128balanced 1L, 3L, 6L, 1L, 4L, 1L, 62245L, 2L, 1L, 1L, 2L
 
-#define SN_OV_Is_pkc "OV_Is_pkc"
-#define LN_OV_Is_pkc "OV_Is_pkc"
-#define NID_OV_Is_pkc 1044
-#define OBJ_OV_Is_pkc 1L, 3L, 9999L, 9L, 5L, 1L
-
 #define SN_OV_Ip_pkc "OV_Ip_pkc"
 #define LN_OV_Ip_pkc "OV_Ip_pkc"
 #define NID_OV_Ip_pkc 1045
 #define OBJ_OV_Ip_pkc 1L, 3L, 9999L, 9L, 6L, 1L
 
-#define SN_OV_Is_pkc_skc "OV_Is_pkc_skc"
-#define LN_OV_Is_pkc_skc "OV_Is_pkc_skc"
-#define NID_OV_Is_pkc_skc 1046
-#define OBJ_OV_Is_pkc_skc 1L, 3L, 9999L, 9L, 9L, 1L
-
 #define SN_OV_Ip_pkc_skc "OV_Ip_pkc_skc"
 #define LN_OV_Ip_pkc_skc "OV_Ip_pkc_skc"
 #define NID_OV_Ip_pkc_skc 1047
 #define OBJ_OV_Ip_pkc_skc 1L, 3L, 9999L, 9L, 10L, 1L
+
+#define SN_snova2454 "snova2454"
+#define LN_snova2454 "snova2454"
+#define NID_snova2454 1048
+#define OBJ_snova2454 1L, 3L, 9999L, 10L, 1L, 1L
+
+#define SN_snova2454esk "snova2454esk"
+#define LN_snova2454esk "snova2454esk"
+#define NID_snova2454esk 1049
+#define OBJ_snova2454esk 1L, 3L, 9999L, 10L, 3L, 1L
+
+#define SN_snova37172 "snova37172"
+#define LN_snova37172 "snova37172"
+#define NID_snova37172 1050
+#define OBJ_snova37172 1L, 3L, 9999L, 10L, 5L, 1L
+
+#define SN_snova2455 "snova2455"
+#define LN_snova2455 "snova2455"
+#define NID_snova2455 1051
+#define OBJ_snova2455 1L, 3L, 9999L, 10L, 10L, 1L
+
+#define SN_snova2965 "snova2965"
+#define LN_snova2965 "snova2965"
+#define NID_snova2965 1052
+#define OBJ_snova2965 1L, 3L, 9999L, 10L, 12L, 1L
 
 
 #if defined(__cplusplus)

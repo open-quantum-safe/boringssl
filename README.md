@@ -28,7 +28,7 @@ Both liboqs and this fork are part of the **Open Quantum Safe (OQS) project**, w
 
 ## Status
 
-This fork is built on top of [commit d5440dd](https://github.com/google/boringssl/commit/d5440dd2c2c500ac2d3bba4afec47a054b4d99ae), and adds:
+This fork is built on top of [commit a934ee9](https://github.com/google/boringssl/commit/a934ee9e1fe4397e682f9f18b1f4f061d7400f9d), and adds:
 
 - quantum-safe key exchange
 - hybrid (quantum-safe + elliptic curve) key exchange
@@ -87,9 +87,10 @@ The following quantum-safe digital signature algorithms from liboqs are supporte
 - **Falcon**: `falcon512`, `rsa3072_falcon512`, `falconpadded512`, `falcon1024`, `falconpadded1024`
 - **MAYO**: `mayo1`, `mayo2`, `mayo3`, `mayo5`
 - **ML-DSA**: `mldsa44`, `p256_mldsa44`, `mldsa65`, `p384_mldsa65`, `mldsa87`, `p521_mldsa87`
+- **SNOVA**: `snova2454`, `snova2454esk`, `snova37172`, `snova2455`, `snova2965`
 - **SPHINCS-SHA2**: `sphincssha2128fsimple`, `sphincssha2128ssimple`, `sphincssha2192fsimple`, `sphincssha2192ssimple`, `sphincssha2256fsimple`, `sphincssha2256ssimple`
 - **SPHINCS-SHAKE**: `sphincsshake128fsimple`, `sphincsshake128ssimple`, `sphincsshake192fsimple`, `sphincsshake192ssimple`, `sphincsshake256fsimple`, `sphincsshake256ssimple`
-- **UOV**: `OV_Is_pkc`, `OV_Ip_pkc`, `OV_Is_pkc_skc`, `OV_Ip_pkc_skc`
+- **UOV**: `OV_Ip_pkc`, `OV_Ip_pkc_skc`
 <!--- OQS_TEMPLATE_FRAGMENT_LIST_SIGS_END -->
 
 No [composite signature algorithms](https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/) are currently implemented. If you need those algorithms, please use the [OQS-provider](https://github.com/open-quantum-safe/oqs-provider) or implement them yourself and create a pull request.

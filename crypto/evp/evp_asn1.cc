@@ -50,11 +50,14 @@ static const EVP_PKEY_ASN1_METHOD *const kASN1Methods[] = {
     &mayo2_asn1_meth,
     &mayo3_asn1_meth,
     &mayo5_asn1_meth,
-    &OV_Is_pkc_asn1_meth,
     &OV_Ip_pkc_asn1_meth,
-    &OV_Is_pkc_skc_asn1_meth,
     &OV_Ip_pkc_skc_asn1_meth,
     &CROSSrsdp128balanced_asn1_meth,
+    &snova2454_asn1_meth,
+    &snova2454esk_asn1_meth,
+    &snova37172_asn1_meth,
+    &snova2455_asn1_meth,
+    &snova2965_asn1_meth,
     &sphincssha2128fsimple_asn1_meth,
     &sphincssha2128ssimple_asn1_meth,
     &sphincssha2192fsimple_asn1_meth,
@@ -469,25 +472,24 @@ int i2d_DSA_PUBKEY(const DSA *dsa, uint8_t **outp) {
 
 EC_KEY *d2i_EC_PUBKEY(EC_KEY **out, const uint8_t **inp, long len) {
   if (len < 0) {
-    return NULL;
+    return nullptr;
   }
   CBS cbs;
   CBS_init(&cbs, *inp, (size_t)len);
-  EVP_PKEY *pkey = EVP_parse_public_key(&cbs);
-  if (pkey == NULL) {
-    return NULL;
+  bssl::UniquePtr<EVP_PKEY> pkey(EVP_parse_public_key(&cbs));
+  if (pkey == nullptr) {
+    return nullptr;
   }
-  EC_KEY *ec_key = EVP_PKEY_get1_EC_KEY(pkey);
-  EVP_PKEY_free(pkey);
-  if (ec_key == NULL) {
-    return NULL;
+  bssl::UniquePtr<EC_KEY> ec_key(EVP_PKEY_get1_EC_KEY(pkey.get()));
+  if (ec_key == nullptr) {
+    return nullptr;
   }
-  if (out != NULL) {
+  if (out != nullptr) {
     EC_KEY_free(*out);
-    *out = ec_key;
+    *out = ec_key.get();
   }
   *inp = CBS_data(&cbs);
-  return ec_key;
+  return ec_key.release();
 }
 
 int i2d_EC_PUBKEY(const EC_KEY *ec_key, uint8_t **outp) {

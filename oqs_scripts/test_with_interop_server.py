@@ -59,11 +59,14 @@ sigs = [
         'mayo2',
         'mayo3',
         'mayo5',
-        'OV_Is_pkc',
         'OV_Ip_pkc',
-        'OV_Is_pkc_skc',
         'OV_Ip_pkc_skc',
         'CROSSrsdp128balanced',
+        'snova2454',
+        'snova2454esk',
+        'snova37172',
+        'snova2455',
+        'snova2965',
         'sphincssha2128fsimple',
         'sphincssha2128ssimple',
         'sphincssha2192fsimple',
@@ -95,7 +98,7 @@ errorPorts = []
 for lines in lineMatches:
     cellMatches = cellPattern.findall(lines)
     if len(cellMatches) > 2 and cellMatches[0] in sigs and cellMatches[1] in kexs:
-        if os.system("../build/tool/bssl client -root-certs " + rootCert + " -curves " + cellMatches[1] + " -connect test.openquantumsafe.org:" + cellMatches[2] + " </dev/null\n") != 0:
+        if os.system("../build/bssl client -root-certs " + rootCert + " -curves " + cellMatches[1] + " -connect test.openquantumsafe.org:" + cellMatches[2] + " </dev/null\n") != 0:
             errorPorts.append(cellMatches[2])
 
 os.unlink(rootCert)

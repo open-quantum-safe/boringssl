@@ -26,7 +26,6 @@
 #include <openssl/bytestring.h>
 #include <openssl/crypto.h>
 #include <openssl/err.h>
-#include <openssl/lhash.h>
 #include <openssl/mem.h>
 #include <openssl/rand.h>
 

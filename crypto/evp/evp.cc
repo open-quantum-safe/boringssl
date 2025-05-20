@@ -206,16 +206,22 @@ static const EVP_PKEY_ASN1_METHOD *evp_pkey_asn1_find(int nid) {
       return &mayo3_asn1_meth;
     case EVP_PKEY_MAYO5:
       return &mayo5_asn1_meth;
-    case EVP_PKEY_OV_IS_PKC:
-      return &OV_Is_pkc_asn1_meth;
     case EVP_PKEY_OV_IP_PKC:
       return &OV_Ip_pkc_asn1_meth;
-    case EVP_PKEY_OV_IS_PKC_SKC:
-      return &OV_Is_pkc_skc_asn1_meth;
     case EVP_PKEY_OV_IP_PKC_SKC:
       return &OV_Ip_pkc_skc_asn1_meth;
     case EVP_PKEY_CROSSRSDP128BALANCED:
       return &CROSSrsdp128balanced_asn1_meth;
+    case EVP_PKEY_SNOVA2454:
+      return &snova2454_asn1_meth;
+    case EVP_PKEY_SNOVA2454ESK:
+      return &snova2454esk_asn1_meth;
+    case EVP_PKEY_SNOVA37172:
+      return &snova37172_asn1_meth;
+    case EVP_PKEY_SNOVA2455:
+      return &snova2455_asn1_meth;
+    case EVP_PKEY_SNOVA2965:
+      return &snova2965_asn1_meth;
     case EVP_PKEY_SPHINCSSHA2128FSIMPLE:
       return &sphincssha2128fsimple_asn1_meth;
     case EVP_PKEY_SPHINCSSHA2128SSIMPLE:
