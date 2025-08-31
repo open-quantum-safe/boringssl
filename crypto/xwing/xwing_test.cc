@@ -22,31 +22,31 @@
 namespace {
 
 TEST(XWingTest, EncapsulateDecapsulate) {
-  uint8_t public_key[1216];
+  uint8_t public_key[XWING_PUBLIC_KEY_BYTES];
   XWING_private_key private_key;
   ASSERT_TRUE(XWING_generate_key(public_key, &private_key));
 
-  uint8_t ciphertext[1120];
-  uint8_t shared_secret[32];
+  uint8_t ciphertext[XWING_CIPHERTEXT_BYTES];
+  uint8_t shared_secret[XWING_SHARED_SECRET_BYTES];
   ASSERT_TRUE(XWING_encap(ciphertext, shared_secret, public_key));
 
-  uint8_t decapsulated[32];
+  uint8_t decapsulated[XWING_SHARED_SECRET_BYTES];
   ASSERT_TRUE(XWING_decap(decapsulated, ciphertext, &private_key));
   EXPECT_EQ(Bytes(decapsulated), Bytes(shared_secret));
 }
 
 TEST(XWingTest, PublicFromPrivate) {
-  uint8_t public_key[1216];
+  uint8_t public_key[XWING_PUBLIC_KEY_BYTES];
   XWING_private_key private_key;
   ASSERT_TRUE(XWING_generate_key(public_key, &private_key));
 
-  uint8_t public_key2[1216];
+  uint8_t public_key2[XWING_PUBLIC_KEY_BYTES];
   ASSERT_TRUE(XWING_public_from_private(public_key2, &private_key));
   EXPECT_EQ(Bytes(public_key2), Bytes(public_key));
 }
 
 TEST(XWingTest, MarshalParsePrivateKey) {
-  uint8_t public_key[1216];
+  uint8_t public_key[XWING_PUBLIC_KEY_BYTES];
   XWING_private_key private_key;
   ASSERT_TRUE(XWING_generate_key(public_key, &private_key));
 
@@ -64,11 +64,11 @@ TEST(XWingTest, MarshalParsePrivateKey) {
   ASSERT_TRUE(XWING_parse_private_key(&parsed_private_key, &cbs));
 
   // Check that both have a consistent behavior.
-  uint8_t ciphertext[1120];
-  uint8_t shared_secret[32];
+  uint8_t ciphertext[XWING_CIPHERTEXT_BYTES];
+  uint8_t shared_secret[XWING_SHARED_SECRET_BYTES];
   ASSERT_TRUE(XWING_encap(ciphertext, shared_secret, public_key));
 
-  uint8_t decapsulated[32];
+  uint8_t decapsulated[XWING_SHARED_SECRET_BYTES];
   ASSERT_TRUE(XWING_decap(decapsulated, ciphertext, &parsed_private_key));
   EXPECT_EQ(Bytes(decapsulated), Bytes(shared_secret));
 }
@@ -77,11 +77,11 @@ TEST(XWingTest, TestVector) {
   // Taken from
   // https://datatracker.ietf.org/doc/html/draft-connolly-cfrg-xwing-kem-06,
   // Appendix C.
-  const uint8_t kPrivateKey[32] = {
+  const uint8_t kPrivateKey[XWING_PRIVATE_KEY_BYTES] = {
       0x7f, 0x9c, 0x2b, 0xa4, 0xe8, 0x8f, 0x82, 0x7d, 0x61, 0x60, 0x45,
       0x50, 0x76, 0x05, 0x85, 0x3e, 0xd7, 0x3b, 0x80, 0x93, 0xf6, 0xef,
       0xbc, 0x88, 0xeb, 0x1a, 0x6e, 0xac, 0xfa, 0x66, 0xef, 0x26};
-  const uint8_t kExpectedPublicKey[1216] = {
+  const uint8_t kExpectedPublicKey[XWING_PUBLIC_KEY_BYTES] = {
       0xe2, 0x23, 0x6b, 0x35, 0xa8, 0xc2, 0x4b, 0x39, 0xb1, 0x0a, 0xa1, 0x32,
       0x3a, 0x96, 0xa9, 0x19, 0xa2, 0xce, 0xd8, 0x84, 0x00, 0x63, 0x3a, 0x7b,
       0x07, 0x13, 0x17, 0x13, 0xfc, 0x14, 0xb2, 0xb5, 0xb1, 0x9c, 0xfc, 0x3d,
@@ -193,11 +193,11 @@ TEST(XWingTest, TestVector) {
       0x9a, 0xfa, 0x2f, 0x75, 0xab, 0x91, 0x6a, 0x58, 0xd9, 0x74, 0x91,
       0x88, 0x35, 0xd2, 0x5e, 0x6a, 0x43, 0x50, 0x85, 0xb2,
   };
-  const uint8_t kExpectedSharedSecret[32] = {
+  const uint8_t kExpectedSharedSecret[XWING_SHARED_SECRET_BYTES] = {
       0xd2, 0xdf, 0x05, 0x22, 0x12, 0x8f, 0x09, 0xdd, 0x8e, 0x2c, 0x92,
       0xb1, 0xe9, 0x05, 0xc7, 0x93, 0xd8, 0xf5, 0x7a, 0x54, 0xc3, 0xda,
       0x25, 0x86, 0x1f, 0x10, 0xbf, 0x4c, 0xa6, 0x13, 0xe3, 0x84};
-  const uint8_t kExpectedCiphertext[1120] = {
+  const uint8_t kExpectedCiphertext[XWING_CIPHERTEXT_BYTES] = {
       0xb8, 0x3a, 0xa8, 0x28, 0xd4, 0xd6, 0x2b, 0x9a, 0x83, 0xce, 0xff, 0xe1,
       0xd3, 0xd3, 0xbb, 0x1e, 0xf3, 0x12, 0x64, 0x64, 0x3c, 0x07, 0x0c, 0x57,
       0x98, 0x92, 0x7e, 0x41, 0xfb, 0x07, 0x91, 0x4a, 0x27, 0x3f, 0x8f, 0x96,
@@ -298,18 +298,18 @@ TEST(XWingTest, TestVector) {
   XWING_private_key private_key;
   ASSERT_TRUE(XWING_parse_private_key(&private_key, &cbs));
 
-  uint8_t public_key[1216];
+  uint8_t public_key[XWING_PUBLIC_KEY_BYTES];
   ASSERT_TRUE(XWING_public_from_private(public_key, &private_key));
   EXPECT_EQ(Bytes(public_key), Bytes(kExpectedPublicKey));
 
-  uint8_t ciphertext[1120];
-  uint8_t shared_secret[32];
+  uint8_t ciphertext[XWING_CIPHERTEXT_BYTES];
+  uint8_t shared_secret[XWING_SHARED_SECRET_BYTES];
   ASSERT_TRUE(XWING_encap_external_entropy(ciphertext, shared_secret,
                                            public_key, kEphemeralSeed));
   EXPECT_EQ(Bytes(ciphertext), Bytes(kExpectedCiphertext));
   EXPECT_EQ(Bytes(shared_secret), Bytes(kExpectedSharedSecret));
 
-  uint8_t decapsulated[32];
+  uint8_t decapsulated[XWING_SHARED_SECRET_BYTES];
   ASSERT_TRUE(XWING_decap(decapsulated, ciphertext, &private_key));
   EXPECT_EQ(Bytes(decapsulated), Bytes(shared_secret));
 }

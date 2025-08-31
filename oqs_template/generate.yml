@@ -16,12 +16,6 @@ kems:
     use_as_default_with: 'p256'
     oqs_meth: 'OQS_KEM_alg_ml_kem_768'
   -
-    family: 'ML-KEM'
-    name: 'mlkem1024'
-    nid: '0x0202'
-    mix_with: [{'name': 'p384', 'mix_nid':'0x11ED', 'nid':'SSL_GROUP_SECP384R1'}, {'name': 'p521', 'mix_nid':'0x2F4D', 'nid':'SSL_GROUP_SECP521R1'}]
-    oqs_meth: 'OQS_KEM_alg_ml_kem_1024'
-  -
     family: 'FrodoKEM'
     name: 'frodo640aes'
     nid: '0xFE00'

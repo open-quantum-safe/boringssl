@@ -1,0 +1,4 @@
+{% for sig in config['sigs'] %}
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_{{ sig['name'] }}(void);
+{%- endfor %}
+

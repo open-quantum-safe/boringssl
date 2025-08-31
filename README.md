@@ -28,7 +28,7 @@ Both liboqs and this fork are part of the **Open Quantum Safe (OQS) project**, w
 
 ## Status
 
-This fork is built on top of [commit a934ee9](https://github.com/google/boringssl/commit/a934ee9e1fe4397e682f9f18b1f4f061d7400f9d), and adds:
+This fork is built on top of [commit 208361a](https://github.com/google/boringssl/commit/208361a22e217afca0081acf78b2a3f3cf328a7e), and adds:
 
 - quantum-safe key exchange
 - hybrid (quantum-safe + elliptic curve) key exchange
@@ -66,12 +66,12 @@ If an algorithm is provided by liboqs but is not listed below, it might still be
 
 #### Key Exchange
 
-Along with `X25519MLKEM768` supported by BoringSSL through Google's implementations, this fork also incorporates support for additional quantum-safe algorithms from liboqs (provided they have been enabled in liboqs):
+Along with `X25519MLKEM768` and `MLKEM1024` supported by BoringSSL through Google's implementations, this fork also incorporates support for additional quantum-safe algorithms from liboqs (provided they have been enabled in liboqs):
 
 <!--- OQS_TEMPLATE_FRAGMENT_LIST_KEXS_START -->
 - **BIKE**: `bikel1`, `p256_bikel1`, `x25519_bikel1`, `bikel3`, `p384_bikel3`, `bikel5`, `p521_bikel5`
 - **FrodoKEM**: `frodo640aes`, `p256_frodo640aes`, `x25519_frodo640aes`, `frodo640shake`, `p256_frodo640shake`, `x25519_frodo640shake`, `frodo976aes`, `p384_frodo976aes`, `frodo976shake`, `p384_frodo976shake`, `frodo1344aes`, `p521_frodo1344aes`, `frodo1344shake`, `p521_frodo1344shake`
-- **ML-KEM**: `mlkem512`, `p256_mlkem512`, `x25519_mlkem512`, `mlkem768`, `p256_mlkem768`, `p384_mlkem768`, `mlkem1024`, `p384_mlkem1024`, `p521_mlkem1024`
+- **ML-KEM**: `mlkem512`, `p256_mlkem512`, `x25519_mlkem512`, `mlkem768`, `p256_mlkem768`, `p384_mlkem768`, `p384_mlkem1024`, `p521_mlkem1024`
 <!--- OQS_TEMPLATE_FRAGMENT_LIST_KEXS_END -->
 
 Be aware that hybrid algorithms utlizing `X448` are not supported. If those are needed for a project please use [OQS-provider](https://github.com/open-quantum-safe/oqs-provider) which supports them out of the box, or implement them and create a pull request, or [create an issue](https://github.com/open-quantum-safe/boringssl/issues).
@@ -158,7 +158,7 @@ BoringSSL contains a basic TLS server (`server`) and TLS client (`client`) which
 To run a basic TLS server with all liboqs algorithms enabled, from the `build` directory, run:
 
 ```
-tool/bssl server -accept 4433 -sig-alg <SIG> -loop
+./bssl server -accept 4433 -sig-alg <SIG> -loop
 ```
 
 where `<SIG>` is one of the quantum-safe or hybrid signature algorithms listed in the [Supported Algorithms](#supported-algorithms) section above; if the `sig-alg` option is omitted, the default classical algorithm `ecdhe` with prime curve `X9_62_prime256v1` is used.
@@ -166,7 +166,7 @@ where `<SIG>` is one of the quantum-safe or hybrid signature algorithms listed i
 In another terminal window, you can run a TLS client requesting one of the supported key-exchange algorithms:
 
 ```
-tool/bssl client -curves <KEX> -connect localhost:4433
+./bssl client -curves <KEX> -connect localhost:4433
 ```
 
 where `<KEX>` is one of the quantum-safe or hybrid key exchange algorithms listed in the [Supported Algorithms](#supported-algorithms) section above.
@@ -181,7 +181,7 @@ Contributors to this fork include:
 
 - Christian Paquin (Microsoft Research)
 - Goutam Tamvada (University of Waterloo)
-- JT (Henan Raytonne Trading Company)
+- JT
 
 ## Acknowledgments
 

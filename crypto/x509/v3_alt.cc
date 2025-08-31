@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <openssl/asn1.h>
 #include <openssl/conf.h>
 #include <openssl/err.h>
 #include <openssl/mem.h>

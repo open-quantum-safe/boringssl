@@ -1,0 +1,4 @@
+{%- for sig in config['sigs'] %}
+      EVP_pkey_{{ sig['name'] }}(),
+{%- endfor %}
+

@@ -33,10 +33,6 @@ var testSignatureAlgorithms = []struct {
 	{"RSA_PKCS1_SHA384", signatureRSAPKCS1WithSHA384, &rsaCertificate, 0},
 	{"RSA_PKCS1_SHA512", signatureRSAPKCS1WithSHA512, &rsaCertificate, 0},
 	{"ECDSA_SHA1", signatureECDSAWithSHA1, &ecdsaP256Certificate, CurveP256},
-	// The “P256” in the following line is not a mistake. In TLS 1.2 the
-	// hash function doesn't have to match the curve and so the same
-	// signature algorithm works with P-224.
-	{"ECDSA_P224_SHA256", signatureECDSAWithP256AndSHA256, &ecdsaP224Certificate, CurveP224},
 	{"ECDSA_P256_SHA256", signatureECDSAWithP256AndSHA256, &ecdsaP256Certificate, CurveP256},
 	{"ECDSA_P384_SHA384", signatureECDSAWithP384AndSHA384, &ecdsaP384Certificate, CurveP384},
 	{"ECDSA_P521_SHA512", signatureECDSAWithP521AndSHA512, &ecdsaP521Certificate, CurveP521},
@@ -101,7 +97,7 @@ func addSignatureAlgorithmTests() {
 				isTLS13PKCS1 := hasComponent(alg.name, "PKCS1") && hasComponent(alg.name, "LEGACY")
 
 				// TLS 1.3 removes a number of signature algorithms.
-				if ver.version >= VersionTLS13 && (alg.curve == CurveP224 || alg.id == signatureECDSAWithSHA1 || isTLS12PKCS1) {
+				if ver.version >= VersionTLS13 && (alg.id == signatureECDSAWithSHA1 || isTLS12PKCS1) {
 					shouldFail = true
 				}
 
@@ -1132,6 +1128,39 @@ func addSignatureAlgorithmTests() {
 			cipher: TLS_RSA_WITH_AES_128_GCM_SHA256,
 		},
 	})
+
+	// id-RSASSA-PSS certificates are not accepted for use with rsa_pss_rsae_*
+	// algorithms. There are separate codepoints, which we do not support, for
+	// id-RSASSA-PSS.
+	for _, ver := range tlsVersions {
+		testCases = append(testCases, testCase{
+			testType: clientTest,
+			name:     "RejectPSSKeyType-Client-" + ver.name,
+			config: Config{
+				MinVersion: ver.version,
+				MaxVersion: ver.version,
+				Credential: pssCertificate.WithSignatureAlgorithms(
+					signatureRSAPSSWithSHA256,
+				),
+			},
+			shouldFail:    true,
+			expectedError: ":UNSUPPORTED_ALGORITHM:",
+		})
+		testCases = append(testCases, testCase{
+			testType: serverTest,
+			name:     "RejectPSSKeyType-Server-" + ver.name,
+			config: Config{
+				MinVersion: ver.version,
+				MaxVersion: ver.version,
+				Credential: pssCertificate.WithSignatureAlgorithms(
+					signatureRSAPSSWithSHA256,
+				),
+			},
+			flags:         []string{"-require-any-client-certificate"},
+			shouldFail:    true,
+			expectedError: ":UNSUPPORTED_ALGORITHM:",
+		})
+	}
 }
 
 func addBadECDSASignatureTests() {

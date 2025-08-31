@@ -18,6 +18,7 @@
 #include <openssl/err.h>
 #include <openssl/evp.h>
 #include <openssl/mem.h>
+#include <openssl/rsa.h>
 #include <oqs/oqs.h>
 #include <stdio.h>
 
@@ -50,204 +51,212 @@ void oqs_pkey_ctx_free(OQS_KEY *key) {
   OPENSSL_free(key);
 }
 
-#define DEFINE_OQS_SET_PRIV_RAW(ALG, OQS_METH)                                 \
-  static int ALG##_set_priv_raw(EVP_PKEY *pkey, const uint8_t *in,             \
-                                size_t len) {                                  \
-    OQS_KEY *key =                                                             \
-        reinterpret_cast<OQS_KEY *>(OPENSSL_malloc(sizeof(OQS_KEY)));          \
-    if (!key) {                                                                \
-      OPENSSL_PUT_ERROR(EVP, ERR_R_MALLOC_FAILURE);                            \
-      goto err;                                                                \
-    }                                                                          \
-                                                                               \
-    key->ctx = OQS_SIG_new(OQS_METH);                                          \
-    if (!key->ctx) {                                                           \
-      OPENSSL_PUT_ERROR(EVP, ERR_R_MALLOC_FAILURE);                            \
-      goto err;                                                                \
-    }                                                                          \
-                                                                               \
-    {                                                                          \
-      unsigned int max_privkey_len =                                           \
-          key->ctx->length_secret_key + key->ctx->length_public_key;           \
-      int id = pkey->ameth->pkey_id;                                           \
-      int index = 0;                                                           \
-      int is_hybrid = is_oqs_hybrid_alg(id);                                   \
-      key->nid = id;                                                           \
-      if (is_hybrid) {                                                         \
-        max_privkey_len +=                                                     \
-            (SIZE_OF_UINT32 +                                                  \
-             get_classical_key_len(KEY_TYPE_PRIVATE, get_classical_nid(id)));  \
-        unsigned int actual_classical_privkey_len;                             \
-        DECODE_UINT32(actual_classical_privkey_len, in);                       \
-        const unsigned char *privkey_temp = in + SIZE_OF_UINT32;               \
-        key->classical_pkey =                                                  \
-            d2i_AutoPrivateKey(&key->classical_pkey, &privkey_temp,            \
-                               actual_classical_privkey_len);                  \
-        if (key->classical_pkey == NULL) {                                     \
-          OPENSSL_PUT_ERROR(EVP, EVP_R_DECODE_ERROR);                          \
-          goto err;                                                            \
-        }                                                                      \
-        index += (SIZE_OF_UINT32 + actual_classical_privkey_len);              \
-      }                                                                        \
-                                                                               \
-      if (len != max_privkey_len) {                                            \
-        OPENSSL_PUT_ERROR(EVP, EVP_R_DECODE_ERROR);                            \
-        goto err;                                                              \
-      }                                                                        \
-                                                                               \
-      key->priv = (uint8_t *)(malloc(key->ctx->length_secret_key));            \
-      OPENSSL_memcpy(key->priv, in + index, key->ctx->length_secret_key);      \
-      key->has_private = 1;                                                    \
-                                                                               \
-      key->pub = (uint8_t *)(malloc(key->ctx->length_public_key));             \
-      OPENSSL_memcpy(key->pub, in + index + key->ctx->length_secret_key,       \
-                     key->ctx->length_public_key);                             \
-    }                                                                          \
-    oqs_free(pkey);                                                            \
-    pkey->pkey = key;                                                          \
-    return 1;                                                                  \
-  err:                                                                         \
-    oqs_pkey_ctx_free(key);                                                    \
-    return 0;                                                                  \
+#define DEFINE_OQS_SET_PRIV_RAW(ALG, OQS_METH)                                \
+  static int ALG##_set_priv_raw(EVP_PKEY *pkey, const uint8_t *in,            \
+                                size_t len) {                                 \
+    OQS_KEY *key =                                                            \
+        reinterpret_cast<OQS_KEY *>(OPENSSL_malloc(sizeof(OQS_KEY)));         \
+    if (!key) {                                                               \
+      OPENSSL_PUT_ERROR(EVP, ERR_R_MALLOC_FAILURE);                           \
+      goto err;                                                               \
+    }                                                                         \
+                                                                              \
+    key->ctx = OQS_SIG_new(OQS_METH);                                         \
+    if (!key->ctx) {                                                          \
+      OPENSSL_PUT_ERROR(EVP, ERR_R_MALLOC_FAILURE);                           \
+      goto err;                                                               \
+    }                                                                         \
+                                                                              \
+    {                                                                         \
+      unsigned int max_privkey_len =                                          \
+          key->ctx->length_secret_key + key->ctx->length_public_key;          \
+      int id = NID_##ALG;                                                     \
+      int index = 0;                                                          \
+      int is_hybrid = is_oqs_hybrid_alg(id);                                  \
+      key->nid = id;                                                          \
+      if (is_hybrid) {                                                        \
+        max_privkey_len +=                                                    \
+            (SIZE_OF_UINT32 +                                                 \
+             get_classical_key_len(KEY_TYPE_PRIVATE, get_classical_nid(id))); \
+        unsigned int actual_classical_privkey_len;                            \
+        DECODE_UINT32(actual_classical_privkey_len, in);                      \
+        const unsigned char *privkey_temp = in + SIZE_OF_UINT32;              \
+        key->classical_pkey =                                                 \
+            d2i_AutoPrivateKey(&key->classical_pkey, &privkey_temp,           \
+                               actual_classical_privkey_len);                 \
+        if (key->classical_pkey == NULL) {                                    \
+          OPENSSL_PUT_ERROR(EVP, EVP_R_DECODE_ERROR);                         \
+          goto err;                                                           \
+        }                                                                     \
+        index += (SIZE_OF_UINT32 + actual_classical_privkey_len);             \
+      }                                                                       \
+                                                                              \
+      if (len != max_privkey_len) {                                           \
+        OPENSSL_PUT_ERROR(EVP, EVP_R_DECODE_ERROR);                           \
+        goto err;                                                             \
+      }                                                                       \
+                                                                              \
+      key->priv = (uint8_t *)(malloc(key->ctx->length_secret_key));           \
+      OPENSSL_memcpy(key->priv, in + index, key->ctx->length_secret_key);     \
+      key->has_private = 1;                                                   \
+                                                                              \
+      key->pub = (uint8_t *)(malloc(key->ctx->length_public_key));            \
+      OPENSSL_memcpy(key->pub, in + index + key->ctx->length_secret_key,      \
+                     key->ctx->length_public_key);                            \
+    }                                                                         \
+    oqs_free(pkey);                                                           \
+    evp_pkey_set0(pkey, &ALG##_asn1_meth, key);                               \
+    return 1;                                                                 \
+  err:                                                                        \
+    oqs_pkey_ctx_free(key);                                                   \
+    return 0;                                                                 \
   }
 
-#define DEFINE_OQS_PRIV_DECODE(ALG)                                            \
-  static int ALG##_priv_decode(EVP_PKEY *out, CBS *params, CBS *key) {         \
-    CBS inner;                                                                 \
-    if (CBS_len(params) != 0 ||                                                \
-        !CBS_get_asn1(key, &inner, CBS_ASN1_OCTETSTRING) ||                    \
-        CBS_len(key) != 0) {                                                   \
-      OPENSSL_PUT_ERROR(EVP, EVP_R_DECODE_ERROR);                              \
-      return 0;                                                                \
-    }                                                                          \
-                                                                               \
-    return ALG##_set_priv_raw(out, CBS_data(&inner), CBS_len(&inner));         \
+#define DEFINE_OQS_PRIV_DECODE(ALG)                                        \
+  static evp_decode_result_t ALG##_priv_decode(                            \
+      const EVP_PKEY_ALG *alg, EVP_PKEY *out, CBS *params, CBS *key) {     \
+    CBS inner;                                                             \
+    if (CBS_len(params) != 0 ||                                            \
+        !CBS_get_asn1(key, &inner, CBS_ASN1_OCTETSTRING) ||                \
+        CBS_len(key) != 0) {                                               \
+      OPENSSL_PUT_ERROR(EVP, EVP_R_DECODE_ERROR);                          \
+      return evp_decode_error;                                             \
+    }                                                                      \
+                                                                           \
+    if (ALG##_set_priv_raw(out, CBS_data(&inner), CBS_len(&inner)) != 1) { \
+      return evp_decode_error;                                             \
+    }                                                                      \
+    return evp_decode_ok;                                                  \
   }
 
-#define DEFINE_OQS_SET_PUB_RAW(ALG, OQS_METH)                                  \
-  static int ALG##_set_pub_raw(EVP_PKEY *pkey, const uint8_t *in,              \
-                               size_t len) {                                   \
-    OQS_KEY *key =                                                             \
-        reinterpret_cast<OQS_KEY *>(OPENSSL_malloc(sizeof(OQS_KEY)));          \
-    if (!key) {                                                                \
-      OPENSSL_PUT_ERROR(EVP, ERR_R_MALLOC_FAILURE);                            \
-      goto err;                                                                \
-    }                                                                          \
-                                                                               \
-    key->ctx = OQS_SIG_new(OQS_METH);                                          \
-    if (!key->ctx) {                                                           \
-      OPENSSL_PUT_ERROR(EVP, ERR_R_MALLOC_FAILURE);                            \
-      goto err;                                                                \
-    }                                                                          \
-                                                                               \
-    {                                                                          \
-      unsigned int max_pubkey_len = key->ctx->length_public_key;               \
-      int id = pkey->ameth->pkey_id;                                           \
-      int index = 0;                                                           \
-      int is_hybrid = is_oqs_hybrid_alg(id);                                   \
-      key->nid = id;                                                           \
-      if (is_hybrid) {                                                         \
-        max_pubkey_len +=                                                      \
-            (SIZE_OF_UINT32 +                                                  \
-             get_classical_key_len(KEY_TYPE_PUBLIC, get_classical_nid(id)));   \
-        int classical_id = get_classical_nid(id);                              \
-        int actual_classical_pubkey_len;                                       \
-        DECODE_UINT32(actual_classical_pubkey_len, in);                        \
-        if (is_EC_nid(classical_id)) {                                         \
-          decode_EC_pub(classical_id, in + SIZE_OF_UINT32,                     \
-                        actual_classical_pubkey_len, key);                     \
-        } else {                                                               \
-          const unsigned char *pubkey_temp = in + SIZE_OF_UINT32;              \
-          key->classical_pkey =                                                \
-              decode_RSA_pub(&key->classical_pkey, &pubkey_temp,               \
-                             actual_classical_pubkey_len);                     \
-        }                                                                      \
-        if (key->classical_pkey == NULL) {                                     \
-          OPENSSL_PUT_ERROR(EVP, EVP_R_DECODE_ERROR);                          \
-          goto err;                                                            \
-        }                                                                      \
-        index += (SIZE_OF_UINT32 + actual_classical_pubkey_len);               \
-      }                                                                        \
-                                                                               \
-      if (len != max_pubkey_len) {                                             \
-        OPENSSL_PUT_ERROR(EVP, EVP_R_DECODE_ERROR);                            \
-        goto err;                                                              \
-      }                                                                        \
-                                                                               \
-      max_pubkey_len = key->ctx->length_public_key;                            \
-      key->pub = (uint8_t *)(malloc(max_pubkey_len));                          \
-      OPENSSL_memcpy(key->pub, index + in, max_pubkey_len);                    \
-      key->has_private = 0;                                                    \
-    }                                                                          \
-    oqs_free(pkey);                                                            \
-    pkey->pkey = key;                                                          \
-    return 1;                                                                  \
-  err:                                                                         \
-    oqs_pkey_ctx_free(key);                                                    \
-    return 0;                                                                  \
+#define DEFINE_OQS_SET_PUB_RAW(ALG, OQS_METH)                                \
+  static int ALG##_set_pub_raw(EVP_PKEY *pkey, const uint8_t *in,            \
+                               size_t len) {                                 \
+    OQS_KEY *key =                                                           \
+        reinterpret_cast<OQS_KEY *>(OPENSSL_malloc(sizeof(OQS_KEY)));        \
+    if (!key) {                                                              \
+      OPENSSL_PUT_ERROR(EVP, ERR_R_MALLOC_FAILURE);                          \
+      goto err;                                                              \
+    }                                                                        \
+                                                                             \
+    key->ctx = OQS_SIG_new(OQS_METH);                                        \
+    if (!key->ctx) {                                                         \
+      OPENSSL_PUT_ERROR(EVP, ERR_R_MALLOC_FAILURE);                          \
+      goto err;                                                              \
+    }                                                                        \
+                                                                             \
+    {                                                                        \
+      unsigned int max_pubkey_len = key->ctx->length_public_key;             \
+      int id = NID_##ALG;                                                    \
+      int index = 0;                                                         \
+      int is_hybrid = is_oqs_hybrid_alg(id);                                 \
+      key->nid = id;                                                         \
+      if (is_hybrid) {                                                       \
+        max_pubkey_len +=                                                    \
+            (SIZE_OF_UINT32 +                                                \
+             get_classical_key_len(KEY_TYPE_PUBLIC, get_classical_nid(id))); \
+        int classical_id = get_classical_nid(id);                            \
+        int actual_classical_pubkey_len;                                     \
+        DECODE_UINT32(actual_classical_pubkey_len, in);                      \
+        if (is_EC_nid(classical_id)) {                                       \
+          decode_EC_pub(classical_id, in + SIZE_OF_UINT32,                   \
+                        actual_classical_pubkey_len, key);                   \
+        } else {                                                             \
+          const unsigned char *pubkey_temp = in + SIZE_OF_UINT32;            \
+          key->classical_pkey =                                              \
+              decode_RSA_pub(&key->classical_pkey, &pubkey_temp,             \
+                             actual_classical_pubkey_len);                   \
+        }                                                                    \
+        if (key->classical_pkey == NULL) {                                   \
+          OPENSSL_PUT_ERROR(EVP, EVP_R_DECODE_ERROR);                        \
+          goto err;                                                          \
+        }                                                                    \
+        index += (SIZE_OF_UINT32 + actual_classical_pubkey_len);             \
+      }                                                                      \
+                                                                             \
+      if (len != max_pubkey_len) {                                           \
+        OPENSSL_PUT_ERROR(EVP, EVP_R_DECODE_ERROR);                          \
+        goto err;                                                            \
+      }                                                                      \
+                                                                             \
+      max_pubkey_len = key->ctx->length_public_key;                          \
+      key->pub = (uint8_t *)(malloc(max_pubkey_len));                        \
+      OPENSSL_memcpy(key->pub, index + in, max_pubkey_len);                  \
+      key->has_private = 0;                                                  \
+    }                                                                        \
+    oqs_free(pkey);                                                          \
+    evp_pkey_set0(pkey, &ALG##_asn1_meth, key);                              \
+    return 1;                                                                \
+  err:                                                                       \
+    oqs_pkey_ctx_free(key);                                                  \
+    return 0;                                                                \
   }
 
-#define DEFINE_OQS_PUB_DECODE(ALG)                                             \
-  static int ALG##_pub_decode(EVP_PKEY *out, CBS *params, CBS *key) {          \
-    if (CBS_len(params) != 0) {                                                \
-      OPENSSL_PUT_ERROR(EVP, EVP_R_DECODE_ERROR);                              \
-      return 0;                                                                \
-    }                                                                          \
-                                                                               \
-    return ALG##_set_pub_raw(out, CBS_data(key), CBS_len(key));                \
+#define DEFINE_OQS_PUB_DECODE(ALG)                                     \
+  static evp_decode_result_t ALG##_pub_decode(                         \
+      const EVP_PKEY_ALG *alg, EVP_PKEY *out, CBS *params, CBS *key) { \
+    if (CBS_len(params) != 0) {                                        \
+      OPENSSL_PUT_ERROR(EVP, EVP_R_DECODE_ERROR);                      \
+      return evp_decode_error;                                         \
+    }                                                                  \
+                                                                       \
+    if (ALG##_set_pub_raw(out, CBS_data(key), CBS_len(key)) != 1) {    \
+      return evp_decode_error;                                         \
+    }                                                                  \
+    return evp_decode_ok;                                              \
   }
 
-#define DEFINE_OQS_PUB_ENCODE(ALG)                                             \
-  static int ALG##_pub_encode(CBB *out, const EVP_PKEY *pkey) {                \
-    const OQS_KEY *key = reinterpret_cast<const OQS_KEY *>(pkey->pkey);        \
-    {                                                                          \
-      uint32_t pubkey_len = 0, max_classical_pubkey_len = 0,                   \
-               classical_pubkey_len = 0, index = 0;                            \
-                                                                               \
-      int is_hybrid = (key->classical_pkey != NULL);                           \
-      pubkey_len = key->ctx->length_public_key;                                \
-      if (is_hybrid) {                                                         \
-        max_classical_pubkey_len = get_classical_key_len(                      \
-            KEY_TYPE_PUBLIC, get_classical_nid(pkey->ameth->pkey_id));         \
-        pubkey_len += (SIZE_OF_UINT32 + max_classical_pubkey_len);             \
-      }                                                                        \
-      unsigned char *penc =                                                    \
-          reinterpret_cast<unsigned char *>(OPENSSL_malloc(pubkey_len));       \
-      unsigned char *classical_pubkey = penc + SIZE_OF_UINT32;                 \
-      if (is_hybrid) {                                                         \
-        uint32_t actual_classical_pubkey_len =                                 \
-            i2d_PublicKey(key->classical_pkey, &classical_pubkey);             \
-        if (actual_classical_pubkey_len > max_classical_pubkey_len) {          \
-          OPENSSL_free(classical_pubkey);                                      \
-          OPENSSL_free(penc);                                                  \
-          OPENSSL_PUT_ERROR(EVP, EVP_R_ENCODE_ERROR);                          \
-          return 0;                                                            \
-        }                                                                      \
-        ENCODE_UINT32(penc, actual_classical_pubkey_len);                      \
-        classical_pubkey_len = SIZE_OF_UINT32 + actual_classical_pubkey_len;   \
-        index += classical_pubkey_len;                                         \
-      }                                                                        \
-      OPENSSL_memcpy(penc + index, key->pub, key->ctx->length_public_key);     \
-      pubkey_len = classical_pubkey_len + key->ctx->length_public_key;         \
-                                                                               \
-      /* See RFC 8410, section 4. */                                           \
-      CBB spki, algorithm, oid, key_bitstring;                                 \
-      if (!CBB_add_asn1(out, &spki, CBS_ASN1_SEQUENCE) ||                      \
-          !CBB_add_asn1(&spki, &algorithm, CBS_ASN1_SEQUENCE) ||               \
-          !CBB_add_asn1(&algorithm, &oid, CBS_ASN1_OBJECT) ||                  \
-          !CBB_add_bytes(&oid, ALG##_asn1_meth.oid,                            \
-                         ALG##_asn1_meth.oid_len) ||                           \
-          !CBB_add_asn1(&spki, &key_bitstring, CBS_ASN1_BITSTRING) ||          \
-          !CBB_add_u8(&key_bitstring, 0 /* padding */) ||                      \
-          !CBB_add_bytes(&key_bitstring, penc, pubkey_len) ||                  \
-          !CBB_flush(out)) {                                                   \
-        OPENSSL_PUT_ERROR(EVP, EVP_R_ENCODE_ERROR);                            \
-        OPENSSL_free(classical_pubkey);                                        \
-        OPENSSL_free(penc);                                                    \
-        return 0;                                                              \
-      }                                                                        \
-    }                                                                          \
-    return 1;                                                                  \
+#define DEFINE_OQS_PUB_ENCODE(ALG)                                           \
+  static int ALG##_pub_encode(CBB *out, const EVP_PKEY *pkey) {              \
+    const OQS_KEY *key = reinterpret_cast<const OQS_KEY *>(pkey->pkey);      \
+    {                                                                        \
+      uint32_t pubkey_len = 0, max_classical_pubkey_len = 0,                 \
+               classical_pubkey_len = 0, index = 0;                          \
+                                                                             \
+      int is_hybrid = (key->classical_pkey != NULL);                         \
+      pubkey_len = key->ctx->length_public_key;                              \
+      if (is_hybrid) {                                                       \
+        max_classical_pubkey_len = get_classical_key_len(                    \
+            KEY_TYPE_PUBLIC, get_classical_nid(NID_##ALG));                  \
+        pubkey_len += (SIZE_OF_UINT32 + max_classical_pubkey_len);           \
+      }                                                                      \
+      unsigned char *penc =                                                  \
+          reinterpret_cast<unsigned char *>(OPENSSL_malloc(pubkey_len));     \
+      unsigned char *classical_pubkey = penc + SIZE_OF_UINT32;               \
+      if (is_hybrid) {                                                       \
+        uint32_t actual_classical_pubkey_len =                               \
+            i2d_PublicKey(key->classical_pkey, &classical_pubkey);           \
+        if (actual_classical_pubkey_len > max_classical_pubkey_len) {        \
+          OPENSSL_free(classical_pubkey);                                    \
+          OPENSSL_free(penc);                                                \
+          OPENSSL_PUT_ERROR(EVP, EVP_R_ENCODE_ERROR);                        \
+          return 0;                                                          \
+        }                                                                    \
+        ENCODE_UINT32(penc, actual_classical_pubkey_len);                    \
+        classical_pubkey_len = SIZE_OF_UINT32 + actual_classical_pubkey_len; \
+        index += classical_pubkey_len;                                       \
+      }                                                                      \
+      OPENSSL_memcpy(penc + index, key->pub, key->ctx->length_public_key);   \
+      pubkey_len = classical_pubkey_len + key->ctx->length_public_key;       \
+                                                                             \
+      /* See RFC 8410, section 4. */                                         \
+      CBB spki, algorithm, oid, key_bitstring;                               \
+      if (!CBB_add_asn1(out, &spki, CBS_ASN1_SEQUENCE) ||                    \
+          !CBB_add_asn1(&spki, &algorithm, CBS_ASN1_SEQUENCE) ||             \
+          !CBB_add_asn1(&algorithm, &oid, CBS_ASN1_OBJECT) ||                \
+          !CBB_add_bytes(&oid, ALG##_asn1_meth.oid,                          \
+                         ALG##_asn1_meth.oid_len) ||                         \
+          !CBB_add_asn1(&spki, &key_bitstring, CBS_ASN1_BITSTRING) ||        \
+          !CBB_add_u8(&key_bitstring, 0 /* padding */) ||                    \
+          !CBB_add_bytes(&key_bitstring, penc, pubkey_len) ||                \
+          !CBB_flush(out)) {                                                 \
+        OPENSSL_PUT_ERROR(EVP, EVP_R_ENCODE_ERROR);                          \
+        OPENSSL_free(classical_pubkey);                                      \
+        OPENSSL_free(penc);                                                  \
+        return 0;                                                            \
+      }                                                                      \
+    }                                                                        \
+    return 1;                                                                \
   }
 
 static int oqs_pub_cmp(const EVP_PKEY *a, const EVP_PKEY *b) {
@@ -274,22 +283,235 @@ static size_t oqs_sig_size(const EVP_PKEY *pkey) {
 
 static int get_classical_key_len(oqs_key_type_t keytype, int classical_id) {
   switch (classical_id) {
-  case NID_rsaEncryption:
-    return (keytype == KEY_TYPE_PRIVATE) ? 1770 : 398;
-  case NID_X9_62_prime256v1:
-    return (keytype == KEY_TYPE_PRIVATE) ? 121 : 65;
-  case NID_secp384r1:
-    return (keytype == KEY_TYPE_PRIVATE) ? 167 : 97;
-  case NID_secp521r1:
-    return (keytype == KEY_TYPE_PRIVATE) ? 223 : 133;
-  default:
-    return 0;
+    case NID_rsaEncryption:
+      return (keytype == KEY_TYPE_PRIVATE) ? 1770 : 398;
+    case NID_X9_62_prime256v1:
+      return (keytype == KEY_TYPE_PRIVATE) ? 121 : 65;
+    case NID_secp384r1:
+      return (keytype == KEY_TYPE_PRIVATE) ? 167 : 97;
+    case NID_secp521r1:
+      return (keytype == KEY_TYPE_PRIVATE) ? 223 : 133;
+    default:
+      return 0;
   }
 }
 
+///// OQS_TEMPLATE_FRAGMENT_DEF_EVP_PKEY_ALGS_START
+const EVP_PKEY_ALG *EVP_pkey_mldsa44(void) {
+  static const EVP_PKEY_ALG kAlg = {
+      &mldsa44_asn1_meth, nullptr,
+  };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_p256_mldsa44(void) {
+  static const EVP_PKEY_ALG kAlg = {
+      &p256_mldsa44_asn1_meth, nullptr,
+  };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_mldsa65(void) {
+  static const EVP_PKEY_ALG kAlg = {
+      &mldsa65_asn1_meth, nullptr,
+  };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_p384_mldsa65(void) {
+  static const EVP_PKEY_ALG kAlg = {
+      &p384_mldsa65_asn1_meth, nullptr,
+  };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_mldsa87(void) {
+  static const EVP_PKEY_ALG kAlg = {
+      &mldsa87_asn1_meth, nullptr,
+  };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_p521_mldsa87(void) {
+  static const EVP_PKEY_ALG kAlg = {
+      &p521_mldsa87_asn1_meth, nullptr,
+  };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_falcon512(void) {
+  static const EVP_PKEY_ALG kAlg = {
+      &falcon512_asn1_meth, nullptr,
+  };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_rsa3072_falcon512(void) {
+  static const EVP_PKEY_ALG kAlg = {
+      &rsa3072_falcon512_asn1_meth, nullptr,
+  };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_falconpadded512(void) {
+  static const EVP_PKEY_ALG kAlg = {
+      &falconpadded512_asn1_meth, nullptr,
+  };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_falcon1024(void) {
+  static const EVP_PKEY_ALG kAlg = {
+      &falcon1024_asn1_meth, nullptr,
+  };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_falconpadded1024(void) {
+  static const EVP_PKEY_ALG kAlg = {
+      &falconpadded1024_asn1_meth, nullptr,
+  };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_mayo1(void) {
+  static const EVP_PKEY_ALG kAlg = {
+      &mayo1_asn1_meth, nullptr,
+  };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_mayo2(void) {
+  static const EVP_PKEY_ALG kAlg = {
+      &mayo2_asn1_meth, nullptr,
+  };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_mayo3(void) {
+  static const EVP_PKEY_ALG kAlg = {
+      &mayo3_asn1_meth, nullptr,
+  };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_mayo5(void) {
+  static const EVP_PKEY_ALG kAlg = {
+      &mayo5_asn1_meth, nullptr,
+  };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_OV_Ip_pkc(void) {
+  static const EVP_PKEY_ALG kAlg = {
+      &OV_Ip_pkc_asn1_meth, nullptr,
+  };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_OV_Ip_pkc_skc(void) {
+  static const EVP_PKEY_ALG kAlg = {
+      &OV_Ip_pkc_skc_asn1_meth, nullptr,
+  };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_CROSSrsdp128balanced(void) {
+  static const EVP_PKEY_ALG kAlg = {
+      &CROSSrsdp128balanced_asn1_meth, nullptr,
+  };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_snova2454(void) {
+  static const EVP_PKEY_ALG kAlg = {
+      &snova2454_asn1_meth, nullptr,
+  };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_snova2454esk(void) {
+  static const EVP_PKEY_ALG kAlg = {
+      &snova2454esk_asn1_meth, nullptr,
+  };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_snova37172(void) {
+  static const EVP_PKEY_ALG kAlg = {
+      &snova37172_asn1_meth, nullptr,
+  };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_snova2455(void) {
+  static const EVP_PKEY_ALG kAlg = {
+      &snova2455_asn1_meth, nullptr,
+  };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_snova2965(void) {
+  static const EVP_PKEY_ALG kAlg = {
+      &snova2965_asn1_meth, nullptr,
+  };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_sphincssha2128fsimple(void) {
+  static const EVP_PKEY_ALG kAlg = {
+      &sphincssha2128fsimple_asn1_meth, nullptr,
+  };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_sphincssha2128ssimple(void) {
+  static const EVP_PKEY_ALG kAlg = {
+      &sphincssha2128ssimple_asn1_meth, nullptr,
+  };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_sphincssha2192fsimple(void) {
+  static const EVP_PKEY_ALG kAlg = {
+      &sphincssha2192fsimple_asn1_meth, nullptr,
+  };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_sphincssha2192ssimple(void) {
+  static const EVP_PKEY_ALG kAlg = {
+      &sphincssha2192ssimple_asn1_meth, nullptr,
+  };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_sphincssha2256fsimple(void) {
+  static const EVP_PKEY_ALG kAlg = {
+      &sphincssha2256fsimple_asn1_meth, nullptr,
+  };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_sphincssha2256ssimple(void) {
+  static const EVP_PKEY_ALG kAlg = {
+      &sphincssha2256ssimple_asn1_meth, nullptr,
+  };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_sphincsshake128fsimple(void) {
+  static const EVP_PKEY_ALG kAlg = {
+      &sphincsshake128fsimple_asn1_meth, nullptr,
+  };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_sphincsshake128ssimple(void) {
+  static const EVP_PKEY_ALG kAlg = {
+      &sphincsshake128ssimple_asn1_meth, nullptr,
+  };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_sphincsshake192fsimple(void) {
+  static const EVP_PKEY_ALG kAlg = {
+      &sphincsshake192fsimple_asn1_meth, nullptr,
+  };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_sphincsshake192ssimple(void) {
+  static const EVP_PKEY_ALG kAlg = {
+      &sphincsshake192ssimple_asn1_meth, nullptr,
+  };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_sphincsshake256fsimple(void) {
+  static const EVP_PKEY_ALG kAlg = {
+      &sphincsshake256fsimple_asn1_meth, nullptr,
+  };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_sphincsshake256ssimple(void) {
+  static const EVP_PKEY_ALG kAlg = {
+      &sphincsshake256ssimple_asn1_meth, nullptr,
+  };
+  return &kAlg;
+}
+///// OQS_TEMPLATE_FRAGMENT_DEF_EVP_PKEY_ALGS_END
+
 int get_classical_nid(int hybrid_id) {
   switch (hybrid_id) {
-    ///// OQS_TEMPLATE_FRAGMENT_ASSIGN_CLASSICAL_NIDS_START
+///// OQS_TEMPLATE_FRAGMENT_ASSIGN_CLASSICAL_NIDS_START
     case NID_p256_mldsa44:
       return NID_X9_62_prime256v1;
     case NID_p384_mldsa65:
@@ -299,14 +521,14 @@ int get_classical_nid(int hybrid_id) {
     case NID_rsa3072_falcon512:
       return NID_rsaEncryption;
 ///// OQS_TEMPLATE_FRAGMENT_ASSIGN_CLASSICAL_NIDS_END
-  default:
-    return 0;
+    default:
+      return 0;
   }
 }
 
 int is_oqs_hybrid_alg(int hybrid_nid) {
   switch (hybrid_nid) {
-    ///// OQS_TEMPLATE_FRAGMENT_LIST_HYBRID_NIDS_START
+///// OQS_TEMPLATE_FRAGMENT_LIST_HYBRID_NIDS_START
     case NID_p256_mldsa44:
       return 1;
     case NID_p384_mldsa65:
@@ -316,8 +538,8 @@ int is_oqs_hybrid_alg(int hybrid_nid) {
     case NID_rsa3072_falcon512:
       return 1;
 ///// OQS_TEMPLATE_FRAGMENT_LIST_HYBRID_NIDS_END
-  default:
-    return 0;
+    default:
+      return 0;
   }
 }
 
@@ -328,16 +550,16 @@ int is_EC_nid(int nid) {
 
 int get_classical_sig_len(int classical_id) {
   switch (classical_id) {
-  case NID_rsaEncryption:
-    return 384;
-  case NID_X9_62_prime256v1:
-    return 72;
-  case NID_secp384r1:
-    return 104;
-  case NID_secp521r1:
-    return 141;
-  default:
-    return 0;
+    case NID_rsaEncryption:
+      return 384;
+    case NID_X9_62_prime256v1:
+      return 72;
+    case NID_secp384r1:
+      return 104;
+    case NID_secp521r1:
+      return 141;
+    default:
+      return 0;
   }
 }
 
@@ -350,9 +572,10 @@ static EVP_PKEY *decode_RSA_pub(EVP_PKEY **out, const uint8_t **inp, long len) {
 
   CBS cbs;
   CBS_init(&cbs, *inp, len < 0 ? 0 : (size_t)len);
-  RSA *rsa = RSA_parse_public_key(&cbs);
-  if (rsa == NULL || !EVP_PKEY_assign_RSA(ret, rsa)) {
-    RSA_free(rsa);
+  bssl::UniquePtr<RSA> rsa(
+      RSA_public_key_from_bytes(CBS_data(&cbs), CBS_len(&cbs)));
+
+  if (rsa == nullptr || !EVP_PKEY_assign_RSA(ret, rsa.release())) {
     EVP_PKEY_free(ret);
     return NULL;
   }
@@ -384,7 +607,6 @@ static int decode_EC_pub(int nid, const unsigned char *encoded_key, int key_len,
   }
 
   if ((oqs_key->classical_pkey = EVP_PKEY_new()) == NULL ||
-      !EVP_PKEY_set_type(oqs_key->classical_pkey, NID_X9_62_id_ecPublicKey) ||
       !EVP_PKEY_assign_EC_KEY(oqs_key->classical_pkey, ec_key)) {
     ;
     goto end;
@@ -405,37 +627,37 @@ end:
 
 #define OID_LEN(...) (sizeof((int[]){__VA_ARGS__}) / sizeof(int))
 
-#define DEFINE_OQS_ASN1_METHODS(ALG, OQS_METH, ALG_PKEY)                       \
-  DEFINE_OQS_SET_PRIV_RAW(ALG, OQS_METH)                                       \
-  DEFINE_OQS_PRIV_DECODE(ALG)                                                  \
-  DEFINE_OQS_SET_PUB_RAW(ALG, OQS_METH)                                        \
-  DEFINE_OQS_PUB_DECODE(ALG)                                                   \
+#define DEFINE_OQS_ASN1_METHODS(ALG, OQS_METH, ALG_PKEY) \
+  DEFINE_OQS_SET_PRIV_RAW(ALG, OQS_METH)                 \
+  DEFINE_OQS_PRIV_DECODE(ALG)                            \
+  DEFINE_OQS_SET_PUB_RAW(ALG, OQS_METH)                  \
+  DEFINE_OQS_PUB_DECODE(ALG)                             \
   DEFINE_OQS_PUB_ENCODE(ALG)
 
-#define DEFINE_OQS_PKEY_ASN1_METHOD(ALG, ALG_PKEY, ...)                        \
-  const EVP_PKEY_ASN1_METHOD ALG##_asn1_meth = {                               \
-      ALG_PKEY,                                                                \
-      {__VA_ARGS__},                                                           \
-      OID_LEN(__VA_ARGS__),                                                    \
-      &ALG##_pkey_meth,                                                        \
-      ALG##_pub_decode,                                                        \
-      ALG##_pub_encode /* pub_encode */,                                       \
-      oqs_pub_cmp,                                                             \
-      ALG##_priv_decode,                                                       \
-      NULL /* priv_encode */,                                                  \
-      ALG##_set_priv_raw,                                                      \
-      ALG##_set_pub_raw,                                                       \
-      NULL /* get_priv_raw */,                                                 \
-      NULL /* get_pub_raw */,                                                  \
-      NULL /* int set1_tls_encodedpoint */,                                    \
-      NULL /* size_t set1_tls_encodedpoint */,                                 \
-      NULL /* pkey_opaque */,                                                  \
-      oqs_sig_size,                                                            \
-      NULL /* pkey_bits */,                                                    \
-      NULL /* param_missing */,                                                \
-      NULL /* param_copy */,                                                   \
-      NULL /* param_cmp */,                                                    \
-      oqs_free,                                                                \
+#define DEFINE_OQS_PKEY_ASN1_METHOD(ALG, ALG_PKEY, ...) \
+  const EVP_PKEY_ASN1_METHOD ALG##_asn1_meth = {        \
+      ALG_PKEY,                                         \
+      {__VA_ARGS__},                                    \
+      OID_LEN(__VA_ARGS__),                             \
+      &ALG##_pkey_meth,                                 \
+      ALG##_pub_decode,                                 \
+      ALG##_pub_encode /* pub_encode */,                \
+      oqs_pub_cmp,                                      \
+      ALG##_priv_decode,                                \
+      NULL /* priv_encode */,                           \
+      ALG##_set_priv_raw,                               \
+      ALG##_set_pub_raw,                                \
+      NULL /* get_priv_raw */,                          \
+      NULL /* get_pub_raw */,                           \
+      NULL /* int set1_tls_encodedpoint */,             \
+      NULL /* size_t set1_tls_encodedpoint */,          \
+      NULL /* pkey_opaque */,                           \
+      oqs_sig_size,                                     \
+      NULL /* pkey_bits */,                             \
+      NULL /* param_missing */,                         \
+      NULL /* param_copy */,                            \
+      NULL /* param_cmp */,                             \
+      oqs_free,                                         \
   };
 
 // the OIDs can also be found in the kObjectData array in crypto/obj/obj_dat.h

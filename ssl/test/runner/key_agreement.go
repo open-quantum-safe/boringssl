@@ -9,7 +9,6 @@ import (
 	"crypto/ecdh"
 	"crypto/ecdsa"
 	"crypto/ed25519"
-	"crypto/elliptic"
 	"crypto/mlkem"
 	"crypto/rsa"
 	"crypto/x509"
@@ -267,58 +266,6 @@ func applyBugsToECDHPublicKey(config *Config, publicKey []byte) []byte {
 	return publicKey
 }
 
-// p224KEM implements kemImplementation with P-224. Go's crypto/ecdh does not
-// support P-224.
-type p224KEM struct {
-	privateKey []byte
-}
-
-func (e *p224KEM) encapsulationKeySize() int {
-	fieldBytes := (elliptic.P224().Params().Params().BitSize + 7) / 8
-	return 1 + 2*fieldBytes
-}
-
-func (e *p224KEM) ciphertextSize() int {
-	return e.encapsulationKeySize()
-}
-
-func (e *p224KEM) generate(config *Config) (publicKey []byte, err error) {
-	p224 := elliptic.P224().Params()
-	var x, y *big.Int
-	e.privateKey, x, y, err = elliptic.GenerateKey(p224, config.rand())
-	if err != nil {
-		return nil, err
-	}
-	ret := elliptic.Marshal(p224, x, y)
-	ret = applyBugsToECDHPublicKey(config, ret)
-	return ret, nil
-}
-
-func (e *p224KEM) encap(config *Config, peerKey []byte) (ciphertext []byte, secret []byte, err error) {
-	ciphertext, err = e.generate(config)
-	if err != nil {
-		return nil, nil, err
-	}
-	secret, err = e.decap(config, peerKey)
-	if err != nil {
-		return nil, nil, err
-	}
-	return
-}
-
-func (e *p224KEM) decap(config *Config, ciphertext []byte) (secret []byte, err error) {
-	p224 := elliptic.P224().Params()
-	x, y := elliptic.Unmarshal(p224, ciphertext)
-	if x == nil {
-		return nil, errors.New("tls: invalid peer key")
-	}
-	x, _ = p224.ScalarMult(x, y, e.privateKey)
-	secret = make([]byte, (p224.Params().BitSize+7)>>3)
-	xBytes := x.Bytes()
-	copy(secret[len(secret)-len(xBytes):], xBytes)
-	return secret, nil
-}
-
 // ecdhKEM implements kemImplementation with crypto/ecdh.
 type ecdhKEM struct {
 	curve      ecdh.Curve
@@ -479,6 +426,47 @@ func (m *mlkem768KEM) decap(config *Config, ciphertext []byte) (secret []byte, e
 	return m.decapKey.Decapsulate(ciphertext)
 }
 
+// mlkem1024KEM implements ML-KEM-1024
+type mlkem1024KEM struct {
+	decapKey *mlkem.DecapsulationKey1024
+}
+
+func (e *mlkem1024KEM) encapsulationKeySize() int {
+	return mlkem.EncapsulationKeySize1024
+}
+
+func (e *mlkem1024KEM) ciphertextSize() int {
+	return mlkem.CiphertextSize1024
+}
+
+func (m *mlkem1024KEM) generate(config *Config) (publicKey []byte, err error) {
+	m.decapKey, err = mlkem.GenerateKey1024()
+	if err != nil {
+		return
+	}
+	publicKey = m.decapKey.EncapsulationKey().Bytes()
+	if config.Bugs.MLKEMEncapKeyNotReduced {
+		// Set the first 12 bits so that the first word is definitely
+		// not reduced.
+		publicKey[0] |= 0xff
+		publicKey[1] |= 0xf
+	}
+	return
+}
+
+func (m *mlkem1024KEM) encap(config *Config, peerKey []byte) (ciphertext []byte, secret []byte, err error) {
+	key, err := mlkem.NewEncapsulationKey1024(peerKey)
+	if err != nil {
+		return nil, nil, err
+	}
+	secret, ciphertext = key.Encapsulate()
+	return
+}
+
+func (m *mlkem1024KEM) decap(config *Config, ciphertext []byte) (secret []byte, err error) {
+	return m.decapKey.Decapsulate(ciphertext)
+}
+
 // concatKEM concatenates two kemImplementations.
 type concatKEM struct {
 	kem1, kem2 kemImplementation
@@ -574,8 +562,6 @@ func (t *transformKEM) decap(config *Config, ciphertext []byte) (secret []byte, 
 func kemForCurveID(id CurveID, config *Config) (kemImplementation, bool) {
 	var kem kemImplementation
 	switch id {
-	case CurveP224:
-		kem = &p224KEM{}
 	case CurveP256:
 		kem = &ecdhKEM{curve: ecdh.P256()}
 	case CurveP384:
@@ -590,6 +576,9 @@ func kemForCurveID(id CurveID, config *Config) (kemImplementation, bool) {
 	case CurveX25519MLKEM768:
 		// draft-ietf-tls-ecdhe-mlkem-00
 		kem = &concatKEM{kem1: &mlkem768KEM{}, kem2: &ecdhKEM{curve: ecdh.X25519()}}
+	case CurveMLKEM1024:
+		// draft-ietf-tls-mlkem-04
+		kem = &mlkem1024KEM{}
 	default:
 		return nil, false
 	}

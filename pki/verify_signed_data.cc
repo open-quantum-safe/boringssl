@@ -20,7 +20,7 @@
 #include <openssl/evp.h>
 #include <openssl/pki/signature_verify_cache.h>
 #include <openssl/rsa.h>
-#include <openssl/sha.h>
+#include <openssl/sha2.h>
 
 #include "cert_errors.h"
 #include "input.h"
@@ -151,15 +151,54 @@ bool ParsePublicKey(der::Input public_key_spki,
                     bssl::UniquePtr<EVP_PKEY> *public_key) {
   // Parse the SPKI to an EVP_PKEY.
   OpenSSLErrStackTracer err_tracer;
-
-  CBS cbs;
-  CBS_init(&cbs, public_key_spki.data(), public_key_spki.size());
-  public_key->reset(EVP_parse_public_key(&cbs));
-  if (!*public_key || CBS_len(&cbs) != 0) {
-    public_key->reset();
-    return false;
-  }
-  return true;
+  const EVP_PKEY_ALG *const algs[] = {
+      EVP_pkey_rsa(),
+///// OQS_TEMPLATE_FRAGMENT_LIST_PEER_SIG_ALGS_START
+      EVP_pkey_mldsa44(),
+      EVP_pkey_p256_mldsa44(),
+      EVP_pkey_mldsa65(),
+      EVP_pkey_p384_mldsa65(),
+      EVP_pkey_mldsa87(),
+      EVP_pkey_p521_mldsa87(),
+      EVP_pkey_falcon512(),
+      EVP_pkey_rsa3072_falcon512(),
+      EVP_pkey_falconpadded512(),
+      EVP_pkey_falcon1024(),
+      EVP_pkey_falconpadded1024(),
+      EVP_pkey_mayo1(),
+      EVP_pkey_mayo2(),
+      EVP_pkey_mayo3(),
+      EVP_pkey_mayo5(),
+      EVP_pkey_OV_Ip_pkc(),
+      EVP_pkey_OV_Ip_pkc_skc(),
+      EVP_pkey_CROSSrsdp128balanced(),
+      EVP_pkey_snova2454(),
+      EVP_pkey_snova2454esk(),
+      EVP_pkey_snova37172(),
+      EVP_pkey_snova2455(),
+      EVP_pkey_snova2965(),
+      EVP_pkey_sphincssha2128fsimple(),
+      EVP_pkey_sphincssha2128ssimple(),
+      EVP_pkey_sphincssha2192fsimple(),
+      EVP_pkey_sphincssha2192ssimple(),
+      EVP_pkey_sphincssha2256fsimple(),
+      EVP_pkey_sphincssha2256ssimple(),
+      EVP_pkey_sphincsshake128fsimple(),
+      EVP_pkey_sphincsshake128ssimple(),
+      EVP_pkey_sphincsshake192fsimple(),
+      EVP_pkey_sphincsshake192ssimple(),
+      EVP_pkey_sphincsshake256fsimple(),
+      EVP_pkey_sphincsshake256ssimple(),
+///// OQS_TEMPLATE_FRAGMENT_LIST_PEER_SIG_ALGS_END
+      EVP_pkey_ec_p256(),
+      EVP_pkey_ec_p384(),
+      // TODO(davidben): Remove P-521 from here, or let callers configure this.
+      // We don't advertise it in TLS.
+      EVP_pkey_ec_p521(),
+  };
+  public_key->reset(EVP_PKEY_from_subject_public_key_info(
+      public_key_spki.data(), public_key_spki.size(), algs, std::size(algs)));
+  return *public_key != nullptr;
 }
 
 bool VerifySignedData(SignatureAlgorithm algorithm, der::Input signed_data,
@@ -455,7 +494,7 @@ bool VerifySignedData(SignatureAlgorithm algorithm, der::Input signed_data,
     // also use the digest length as the salt length, which is specified with -1
     // in OpenSSL's API.
     if (!EVP_PKEY_CTX_set_rsa_padding(pctx, RSA_PKCS1_PSS_PADDING) ||
-        !EVP_PKEY_CTX_set_rsa_pss_saltlen(pctx, -1)) {
+        !EVP_PKEY_CTX_set_rsa_pss_saltlen(pctx, RSA_PSS_SALTLEN_DIGEST)) {
       return false;
     }
   }

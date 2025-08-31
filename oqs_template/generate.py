@@ -56,7 +56,6 @@ populate('ssl/test/test_config.cc', config, '/////')
 # sigs
 populate('crypto/evp/p_oqs_asn1.cc', config, '/////')
 populate('crypto/evp/evp_ctx.cc', config, '/////')
-populate('crypto/evp/evp.cc', config, '/////')
 populate('crypto/evp/internal.h', config, '/////')
 populate('crypto/evp/evp_asn1.cc', config, '/////')
 populate('crypto/evp/p_oqs.cc', config, '/////')

@@ -18,6 +18,7 @@
 #include <time.h>
 
 #include <algorithm>
+#include <iterator>
 #include <limits>
 #include <string>
 #include <utility>
@@ -495,6 +496,14 @@ static const CurveTest kCurveTests[] = {
         "P-256:X25519MLKEM768",
         {SSL_GROUP_SECP256R1, SSL_GROUP_X25519_MLKEM768},
     },
+    {
+        "P-256:MLKEM1024",
+        {SSL_GROUP_SECP256R1, SSL_GROUP_MLKEM1024},
+    },
+    {
+        "MLKEM1024:X25519MLKEM768",
+        {SSL_GROUP_MLKEM1024, SSL_GROUP_X25519_MLKEM768},
+    },
 
     {
         "P-256:P-384:P-521:X25519",
@@ -532,9 +541,8 @@ static const CurveTest kCurveTests[] = {
         },
     },
     {
-        "mlkem1024:p384_mlkem1024:p521_mlkem1024",
+        "p384_mlkem1024:p521_mlkem1024",
         {
-            SSL_GROUP_MLKEM1024,
             SSL_GROUP_P384_MLKEM1024,
             SSL_GROUP_P521_MLKEM1024,
         },
@@ -4549,8 +4557,8 @@ TEST_P(SSLVersionTest, AutoChain) {
 
 static bool ExpectSingleError(int lib, int reason) {
   const char *expected = ERR_reason_error_string(ERR_PACK(lib, reason));
-  int err = ERR_get_error();
-  if (ERR_GET_LIB(err) != lib || ERR_GET_REASON(err) != reason) {
+  uint32_t err = ERR_get_error();
+  if (!ERR_equals(err, lib, reason)) {
     char buf[ERR_ERROR_STRING_BUF_LEN];
     ERR_error_string_n(err, buf, sizeof(buf));
     fprintf(stderr, "Wanted %s, got: %s.\n", expected, buf);
@@ -6692,8 +6700,7 @@ TEST(SSLTest, ApplyHandoffRemovesUnsupportedCiphers) {
   };
 
   EXPECT_LT(1u, sk_SSL_CIPHER_num(SSL_get_ciphers(server.get())));
-  ASSERT_TRUE(
-      SSL_apply_handoff(server.get(), {handoff, OPENSSL_ARRAY_SIZE(handoff)}));
+  ASSERT_TRUE(SSL_apply_handoff(server.get(), handoff));
   EXPECT_EQ(1u, sk_SSL_CIPHER_num(SSL_get_ciphers(server.get())));
 }
 
@@ -6731,8 +6738,7 @@ TEST(SSLTest, ApplyHandoffRemovesUnsupportedCurves) {
 
   // The zero length means that the default list of groups is used.
   EXPECT_EQ(0u, server->config->supported_group_list.size());
-  ASSERT_TRUE(
-      SSL_apply_handoff(server.get(), {handoff, OPENSSL_ARRAY_SIZE(handoff)}));
+  ASSERT_TRUE(SSL_apply_handoff(server.get(), handoff));
   EXPECT_EQ(1u, server->config->supported_group_list.size());
 }
 
@@ -7645,10 +7651,10 @@ TEST_F(QUICMethodTest, HelloRetryRequest) {
   // preferences will trigger HelloRetryRequest.
   static const int kClientPrefs[] = {NID_X25519, NID_X9_62_prime256v1};
   ASSERT_TRUE(SSL_CTX_set1_groups(client_ctx_.get(), kClientPrefs,
-                                  OPENSSL_ARRAY_SIZE(kClientPrefs)));
+                                  std::size(kClientPrefs)));
   static const int kServerPrefs[] = {NID_X9_62_prime256v1, NID_X25519};
   ASSERT_TRUE(SSL_CTX_set1_groups(server_ctx_.get(), kServerPrefs,
-                                  OPENSSL_ARRAY_SIZE(kServerPrefs)));
+                                  std::size(kServerPrefs)));
 
   ASSERT_TRUE(CreateClientAndServer());
   ASSERT_TRUE(CompleteHandshakesForQUIC());
@@ -8959,7 +8965,6 @@ static const TLSGroup kOQSGroups[] = {
     {NID_mlkem768, SSL_GROUP_MLKEM768},
     {NID_p256_mlkem768, SSL_GROUP_P256_MLKEM768},
     {NID_p384_mlkem768, SSL_GROUP_P384_MLKEM768},
-    {NID_mlkem1024, SSL_GROUP_MLKEM1024},
     {NID_p384_mlkem1024, SSL_GROUP_P384_MLKEM1024},
     {NID_p521_mlkem1024, SSL_GROUP_P521_MLKEM1024},
     {NID_frodo640aes, SSL_GROUP_FRODO640AES},
@@ -9919,7 +9924,7 @@ xNCwyMX9mtdXdQicOfNjIGUCD5OLV5PgHFPRKiHHioBAhg==
       // Preserve existing duplicates.
       {{kName1, kName2, kName2}, kCert1 + kCert2, {kName1, kName2, kName2}},
   };
-  for (size_t i = 0; i < OPENSSL_ARRAY_SIZE(kTests); i++) {
+  for (size_t i = 0; i < std::size(kTests); i++) {
     SCOPED_TRACE(i);
     const auto &t = kTests[i];
 
@@ -10407,17 +10412,17 @@ TEST(SSLTest, InvalidSignatureAlgorithm) {
   ASSERT_TRUE(ctx);
 
   static const uint16_t kInvalidPrefs[] = {1234};
-  EXPECT_FALSE(SSL_CTX_set_signing_algorithm_prefs(
-      ctx.get(), kInvalidPrefs, OPENSSL_ARRAY_SIZE(kInvalidPrefs)));
-  EXPECT_FALSE(SSL_CTX_set_verify_algorithm_prefs(
-      ctx.get(), kInvalidPrefs, OPENSSL_ARRAY_SIZE(kInvalidPrefs)));
+  EXPECT_FALSE(SSL_CTX_set_signing_algorithm_prefs(ctx.get(), kInvalidPrefs,
+                                                   std::size(kInvalidPrefs)));
+  EXPECT_FALSE(SSL_CTX_set_verify_algorithm_prefs(ctx.get(), kInvalidPrefs,
+                                                  std::size(kInvalidPrefs)));
 
   static const uint16_t kDuplicatePrefs[] = {SSL_SIGN_RSA_PKCS1_SHA256,
                                              SSL_SIGN_RSA_PKCS1_SHA256};
-  EXPECT_FALSE(SSL_CTX_set_signing_algorithm_prefs(
-      ctx.get(), kDuplicatePrefs, OPENSSL_ARRAY_SIZE(kDuplicatePrefs)));
-  EXPECT_FALSE(SSL_CTX_set_verify_algorithm_prefs(
-      ctx.get(), kDuplicatePrefs, OPENSSL_ARRAY_SIZE(kDuplicatePrefs)));
+  EXPECT_FALSE(SSL_CTX_set_signing_algorithm_prefs(ctx.get(), kDuplicatePrefs,
+                                                   std::size(kDuplicatePrefs)));
+  EXPECT_FALSE(SSL_CTX_set_verify_algorithm_prefs(ctx.get(), kDuplicatePrefs,
+                                                  std::size(kDuplicatePrefs)));
 }
 
 TEST(SSLTest, InvalidGroups) {
@@ -10425,13 +10430,13 @@ TEST(SSLTest, InvalidGroups) {
   ASSERT_TRUE(ctx);
 
   static const uint16_t kInvalidIDs[] = {1234};
-  EXPECT_FALSE(SSL_CTX_set1_group_ids(ctx.get(), kInvalidIDs,
-                                      OPENSSL_ARRAY_SIZE(kInvalidIDs)));
+  EXPECT_FALSE(
+      SSL_CTX_set1_group_ids(ctx.get(), kInvalidIDs, std::size(kInvalidIDs)));
 
   // This is a valid NID, but it is not a valid group.
   static const int kInvalidNIDs[] = {NID_rsaEncryption};
-  EXPECT_FALSE(SSL_CTX_set1_groups(ctx.get(), kInvalidNIDs,
-                                   OPENSSL_ARRAY_SIZE(kInvalidNIDs)));
+  EXPECT_FALSE(
+      SSL_CTX_set1_groups(ctx.get(), kInvalidNIDs, std::size(kInvalidNIDs)));
 }
 
 TEST(SSLTest, NameLists) {

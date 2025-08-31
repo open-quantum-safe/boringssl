@@ -5,9 +5,6 @@
 #define IS_OQS_PKEY(pkey_id) ( \
 {%- for sig in config['sigs'] %}
    (pkey_id == NID_{{ sig['name'] }}) || \
-{%- endfor -%}
-{% for kem in config['kems'] %}
-   (pkey_id == NID_{{ kem['name'] }}) || \
 {%- endfor %}
 0 )
 

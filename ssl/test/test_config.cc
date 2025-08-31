@@ -598,6 +598,7 @@ const Flag<TestConfig> *FindFlag(const char *name) {
                              &TestConfig::expect_resumable_across_names),
         OptionalBoolFalseFlag("-expect-not-resumable-across-names",
                               &TestConfig::expect_resumable_across_names),
+        BoolFlag("-no-server-name-ack", &TestConfig::no_server_name_ack),
     };
     std::sort(ret.begin(), ret.end(), FlagNameComparator{});
     return ret;
@@ -792,15 +793,18 @@ static int LegacyOCSPCallback(SSL *ssl, void *arg) {
 static int ServerNameCallback(SSL *ssl, int *out_alert, void *arg) {
   // SNI must be accessible from the SNI callback.
   const TestConfig *config = GetTestConfig(ssl);
-  const char *server_name = SSL_get_servername(ssl, TLSEXT_NAMETYPE_host_name);
-  if (server_name == nullptr ||
-      std::string(server_name) != config->expect_server_name) {
-    fprintf(stderr, "servername mismatch (got %s; want %s).\n", server_name,
-            config->expect_server_name.c_str());
-    return SSL_TLSEXT_ERR_ALERT_FATAL;
+  if (!config->expect_server_name.empty()) {
+    const char *server_name =
+        SSL_get_servername(ssl, TLSEXT_NAMETYPE_host_name);
+    if (server_name == nullptr ||
+        std::string(server_name) != config->expect_server_name) {
+      fprintf(stderr, "servername mismatch (got %s; want %s).\n", server_name,
+              config->expect_server_name.c_str());
+      return SSL_TLSEXT_ERR_ALERT_FATAL;
+    }
   }
 
-  return SSL_TLSEXT_ERR_OK;
+  return config->no_server_name_ack ? SSL_TLSEXT_ERR_NOACK : SSL_TLSEXT_ERR_OK;
 }
 
 static int NextProtoSelectCallback(SSL *ssl, uint8_t **out, uint8_t *outlen,
@@ -1171,9 +1175,7 @@ bool LoadCertificate(bssl::UniquePtr<X509> *out_x509,
     }
   }
 
-  uint32_t err = ERR_peek_last_error();
-  if (ERR_GET_LIB(err) != ERR_LIB_PEM ||
-      ERR_GET_REASON(err) != PEM_R_NO_START_LINE) {
+  if (!ERR_equals(ERR_peek_last_error(), ERR_LIB_PEM, PEM_R_NO_START_LINE)) {
     return false;
   }
 
@@ -1244,7 +1246,7 @@ static ssl_private_key_result_t AsyncPrivateKeySign(
   // Configure additional signature parameters.
   if (SSL_is_signature_algorithm_rsa_pss(signature_algorithm)) {
     if (!EVP_PKEY_CTX_set_rsa_padding(pctx, RSA_PKCS1_PSS_PADDING) ||
-        !EVP_PKEY_CTX_set_rsa_pss_saltlen(pctx, -1 /* salt len = hash len */)) {
+        !EVP_PKEY_CTX_set_rsa_pss_saltlen(pctx, RSA_PSS_SALTLEN_DIGEST)) {
       return ssl_private_key_failure;
     }
   }
@@ -2039,9 +2041,7 @@ bssl::UniquePtr<SSL_CTX> TestConfig::SetupCtx(SSL_CTX *old_ctx) const {
     SSL_CTX_set_permute_extensions(ssl_ctx.get(), 1);
   }
 
-  if (!expect_server_name.empty()) {
-    SSL_CTX_set_tlsext_servername_callback(ssl_ctx.get(), ServerNameCallback);
-  }
+  SSL_CTX_set_tlsext_servername_callback(ssl_ctx.get(), ServerNameCallback);
 
   if (enable_early_data) {
     SSL_CTX_set_early_data_enabled(ssl_ctx.get(), 1);
@@ -2486,11 +2486,11 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
   if (enable_all_curves) {
     static const int kAllCurves[] = {
         NID_secp224r1, NID_X9_62_prime256v1, NID_secp384r1,
-        NID_secp521r1, NID_X25519, NID_X25519Kyber768Draft00,
+        NID_secp521r1, NID_MLKEM1024, NID_X25519, NID_X25519Kyber768Draft00,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_PQ_CURVEIDS_START
         NID_mlkem512, NID_p256_mlkem512, NID_x25519_mlkem512,
         NID_mlkem768, NID_p256_mlkem768, NID_p384_mlkem768,
-        NID_mlkem1024, NID_p384_mlkem1024, NID_p521_mlkem1024,
+        NID_p384_mlkem1024, NID_p521_mlkem1024,
         NID_frodo640aes, NID_p256_frodo640aes, NID_x25519_frodo640aes,
         NID_frodo640shake, NID_p256_frodo640shake, NID_x25519_frodo640shake,
         NID_frodo976aes, NID_p384_frodo976aes,
@@ -2503,7 +2503,7 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
 ///// OQS_TEMPLATE_FRAGMENT_LIST_PQ_CURVEIDS_END
     };
     if (!SSL_set1_curves(ssl.get(), kAllCurves,
-                         OPENSSL_ARRAY_SIZE(kAllCurves))) {
+                         std::size(kAllCurves))) {
       return nullptr;
     }
   }

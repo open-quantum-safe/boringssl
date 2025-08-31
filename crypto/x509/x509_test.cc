@@ -15,6 +15,7 @@
 #include <limits.h>
 
 #include <algorithm>
+#include <iterator>
 #include <functional>
 #include <string>
 #include <string_view>
@@ -2206,7 +2207,8 @@ TEST(X509Test, RSASign) {
   ASSERT_TRUE(EVP_DigestSignInit(md_ctx.get(), &pkey_ctx, EVP_sha256(), NULL,
                                  pkey.get()));
   ASSERT_TRUE(EVP_PKEY_CTX_set_rsa_padding(pkey_ctx, RSA_PKCS1_PSS_PADDING));
-  ASSERT_TRUE(EVP_PKEY_CTX_set_rsa_pss_saltlen(pkey_ctx, -1));
+  ASSERT_TRUE(
+      EVP_PKEY_CTX_set_rsa_pss_saltlen(pkey_ctx, RSA_PSS_SALTLEN_DIGEST));
   ASSERT_TRUE(SignatureRoundTrips(md_ctx.get(), pkey.get()));
 
   md_ctx.Reset();
@@ -2221,7 +2223,8 @@ TEST(X509Test, RSASign) {
   ASSERT_TRUE(EVP_DigestSignInit(md_ctx.get(), &pkey_ctx, EVP_sha1(), NULL,
                                  pkey.get()));
   ASSERT_TRUE(EVP_PKEY_CTX_set_rsa_padding(pkey_ctx, RSA_PKCS1_PSS_PADDING));
-  ASSERT_TRUE(EVP_PKEY_CTX_set_rsa_pss_saltlen(pkey_ctx, -1));
+  ASSERT_TRUE(
+      EVP_PKEY_CTX_set_rsa_pss_saltlen(pkey_ctx, RSA_PSS_SALTLEN_DIGEST));
   bssl::UniquePtr<X509> cert = CertFromPEM(kLeafPEM);
   ASSERT_TRUE(cert);
   EXPECT_FALSE(X509_sign_ctx(cert.get(), md_ctx.get()));
@@ -2231,7 +2234,8 @@ TEST(X509Test, RSASign) {
   ASSERT_TRUE(EVP_DigestSignInit(md_ctx.get(), &pkey_ctx, EVP_sha256(), NULL,
                                  pkey.get()));
   ASSERT_TRUE(EVP_PKEY_CTX_set_rsa_padding(pkey_ctx, RSA_PKCS1_PSS_PADDING));
-  ASSERT_TRUE(EVP_PKEY_CTX_set_rsa_pss_saltlen(pkey_ctx, -1));
+  ASSERT_TRUE(
+      EVP_PKEY_CTX_set_rsa_pss_saltlen(pkey_ctx, RSA_PSS_SALTLEN_DIGEST));
   ASSERT_TRUE(EVP_PKEY_CTX_set_rsa_mgf1_md(pkey_ctx, EVP_sha512()));
   cert = CertFromPEM(kLeafPEM);
   ASSERT_TRUE(cert);
@@ -2548,10 +2552,10 @@ TEST(X509Test, Ed25519Sign) {
   ED25519_keypair(pub_bytes, priv_bytes);
 
   bssl::UniquePtr<EVP_PKEY> pub(
-      EVP_PKEY_new_raw_public_key(EVP_PKEY_ED25519, nullptr, pub_bytes, 32));
+      EVP_PKEY_from_raw_public_key(EVP_pkey_ed25519(), pub_bytes, 32));
   ASSERT_TRUE(pub);
   bssl::UniquePtr<EVP_PKEY> priv(
-      EVP_PKEY_new_raw_private_key(EVP_PKEY_ED25519, nullptr, priv_bytes, 32));
+      EVP_PKEY_from_raw_private_key(EVP_pkey_ed25519(), priv_bytes, 32));
   ASSERT_TRUE(priv);
 
   bssl::ScopedEVP_MD_CTX md_ctx;
@@ -3089,8 +3093,8 @@ wr6JtaX2G+pOmwcSPymZC4u2TncAP7KHgS8UGcMw8CE=
   bssl::UniquePtr<STACK_OF(X509_INFO)> infos(
       PEM_X509_INFO_read_bio(bio.get(), nullptr, nullptr, nullptr));
   ASSERT_TRUE(infos);
-  ASSERT_EQ(OPENSSL_ARRAY_SIZE(kExpected), sk_X509_INFO_num(infos.get()));
-  for (size_t i = 0; i < OPENSSL_ARRAY_SIZE(kExpected); i++) {
+  ASSERT_EQ(std::size(kExpected), sk_X509_INFO_num(infos.get()));
+  for (size_t i = 0; i < std::size(kExpected); i++) {
     SCOPED_TRACE(i);
     check_info(&kExpected[i], sk_X509_INFO_value(infos.get(), i));
   }
@@ -3100,13 +3104,12 @@ wr6JtaX2G+pOmwcSPymZC4u2TncAP7KHgS8UGcMw8CE=
   ASSERT_TRUE(bio);
   ASSERT_EQ(infos.get(),
             PEM_X509_INFO_read_bio(bio.get(), infos.get(), nullptr, nullptr));
-  ASSERT_EQ(2 * OPENSSL_ARRAY_SIZE(kExpected), sk_X509_INFO_num(infos.get()));
-  for (size_t i = 0; i < OPENSSL_ARRAY_SIZE(kExpected); i++) {
+  ASSERT_EQ(2 * std::size(kExpected), sk_X509_INFO_num(infos.get()));
+  for (size_t i = 0; i < std::size(kExpected); i++) {
     SCOPED_TRACE(i);
     check_info(&kExpected[i], sk_X509_INFO_value(infos.get(), i));
-    check_info(
-        &kExpected[i],
-        sk_X509_INFO_value(infos.get(), i + OPENSSL_ARRAY_SIZE(kExpected)));
+    check_info(&kExpected[i],
+               sk_X509_INFO_value(infos.get(), i + std::size(kExpected)));
   }
 
   // Gracefully handle errors in both the append and fresh cases.
@@ -3122,7 +3125,7 @@ wr6JtaX2G+pOmwcSPymZC4u2TncAP7KHgS8UGcMw8CE=
   ASSERT_TRUE(bio);
   EXPECT_FALSE(
       PEM_X509_INFO_read_bio(bio.get(), infos.get(), nullptr, nullptr));
-  EXPECT_EQ(2 * OPENSSL_ARRAY_SIZE(kExpected), sk_X509_INFO_num(infos.get()));
+  EXPECT_EQ(2 * std::size(kExpected), sk_X509_INFO_num(infos.get()));
 }
 
 TEST(X509Test, ReadBIOEmpty) {
@@ -4034,7 +4037,7 @@ TEST(X509Test, GeneralName) {
   };
 
   // Every name should be equal to itself and not equal to any others.
-  for (size_t i = 0; i < OPENSSL_ARRAY_SIZE(kNames); i++) {
+  for (size_t i = 0; i < std::size(kNames); i++) {
     SCOPED_TRACE(Bytes(kNames[i]));
 
     const uint8_t *ptr = kNames[i].data();
@@ -4049,7 +4052,7 @@ TEST(X509Test, GeneralName) {
     bssl::UniquePtr<uint8_t> free_enc(enc);
     EXPECT_EQ(Bytes(enc, enc_len), Bytes(kNames[i]));
 
-    for (size_t j = 0; j < OPENSSL_ARRAY_SIZE(kNames); j++) {
+    for (size_t j = 0; j < std::size(kNames); j++) {
       SCOPED_TRACE(Bytes(kNames[j]));
 
       ptr = kNames[j].data();

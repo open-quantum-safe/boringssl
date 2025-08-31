@@ -491,6 +491,16 @@ static bool GetConfig(const Span<const uint8_t> args[],
         "reseedImplemented": true,
         "capabilities": [{
           "mode": "AES-256",
+          "derFuncEnabled": true,
+          "entropyInputLen": [{"min": 256, "max": 512, "increment": 16}],
+          "nonceLen": [128],
+          "persoStringLen": [{"min": 0, "max": 384, "increment": 16}],
+          "additionalInputLen": [
+            {"min": 0, "max": 384, "increment": 16}
+          ],
+          "returnedBitsLen": 2048
+        }, {
+          "mode": "AES-256",
           "derFuncEnabled": false,
           "entropyInputLen": [384],
           "nonceLen": [0],
@@ -935,6 +945,7 @@ static bool GetConfig(const Span<const uint8_t> args[],
         "mode": "keyGen",
         "revision": "FIPS204",
         "parameterSets": [
+          "ML-DSA-44",
           "ML-DSA-65",
           "ML-DSA-87"
         ]
@@ -953,6 +964,7 @@ static bool GetConfig(const Span<const uint8_t> args[],
         ],
         "capabilities": [{
           "parameterSets": [
+            "ML-DSA-44",
             "ML-DSA-65",
             "ML-DSA-87"
           ],
@@ -975,6 +987,7 @@ static bool GetConfig(const Span<const uint8_t> args[],
             "increment": 8
           }],
           "parameterSets": [
+            "ML-DSA-44",
             "ML-DSA-65",
             "ML-DSA-87"
           ]
@@ -1742,11 +1755,12 @@ static bool DRBG(const Span<const uint8_t> args[], ReplyCallback write_reply) {
 
   uint32_t out_len;
   if (out_len_bytes.size() != sizeof(out_len) ||
-      entropy.size() != CTR_DRBG_ENTROPY_LEN ||
+      entropy.size() < CTR_DRBG_MIN_ENTROPY_LEN ||
+      entropy.size() > CTR_DRBG_MAX_ENTROPY_LEN ||
       (!reseed_entropy.empty() &&
-       reseed_entropy.size() != CTR_DRBG_ENTROPY_LEN) ||
-      // nonces are not supported
-      nonce.size() != 0) {
+       (reseed_entropy.size() < CTR_DRBG_MIN_ENTROPY_LEN ||
+        reseed_entropy.size() > CTR_DRBG_MAX_ENTROPY_LEN)) ||
+      (nonce.size() != CTR_DRBG_NONCE_LEN && nonce.size() != 0)) {
     return false;
   }
   memcpy(&out_len, out_len_bytes.data(), sizeof(out_len));
@@ -1756,12 +1770,13 @@ static bool DRBG(const Span<const uint8_t> args[], ReplyCallback write_reply) {
   std::vector<uint8_t> out(out_len);
 
   CTR_DRBG_STATE drbg;
-  if (!CTR_DRBG_init(&drbg, entropy.data(), personalisation.data(),
-                     personalisation.size()) ||
+  if (!CTR_DRBG_init(&drbg, /*df=*/nonce.size() != 0, entropy.data(),
+                     entropy.size(), nonce.empty() ? nullptr : nonce.data(),
+                     personalisation.data(), personalisation.size()) ||
       (!reseed_entropy.empty() &&
-       !CTR_DRBG_reseed(&drbg, reseed_entropy.data(),
-                        reseed_additional_data.data(),
-                        reseed_additional_data.size())) ||
+       !CTR_DRBG_reseed_ex(&drbg, reseed_entropy.data(), reseed_entropy.size(),
+                           reseed_additional_data.data(),
+                           reseed_additional_data.size())) ||
       !CTR_DRBG_generate(&drbg, out.data(), out_len, additional_data1.data(),
                          additional_data1.size()) ||
       !CTR_DRBG_generate(&drbg, out.data(), out_len, additional_data2.data(),
@@ -2043,7 +2058,7 @@ static bool RSASigGen(const Span<const uint8_t> args[],
   size_t sig_len;
   if (UsePSS) {
     if (!RSA_sign_pss_mgf1(key, &sig_len, sig.data(), sig.size(), digest_buf,
-                           digest_len, md, md, -1)) {
+                           digest_len, md, md, RSA_PSS_SALTLEN_DIGEST)) {
       return false;
     }
   } else {
@@ -2087,8 +2102,8 @@ static bool RSASigVer(const Span<const uint8_t> args[],
 
   uint8_t ok;
   if (UsePSS) {
-    ok = RSA_verify_pss_mgf1(key.get(), digest_buf, digest_len, md, md, -1,
-                             sig.data(), sig.size());
+    ok = RSA_verify_pss_mgf1(key.get(), digest_buf, digest_len, md, md,
+                             RSA_PSS_SALTLEN_DIGEST, sig.data(), sig.size());
   } else {
     ok = RSA_verify(EVP_MD_type(md), digest_buf, digest_len, sig.data(),
                     sig.size(), key.get());
@@ -2569,6 +2584,10 @@ static constexpr struct {
     {"ECDH/P-384", 3, ECDH<NID_secp384r1>},
     {"ECDH/P-521", 3, ECDH<NID_secp521r1>},
     {"FFDH", 6, FFDH},
+    {"ML-DSA-44/keyGen", 1,
+     MLDSAKeyGen<BCM_mldsa44_private_key, BCM_MLDSA44_PUBLIC_KEY_BYTES,
+                 BCM_mldsa44_generate_key_external_entropy_fips,
+                 BCM_mldsa44_marshal_private_key>},
     {"ML-DSA-65/keyGen", 1,
      MLDSAKeyGen<BCM_mldsa65_private_key, BCM_MLDSA65_PUBLIC_KEY_BYTES,
                  BCM_mldsa65_generate_key_external_entropy_fips,
@@ -2577,12 +2596,18 @@ static constexpr struct {
      MLDSAKeyGen<BCM_mldsa87_private_key, BCM_MLDSA87_PUBLIC_KEY_BYTES,
                  BCM_mldsa87_generate_key_external_entropy_fips,
                  BCM_mldsa87_marshal_private_key>},
+    {"ML-DSA-44/sigGen", 3,
+     MLDSASigGen<BCM_mldsa44_private_key, BCM_MLDSA44_SIGNATURE_BYTES,
+                 BCM_mldsa44_parse_private_key, BCM_mldsa44_sign_internal>},
     {"ML-DSA-65/sigGen", 3,
      MLDSASigGen<BCM_mldsa65_private_key, BCM_MLDSA65_SIGNATURE_BYTES,
                  BCM_mldsa65_parse_private_key, BCM_mldsa65_sign_internal>},
     {"ML-DSA-87/sigGen", 3,
      MLDSASigGen<BCM_mldsa87_private_key, BCM_MLDSA87_SIGNATURE_BYTES,
                  BCM_mldsa87_parse_private_key, BCM_mldsa87_sign_internal>},
+    {"ML-DSA-44/sigVer", 3,
+     MLDSASigVer<BCM_mldsa44_public_key, BCM_MLDSA44_SIGNATURE_BYTES,
+                 BCM_mldsa44_parse_public_key, BCM_mldsa44_verify_internal>},
     {"ML-DSA-65/sigVer", 3,
      MLDSASigVer<BCM_mldsa65_public_key, BCM_MLDSA65_SIGNATURE_BYTES,
                  BCM_mldsa65_parse_public_key, BCM_mldsa65_verify_internal>},

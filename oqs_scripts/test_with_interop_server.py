@@ -13,7 +13,6 @@ kexs = [
         'mlkem768',
         'p256_mlkem768',
         'p384_mlkem768',
-        'mlkem1024',
         'p384_mlkem1024',
         'p521_mlkem1024',
         'frodo640aes',

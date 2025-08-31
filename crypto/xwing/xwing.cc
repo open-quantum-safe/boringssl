@@ -21,7 +21,7 @@
 
 #include "../fipsmodule/bcm_interface.h"
 #include "../fipsmodule/keccak/internal.h"
-#include "../internal.h"
+
 
 struct private_key {
   MLKEM768_private_key mlkem_private_key;
@@ -173,6 +173,7 @@ int XWING_encap_external_entropy(
     const uint8_t encoded_public_key[XWING_PUBLIC_KEY_BYTES],
     const uint8_t eseed[64]) {
   // X25519
+  static_assert(XWING_PUBLIC_KEY_BYTES >= MLKEM768_PUBLIC_KEY_BYTES + 32);
   const uint8_t *x25519_public_key =
       encoded_public_key + MLKEM768_PUBLIC_KEY_BYTES;
   const uint8_t *x25519_ephemeral_private_key = eseed + 32;
@@ -186,14 +187,9 @@ int XWING_encap_external_entropy(
   }
 
   // ML-KEM-768
-  const uint8_t *mlkem_encoded_public_key = encoded_public_key;
-  CBS cbs;
-  CBS_init(&cbs, mlkem_encoded_public_key, XWING_PUBLIC_KEY_BYTES);
-
   CBS mlkem_cbs;
-  if (!CBS_get_bytes(&cbs, &mlkem_cbs, MLKEM768_PUBLIC_KEY_BYTES)) {
-    return 0;
-  }
+  static_assert(MLKEM768_PUBLIC_KEY_BYTES <= XWING_PUBLIC_KEY_BYTES);
+  CBS_init(&mlkem_cbs, encoded_public_key, MLKEM768_PUBLIC_KEY_BYTES);
 
   BCM_mlkem768_public_key mlkem_public_key;
   if (!bcm_success(
@@ -215,16 +211,16 @@ int XWING_encap_external_entropy(
 static int xwing_decap(uint8_t out_shared_secret[XWING_SHARED_SECRET_BYTES],
                        const uint8_t ciphertext[XWING_CIPHERTEXT_BYTES],
                        const struct private_key *private_key) {
-  // Define this upfront so that it doesn't cross a goto.
+  static_assert(XWING_CIPHERTEXT_BYTES >= MLKEM768_CIPHERTEXT_BYTES + 32);
+  const uint8_t *mlkem_ciphertext = ciphertext;
   const uint8_t *x25519_ciphertext = ciphertext + MLKEM768_CIPHERTEXT_BYTES;
 
   // ML-KEM-768
-  const uint8_t *mlkem_ciphertext = ciphertext;
   uint8_t mlkem_shared_secret[MLKEM_SHARED_SECRET_BYTES];
   if (!MLKEM768_decap(mlkem_shared_secret, mlkem_ciphertext,
                       MLKEM768_CIPHERTEXT_BYTES,
                       &private_key->mlkem_private_key)) {
-    goto error;
+    goto err;
   }
 
   // X25519
@@ -235,7 +231,7 @@ static int xwing_decap(uint8_t out_shared_secret[XWING_SHARED_SECRET_BYTES],
   uint8_t x25519_shared_secret[32];
   if (!X25519(x25519_shared_secret, private_key->x25519_private_key,
               x25519_ciphertext)) {
-    goto error;
+    goto err;
   }
 
   // Combine the shared secrets
@@ -243,7 +239,7 @@ static int xwing_decap(uint8_t out_shared_secret[XWING_SHARED_SECRET_BYTES],
                  x25519_ciphertext, x25519_public_key);
   return 1;
 
-error:
+err:
   // In case of error, fill the shared secret with random bytes so that if the
   // caller forgets to check the return code:
   // - no intermediate information leaks,

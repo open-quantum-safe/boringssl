@@ -15,6 +15,7 @@
 #include <limits.h>
 #include <stdio.h>
 
+#include <iterator>
 #include <map>
 #include <string>
 #include <string_view>
@@ -460,13 +461,13 @@ TEST(ASN1Test, Integer) {
     }
   }
 
-  for (size_t i = 0; i < OPENSSL_ARRAY_SIZE(kTests); i++) {
+  for (size_t i = 0; i < std::size(kTests); i++) {
     SCOPED_TRACE(Bytes(kTests[i].der));
     const uint8_t *ptr = kTests[i].der.data();
     bssl::UniquePtr<ASN1_INTEGER> a(
         d2i_ASN1_INTEGER(nullptr, &ptr, kTests[i].der.size()));
     ASSERT_TRUE(a);
-    for (size_t j = 0; j < OPENSSL_ARRAY_SIZE(kTests); j++) {
+    for (size_t j = 0; j < std::size(kTests); j++) {
       SCOPED_TRACE(Bytes(kTests[j].der));
       ptr = kTests[j].der.data();
       bssl::UniquePtr<ASN1_INTEGER> b(
@@ -2185,7 +2186,7 @@ TEST(ASN1Test, StringCmp) {
       {V_ASN1_UTF8STRING, {0xff, 0x00}, 0, false},
   };
   std::vector<bssl::UniquePtr<ASN1_STRING>> strs;
-  strs.reserve(OPENSSL_ARRAY_SIZE(kInputs));
+  strs.reserve(std::size(kInputs));
   for (const auto &input : kInputs) {
     strs.emplace_back(ASN1_STRING_type_new(input.type));
     ASSERT_TRUE(strs.back());

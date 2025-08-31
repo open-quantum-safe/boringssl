@@ -15,12 +15,14 @@
 #include <limits.h>
 #include <stdint.h>
 
+#include <iterator>
 #include <type_traits>
 
 #include <gtest/gtest.h>
 
 #include "test/test_util.h"
 
+namespace {
 
 // C and C++ have two forms of unspecified behavior: undefined behavior and
 // implementation-defined behavior.
@@ -203,7 +205,7 @@ TEST(CompilerTest, PointerRepresentation) {
   }
 
   int ints[256];
-  for (size_t i = 0; i < OPENSSL_ARRAY_SIZE(ints); i++) {
+  for (size_t i = 0; i < std::size(ints); i++) {
     EXPECT_EQ(reinterpret_cast<uintptr_t>(ints) + i * sizeof(int),
               reinterpret_cast<uintptr_t>(ints + i));
   }
@@ -215,3 +217,31 @@ TEST(CompilerTest, PointerRepresentation) {
   EXPECT_EQ(Bytes(bytes),
             Bytes(reinterpret_cast<uint8_t *>(&null), sizeof(null)));
 }
+
+static uintptr_t aba(uintptr_t *a, void **b) {
+  *a = (uintptr_t)1;
+  *b = NULL;
+  return *a;  // 0 if a == b, 1 if a and b are disjoint
+}
+
+TEST(CompilerTest, NoStrictAliasing) {
+  // Sequential memory access must be sequentially consistent across types.
+  // Compilers such as clang and gcc need to be passed -fno-strict-aliasing
+  // for this to remain true at at higher optimization levels. Use with the
+  // opposite configuration, -fstrict-aliasing, is not supported.
+  // Even though some subset of type punning through memory is considered
+  // undefined behavior, the subtlety of exactly which subset that is and the
+  // limited sanitizer-tooling support make it impractical to avoid reliably.
+  uint8_t aliased[sizeof(void *)] = {};
+  uint8_t zeros[sizeof(void *)] = {};
+
+  OPENSSL_memset(aliased, -1, sizeof(aliased));
+  EXPECT_EQ(aba((uintptr_t *)aliased, (void **)aliased), (uintptr_t)0);
+  EXPECT_EQ(Bytes(aliased), Bytes(zeros));
+
+  volatile auto volatile_aba = &aba;
+  OPENSSL_memset(aliased, -1, sizeof(aliased));
+  EXPECT_EQ(volatile_aba((uintptr_t *)aliased, (void **)aliased), (uintptr_t)0);
+  EXPECT_EQ(Bytes(aliased), Bytes(zeros));
+}
+}  // namespace

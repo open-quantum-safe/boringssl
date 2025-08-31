@@ -102,6 +102,7 @@ static bool is_post_quantum_group(uint16_t id) {
   switch (id) {
     case SSL_GROUP_X25519_KYBER768_DRAFT00:
     case SSL_GROUP_X25519_MLKEM768:
+    case SSL_GROUP_MLKEM1024:
       return true;
 ///// OQS_TEMPLATE_FRAGMENT_ADD_PQ_GROUPS_START
     case SSL_GROUP_MLKEM512:
@@ -115,8 +116,6 @@ static bool is_post_quantum_group(uint16_t id) {
     case SSL_GROUP_P256_MLKEM768:
       return true;
     case SSL_GROUP_P384_MLKEM768:
-      return true;
-    case SSL_GROUP_MLKEM1024:
       return true;
     case SSL_GROUP_P384_MLKEM1024:
       return true;
@@ -293,7 +292,6 @@ static const uint16_t kAllSupportedGroups[] = {
     SSL_GROUP_MLKEM768,
     SSL_GROUP_P384_MLKEM1024,
     SSL_GROUP_P521_MLKEM1024,
-    SSL_GROUP_MLKEM1024,
     SSL_GROUP_P256_FRODO640AES,
     SSL_GROUP_X25519_FRODO640AES,
     SSL_GROUP_FRODO640AES,
@@ -740,6 +738,8 @@ static bool ext_sni_parse_clienthello(SSL_HANDSHAKE *hs, uint8_t *out_alert,
 }
 
 static bool ext_sni_add_serverhello(SSL_HANDSHAKE *hs, CBB *out) {
+  // RFC 6066 says "When resuming a session, the server MUST NOT include a
+  // server_name extension in the server hello."
   if (hs->ssl->s3->session_reused ||  //
       !hs->should_ack_sni) {
     return true;

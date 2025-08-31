@@ -20,6 +20,7 @@
 #include <string.h>
 
 #include <algorithm>
+#include <iterator>
 #include <vector>
 
 #include <openssl/bio.h>
@@ -451,8 +452,8 @@ class TLSFuzzer {
 
     static const uint16_t kGroups[] = {
         SSL_GROUP_X25519_MLKEM768, SSL_GROUP_X25519_KYBER768_DRAFT00,
-        SSL_GROUP_X25519,          SSL_GROUP_SECP256R1,
-        SSL_GROUP_SECP384R1,       SSL_GROUP_SECP521R1,
+        SSL_GROUP_MLKEM1024,       SSL_GROUP_X25519,
+        SSL_GROUP_SECP256R1,       SSL_GROUP_SECP384R1,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_GROUPS_START
         SSL_GROUP_MLKEM512,
         SSL_GROUP_P256_MLKEM512,
@@ -460,7 +461,6 @@ class TLSFuzzer {
         SSL_GROUP_MLKEM768,
         SSL_GROUP_P256_MLKEM768,
         SSL_GROUP_P384_MLKEM768,
-        SSL_GROUP_MLKEM1024,
         SSL_GROUP_P384_MLKEM1024,
         SSL_GROUP_P521_MLKEM1024,
         SSL_GROUP_FRODO640AES,
@@ -485,9 +485,8 @@ class TLSFuzzer {
         SSL_GROUP_BIKEL5,
         SSL_GROUP_P521_BIKEL5
 ///// OQS_TEMPLATE_FRAGMENT_LIST_GROUPS_END
-    };
-    if (!SSL_CTX_set1_group_ids(ctx_.get(), kGroups,
-                                OPENSSL_ARRAY_SIZE(kGroups))) {
+        SSL_GROUP_SECP521R1};
+    if (!SSL_CTX_set1_group_ids(ctx_.get(), kGroups, std::size(kGroups))) {
       return false;
     }
 

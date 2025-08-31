@@ -1,4 +1,4 @@
 {% for sig in config['sigs'] %}
-    &{{ sig['name'] }}_asn1_meth,
+      EVP_pkey_{{ sig['name'] }}(),
 {%- endfor %}
 
