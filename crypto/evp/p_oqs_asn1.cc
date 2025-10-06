@@ -298,111 +298,75 @@ static int get_classical_key_len(oqs_key_type_t keytype, int classical_id) {
 
 ///// OQS_TEMPLATE_FRAGMENT_DEF_EVP_PKEY_ALGS_START
 const EVP_PKEY_ALG *EVP_pkey_mldsa44(void) {
-  static const EVP_PKEY_ALG kAlg = {
-      &mldsa44_asn1_meth
-  };
+  static const EVP_PKEY_ALG kAlg = { &mldsa44_asn1_meth };
   return &kAlg;
 }
 const EVP_PKEY_ALG *EVP_pkey_p256_mldsa44(void) {
-  static const EVP_PKEY_ALG kAlg = {
-      &p256_mldsa44_asn1_meth
-  };
+  static const EVP_PKEY_ALG kAlg = { &p256_mldsa44_asn1_meth };
   return &kAlg;
 }
 const EVP_PKEY_ALG *EVP_pkey_mldsa65(void) {
-  static const EVP_PKEY_ALG kAlg = {
-      &mldsa65_asn1_meth
-  };
+  static const EVP_PKEY_ALG kAlg = { &mldsa65_asn1_meth };
   return &kAlg;
 }
 const EVP_PKEY_ALG *EVP_pkey_p384_mldsa65(void) {
-  static const EVP_PKEY_ALG kAlg = {
-      &p384_mldsa65_asn1_meth
-  };
+  static const EVP_PKEY_ALG kAlg = { &p384_mldsa65_asn1_meth };
   return &kAlg;
 }
 const EVP_PKEY_ALG *EVP_pkey_mldsa87(void) {
-  static const EVP_PKEY_ALG kAlg = {
-      &mldsa87_asn1_meth
-  };
+  static const EVP_PKEY_ALG kAlg = { &mldsa87_asn1_meth };
   return &kAlg;
 }
 const EVP_PKEY_ALG *EVP_pkey_p521_mldsa87(void) {
-  static const EVP_PKEY_ALG kAlg = {
-      &p521_mldsa87_asn1_meth
-  };
-  return &kAlg;
-}
-const EVP_PKEY_ALG *EVP_pkey_falcon512(void) {
-  static const EVP_PKEY_ALG kAlg = {
-      &falcon512_asn1_meth
-  };
-  return &kAlg;
-}
-const EVP_PKEY_ALG *EVP_pkey_rsa3072_falcon512(void) {
-  static const EVP_PKEY_ALG kAlg = {
-      &rsa3072_falcon512_asn1_meth
-  };
-  return &kAlg;
-}
-const EVP_PKEY_ALG *EVP_pkey_falconpadded512(void) {
-  static const EVP_PKEY_ALG kAlg = {
-      &falconpadded512_asn1_meth
-  };
-  return &kAlg;
-}
-const EVP_PKEY_ALG *EVP_pkey_falcon1024(void) {
-  static const EVP_PKEY_ALG kAlg = {
-      &falcon1024_asn1_meth
-  };
-  return &kAlg;
-}
-const EVP_PKEY_ALG *EVP_pkey_falconpadded1024(void) {
-  static const EVP_PKEY_ALG kAlg = {
-      &falconpadded1024_asn1_meth
-  };
-  return &kAlg;
-}
-const EVP_PKEY_ALG *EVP_pkey_mayo1(void) {
-  static const EVP_PKEY_ALG kAlg = {
-      &mayo1_asn1_meth
-  };
-  return &kAlg;
-}
-const EVP_PKEY_ALG *EVP_pkey_mayo2(void) {
-  static const EVP_PKEY_ALG kAlg = {
-      &mayo2_asn1_meth
-  };
-  return &kAlg;
-}
-const EVP_PKEY_ALG *EVP_pkey_mayo3(void) {
-  static const EVP_PKEY_ALG kAlg = {
-      &mayo3_asn1_meth
-  };
-  return &kAlg;
-}
-const EVP_PKEY_ALG *EVP_pkey_mayo5(void) {
-  static const EVP_PKEY_ALG kAlg = {
-      &mayo5_asn1_meth
-  };
-  return &kAlg;
-}
-const EVP_PKEY_ALG *EVP_pkey_OV_Ip_pkc(void) {
-  static const EVP_PKEY_ALG kAlg = {
-      &OV_Ip_pkc_asn1_meth
-  };
-  return &kAlg;
-}
-const EVP_PKEY_ALG *EVP_pkey_OV_Ip_pkc_skc(void) {
-  static const EVP_PKEY_ALG kAlg = {
-      &OV_Ip_pkc_skc_asn1_meth
-  };
+  static const EVP_PKEY_ALG kAlg = { &p521_mldsa87_asn1_meth };
   return &kAlg;
 }
 const EVP_PKEY_ALG *EVP_pkey_CROSSrsdp128balanced(void) {
-  static const EVP_PKEY_ALG kAlg = {
-      &CROSSrsdp128balanced_asn1_meth
-  };
+  static const EVP_PKEY_ALG kAlg = { &CROSSrsdp128balanced_asn1_meth };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_OV_Ip_pkc(void) {
+  static const EVP_PKEY_ALG kAlg = { &OV_Ip_pkc_asn1_meth };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_OV_Ip_pkc_skc(void) {
+  static const EVP_PKEY_ALG kAlg = { &OV_Ip_pkc_skc_asn1_meth };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_falcon512(void) {
+  static const EVP_PKEY_ALG kAlg = { &falcon512_asn1_meth };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_rsa3072_falcon512(void) {
+  static const EVP_PKEY_ALG kAlg = { &rsa3072_falcon512_asn1_meth };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_falconpadded512(void) {
+  static const EVP_PKEY_ALG kAlg = { &falconpadded512_asn1_meth };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_falcon1024(void) {
+  static const EVP_PKEY_ALG kAlg = { &falcon1024_asn1_meth };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_falconpadded1024(void) {
+  static const EVP_PKEY_ALG kAlg = { &falconpadded1024_asn1_meth };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_mayo1(void) {
+  static const EVP_PKEY_ALG kAlg = { &mayo1_asn1_meth };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_mayo2(void) {
+  static const EVP_PKEY_ALG kAlg = { &mayo2_asn1_meth };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_mayo3(void) {
+  static const EVP_PKEY_ALG kAlg = { &mayo3_asn1_meth };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_mayo5(void) {
+  static const EVP_PKEY_ALG kAlg = { &mayo5_asn1_meth };
   return &kAlg;
 }
 const EVP_PKEY_ALG *EVP_pkey_snova2454(void) {
@@ -410,99 +374,67 @@ const EVP_PKEY_ALG *EVP_pkey_snova2454(void) {
   return &kAlg;
 }
 const EVP_PKEY_ALG *EVP_pkey_snova2454esk(void) {
-  static const EVP_PKEY_ALG kAlg = {
-      &snova2454esk_asn1_meth
-  };
+  static const EVP_PKEY_ALG kAlg = { &snova2454esk_asn1_meth };
   return &kAlg;
 }
 const EVP_PKEY_ALG *EVP_pkey_snova37172(void) {
-  static const EVP_PKEY_ALG kAlg = {
-      &snova37172_asn1_meth
-  };
+  static const EVP_PKEY_ALG kAlg = { &snova37172_asn1_meth };
   return &kAlg;
 }
 const EVP_PKEY_ALG *EVP_pkey_snova2455(void) {
-  static const EVP_PKEY_ALG kAlg = {
-      &snova2455_asn1_meth
-  };
+  static const EVP_PKEY_ALG kAlg = { &snova2455_asn1_meth };
   return &kAlg;
 }
 const EVP_PKEY_ALG *EVP_pkey_snova2965(void) {
-  static const EVP_PKEY_ALG kAlg = {
-      &snova2965_asn1_meth
-  };
+  static const EVP_PKEY_ALG kAlg = { &snova2965_asn1_meth };
   return &kAlg;
 }
 const EVP_PKEY_ALG *EVP_pkey_sphincssha2128fsimple(void) {
-  static const EVP_PKEY_ALG kAlg = {
-      &sphincssha2128fsimple_asn1_meth
-  };
+  static const EVP_PKEY_ALG kAlg = { &sphincssha2128fsimple_asn1_meth };
   return &kAlg;
 }
 const EVP_PKEY_ALG *EVP_pkey_sphincssha2128ssimple(void) {
-  static const EVP_PKEY_ALG kAlg = {
-      &sphincssha2128ssimple_asn1_meth
-  };
+  static const EVP_PKEY_ALG kAlg = { &sphincssha2128ssimple_asn1_meth };
   return &kAlg;
 }
 const EVP_PKEY_ALG *EVP_pkey_sphincssha2192fsimple(void) {
-  static const EVP_PKEY_ALG kAlg = {
-      &sphincssha2192fsimple_asn1_meth
-  };
+  static const EVP_PKEY_ALG kAlg = { &sphincssha2192fsimple_asn1_meth };
   return &kAlg;
 }
 const EVP_PKEY_ALG *EVP_pkey_sphincssha2192ssimple(void) {
-  static const EVP_PKEY_ALG kAlg = {
-      &sphincssha2192ssimple_asn1_meth
-  };
+  static const EVP_PKEY_ALG kAlg = { &sphincssha2192ssimple_asn1_meth };
   return &kAlg;
 }
 const EVP_PKEY_ALG *EVP_pkey_sphincssha2256fsimple(void) {
-  static const EVP_PKEY_ALG kAlg = {
-      &sphincssha2256fsimple_asn1_meth
-  };
+  static const EVP_PKEY_ALG kAlg = { &sphincssha2256fsimple_asn1_meth };
   return &kAlg;
 }
 const EVP_PKEY_ALG *EVP_pkey_sphincssha2256ssimple(void) {
-  static const EVP_PKEY_ALG kAlg = {
-      &sphincssha2256ssimple_asn1_meth
-  };
+  static const EVP_PKEY_ALG kAlg = { &sphincssha2256ssimple_asn1_meth };
   return &kAlg;
 }
 const EVP_PKEY_ALG *EVP_pkey_sphincsshake128fsimple(void) {
-  static const EVP_PKEY_ALG kAlg = {
-      &sphincsshake128fsimple_asn1_meth
-  };
+  static const EVP_PKEY_ALG kAlg = { &sphincsshake128fsimple_asn1_meth };
   return &kAlg;
 }
 const EVP_PKEY_ALG *EVP_pkey_sphincsshake128ssimple(void) {
-  static const EVP_PKEY_ALG kAlg = {
-      &sphincsshake128ssimple_asn1_meth
-  };
+  static const EVP_PKEY_ALG kAlg = { &sphincsshake128ssimple_asn1_meth };
   return &kAlg;
 }
 const EVP_PKEY_ALG *EVP_pkey_sphincsshake192fsimple(void) {
-  static const EVP_PKEY_ALG kAlg = {
-      &sphincsshake192fsimple_asn1_meth
-  };
+  static const EVP_PKEY_ALG kAlg = { &sphincsshake192fsimple_asn1_meth };
   return &kAlg;
 }
 const EVP_PKEY_ALG *EVP_pkey_sphincsshake192ssimple(void) {
-  static const EVP_PKEY_ALG kAlg = {
-      &sphincsshake192ssimple_asn1_meth
-  };
+  static const EVP_PKEY_ALG kAlg = { &sphincsshake192ssimple_asn1_meth };
   return &kAlg;
 }
 const EVP_PKEY_ALG *EVP_pkey_sphincsshake256fsimple(void) {
-  static const EVP_PKEY_ALG kAlg = {
-      &sphincsshake256fsimple_asn1_meth
-  };
+  static const EVP_PKEY_ALG kAlg = { &sphincsshake256fsimple_asn1_meth };
   return &kAlg;
 }
 const EVP_PKEY_ALG *EVP_pkey_sphincsshake256ssimple(void) {
-  static const EVP_PKEY_ALG kAlg = {
-      &sphincsshake256ssimple_asn1_meth
-  };
+  static const EVP_PKEY_ALG kAlg = { &sphincsshake256ssimple_asn1_meth };
   return &kAlg;
 }
 ///// OQS_TEMPLATE_FRAGMENT_DEF_EVP_PKEY_ALGS_END
@@ -678,6 +610,15 @@ DEFINE_OQS_PKEY_ASN1_METHOD(mldsa87, EVP_PKEY_MLDSA87, OID(0x60, 0x86, 0x48, 0x0
 DEFINE_OQS_ASN1_METHODS(p521_mldsa87, OQS_SIG_alg_ml_dsa_87, EVP_PKEY_P521_MLDSA87)
 DEFINE_OQS_PKEY_ASN1_METHOD(p521_mldsa87, EVP_PKEY_P521_MLDSA87, OID(0x2B, 0xCE, 0x0F, 0x07, 0x08))
 
+DEFINE_OQS_ASN1_METHODS(CROSSrsdp128balanced, OQS_SIG_alg_cross_rsdp_128_balanced, EVP_PKEY_CROSSRSDP128BALANCED)
+DEFINE_OQS_PKEY_ASN1_METHOD(CROSSrsdp128balanced, EVP_PKEY_CROSSRSDP128BALANCED, OID(0x2B, 0x06, 0x01, 0x04, 0x01, 0x83, 0xE6, 0x25, 0x02, 0x01, 0x01, 0x02, 0x02))
+
+DEFINE_OQS_ASN1_METHODS(OV_Ip_pkc, OQS_SIG_alg_uov_ov_Ip_pkc, EVP_PKEY_OV_IP_PKC)
+DEFINE_OQS_PKEY_ASN1_METHOD(OV_Ip_pkc, EVP_PKEY_OV_IP_PKC, OID(0x2B, 0xCE, 0x0F, 0x09, 0x06, 0x01))
+
+DEFINE_OQS_ASN1_METHODS(OV_Ip_pkc_skc, OQS_SIG_alg_uov_ov_Ip_pkc_skc, EVP_PKEY_OV_IP_PKC_SKC)
+DEFINE_OQS_PKEY_ASN1_METHOD(OV_Ip_pkc_skc, EVP_PKEY_OV_IP_PKC_SKC, OID(0x2B, 0xCE, 0x0F, 0x09, 0x0A, 0x01))
+
 DEFINE_OQS_ASN1_METHODS(falcon512, OQS_SIG_alg_falcon_512, EVP_PKEY_FALCON512)
 DEFINE_OQS_PKEY_ASN1_METHOD(falcon512, EVP_PKEY_FALCON512, OID(0x2B, 0xCE, 0x0F, 0x03, 0x0B))
 
@@ -704,15 +645,6 @@ DEFINE_OQS_PKEY_ASN1_METHOD(mayo3, EVP_PKEY_MAYO3, OID(0x2B, 0xCE, 0x0F, 0x08, 0
 
 DEFINE_OQS_ASN1_METHODS(mayo5, OQS_SIG_alg_mayo_5, EVP_PKEY_MAYO5)
 DEFINE_OQS_PKEY_ASN1_METHOD(mayo5, EVP_PKEY_MAYO5, OID(0x2B, 0xCE, 0x0F, 0x08, 0x05, 0x03))
-
-DEFINE_OQS_ASN1_METHODS(OV_Ip_pkc, OQS_SIG_alg_uov_ov_Ip_pkc, EVP_PKEY_OV_IP_PKC)
-DEFINE_OQS_PKEY_ASN1_METHOD(OV_Ip_pkc, EVP_PKEY_OV_IP_PKC, OID(0x2B, 0xCE, 0x0F, 0x09, 0x06, 0x01))
-
-DEFINE_OQS_ASN1_METHODS(OV_Ip_pkc_skc, OQS_SIG_alg_uov_ov_Ip_pkc_skc, EVP_PKEY_OV_IP_PKC_SKC)
-DEFINE_OQS_PKEY_ASN1_METHOD(OV_Ip_pkc_skc, EVP_PKEY_OV_IP_PKC_SKC, OID(0x2B, 0xCE, 0x0F, 0x09, 0x0A, 0x01))
-
-DEFINE_OQS_ASN1_METHODS(CROSSrsdp128balanced, OQS_SIG_alg_cross_rsdp_128_balanced, EVP_PKEY_CROSSRSDP128BALANCED)
-DEFINE_OQS_PKEY_ASN1_METHOD(CROSSrsdp128balanced, EVP_PKEY_CROSSRSDP128BALANCED, OID(0x2B, 0x06, 0x01, 0x04, 0x01, 0x83, 0xE6, 0x25, 0x02, 0x01, 0x01, 0x02))
 
 DEFINE_OQS_ASN1_METHODS(snova2454, OQS_SIG_alg_snova_SNOVA_24_5_4, EVP_PKEY_SNOVA2454)
 DEFINE_OQS_PKEY_ASN1_METHOD(snova2454, EVP_PKEY_SNOVA2454, OID(0x2B, 0xCE, 0x0F, 0x0A, 0x01, 0x01))

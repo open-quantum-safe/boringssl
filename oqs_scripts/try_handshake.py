@@ -52,6 +52,9 @@ sigs = [
         'p384_mldsa65',
         'mldsa87',
         'p521_mldsa87',
+        'CROSSrsdp128balanced',
+        'OV_Ip_pkc',
+        'OV_Ip_pkc_skc',
         'falcon512',
         'rsa3072_falcon512',
         'falconpadded512',
@@ -61,9 +64,6 @@ sigs = [
         'mayo2',
         'mayo3',
         'mayo5',
-        'OV_Ip_pkc',
-        'OV_Ip_pkc_skc',
-        'CROSSrsdp128balanced',
         'snova2454',
         'snova2454esk',
         'snova37172',
@@ -86,8 +86,10 @@ sigs = [
 
 def try_handshake(bssl):
     random_sig = random.choice(sigs)
+    random_kex = random.choice(kexs)
     server = subprocess.Popen([bssl, 'server',
                                      '-accept', '26150',
+                                     '-curves', random_kex,
                                      '-sig-alg', random_sig],
                               stdout=subprocess.PIPE,
                               stderr=subprocess.STDOUT)
@@ -97,7 +99,6 @@ def try_handshake(bssl):
     time.sleep(10)
 
     # Try to connect to it with the client
-    random_kex = random.choice(kexs)
     client = subprocess.run([bssl, 'client',
                                    '-connect', 'localhost:26150',
                                    '-curves', random_kex],

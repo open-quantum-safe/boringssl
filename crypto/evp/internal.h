@@ -48,7 +48,7 @@ struct evp_pkey_asn1_method_st {
   // pkey_id contains one of the |EVP_PKEY_*| values and corresponds to the OID
   // in the key type's AlgorithmIdentifier.
   int pkey_id;
-  uint8_t oid[12]; // OQS note: increased length (was 9) to accomodate larger PQ OIDs
+  uint8_t oid[13]; // OQS note: increased length (was 9) to accomodate larger PQ OIDs
   uint8_t oid_len;
 
   const EVP_PKEY_CTX_METHOD *pkey_method;
@@ -321,6 +321,9 @@ extern const EVP_PKEY_ASN1_METHOD mldsa65_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD p384_mldsa65_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD mldsa87_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD p521_mldsa87_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD CROSSrsdp128balanced_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD OV_Ip_pkc_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD OV_Ip_pkc_skc_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD falcon512_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD rsa3072_falcon512_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD falconpadded512_asn1_meth;
@@ -330,9 +333,6 @@ extern const EVP_PKEY_ASN1_METHOD mayo1_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD mayo2_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD mayo3_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD mayo5_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD OV_Ip_pkc_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD OV_Ip_pkc_skc_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD CROSSrsdp128balanced_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD snova2454_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD snova2454esk_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD snova37172_asn1_meth;
@@ -366,6 +366,9 @@ extern const EVP_PKEY_CTX_METHOD mldsa65_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD p384_mldsa65_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD mldsa87_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD p521_mldsa87_pkey_meth;
+extern const EVP_PKEY_CTX_METHOD CROSSrsdp128balanced_pkey_meth;
+extern const EVP_PKEY_CTX_METHOD OV_Ip_pkc_pkey_meth;
+extern const EVP_PKEY_CTX_METHOD OV_Ip_pkc_skc_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD falcon512_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD rsa3072_falcon512_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD falconpadded512_pkey_meth;
@@ -375,9 +378,6 @@ extern const EVP_PKEY_CTX_METHOD mayo1_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD mayo2_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD mayo3_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD mayo5_pkey_meth;
-extern const EVP_PKEY_CTX_METHOD OV_Ip_pkc_pkey_meth;
-extern const EVP_PKEY_CTX_METHOD OV_Ip_pkc_skc_pkey_meth;
-extern const EVP_PKEY_CTX_METHOD CROSSrsdp128balanced_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD snova2454_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD snova2454esk_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD snova37172_pkey_meth;
@@ -420,6 +420,9 @@ inline auto GetDefaultEVPAlgorithms() {
       EVP_pkey_p384_mldsa65(),
       EVP_pkey_mldsa87(),
       EVP_pkey_p521_mldsa87(),
+      EVP_pkey_CROSSrsdp128balanced(),
+      EVP_pkey_OV_Ip_pkc(),
+      EVP_pkey_OV_Ip_pkc_skc(),
       EVP_pkey_falcon512(),
       EVP_pkey_rsa3072_falcon512(),
       EVP_pkey_falconpadded512(),
@@ -429,9 +432,6 @@ inline auto GetDefaultEVPAlgorithms() {
       EVP_pkey_mayo2(),
       EVP_pkey_mayo3(),
       EVP_pkey_mayo5(),
-      EVP_pkey_OV_Ip_pkc(),
-      EVP_pkey_OV_Ip_pkc_skc(),
-      EVP_pkey_CROSSrsdp128balanced(),
       EVP_pkey_snova2454(),
       EVP_pkey_snova2454esk(),
       EVP_pkey_snova37172(),

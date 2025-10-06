@@ -162,6 +162,9 @@ bool ParsePublicKey(der::Input public_key_spki,
       EVP_pkey_p384_mldsa65(),
       EVP_pkey_mldsa87(),
       EVP_pkey_p521_mldsa87(),
+      EVP_pkey_CROSSrsdp128balanced(),
+      EVP_pkey_OV_Ip_pkc(),
+      EVP_pkey_OV_Ip_pkc_skc(),
       EVP_pkey_falcon512(),
       EVP_pkey_rsa3072_falcon512(),
       EVP_pkey_falconpadded512(),
@@ -171,9 +174,6 @@ bool ParsePublicKey(der::Input public_key_spki,
       EVP_pkey_mayo2(),
       EVP_pkey_mayo3(),
       EVP_pkey_mayo5(),
-      EVP_pkey_OV_Ip_pkc(),
-      EVP_pkey_OV_Ip_pkc_skc(),
-      EVP_pkey_CROSSrsdp128balanced(),
       EVP_pkey_snova2454(),
       EVP_pkey_snova2454esk(),
       EVP_pkey_snova37172(),
@@ -284,6 +284,21 @@ bool VerifySignedData(SignatureAlgorithm algorithm, der::Input signed_data,
       digest = EVP_sha512();
       cache_algorithm_name = "P521_mldsa87";
       break;
+    case SignatureAlgorithm::kCrossrsdp128balanced:
+      expected_pkey_id = EVP_PKEY_CROSSRSDP128BALANCED;
+      digest = EVP_sha256();
+      cache_algorithm_name = "Crossrsdp128balanced";
+      break;
+    case SignatureAlgorithm::kOv_ip_pkc:
+      expected_pkey_id = EVP_PKEY_OV_IP_PKC;
+      digest = EVP_sha256();
+      cache_algorithm_name = "Ov_ip_pkc";
+      break;
+    case SignatureAlgorithm::kOv_ip_pkc_skc:
+      expected_pkey_id = EVP_PKEY_OV_IP_PKC_SKC;
+      digest = EVP_sha256();
+      cache_algorithm_name = "Ov_ip_pkc_skc";
+      break;
     case SignatureAlgorithm::kFalcon512:
       expected_pkey_id = EVP_PKEY_FALCON512;
       digest = EVP_sha256();
@@ -328,21 +343,6 @@ bool VerifySignedData(SignatureAlgorithm algorithm, der::Input signed_data,
       expected_pkey_id = EVP_PKEY_MAYO5;
       digest = EVP_sha512();
       cache_algorithm_name = "Mayo5";
-      break;
-    case SignatureAlgorithm::kOv_ip_pkc:
-      expected_pkey_id = EVP_PKEY_OV_IP_PKC;
-      digest = EVP_sha256();
-      cache_algorithm_name = "Ov_ip_pkc";
-      break;
-    case SignatureAlgorithm::kOv_ip_pkc_skc:
-      expected_pkey_id = EVP_PKEY_OV_IP_PKC_SKC;
-      digest = EVP_sha256();
-      cache_algorithm_name = "Ov_ip_pkc_skc";
-      break;
-    case SignatureAlgorithm::kCrossrsdp128balanced:
-      expected_pkey_id = EVP_PKEY_CROSSRSDP128BALANCED;
-      digest = EVP_sha256();
-      cache_algorithm_name = "Crossrsdp128balanced";
       break;
     case SignatureAlgorithm::kSnova2454:
       expected_pkey_id = EVP_PKEY_SNOVA2454;

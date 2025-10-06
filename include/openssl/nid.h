@@ -4394,7 +4394,8 @@ extern "C" {
 #define SN_CROSSrsdp128balanced "CROSSrsdp128balanced"
 #define LN_CROSSrsdp128balanced "CROSSrsdp128balanced"
 #define NID_CROSSrsdp128balanced 1013
-#define OBJ_CROSSrsdp128balanced 1L, 3L, 6L, 1L, 4L, 1L, 62245L, 2L, 1L, 1L, 2L
+#define OBJ_CROSSrsdp128balanced \
+  1L, 3L, 6L, 1L, 4L, 1L, 62245L, 2L, 1L, 1L, 2L, 2L
 
 #define SN_snova2454 "snova2454"
 #define LN_snova2454 "snova2454"

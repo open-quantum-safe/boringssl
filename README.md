@@ -93,8 +93,6 @@ The following quantum-safe digital signature algorithms from liboqs are supporte
 - **UOV**: `OV_Ip_pkc`, `OV_Ip_pkc_skc`
 <!--- OQS_TEMPLATE_FRAGMENT_LIST_SIGS_END -->
 
-No [composite signature algorithms](https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/) are currently implemented. If you need those algorithms, please use the [OQS-provider](https://github.com/open-quantum-safe/oqs-provider) or implement them yourself and create a pull request.
-
 ## Quickstart
 
 We've only tested the fork on the latest Ubuntu LTS and Windows. This fork has limited support for other platforms and may not function properly.

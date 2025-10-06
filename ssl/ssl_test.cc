@@ -766,8 +766,9 @@ TEST(SSLTest, DefaultCurves) {
 ///// OQS_TEMPLATE_FRAGMENT_ADD_DEFAULT_KEMS_START
                                 SSL_GROUP_X25519_MLKEM512,
                                 SSL_GROUP_P256_MLKEM768,
+                                SSL_GROUP_P384_MLKEM1024,
                                 SSL_GROUP_X25519_FRODO640AES,
-                                SSL_GROUP_X25519_FRODO640SHAKE,
+                                SSL_GROUP_P521_FRODO1344AES,
                                 SSL_GROUP_X25519_BIKEL1,
 ///// OQS_TEMPLATE_FRAGMENT_ADD_DEFAULT_KEMS_END
   };
@@ -6464,6 +6465,12 @@ TEST(SSLTest, SignatureAlgorithmProperties) {
             SSL_get_signature_algorithm_key_type(SSL_SIGN_MLDSA87));
   EXPECT_EQ(EVP_PKEY_P521_MLDSA87,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_P521_MLDSA87));
+  EXPECT_EQ(EVP_PKEY_CROSSRSDP128BALANCED,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_CROSSRSDP128BALANCED));
+  EXPECT_EQ(EVP_PKEY_OV_IP_PKC,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_OV_IP_PKC));
+  EXPECT_EQ(EVP_PKEY_OV_IP_PKC_SKC,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_OV_IP_PKC_SKC));
   EXPECT_EQ(EVP_PKEY_FALCON512,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_FALCON512));
   EXPECT_EQ(EVP_PKEY_RSA3072_FALCON512,
@@ -6482,12 +6489,6 @@ TEST(SSLTest, SignatureAlgorithmProperties) {
             SSL_get_signature_algorithm_key_type(SSL_SIGN_MAYO3));
   EXPECT_EQ(EVP_PKEY_MAYO5,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_MAYO5));
-  EXPECT_EQ(EVP_PKEY_OV_IP_PKC,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_OV_IP_PKC));
-  EXPECT_EQ(EVP_PKEY_OV_IP_PKC_SKC,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_OV_IP_PKC_SKC));
-  EXPECT_EQ(EVP_PKEY_CROSSRSDP128BALANCED,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_CROSSRSDP128BALANCED));
   EXPECT_EQ(EVP_PKEY_SNOVA2454,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_SNOVA2454));
   EXPECT_EQ(EVP_PKEY_SNOVA2454ESK,
@@ -6854,6 +6855,9 @@ TEST(SSLTest, SigAlgs) {
       {{NID_sha384, EVP_PKEY_P384_MLDSA65}, true, {SSL_SIGN_P384_MLDSA65}},
       {{NID_sha512, EVP_PKEY_MLDSA87}, true, {SSL_SIGN_MLDSA87}},
       {{NID_sha512, EVP_PKEY_P521_MLDSA87}, true, {SSL_SIGN_P521_MLDSA87}},
+      {{NID_sha256, EVP_PKEY_CROSSRSDP128BALANCED}, true, {SSL_SIGN_CROSSRSDP128BALANCED}},
+      {{NID_sha256, EVP_PKEY_OV_IP_PKC}, true, {SSL_SIGN_OV_IP_PKC}},
+      {{NID_sha256, EVP_PKEY_OV_IP_PKC_SKC}, true, {SSL_SIGN_OV_IP_PKC_SKC}},
       {{NID_sha256, EVP_PKEY_FALCON512}, true, {SSL_SIGN_FALCON512}},
       {{NID_sha256, EVP_PKEY_RSA3072_FALCON512}, true, {SSL_SIGN_RSA3072_FALCON512}},
       {{NID_sha256, EVP_PKEY_FALCONPADDED512}, true, {SSL_SIGN_FALCONPADDED512}},
@@ -6863,9 +6867,6 @@ TEST(SSLTest, SigAlgs) {
       {{NID_sha256, EVP_PKEY_MAYO2}, true, {SSL_SIGN_MAYO2}},
       {{NID_sha384, EVP_PKEY_MAYO3}, true, {SSL_SIGN_MAYO3}},
       {{NID_sha512, EVP_PKEY_MAYO5}, true, {SSL_SIGN_MAYO5}},
-      {{NID_sha256, EVP_PKEY_OV_IP_PKC}, true, {SSL_SIGN_OV_IP_PKC}},
-      {{NID_sha256, EVP_PKEY_OV_IP_PKC_SKC}, true, {SSL_SIGN_OV_IP_PKC_SKC}},
-      {{NID_sha256, EVP_PKEY_CROSSRSDP128BALANCED}, true, {SSL_SIGN_CROSSRSDP128BALANCED}},
       {{NID_sha256, EVP_PKEY_SNOVA2454}, true, {SSL_SIGN_SNOVA2454}},
       {{NID_sha256, EVP_PKEY_SNOVA2454ESK}, true, {SSL_SIGN_SNOVA2454ESK}},
       {{NID_sha256, EVP_PKEY_SNOVA37172}, true, {SSL_SIGN_SNOVA37172}},
@@ -6947,6 +6948,9 @@ TEST(SSLTest, SigAlgsList) {
       {"p384_mldsa65", true, {SSL_SIGN_P384_MLDSA65}},
       {"mldsa87", true, {SSL_SIGN_MLDSA87}},
       {"p521_mldsa87", true, {SSL_SIGN_P521_MLDSA87}},
+      {"CROSSrsdp128balanced", true, {SSL_SIGN_CROSSRSDP128BALANCED}},
+      {"OV_Ip_pkc", true, {SSL_SIGN_OV_IP_PKC}},
+      {"OV_Ip_pkc_skc", true, {SSL_SIGN_OV_IP_PKC_SKC}},
       {"falcon512", true, {SSL_SIGN_FALCON512}},
       {"rsa3072_falcon512", true, {SSL_SIGN_RSA3072_FALCON512}},
       {"falconpadded512", true, {SSL_SIGN_FALCONPADDED512}},
@@ -6956,9 +6960,6 @@ TEST(SSLTest, SigAlgsList) {
       {"mayo2", true, {SSL_SIGN_MAYO2}},
       {"mayo3", true, {SSL_SIGN_MAYO3}},
       {"mayo5", true, {SSL_SIGN_MAYO5}},
-      {"OV_Ip_pkc", true, {SSL_SIGN_OV_IP_PKC}},
-      {"OV_Ip_pkc_skc", true, {SSL_SIGN_OV_IP_PKC_SKC}},
-      {"CROSSrsdp128balanced", true, {SSL_SIGN_CROSSRSDP128BALANCED}},
       {"snova2454", true, {SSL_SIGN_SNOVA2454}},
       {"snova2454esk", true, {SSL_SIGN_SNOVA2454ESK}},
       {"snova37172", true, {SSL_SIGN_SNOVA37172}},
@@ -7082,8 +7083,9 @@ TEST(SSLTest, ApplyHandoffRemovesUnsupportedCurves) {
 ///// OQS_TEMPLATE_FRAGMENT_ADD_DEF_KEMS_START
                                 SSL_GROUP_X25519_MLKEM512,
                                 SSL_GROUP_P256_MLKEM768,
+                                SSL_GROUP_P384_MLKEM1024,
                                 SSL_GROUP_X25519_FRODO640AES,
-                                SSL_GROUP_X25519_FRODO640SHAKE,
+                                SSL_GROUP_P521_FRODO1344AES,
                                 SSL_GROUP_X25519_BIKEL1,
 ///// OQS_TEMPLATE_FRAGMENT_ADD_DEF_KEMS_END
   }));
@@ -9437,6 +9439,9 @@ INSTANTIATE_TEST_SUITE_P(WithSignatureNIDs, OQSHandshakeTest,
                             NID_p384_mldsa65,
                             NID_mldsa87,
                             NID_p521_mldsa87,
+                            NID_CROSSrsdp128balanced,
+                            NID_OV_Ip_pkc,
+                            NID_OV_Ip_pkc_skc,
                             NID_falcon512,
                             NID_rsa3072_falcon512,
                             NID_falconpadded512,
@@ -9446,9 +9451,6 @@ INSTANTIATE_TEST_SUITE_P(WithSignatureNIDs, OQSHandshakeTest,
                             NID_mayo2,
                             NID_mayo3,
                             NID_mayo5,
-                            NID_OV_Ip_pkc,
-                            NID_OV_Ip_pkc_skc,
-                            NID_CROSSrsdp128balanced,
                             NID_snova2454,
                             NID_snova2454esk,
                             NID_snova37172,

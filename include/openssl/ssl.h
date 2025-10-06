@@ -1146,6 +1146,9 @@ OPENSSL_EXPORT int SSL_set_ocsp_response(SSL *ssl, const uint8_t *response,
 #define SSL_SIGN_P384_MLDSA65 0xff08
 #define SSL_SIGN_MLDSA87 0x0906
 #define SSL_SIGN_P521_MLDSA87 0xff09
+#define SSL_SIGN_CROSSRSDP128BALANCED 0xff53
+#define SSL_SIGN_OV_IP_PKC 0xff0f
+#define SSL_SIGN_OV_IP_PKC_SKC 0xff13
 #define SSL_SIGN_FALCON512 0xfed7
 #define SSL_SIGN_RSA3072_FALCON512 0xfed9
 #define SSL_SIGN_FALCONPADDED512 0xfedc
@@ -1155,9 +1158,6 @@ OPENSSL_EXPORT int SSL_set_ocsp_response(SSL *ssl, const uint8_t *response,
 #define SSL_SIGN_MAYO2 0xff33
 #define SSL_SIGN_MAYO3 0xff34
 #define SSL_SIGN_MAYO5 0xff35
-#define SSL_SIGN_OV_IP_PKC 0xff0f
-#define SSL_SIGN_OV_IP_PKC_SKC 0xff13
-#define SSL_SIGN_CROSSRSDP128BALANCED 0xff22
 #define SSL_SIGN_SNOVA2454 0xff3a
 #define SSL_SIGN_SNOVA2454ESK 0xff3e
 #define SSL_SIGN_SNOVA37172 0xff42
