@@ -1,8 +1,6 @@
 {% for sig in config['sigs'] %}
 const EVP_PKEY_ALG *EVP_pkey_{{ sig['name'] }}(void) {
-  static const EVP_PKEY_ALG kAlg = {
-      &{{ sig['name'] }}_asn1_meth, nullptr,
-  };
+  static const EVP_PKEY_ALG kAlg = { &{{ sig['name'] }}_asn1_meth };
   return &kAlg;
 }
 {%- endfor %}

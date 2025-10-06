@@ -17,6 +17,7 @@
 #include <assert.h>
 #include <string.h>
 
+#include <iterator>
 #include <utility>
 
 #include <openssl/bn.h>
@@ -755,9 +756,28 @@ constexpr NamedGroup kNamedGroups[] = {
     {NID_MLKEM1024, SSL_GROUP_MLKEM1024, "MLKEM1024", ""},
 };
 
+static_assert(std::size(kNamedGroups) == kNumNamedGroups,
+              "kNamedGroups size mismatch");
+
 }  // namespace
 
 Span<const NamedGroup> NamedGroups() { return kNamedGroups; }
+
+Span<const uint16_t> DefaultSupportedGroupIds() {
+  static const uint16_t kDefaultSupportedGroupIds[] = {
+      SSL_GROUP_X25519,
+      SSL_GROUP_SECP256R1,
+      SSL_GROUP_SECP384R1,
+///// OQS_TEMPLATE_FRAGMENT_ADD_DEFAULT_KEMS_START
+      SSL_GROUP_X25519_MLKEM512,
+      SSL_GROUP_P256_MLKEM768,
+      SSL_GROUP_X25519_FRODO640AES,
+      SSL_GROUP_X25519_FRODO640SHAKE,
+      SSL_GROUP_X25519_BIKEL1,
+///// OQS_TEMPLATE_FRAGMENT_ADD_DEFAULT_KEMS_END
+  };
+  return Span(kDefaultSupportedGroupIds);
+}
 
 UniquePtr<SSLKeyShare> SSLKeyShare::Create(uint16_t group_id) {
   switch (group_id) {

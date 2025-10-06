@@ -505,7 +505,6 @@ crypto_sources = [
     "crypto/x509/x_req.cc",
     "crypto/x509/x_sig.cc",
     "crypto/x509/x_spki.cc",
-    "crypto/x509/x_val.cc",
     "crypto/x509/x_x509.cc",
     "crypto/x509/x_x509a.cc",
     "crypto/xwing/xwing.cc",
@@ -997,6 +996,7 @@ crypto_test_data = [
     "crypto/x509/test/pss_sha256_wrong_trailer.pem",
     "crypto/x509/test/pss_sha384.pem",
     "crypto/x509/test/pss_sha512.pem",
+    "crypto/x509/test/rsa_pss_sha256_key.pk8",
     "crypto/x509/test/some_names1.pem",
     "crypto/x509/test/some_names2.pem",
     "crypto/x509/test/some_names3.pem",
@@ -1007,6 +1007,16 @@ crypto_test_data = [
     "crypto/x509/test/trailing_data_leaf_name_constraints.pem",
     "crypto/x509/test/trailing_data_leaf_subject_alt_name.pem",
     "crypto/x509/test/trailing_data_leaf_subject_key_identifier.pem",
+    "crypto/x509/test/unusual_tbs_critical_ber.pem",
+    "crypto/x509/test/unusual_tbs_critical_false_not_omitted.pem",
+    "crypto/x509/test/unusual_tbs_empty_extension_not_omitted.pem",
+    "crypto/x509/test/unusual_tbs_key.pem",
+    "crypto/x509/test/unusual_tbs_null_sigalg_param.pem",
+    "crypto/x509/test/unusual_tbs_uid_both.pem",
+    "crypto/x509/test/unusual_tbs_uid_issuer.pem",
+    "crypto/x509/test/unusual_tbs_uid_subject.pem",
+    "crypto/x509/test/unusual_tbs_v1_not_omitted.pem",
+    "crypto/x509/test/unusual_tbs_wrong_attribute_order.pem",
     "third_party/wycheproof_testvectors/aes_cbc_pkcs5_test.txt",
     "third_party/wycheproof_testvectors/aes_cmac_test.txt",
     "third_party/wycheproof_testvectors/aes_eax_test.txt",
@@ -1132,6 +1142,16 @@ decrepit_test_sources = [
     "decrepit/xts/xts_test.cc",
 ]
 
+entropy_modulewrapper_sources = [
+    "util/fipstools/acvp/entropy_modulewrapper/main.cc",
+    "util/fipstools/acvp/entropy_modulewrapper/modulewrapper.cc",
+    "util/fipstools/acvp/modulewrapper/proto.cc",
+]
+
+entropy_modulewrapper_internal_headers = [
+    "util/fipstools/acvp/modulewrapper/modulewrapper.h",
+]
+
 fuzz_sources = [
     "fuzz/arm_cpuinfo.cc",
     "fuzz/bn_div.cc",
@@ -1172,6 +1192,7 @@ fuzz_sources = [
 modulewrapper_sources = [
     "util/fipstools/acvp/modulewrapper/main.cc",
     "util/fipstools/acvp/modulewrapper/modulewrapper.cc",
+    "util/fipstools/acvp/modulewrapper/proto.cc",
 ]
 
 modulewrapper_internal_headers = [
@@ -2867,6 +2888,7 @@ ssl_test_sources = [
 
 test_support_sources = [
     "crypto/test/abi_test.cc",
+    "crypto/test/der_trailing_data.cc",
     "crypto/test/file_test.cc",
     "crypto/test/file_test_gtest.cc",
     "crypto/test/file_util.cc",
@@ -2877,6 +2899,7 @@ test_support_sources = [
 
 test_support_internal_headers = [
     "crypto/test/abi_test.h",
+    "crypto/test/der_trailing_data.h",
     "crypto/test/file_test.h",
     "crypto/test/file_util.h",
     "crypto/test/gtest_main.h",

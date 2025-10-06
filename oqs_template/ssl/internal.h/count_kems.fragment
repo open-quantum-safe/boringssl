@@ -1,0 +1,10 @@
+{%- set ns = namespace(kemSize = 7) %}
+
+{%- for kem in config.kems if kem.family != 'HQC' %}
+    {%- set ns.kemSize = ns.kemSize + 1 %}
+    {%- for classical_alg in kem.mix_with %}
+        {%- set ns.kemSize = ns.kemSize + 1 %}
+    {%- endfor %}
+{%- endfor %}
+constexpr size_t kNumNamedGroups = {{ ns.kemSize }}u;
+
