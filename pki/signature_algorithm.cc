@@ -140,6 +140,9 @@ const uint8_t kOidMldsa65[] = {0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0
 const uint8_t kOidP384_mldsa65[] = {0x2b, 0xce, 0x0f, 0x07, 0x07};
 const uint8_t kOidMldsa87[] = {0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x13};
 const uint8_t kOidP521_mldsa87[] = {0x2b, 0xce, 0x0f, 0x07, 0x08};
+const uint8_t kOidCrossrsdp128balanced[] = {0x2b, 0x06, 0x01, 0x04, 0x01, 0x83, 0xe6, 0x25, 0x02, 0x01, 0x01, 0x02, 0x02};
+const uint8_t kOidOv_ip_pkc[] = {0x2b, 0xce, 0x0f, 0x09, 0x06, 0x01};
+const uint8_t kOidOv_ip_pkc_skc[] = {0x2b, 0xce, 0x0f, 0x09, 0x0a, 0x01};
 const uint8_t kOidFalcon512[] = {0x2b, 0xce, 0x0f, 0x03, 0x0b};
 const uint8_t kOidRsa3072_falcon512[] = {0x2b, 0xce, 0x0f, 0x03, 0x0d};
 const uint8_t kOidFalconpadded512[] = {0x2b, 0xce, 0x0f, 0x03, 0x10};
@@ -149,9 +152,6 @@ const uint8_t kOidMayo1[] = {0x2b, 0xce, 0x0f, 0x08, 0x01, 0x03};
 const uint8_t kOidMayo2[] = {0x2b, 0xce, 0x0f, 0x08, 0x02, 0x03};
 const uint8_t kOidMayo3[] = {0x2b, 0xce, 0x0f, 0x08, 0x03, 0x03};
 const uint8_t kOidMayo5[] = {0x2b, 0xce, 0x0f, 0x08, 0x05, 0x03};
-const uint8_t kOidOv_ip_pkc[] = {0x2b, 0xce, 0x0f, 0x09, 0x06, 0x01};
-const uint8_t kOidOv_ip_pkc_skc[] = {0x2b, 0xce, 0x0f, 0x09, 0x0a, 0x01};
-const uint8_t kOidCrossrsdp128balanced[] = {0x2b, 0x06, 0x01, 0x04, 0x01, 0x83, 0xe6, 0x25, 0x02, 0x01, 0x01, 0x02};
 const uint8_t kOidSnova2454[] = {0x2b, 0xce, 0x0f, 0x0a, 0x01, 0x01};
 const uint8_t kOidSnova2454esk[] = {0x2b, 0xce, 0x0f, 0x0a, 0x03, 0x01};
 const uint8_t kOidSnova37172[] = {0x2b, 0xce, 0x0f, 0x0a, 0x05, 0x01};
@@ -443,6 +443,15 @@ std::optional<SignatureAlgorithm> ParseSignatureAlgorithm(
   if (oid == der::Input(kOidP521_mldsa87)) {
     return SignatureAlgorithm::kP521_mldsa87;
   }
+  if (oid == der::Input(kOidCrossrsdp128balanced)) {
+    return SignatureAlgorithm::kCrossrsdp128balanced;
+  }
+  if (oid == der::Input(kOidOv_ip_pkc)) {
+    return SignatureAlgorithm::kOv_ip_pkc;
+  }
+  if (oid == der::Input(kOidOv_ip_pkc_skc)) {
+    return SignatureAlgorithm::kOv_ip_pkc_skc;
+  }
   if (oid == der::Input(kOidFalcon512)) {
     return SignatureAlgorithm::kFalcon512;
   }
@@ -469,15 +478,6 @@ std::optional<SignatureAlgorithm> ParseSignatureAlgorithm(
   }
   if (oid == der::Input(kOidMayo5)) {
     return SignatureAlgorithm::kMayo5;
-  }
-  if (oid == der::Input(kOidOv_ip_pkc)) {
-    return SignatureAlgorithm::kOv_ip_pkc;
-  }
-  if (oid == der::Input(kOidOv_ip_pkc_skc)) {
-    return SignatureAlgorithm::kOv_ip_pkc_skc;
-  }
-  if (oid == der::Input(kOidCrossrsdp128balanced)) {
-    return SignatureAlgorithm::kCrossrsdp128balanced;
   }
   if (oid == der::Input(kOidSnova2454)) {
     return SignatureAlgorithm::kSnova2454;
@@ -568,14 +568,14 @@ std::optional<DigestAlgorithm> GetTlsServerEndpointDigestAlgorithm(
 ///// OQS_TEMPLATE_FRAGMENT_PAIR_SIGS_WITH_DIGESTS_START
     case SignatureAlgorithm::kMldsa44:
     case SignatureAlgorithm::kP256_mldsa44:
+    case SignatureAlgorithm::kCrossrsdp128balanced:
+    case SignatureAlgorithm::kOv_ip_pkc:
+    case SignatureAlgorithm::kOv_ip_pkc_skc:
     case SignatureAlgorithm::kFalcon512:
     case SignatureAlgorithm::kRsa3072_falcon512:
     case SignatureAlgorithm::kFalconpadded512:
     case SignatureAlgorithm::kMayo1:
     case SignatureAlgorithm::kMayo2:
-    case SignatureAlgorithm::kOv_ip_pkc:
-    case SignatureAlgorithm::kOv_ip_pkc_skc:
-    case SignatureAlgorithm::kCrossrsdp128balanced:
     case SignatureAlgorithm::kSnova2454:
     case SignatureAlgorithm::kSnova2454esk:
     case SignatureAlgorithm::kSnova37172:

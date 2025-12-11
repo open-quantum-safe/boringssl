@@ -49,6 +49,7 @@ def load_config():
 config = load_config()
 
 # kems
+populate('ssl/internal.h', config, '/////')
 populate('ssl/ssl_key_share.cc', config, '/////')
 populate('ssl/test/fuzzer.h', config, '/////')
 populate('ssl/test/test_config.cc', config, '/////')
@@ -57,7 +58,6 @@ populate('ssl/test/test_config.cc', config, '/////')
 populate('crypto/evp/p_oqs_asn1.cc', config, '/////')
 populate('crypto/evp/evp_ctx.cc', config, '/////')
 populate('crypto/evp/internal.h', config, '/////')
-populate('crypto/evp/evp_asn1.cc', config, '/////')
 populate('crypto/evp/p_oqs.cc', config, '/////')
 populate('crypto/x509/algorithm.cc', config, '/////')
 populate('ssl/ssl_privkey.cc', config, '/////')

@@ -260,19 +260,6 @@ bool ssl_client_hello_get_extension(const SSL_CLIENT_HELLO *client_hello,
   return false;
 }
 
-static const uint16_t kDefaultGroups[] = {
-    SSL_GROUP_X25519,
-    SSL_GROUP_SECP256R1,
-    SSL_GROUP_SECP384R1,
-///// OQS_TEMPLATE_FRAGMENT_ADD_DEFAULT_KEMS_START
-    SSL_GROUP_X25519_MLKEM512,
-    SSL_GROUP_P256_MLKEM768,
-    SSL_GROUP_X25519_FRODO640AES,
-    SSL_GROUP_X25519_FRODO640SHAKE,
-    SSL_GROUP_X25519_BIKEL1,
-///// OQS_TEMPLATE_FRAGMENT_ADD_DEFAULT_KEMS_END
-};
-
 // OQS note: since it would be too unwieldy to add the
 // group IDs and keyshares of all of liboqs's alogrithms
 // (and their corresponding hybrid variants) to the ClientHello,
@@ -315,13 +302,6 @@ static const uint16_t kAllSupportedGroups[] = {
     SSL_GROUP_BIKEL5,
 ///// OQS_TEMPLATE_FRAGMENT_ADD_ALL_KEMS_END
 };
-
-Span<const uint16_t> tls1_get_grouplist(const SSL_HANDSHAKE *hs) {
-  if (!hs->config->supported_group_list.empty()) {
-    return hs->config->supported_group_list;
-  }
-  return Span<const uint16_t>(kDefaultGroups);
-}
 
 bool tls1_get_shared_group(SSL_HANDSHAKE *hs, uint16_t *out_group_id) {
   SSL *const ssl = hs->ssl;
@@ -381,7 +361,7 @@ bool tls1_check_group_id(const SSL_HANDSHAKE *hs, uint16_t group_id) {
     return false;
   }
 
-  for (uint16_t supported : tls1_get_grouplist(hs)) {
+  for (uint16_t supported : hs->config->supported_group_list) {
     if (supported == group_id) {
       return true;
     }
@@ -401,6 +381,9 @@ static const uint16_t kVerifySignatureAlgorithms[] = {
     SSL_SIGN_P384_MLDSA65,
     SSL_SIGN_MLDSA87,
     SSL_SIGN_P521_MLDSA87,
+    SSL_SIGN_CROSSRSDP128BALANCED,
+    SSL_SIGN_OV_IP_PKC,
+    SSL_SIGN_OV_IP_PKC_SKC,
     SSL_SIGN_FALCON512,
     SSL_SIGN_RSA3072_FALCON512,
     SSL_SIGN_FALCONPADDED512,
@@ -410,9 +393,6 @@ static const uint16_t kVerifySignatureAlgorithms[] = {
     SSL_SIGN_MAYO2,
     SSL_SIGN_MAYO3,
     SSL_SIGN_MAYO5,
-    SSL_SIGN_OV_IP_PKC,
-    SSL_SIGN_OV_IP_PKC_SKC,
-    SSL_SIGN_CROSSRSDP128BALANCED,
     SSL_SIGN_SNOVA2454,
     SSL_SIGN_SNOVA2454ESK,
     SSL_SIGN_SNOVA37172,
@@ -459,6 +439,9 @@ static const uint16_t kSignSignatureAlgorithms[] = {
     SSL_SIGN_P384_MLDSA65,
     SSL_SIGN_MLDSA87,
     SSL_SIGN_P521_MLDSA87,
+    SSL_SIGN_CROSSRSDP128BALANCED,
+    SSL_SIGN_OV_IP_PKC,
+    SSL_SIGN_OV_IP_PKC_SKC,
     SSL_SIGN_FALCON512,
     SSL_SIGN_RSA3072_FALCON512,
     SSL_SIGN_FALCONPADDED512,
@@ -468,9 +451,6 @@ static const uint16_t kSignSignatureAlgorithms[] = {
     SSL_SIGN_MAYO2,
     SSL_SIGN_MAYO3,
     SSL_SIGN_MAYO5,
-    SSL_SIGN_OV_IP_PKC,
-    SSL_SIGN_OV_IP_PKC_SKC,
-    SSL_SIGN_CROSSRSDP128BALANCED,
     SSL_SIGN_SNOVA2454,
     SSL_SIGN_SNOVA2454ESK,
     SSL_SIGN_SNOVA37172,
@@ -2394,8 +2374,7 @@ static bool ext_early_data_add_serverhello(SSL_HANDSHAKE *hs, CBB *out) {
 
 bool ssl_setup_key_shares(SSL_HANDSHAKE *hs, uint16_t override_group_id) {
   SSL *const ssl = hs->ssl;
-  hs->key_shares[0].reset();
-  hs->key_shares[1].reset();
+  hs->key_shares.clear();
   hs->key_share_bytes.Reset();
 
   // If offering a PAKE, do not set up key shares. We do not currently support
@@ -2403,6 +2382,67 @@ bool ssl_setup_key_shares(SSL_HANDSHAKE *hs, uint16_t override_group_id) {
   if (hs->max_version < TLS1_3_VERSION || hs->pake_prover) {
     return true;
   }
+
+  const Span<const uint16_t> supported_group_list =
+      hs->config->supported_group_list;
+  if (supported_group_list.empty()) {
+    OPENSSL_PUT_ERROR(SSL, SSL_R_NO_GROUPS_SPECIFIED);
+    return false;
+  }
+
+  std::optional<Span<const uint16_t>> selected_key_shares;
+
+  // This is used for HelloRetryRequest, where we have already been given the
+  // correct group to use.
+  if (override_group_id != 0) {
+    assert(std::find(supported_group_list.begin(), supported_group_list.end(),
+                     override_group_id) != supported_group_list.end());
+    selected_key_shares.emplace(&override_group_id, 1u);
+  }
+
+  // First try to predict the most preferred (by our preference order) group
+  // that was hinted by the server.
+  const auto &server_hint_list = ssl->config->server_supported_groups_hint;
+  if (!selected_key_shares.has_value() && !server_hint_list.empty()) {
+    for (const uint16_t &supported_group : supported_group_list) {
+      if (std::find(server_hint_list.begin(), server_hint_list.end(),
+                    supported_group) != server_hint_list.end()) {
+        selected_key_shares.emplace(&supported_group, 1u);
+        break;
+      }
+    }
+  }
+
+  // Otherwise, try to use explicitly configured key shares from the caller.
+  if (!selected_key_shares.has_value() &&
+      ssl->config->client_key_share_selections.has_value()) {
+    selected_key_shares.emplace(*ssl->config->client_key_share_selections);
+  }
+
+  // Run the default selection if we don't have anything better.
+  InplaceVector<uint16_t, 2> default_key_shares;
+  if (!selected_key_shares.has_value()) {
+    // By default, predict the most preferred group.
+    if (!default_key_shares.TryPushBack(supported_group_list[0])) {
+      return false;
+    }
+    // We'll try to include one post-quantum and one classical initial key
+    // share.
+    for (size_t i = 1; i < supported_group_list.size(); i++) {
+      if (is_post_quantum_group(default_key_shares[0]) ==
+          is_post_quantum_group(supported_group_list[i])) {
+        continue;
+      }
+      if (!default_key_shares.TryPushBack(supported_group_list[i])) {
+        return false;
+      }
+      assert(default_key_shares[1] != default_key_shares[0]);
+      break;
+    }
+    selected_key_shares.emplace(default_key_shares);
+  }
+
+  assert(selected_key_shares.has_value());
 
   bssl::ScopedCBB cbb;
   if (!CBB_init(cbb.get(), 64)) {
@@ -2418,43 +2458,14 @@ bool ssl_setup_key_shares(SSL_HANDSHAKE *hs, uint16_t override_group_id) {
     }
   }
 
-  uint16_t group_id = override_group_id;
-  uint16_t second_group_id = 0;
-  if (override_group_id == 0) {
-    // Predict the most preferred group.
-    Span<const uint16_t> groups = tls1_get_grouplist(hs);
-    if (groups.empty()) {
-      OPENSSL_PUT_ERROR(SSL, SSL_R_NO_GROUPS_SPECIFIED);
-      return false;
-    }
-
-    group_id = groups[0];
-
-    // We'll try to include one post-quantum and one classical initial key
-    // share.
-    for (size_t i = 1; i < groups.size() && second_group_id == 0; i++) {
-      if (is_post_quantum_group(group_id) != is_post_quantum_group(groups[i])) {
-        second_group_id = groups[i];
-        assert(second_group_id != group_id);
-      }
-    }
-  }
-
   CBB key_exchange;
-  hs->key_shares[0] = SSLKeyShare::Create(group_id);
-  if (!hs->key_shares[0] ||  //
-      !CBB_add_u16(cbb.get(), group_id) ||
-      !CBB_add_u16_length_prefixed(cbb.get(), &key_exchange) ||
-      !hs->key_shares[0]->Generate(&key_exchange)) {
-    return false;
-  }
-
-  if (second_group_id != 0) {
-    hs->key_shares[1] = SSLKeyShare::Create(second_group_id);
-    if (!hs->key_shares[1] ||  //
-        !CBB_add_u16(cbb.get(), second_group_id) ||
-        !CBB_add_u16_length_prefixed(cbb.get(), &key_exchange) ||
-        !hs->key_shares[1]->Generate(&key_exchange)) {
+  for (const uint16_t group_id : *selected_key_shares) {
+    UniquePtr<SSLKeyShare> key_share = SSLKeyShare::Create(group_id);
+    if (key_share == nullptr ||                                    //
+        !CBB_add_u16(cbb.get(), group_id) ||                       //
+        !CBB_add_u16_length_prefixed(cbb.get(), &key_exchange) ||  //
+        !key_share->Generate(&key_exchange) ||                     //
+        !hs->key_shares.TryPushBack(std::move(key_share))) {
       return false;
     }
   }
@@ -2471,7 +2482,12 @@ static bool ext_key_share_add_clienthello(const SSL_HANDSHAKE *hs, CBB *out,
     return true;
   }
 
-  assert(!hs->key_share_bytes.empty());
+  // The caller may explicitly configure empty key shares to request a
+  // HelloRetryRequest.
+  assert(!hs->key_share_bytes.empty() ||
+         (hs->config->client_key_share_selections.has_value() &&
+          hs->config->client_key_share_selections->empty()));
+
   CBB contents, kse_bytes;
   if (!CBB_add_u16(out_compressible, TLSEXT_TYPE_key_share) ||
       !CBB_add_u16_length_prefixed(out_compressible, &contents) ||
@@ -2488,13 +2504,9 @@ static bool ext_key_share_add_clienthello(const SSL_HANDSHAKE *hs, CBB *out,
 bool ssl_ext_key_share_parse_serverhello(SSL_HANDSHAKE *hs,
                                          Array<uint8_t> *out_secret,
                                          uint8_t *out_alert, CBS *contents) {
-  if (hs->key_shares[0] == nullptr) {
-    // If we did not offer key shares, the extension should have been rejected
-    // as unsolicited.
-    OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
-    *out_alert = SSL_AD_INTERNAL_ERROR;
-    return false;
-  }
+  // If we did not offer key shares, the extension should have been rejected
+  // as unsolicited.
+  assert(!hs->key_shares.empty());
 
   CBS ciphertext;
   uint16_t group_id;
@@ -2506,24 +2518,23 @@ bool ssl_ext_key_share_parse_serverhello(SSL_HANDSHAKE *hs,
     return false;
   }
 
-  SSLKeyShare *key_share = hs->key_shares[0].get();
-  if (key_share->GroupID() != group_id) {
-    if (!hs->key_shares[1] || hs->key_shares[1]->GroupID() != group_id) {
-      *out_alert = SSL_AD_ILLEGAL_PARAMETER;
-      OPENSSL_PUT_ERROR(SSL, SSL_R_WRONG_CURVE);
-      return false;
-    }
-    key_share = hs->key_shares[1].get();
+  const auto key_share_it =
+      std::find_if(hs->key_shares.begin(), hs->key_shares.end(),
+                   [group_id](const auto &key_share) {
+                     return key_share->GroupID() == group_id;
+                   });
+  if (key_share_it == hs->key_shares.end()) {
+    *out_alert = SSL_AD_ILLEGAL_PARAMETER;
+    OPENSSL_PUT_ERROR(SSL, SSL_R_WRONG_CURVE);
+    return false;
   }
-
-  if (!key_share->Decap(out_secret, out_alert, ciphertext)) {
+  if (!(*key_share_it)->Decap(out_secret, out_alert, ciphertext)) {
     *out_alert = SSL_AD_INTERNAL_ERROR;
     return false;
   }
 
   hs->new_session->group_id = group_id;
-  hs->key_shares[0].reset();
-  hs->key_shares[1].reset();
+  hs->key_shares.clear();
   return true;
 }
 
@@ -2714,7 +2725,7 @@ static bool ext_supported_groups_add_clienthello(const SSL_HANDSHAKE *hs,
     return false;
   }
 
-  for (uint16_t group : tls1_get_grouplist(hs)) {
+  for (uint16_t group : hs->config->supported_group_list) {
     if (is_post_quantum_group(group) && hs->max_version < TLS1_3_VERSION) {
       continue;
     }
@@ -4269,8 +4280,8 @@ static bool ssl_scan_clienthello_tlsext(SSL_HANDSHAKE *hs,
     CBS *contents = NULL, fake_contents;
     static const uint8_t kFakeRenegotiateExtension[] = {0};
     if (kExtensions[i].value == TLSEXT_TYPE_renegotiate &&
-        ssl_client_cipher_list_contains_cipher(client_hello,
-                                               SSL3_CK_SCSV & 0xffff)) {
+        ssl_client_cipher_list_contains_cipher(
+            client_hello, SSL_CIPHER_EMPTY_RENEGOTIATION_INFO_SCSV)) {
       // The renegotiation SCSV was received so pretend that we received a
       // renegotiation extension.
       CBS_init(&fake_contents, kFakeRenegotiateExtension,
@@ -4755,6 +4766,9 @@ bool tls1_choose_signature_algorithm(SSL_HANDSHAKE *hs,
                                                SSL_SIGN_P384_MLDSA65,
                                                SSL_SIGN_MLDSA87,
                                                SSL_SIGN_P521_MLDSA87,
+                                               SSL_SIGN_CROSSRSDP128BALANCED,
+                                               SSL_SIGN_OV_IP_PKC,
+                                               SSL_SIGN_OV_IP_PKC_SKC,
                                                SSL_SIGN_FALCON512,
                                                SSL_SIGN_RSA3072_FALCON512,
                                                SSL_SIGN_FALCONPADDED512,
@@ -4764,9 +4778,6 @@ bool tls1_choose_signature_algorithm(SSL_HANDSHAKE *hs,
                                                SSL_SIGN_MAYO2,
                                                SSL_SIGN_MAYO3,
                                                SSL_SIGN_MAYO5,
-                                               SSL_SIGN_OV_IP_PKC,
-                                               SSL_SIGN_OV_IP_PKC_SKC,
-                                               SSL_SIGN_CROSSRSDP128BALANCED,
                                                SSL_SIGN_SNOVA2454,
                                                SSL_SIGN_SNOVA2454ESK,
                                                SSL_SIGN_SNOVA37172,
@@ -4785,7 +4796,7 @@ bool tls1_choose_signature_algorithm(SSL_HANDSHAKE *hs,
                                                SSL_SIGN_SPHINCSSHAKE256FSIMPLE,
                                                SSL_SIGN_SPHINCSSHAKE256SSIMPLE,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_DEFAULT_SIG_ALGS_END
-    };
+      };
       peer_sigalgs = kTLS12Default;
     }
   }

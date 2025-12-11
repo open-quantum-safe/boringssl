@@ -94,6 +94,9 @@ bool SimplePathBuilderDelegate::IsSignatureAlgorithmAcceptable(
     case SignatureAlgorithm::kP384_mldsa65:
     case SignatureAlgorithm::kMldsa87:
     case SignatureAlgorithm::kP521_mldsa87:
+    case SignatureAlgorithm::kCrossrsdp128balanced:
+    case SignatureAlgorithm::kOv_ip_pkc:
+    case SignatureAlgorithm::kOv_ip_pkc_skc:
     case SignatureAlgorithm::kFalcon512:
     case SignatureAlgorithm::kRsa3072_falcon512:
     case SignatureAlgorithm::kFalconpadded512:
@@ -103,9 +106,6 @@ bool SimplePathBuilderDelegate::IsSignatureAlgorithmAcceptable(
     case SignatureAlgorithm::kMayo2:
     case SignatureAlgorithm::kMayo3:
     case SignatureAlgorithm::kMayo5:
-    case SignatureAlgorithm::kOv_ip_pkc:
-    case SignatureAlgorithm::kOv_ip_pkc_skc:
-    case SignatureAlgorithm::kCrossrsdp128balanced:
     case SignatureAlgorithm::kSnova2454:
     case SignatureAlgorithm::kSnova2454esk:
     case SignatureAlgorithm::kSnova37172:

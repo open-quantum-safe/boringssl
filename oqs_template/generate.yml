@@ -1,359 +1,360 @@
 # N.B: For interoperability, NIDS must match the group IDs used in
 # https://github.com/open-quantum-safe/oqs-provider/blob/main/ALGORITHMS.md
 kems:
-  -
-    family: 'ML-KEM'
-    name: 'mlkem512'
-    nid: '0x0200'
-    mix_with: [{'name': 'p256', 'mix_nid':'0x2F4B', 'nid':'SSL_GROUP_SECP256R1'}, {'name': 'x25519', 'mix_nid':'0x2FB6', 'nid':'SSL_GROUP_X25519'}]
-    use_as_default_with: 'x25519'
-    oqs_meth: 'OQS_KEM_alg_ml_kem_512'
-  -
-    family: 'ML-KEM'
-    name: 'mlkem768'
-    nid: '0x0201'
-    mix_with: [{'name': 'p256', 'mix_nid':'0x11EB', 'nid':'SSL_GROUP_SECP256R1'}, {'name': 'p384', 'mix_nid':'0x2F4C', 'nid':'SSL_GROUP_SECP384R1'}]
-    use_as_default_with: 'p256'
-    oqs_meth: 'OQS_KEM_alg_ml_kem_768'
-  -
-    family: 'FrodoKEM'
-    name: 'frodo640aes'
-    nid: '0xFE00'
-    mix_with: [{'name': 'p256', 'mix_nid':'0xFE01', 'nid':'SSL_GROUP_SECP256R1'}, {'name': 'x25519', 'mix_nid':'0xFE02', 'nid':'SSL_GROUP_X25519'}]
-    use_as_default_with: 'x25519'
-    oqs_meth: 'OQS_KEM_alg_frodokem_640_aes'
-  -
-    family: 'FrodoKEM'
-    name: 'frodo640shake'
-    nid: '0xFE03'
-    mix_with: [{'name': 'p256', 'mix_nid':'0xFE04', 'nid':'SSL_GROUP_SECP256R1'}, {'name': 'x25519', 'mix_nid':'0xFE05', 'nid':'SSL_GROUP_X25519'}]
-    use_as_default_with: 'x25519'
-    oqs_meth: 'OQS_KEM_alg_frodokem_640_shake'
-  -
-    family: 'FrodoKEM'
-    name: 'frodo976aes'
-    nid: '0xFE06'
-    mix_with: [{'name': 'p384', 'mix_nid':'0xFE07', 'nid':'SSL_GROUP_SECP384R1'}]
-    oqs_meth: 'OQS_KEM_alg_frodokem_976_aes'
-  -
-    family: 'FrodoKEM'
-    name: 'frodo976shake'
-    nid: '0xFE09'
-    mix_with: [{'name': 'p384', 'mix_nid':'0xFE0A', 'nid':'SSL_GROUP_SECP384R1'}]
-    oqs_meth: 'OQS_KEM_alg_frodokem_976_shake'
-  -
-    family: 'FrodoKEM'
-    name: 'frodo1344aes'
-    nid: '0xFE0C'
-    mix_with: [{'name': 'p521', 'mix_nid':'0xFE0D', 'nid':'SSL_GROUP_SECP521R1'}]
-    oqs_meth: 'OQS_KEM_alg_frodokem_1344_aes'
-  -
-    family: 'FrodoKEM'
-    name: 'frodo1344shake'
-    nid: '0xFE0E'
-    mix_with: [{'name': 'p521', 'mix_nid':'0xFE0F', 'nid':'SSL_GROUP_SECP521R1'}]
-    oqs_meth: 'OQS_KEM_alg_frodokem_1344_shake'
-  -
-    family: 'BIKE'
-    name: 'bikel1'
-    nid: '0xFE10'
-    mix_with: [{'name': 'p256', 'mix_nid':'0xFE11', 'nid':'SSL_GROUP_SECP256R1'}, {'name': 'x25519', 'mix_nid':'0xFE12', 'nid':'SSL_GROUP_X25519'}]
-    use_as_default_with: 'x25519'
-    oqs_meth: 'OQS_KEM_alg_bike_l1'
-  -
-    family: 'BIKE'
-    name: 'bikel3'
-    nid: '0xFE13'
-    mix_with: [{'name': 'p384', 'mix_nid':'0xFE14', 'nid':'SSL_GROUP_SECP384R1'}]
-    oqs_meth: 'OQS_KEM_alg_bike_l3'
-  -
-    family: 'BIKE'
-    name: 'bikel5'
-    nid: '0xFE16'
-    mix_with: [{'name': 'p521', 'mix_nid':'0xFE17', 'nid':'SSL_GROUP_SECP521R1'}]
-    oqs_meth: 'OQS_KEM_alg_bike_l5'
-
+- family: ML-KEM
+  name: mlkem512
+  nid: '0x0200'
+  mix_with:
+  - name: p256
+    mix_nid: '0x2f4b'
+    nid: SSL_GROUP_SECP256R1
+  - name: x25519
+    mix_nid: '0x2fb6'
+    nid: SSL_GROUP_X25519
+  oqs_meth: OQS_KEM_alg_ml_kem_512
+  use_as_default_with: x25519
+- family: ML-KEM
+  name: mlkem768
+  nid: '0x0201'
+  mix_with:
+  - name: p256
+    mix_nid: '0x11eb'
+    nid: SSL_GROUP_SECP256R1
+  - name: p384
+    mix_nid: '0x2f4c'
+    nid: SSL_GROUP_SECP384R1
+  oqs_meth: OQS_KEM_alg_ml_kem_768
+  use_as_default_with: 'p256'
+- family: FrodoKEM
+  name: frodo640aes
+  nid: '0xfe00'
+  mix_with:
+  - name: p256
+    mix_nid: '0xfe01'
+    nid: SSL_GROUP_SECP256R1
+  - name: x25519
+    mix_nid: '0xfe02'
+    nid: SSL_GROUP_X25519
+  oqs_meth: OQS_KEM_alg_frodokem_640_aes
+  use_as_default_with: x25519
+- family: FrodoKEM
+  name: frodo640shake
+  nid: '0xfe03'
+  mix_with:
+  - name: p256
+    mix_nid: '0xfe04'
+    nid: SSL_GROUP_SECP256R1
+  - name: x25519
+    mix_nid: '0xfe05'
+    nid: SSL_GROUP_X25519
+  oqs_meth: OQS_KEM_alg_frodokem_640_shake
+- family: FrodoKEM
+  name: frodo976aes
+  nid: '0xfe06'
+  mix_with:
+  - name: p384
+    mix_nid: '0xfe07'
+    nid: SSL_GROUP_SECP384R1
+  oqs_meth: OQS_KEM_alg_frodokem_976_aes
+- family: FrodoKEM
+  name: frodo976shake
+  nid: '0xfe09'
+  mix_with:
+  - name: p384
+    mix_nid: '0xfe0a'
+    nid: SSL_GROUP_SECP384R1
+  oqs_meth: OQS_KEM_alg_frodokem_976_shake
+- family: FrodoKEM
+  name: frodo1344aes
+  nid: '0xfe0c'
+  mix_with:
+  - name: p521
+    mix_nid: '0xfe0d'
+    nid: SSL_GROUP_SECP521R1
+  oqs_meth: OQS_KEM_alg_frodokem_1344_aes
+  use_as_default_with: p521
+- family: FrodoKEM
+  name: frodo1344shake
+  nid: '0xfe0e'
+  mix_with:
+  - name: p521
+    mix_nid: '0xfe0f'
+    nid: SSL_GROUP_SECP521R1
+  oqs_meth: OQS_KEM_alg_frodokem_1344_shake
+- family: BIKE
+  name: bikel1
+  nid: '0xfe10'
+  mix_with:
+  - name: p256
+    mix_nid: '0xfe11'
+    nid: SSL_GROUP_SECP256R1
+  - name: x25519
+    mix_nid: '0xfe12'
+    nid: SSL_GROUP_X25519
+  oqs_meth: OQS_KEM_alg_bike_l1
+  use_as_default_with: x25519
+- family: BIKE
+  name: bikel3
+  nid: '0xfe13'
+  mix_with:
+  - name: p384
+    mix_nid: '0xfe14'
+    nid: SSL_GROUP_SECP384R1
+  oqs_meth: OQS_KEM_alg_bike_l3
+- family: BIKE
+  name: bikel5
+  nid: '0xfe16'
+  mix_with:
+  - name: p521
+    mix_nid: '0xfe17'
+    nid: SSL_GROUP_SECP521R1
+  oqs_meth: OQS_KEM_alg_bike_l5
 
 # N.B: Code points and OIDs must match those used
 # in OQS-provider for interoperability.
 sigs:
-  -
-    family: 'ML-DSA'
-    name: 'mldsa44'
-    oid: '2 16 840 1 101 3 4 3 17'
-    oid_encoded: '0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x11'
-    oqs_meth: 'OQS_SIG_alg_ml_dsa_44'
-    code_point: '0x0904'
-    claimed_security_level: '2'
-  -
-    family: 'ML-DSA'
-    name: 'p256_mldsa44'
-    oid: '1 3 9999 7 5'
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x07, 0x05'
-    oqs_meth: 'OQS_SIG_alg_ml_dsa_44'
-    code_point: '0xff06'
-    claimed_security_level: '2'
-  -
-    family: 'ML-DSA'
-    name: 'mldsa65'
-    oid: '2 16 840 1 101 3 4 3 18'
-    oid_encoded: '0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x12'
-    oqs_meth: 'OQS_SIG_alg_ml_dsa_65'
-    code_point: '0x0905'
-    claimed_security_level: '3'
-  -
-    family: 'ML-DSA'
-    name: 'p384_mldsa65'
-    oid: '1 3 9999 7 7'
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x07, 0x07'
-    oqs_meth: 'OQS_SIG_alg_ml_dsa_65'
-    code_point: '0xff08'
-    claimed_security_level: '3'
-  -
-    family: 'ML-DSA'
-    name: 'mldsa87'
-    oid: '2 16 840 1 101 3 4 3 19'
-    oid_encoded: '0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x13'
-    oqs_meth: 'OQS_SIG_alg_ml_dsa_87'
-    code_point: '0x0906'
-    claimed_security_level: '5'
-  -
-    family: 'ML-DSA'
-    name: 'p521_mldsa87'
-    oid: '1 3 9999 7 8'
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x07, 0x08'
-    oqs_meth: 'OQS_SIG_alg_ml_dsa_87'
-    code_point: '0xff09'
-    claimed_security_level: '5'
-  -
-    family: 'Falcon'
-    name: 'falcon512'
-    oid: '1 3 9999 3 11'
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x03, 0x0B'
-    oqs_meth: 'OQS_SIG_alg_falcon_512'
-    code_point: '0xfed7'
-    claimed_security_level: '1'
-  -
-    family: 'Falcon'
-    name: 'rsa3072_falcon512'
-    oid: '1 3 9999 3 13'
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x03, 0x0D'
-    oqs_meth: 'OQS_SIG_alg_falcon_512'
-    code_point: '0xfed9'
-    claimed_security_level: '1'
-  -
-    family: 'Falcon'
-    name: 'falconpadded512'
-    oid: '1 3 9999 3 16'
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x03, 0x10'
-    oqs_meth: 'OQS_SIG_alg_falcon_padded_512'
-    code_point: '0xfedc'
-    claimed_security_level: '1'
-  -
-    family: 'Falcon'
-    name: 'falcon1024'
-    oid: '1 3 9999 3 14'
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x03, 0x0E'
-    oqs_meth: 'OQS_SIG_alg_falcon_1024'
-    code_point: '0xfeda'
-    claimed_security_level: '5'
-  -
-    family: 'Falcon'
-    name: 'falconpadded1024'
-    oid: '1 3 9999 3 19'
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x03, 0x13'
-    oqs_meth: 'OQS_SIG_alg_falcon_padded_1024'
-    code_point: '0xfedf'
-    claimed_security_level: '5'
-  -
-    family: 'MAYO'
-    name: 'mayo1'
-    oid: '1 3 9999 8 1 3'
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x08, 0x01, 0x03'
-    oqs_meth: 'OQS_SIG_alg_mayo_1'
-    code_point: '0xff32'
-    claimed_security_level: '1'
-  -
-    family: 'MAYO'
-    name: 'mayo2'
-    oid: '1 3 9999 8 2 3'
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x08, 0x02, 0x03'
-    oqs_meth: 'OQS_SIG_alg_mayo_2'
-    code_point: '0xff33'
-    claimed_security_level: '1'
-  -
-    family: 'MAYO'
-    name: 'mayo3'
-    oid: '1 3 9999 8 3 3'
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x08, 0x03, 0x03'
-    oqs_meth: 'OQS_SIG_alg_mayo_3'
-    code_point: '0xff34'
-    claimed_security_level: '3'
-  -
-    family: 'MAYO'
-    name: 'mayo5'
-    oid: '1 3 9999 8 5 3'
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x08, 0x05, 0x03'
-    oqs_meth: 'OQS_SIG_alg_mayo_5'
-    code_point: '0xff35'
-    claimed_security_level: '5'
-  -
-    family: 'UOV'
-    name: 'OV_Ip_pkc'
-    oid: '1 3 9999 9 6 1'
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x09, 0x06, 0x01'
-    oqs_meth: 'OQS_SIG_alg_uov_ov_Ip_pkc'
-    code_point: '0xff0f'
-    claimed_security_level: '1'
-  -
-    family: 'UOV'
-    name: 'OV_Ip_pkc_skc'
-    oid: '1 3 9999 9 10 1'
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x09, 0x0A, 0x01'
-    oqs_meth: 'OQS_SIG_alg_uov_ov_Ip_pkc_skc'
-    code_point: '0xff13'
-    claimed_security_level: '1'
-  -
-    family: 'CROSS'
-    name: 'CROSSrsdp128balanced'
-    oid: '1 3 6 1 4 1 62245 2 1 1 2'
-    oid_encoded: '0x2B, 0x06, 0x01, 0x04, 0x01, 0x83, 0xE6, 0x25, 0x02, 0x01, 0x01, 0x02'
-    oqs_meth: 'OQS_SIG_alg_cross_rsdp_128_balanced'
-    code_point: '0xff22'
-    claimed_security_level: '1'
-  -
-    family: 'SNOVA'
-    name: 'snova2454'
-    oid: '1 3 9999 10 1 1'
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x0A, 0x01, 0x01'
-    oqs_meth: 'OQS_SIG_alg_snova_SNOVA_24_5_4'
-    code_point: '0xff3a'
-    claimed_security_level: '1'
-  -
-    family: 'SNOVA'
-    name: 'snova2454esk'
-    oid: '1 3 9999 10 3 1'
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x0A, 0x03, 0x01'
-    oqs_meth: 'OQS_SIG_alg_snova_SNOVA_24_5_4_esk'
-    code_point: '0xff3e'
-    claimed_security_level: '1'
-  -
-    family: 'SNOVA'
-    name: 'snova37172'
-    oid: '1 3 9999 10 5 1'
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x0A, 0x05, 0x01'
-    oqs_meth: 'OQS_SIG_alg_snova_SNOVA_37_17_2'
-    code_point: '0xff42'
-    claimed_security_level: '1'
-  -
-    family: 'SNOVA'
-    name: 'snova2455'
-    oid: '1 3 9999 10 10 1'
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x0A, 0x0A, 0x01'
-    oqs_meth: 'OQS_SIG_alg_snova_SNOVA_24_5_5'
-    code_point: '0xff4c'
-    claimed_security_level: '3'
-  -
-    family: 'SNOVA'
-    name: 'snova2965'
-    oid: '1 3 9999 10 12 1'
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x0A, 0x0C, 0x01'
-    oqs_meth: 'OQS_SIG_alg_snova_SNOVA_29_6_5'
-    code_point: '0xff51'
-    claimed_security_level: '5'
-  -
-    family: 'SPHINCS-SHA2'
-    name: 'sphincssha2128fsimple'
-    oid: '1 3 9999 6 4 13'
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x04, 0x0D'
-    oqs_meth: 'OQS_SIG_alg_sphincs_sha2_128f_simple'
-    code_point: '0xfeb3'
-    claimed_security_level: '1'
-  -
-    family: 'SPHINCS-SHA2'
-    name: 'sphincssha2128ssimple'
-    oid: '1 3 9999 6 4 16'
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x04, 0x10'
-    oqs_meth: 'OQS_SIG_alg_sphincs_sha2_128s_simple'
-    code_point: '0xfeb6'
-    claimed_security_level: '1'
-  -
-    family: 'SPHINCS-SHA2'
-    name: 'sphincssha2192fsimple'
-    oid: '1 3 9999 6 5 10'
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x05, 0x0A'
-    oqs_meth: 'OQS_SIG_alg_sphincs_sha2_192f_simple'
-    code_point: '0xfeb9'
-    claimed_security_level: '3'
-  -
-    family: 'SPHINCS-SHA2'
-    name: 'sphincssha2192ssimple'
-    oid: '1 3 9999 6 5 12'
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x05, 0x0C'
-    oqs_meth: 'OQS_SIG_alg_sphincs_sha2_192s_simple'
-    code_point: '0xfebb'
-    claimed_security_level: '3'
-  -
-    family: 'SPHINCS-SHA2'
-    name: 'sphincssha2256fsimple'
-    oid: '1 3 9999 6 6 10'
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x06, 0x0A'
-    oqs_meth: 'OQS_SIG_alg_sphincs_sha2_256f_simple'
-    code_point: '0xfebd'
-    claimed_security_level: '5'
-  -
-    family: 'SPHINCS-SHA2'
-    name: 'sphincssha2256ssimple'
-    oid: '1 3 9999 6 6 12'
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x06, 0x0C'
-    oqs_meth: 'OQS_SIG_alg_sphincs_sha2_256s_simple'
-    code_point: '0xfec0'
-    claimed_security_level: '5'
-  -
-    family: 'SPHINCS-SHAKE'
-    name: 'sphincsshake128fsimple'
-    oid: '1 3 9999 6 7 13'
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x07, 0x0D'
-    oqs_meth: 'OQS_SIG_alg_sphincs_shake_128f_simple'
-    code_point: '0xfec2'
-    claimed_security_level: '1'
-  -
-    family: 'SPHINCS-SHAKE'
-    name: 'sphincsshake128ssimple'
-    oid: '1 3 9999 6 7 16'
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x07, 0x10'
-    oqs_meth: 'OQS_SIG_alg_sphincs_shake_128s_simple'
-    code_point: '0xfec5'
-    claimed_security_level: '1'
-  -
-    family: 'SPHINCS-SHAKE'
-    name: 'sphincsshake192fsimple'
-    oid: '1 3 9999 6 8 10'
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x08, 0x0A'
-    oqs_meth: 'OQS_SIG_alg_sphincs_shake_192f_simple'
-    code_point: '0xfec8'
-    claimed_security_level: '3'
-  -
-    family: 'SPHINCS-SHAKE'
-    name: 'sphincsshake192ssimple'
-    oid: '1 3 9999 6 8 12'
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x08, 0x0C'
-    oqs_meth: 'OQS_SIG_alg_sphincs_shake_192s_simple'
-    code_point: '0xfeca'
-    claimed_security_level: '3'
-  -
-    family: 'SPHINCS-SHAKE'
-    name: 'sphincsshake256fsimple'
-    oid: '1 3 9999 6 9 10'
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x09, 0x0A'
-    oqs_meth: 'OQS_SIG_alg_sphincs_shake_256f_simple'
-    code_point: '0xfecc'
-    claimed_security_level: '5'
-  -
-    family: 'SPHINCS-SHAKE'
-    name: 'sphincsshake256ssimple'
-    oid: '1 3 9999 6 9 12'
-    oid_encoded: '0x2B, 0xCE, 0x0F, 0x06, 0x09, 0x0C'
-    oqs_meth: 'OQS_SIG_alg_sphincs_shake_256s_simple'
-    code_point: '0xfece'
-    claimed_security_level: '5'
+- family: ML-DSA
+  name: mldsa44
+  oid: 2 16 840 1 101 3 4 3 17
+  oid_encoded: 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x11
+  oqs_meth: OQS_SIG_alg_ml_dsa_44
+  code_point: '0x0904'
+  claimed_security_level: '1'
+- family: ML-DSA
+  name: p256_mldsa44
+  oid: 1 3 9999 7 5
+  oid_encoded: 0x2B, 0xCE, 0x0F, 0x07, 0x05
+  oqs_meth: OQS_SIG_alg_ml_dsa_44
+  code_point: '0xff06'
+  claimed_security_level: '1'
+- family: ML-DSA
+  name: mldsa65
+  oid: 2 16 840 1 101 3 4 3 18
+  oid_encoded: 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x12
+  oqs_meth: OQS_SIG_alg_ml_dsa_65
+  code_point: '0x0905'
+  claimed_security_level: '3'
+- family: ML-DSA
+  name: p384_mldsa65
+  oid: 1 3 9999 7 7
+  oid_encoded: 0x2B, 0xCE, 0x0F, 0x07, 0x07
+  oqs_meth: OQS_SIG_alg_ml_dsa_65
+  code_point: '0xff08'
+  claimed_security_level: '3'
+- family: ML-DSA
+  name: mldsa87
+  oid: 2 16 840 1 101 3 4 3 19
+  oid_encoded: 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x13
+  oqs_meth: OQS_SIG_alg_ml_dsa_87
+  code_point: '0x0906'
+  claimed_security_level: '5'
+- family: ML-DSA
+  name: p521_mldsa87
+  oid: 1 3 9999 7 8
+  oid_encoded: 0x2B, 0xCE, 0x0F, 0x07, 0x08
+  oqs_meth: OQS_SIG_alg_ml_dsa_87
+  code_point: '0xff09'
+  claimed_security_level: '5'
+- family: CROSS
+  name: CROSSrsdp128balanced
+  oid: 1 3 6 1 4 1 62245 2 1 1 2 2
+  oid_encoded: 0x2B, 0x06, 0x01, 0x04, 0x01, 0x83, 0xE6, 0x25, 0x02, 0x01, 0x01, 0x02, 0x02
+  oqs_meth: OQS_SIG_alg_cross_rsdp_128_balanced
+  code_point: '0xff53'
+  claimed_security_level: '1'
+- family: UOV
+  name: OV_Ip_pkc
+  oid: 1 3 9999 9 6 1
+  oid_encoded: 0x2B, 0xCE, 0x0F, 0x09, 0x06, 0x01
+  oqs_meth: OQS_SIG_alg_uov_ov_Ip_pkc
+  code_point: '0xff0f'
+  claimed_security_level: '1'
+- family: UOV
+  name: OV_Ip_pkc_skc
+  oid: 1 3 9999 9 10 1
+  oid_encoded: 0x2B, 0xCE, 0x0F, 0x09, 0x0A, 0x01
+  oqs_meth: OQS_SIG_alg_uov_ov_Ip_pkc_skc
+  code_point: '0xff13'
+  claimed_security_level: '1'
+- family: Falcon
+  name: falcon512
+  oid: 1 3 9999 3 11
+  oid_encoded: 0x2B, 0xCE, 0x0F, 0x03, 0x0B
+  oqs_meth: OQS_SIG_alg_falcon_512
+  code_point: '0xfed7'
+  claimed_security_level: '1'
+- family: Falcon
+  name: rsa3072_falcon512
+  oid: 1 3 9999 3 13
+  oid_encoded: 0x2B, 0xCE, 0x0F, 0x03, 0x0D
+  oqs_meth: OQS_SIG_alg_falcon_512
+  code_point: '0xfed9'
+  claimed_security_level: '1'
+- family: Falcon
+  name: falconpadded512
+  oid: 1 3 9999 3 16
+  oid_encoded: 0x2B, 0xCE, 0x0F, 0x03, 0x10
+  oqs_meth: OQS_SIG_alg_falcon_padded_512
+  code_point: '0xfedc'
+  claimed_security_level: '1'
+- family: Falcon
+  name: falcon1024
+  oid: 1 3 9999 3 14
+  oid_encoded: 0x2B, 0xCE, 0x0F, 0x03, 0x0E
+  oqs_meth: OQS_SIG_alg_falcon_1024
+  code_point: '0xfeda'
+  claimed_security_level: '5'
+- family: Falcon
+  name: falconpadded1024
+  oid: 1 3 9999 3 19
+  oid_encoded: 0x2B, 0xCE, 0x0F, 0x03, 0x13
+  oqs_meth: OQS_SIG_alg_falcon_padded_1024
+  code_point: '0xfedf'
+  claimed_security_level: '5'
+- family: MAYO
+  name: mayo1
+  oid: 1 3 9999 8 1 3
+  oid_encoded: 0x2B, 0xCE, 0x0F, 0x08, 0x01, 0x03
+  oqs_meth: OQS_SIG_alg_mayo_1
+  code_point: '0xff32'
+  claimed_security_level: '1'
+- family: MAYO
+  name: mayo2
+  oid: 1 3 9999 8 2 3
+  oid_encoded: 0x2B, 0xCE, 0x0F, 0x08, 0x02, 0x03
+  oqs_meth: OQS_SIG_alg_mayo_2
+  code_point: '0xff33'
+  claimed_security_level: '1'
+- family: MAYO
+  name: mayo3
+  oid: 1 3 9999 8 3 3
+  oid_encoded: 0x2B, 0xCE, 0x0F, 0x08, 0x03, 0x03
+  oqs_meth: OQS_SIG_alg_mayo_3
+  code_point: '0xff34'
+  claimed_security_level: '3'
+- family: MAYO
+  name: mayo5
+  oid: 1 3 9999 8 5 3
+  oid_encoded: 0x2B, 0xCE, 0x0F, 0x08, 0x05, 0x03
+  oqs_meth: OQS_SIG_alg_mayo_5
+  code_point: '0xff35'
+  claimed_security_level: '5'
+- family: SNOVA
+  name: snova2454
+  oid: 1 3 9999 10 1 1
+  oid_encoded: 0x2B, 0xCE, 0x0F, 0x0A, 0x01, 0x01
+  oqs_meth: OQS_SIG_alg_snova_SNOVA_24_5_4
+  code_point: '0xff3a'
+  claimed_security_level: '1'
+- family: SNOVA
+  name: snova2454esk
+  oid: 1 3 9999 10 3 1
+  oid_encoded: 0x2B, 0xCE, 0x0F, 0x0A, 0x03, 0x01
+  oqs_meth: OQS_SIG_alg_snova_SNOVA_24_5_4_esk
+  code_point: '0xff3e'
+  claimed_security_level: '1'
+- family: SNOVA
+  name: snova37172
+  oid: 1 3 9999 10 5 1
+  oid_encoded: 0x2B, 0xCE, 0x0F, 0x0A, 0x05, 0x01
+  oqs_meth: OQS_SIG_alg_snova_SNOVA_37_17_2
+  code_point: '0xff42'
+  claimed_security_level: '1'
+- family: SNOVA
+  name: snova2455
+  oid: 1 3 9999 10 10 1
+  oid_encoded: 0x2B, 0xCE, 0x0F, 0x0A, 0x0A, 0x01
+  oqs_meth: OQS_SIG_alg_snova_SNOVA_24_5_5
+  code_point: '0xff4c'
+  claimed_security_level: '3'
+- family: SNOVA
+  name: snova2965
+  oid: 1 3 9999 10 12 1
+  oid_encoded: 0x2B, 0xCE, 0x0F, 0x0A, 0x0C, 0x01
+  oqs_meth: OQS_SIG_alg_snova_SNOVA_29_6_5
+  code_point: '0xff51'
+  claimed_security_level: '5'
+- family: SPHINCS-SHA2
+  name: sphincssha2128fsimple
+  oid: 1 3 9999 6 4 13
+  oid_encoded: 0x2B, 0xCE, 0x0F, 0x06, 0x04, 0x0D
+  oqs_meth: OQS_SIG_alg_sphincs_sha2_128f_simple
+  code_point: '0xfeb3'
+  claimed_security_level: '1'
+- family: SPHINCS-SHA2
+  name: sphincssha2128ssimple
+  oid: 1 3 9999 6 4 16
+  oid_encoded: 0x2B, 0xCE, 0x0F, 0x06, 0x04, 0x10
+  oqs_meth: OQS_SIG_alg_sphincs_sha2_128s_simple
+  code_point: '0xfeb6'
+  claimed_security_level: '1'
+- family: SPHINCS-SHA2
+  name: sphincssha2192fsimple
+  oid: 1 3 9999 6 5 10
+  oid_encoded: 0x2B, 0xCE, 0x0F, 0x06, 0x05, 0x0A
+  oqs_meth: OQS_SIG_alg_sphincs_sha2_192f_simple
+  code_point: '0xfeb9'
+  claimed_security_level: '3'
+- family: SPHINCS-SHA2
+  name: sphincssha2192ssimple
+  oid: 1 3 9999 6 5 12
+  oid_encoded: 0x2B, 0xCE, 0x0F, 0x06, 0x05, 0x0C
+  oqs_meth: OQS_SIG_alg_sphincs_sha2_192s_simple
+  code_point: '0xfebb'
+  claimed_security_level: '3'
+- family: SPHINCS-SHA2
+  name: sphincssha2256fsimple
+  oid: 1 3 9999 6 6 10
+  oid_encoded: 0x2B, 0xCE, 0x0F, 0x06, 0x06, 0x0A
+  oqs_meth: OQS_SIG_alg_sphincs_sha2_256f_simple
+  code_point: '0xfebd'
+  claimed_security_level: '5'
+- family: SPHINCS-SHA2
+  name: sphincssha2256ssimple
+  oid: 1 3 9999 6 6 12
+  oid_encoded: 0x2B, 0xCE, 0x0F, 0x06, 0x06, 0x0C
+  oqs_meth: OQS_SIG_alg_sphincs_sha2_256s_simple
+  code_point: '0xfec0'
+  claimed_security_level: '5'
+- family: SPHINCS-SHAKE
+  name: sphincsshake128fsimple
+  oid: 1 3 9999 6 7 13
+  oid_encoded: 0x2B, 0xCE, 0x0F, 0x06, 0x07, 0x0D
+  oqs_meth: OQS_SIG_alg_sphincs_shake_128f_simple
+  code_point: '0xfec2'
+  claimed_security_level: '1'
+- family: SPHINCS-SHAKE
+  name: sphincsshake128ssimple
+  oid: 1 3 9999 6 7 16
+  oid_encoded: 0x2B, 0xCE, 0x0F, 0x06, 0x07, 0x10
+  oqs_meth: OQS_SIG_alg_sphincs_shake_128s_simple
+  code_point: '0xfec5'
+  claimed_security_level: '1'
+- family: SPHINCS-SHAKE
+  name: sphincsshake192fsimple
+  oid: 1 3 9999 6 8 10
+  oid_encoded: 0x2B, 0xCE, 0x0F, 0x06, 0x08, 0x0A
+  oqs_meth: OQS_SIG_alg_sphincs_shake_192f_simple
+  code_point: '0xfec8'
+  claimed_security_level: '3'
+- family: SPHINCS-SHAKE
+  name: sphincsshake192ssimple
+  oid: 1 3 9999 6 8 12
+  oid_encoded: 0x2B, 0xCE, 0x0F, 0x06, 0x08, 0x0C
+  oqs_meth: OQS_SIG_alg_sphincs_shake_192s_simple
+  code_point: '0xfeca'
+  claimed_security_level: '3'
+- family: SPHINCS-SHAKE
+  name: sphincsshake256fsimple
+  oid: 1 3 9999 6 9 10
+  oid_encoded: 0x2B, 0xCE, 0x0F, 0x06, 0x09, 0x0A
+  oqs_meth: OQS_SIG_alg_sphincs_shake_256f_simple
+  code_point: '0xfecc'
+  claimed_security_level: '5'
+- family: SPHINCS-SHAKE
+  name: sphincsshake256ssimple
+  oid: 1 3 9999 6 9 12
+  oid_encoded: 0x2B, 0xCE, 0x0F, 0x06, 0x09, 0x0C
+  oqs_meth: OQS_SIG_alg_sphincs_shake_256s_simple
+  code_point: '0xfece'
+  claimed_security_level: '5'

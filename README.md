@@ -28,7 +28,7 @@ Both liboqs and this fork are part of the **Open Quantum Safe (OQS) project**, w
 
 ## Status
 
-This fork is built on top of [commit 208361a](https://github.com/google/boringssl/commit/208361a22e217afca0081acf78b2a3f3cf328a7e), and adds:
+This fork is built on top of [commit 88d0c0f](https://github.com/google/boringssl/commit/88d0c0f4772f3abe74f4f1012fe580fa85bab417), and adds:
 
 - quantum-safe key exchange
 - hybrid (quantum-safe + elliptic curve) key exchange
@@ -92,8 +92,6 @@ The following quantum-safe digital signature algorithms from liboqs are supporte
 - **SPHINCS-SHAKE**: `sphincsshake128fsimple`, `sphincsshake128ssimple`, `sphincsshake192fsimple`, `sphincsshake192ssimple`, `sphincsshake256fsimple`, `sphincsshake256ssimple`
 - **UOV**: `OV_Ip_pkc`, `OV_Ip_pkc_skc`
 <!--- OQS_TEMPLATE_FRAGMENT_LIST_SIGS_END -->
-
-No [composite signature algorithms](https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/) are currently implemented. If you need those algorithms, please use the [OQS-provider](https://github.com/open-quantum-safe/oqs-provider) or implement them yourself and create a pull request.
 
 ## Quickstart
 

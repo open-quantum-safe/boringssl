@@ -115,7 +115,7 @@ static bool negotiate_version(SSL_HANDSHAKE *hs, uint8_t *out_alert,
 
   // Handle FALLBACK_SCSV.
   if (ssl_client_cipher_list_contains_cipher(client_hello,
-                                             SSL3_CK_FALLBACK_SCSV & 0xffff) &&
+                                             SSL_CIPHER_FALLBACK_SCSV) &&
       ssl_protocol_version(ssl) < hs->max_version) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_INAPPROPRIATE_FALLBACK);
     *out_alert = SSL3_AD_INAPPROPRIATE_FALLBACK;
@@ -297,7 +297,7 @@ static bool is_probably_jdk11_with_tls13(const SSL_CLIENT_HELLO *client_hello) {
   // JDK 11 does not support ChaCha20-Poly1305. This is unusual: many modern
   // clients implement ChaCha20-Poly1305.
   if (ssl_client_cipher_list_contains_cipher(
-          client_hello, TLS1_3_CK_CHACHA20_POLY1305_SHA256 & 0xffff)) {
+          client_hello, SSL_CIPHER_CHACHA20_POLY1305_SHA256)) {
     return false;
   }
 
@@ -1025,10 +1025,12 @@ static enum ssl_hs_wait_t do_send_server_certificate(SSL_HANDSHAKE *hs) {
 
     if (alg_k & SSL_kECDHE) {
       assert(hs->new_session->group_id != 0);
-      hs->key_shares[0] = SSLKeyShare::Create(hs->new_session->group_id);
-      if (!hs->key_shares[0] ||                                  //
-          !CBB_add_u8(cbb.get(), NAMED_CURVE_TYPE) ||            //
-          !CBB_add_u16(cbb.get(), hs->new_session->group_id) ||  //
+      UniquePtr<SSLKeyShare> ssl_key_share =
+          SSLKeyShare::Create(hs->new_session->group_id);
+      if (ssl_key_share == nullptr ||                               //
+          !hs->key_shares.TryPushBack(std::move(ssl_key_share)) ||  //
+          !CBB_add_u8(cbb.get(), NAMED_CURVE_TYPE) ||               //
+          !CBB_add_u16(cbb.get(), hs->new_session->group_id) ||     //
           !CBB_add_u8_length_prefixed(cbb.get(), &child)) {
         return ssl_hs_error;
       }
@@ -1407,8 +1409,7 @@ static enum ssl_hs_wait_t do_read_client_key_exchange(SSL_HANDSHAKE *hs) {
     }
 
     // The key exchange state may now be discarded.
-    hs->key_shares[0].reset();
-    hs->key_shares[1].reset();
+    hs->key_shares.clear();
   } else if (!(alg_k & SSL_kPSK)) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
     ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_HANDSHAKE_FAILURE);

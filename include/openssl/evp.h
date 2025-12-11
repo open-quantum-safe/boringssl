@@ -114,6 +114,9 @@ OPENSSL_EXPORT int EVP_PKEY_bits(const EVP_PKEY *pkey);
 #define EVP_PKEY_P384_MLDSA65 NID_p384_mldsa65
 #define EVP_PKEY_MLDSA87 NID_mldsa87
 #define EVP_PKEY_P521_MLDSA87 NID_p521_mldsa87
+#define EVP_PKEY_CROSSRSDP128BALANCED NID_CROSSrsdp128balanced
+#define EVP_PKEY_OV_IP_PKC NID_OV_Ip_pkc
+#define EVP_PKEY_OV_IP_PKC_SKC NID_OV_Ip_pkc_skc
 #define EVP_PKEY_FALCON512 NID_falcon512
 #define EVP_PKEY_RSA3072_FALCON512 NID_rsa3072_falcon512
 #define EVP_PKEY_FALCONPADDED512 NID_falconpadded512
@@ -123,9 +126,6 @@ OPENSSL_EXPORT int EVP_PKEY_bits(const EVP_PKEY *pkey);
 #define EVP_PKEY_MAYO2 NID_mayo2
 #define EVP_PKEY_MAYO3 NID_mayo3
 #define EVP_PKEY_MAYO5 NID_mayo5
-#define EVP_PKEY_OV_IP_PKC NID_OV_Ip_pkc
-#define EVP_PKEY_OV_IP_PKC_SKC NID_OV_Ip_pkc_skc
-#define EVP_PKEY_CROSSRSDP128BALANCED NID_CROSSrsdp128balanced
 #define EVP_PKEY_SNOVA2454 NID_snova2454
 #define EVP_PKEY_SNOVA2454ESK NID_snova2454esk
 #define EVP_PKEY_SNOVA37172 NID_snova37172
@@ -151,6 +151,9 @@ OPENSSL_EXPORT int EVP_PKEY_bits(const EVP_PKEY *pkey);
    (pkey_id == NID_p384_mldsa65) || \
    (pkey_id == NID_mldsa87) || \
    (pkey_id == NID_p521_mldsa87) || \
+   (pkey_id == NID_CROSSrsdp128balanced) || \
+   (pkey_id == NID_OV_Ip_pkc) || \
+   (pkey_id == NID_OV_Ip_pkc_skc) || \
    (pkey_id == NID_falcon512) || \
    (pkey_id == NID_rsa3072_falcon512) || \
    (pkey_id == NID_falconpadded512) || \
@@ -160,9 +163,6 @@ OPENSSL_EXPORT int EVP_PKEY_bits(const EVP_PKEY *pkey);
    (pkey_id == NID_mayo2) || \
    (pkey_id == NID_mayo3) || \
    (pkey_id == NID_mayo5) || \
-   (pkey_id == NID_OV_Ip_pkc) || \
-   (pkey_id == NID_OV_Ip_pkc_skc) || \
-   (pkey_id == NID_CROSSrsdp128balanced) || \
    (pkey_id == NID_snova2454) || \
    (pkey_id == NID_snova2454esk) || \
    (pkey_id == NID_snova37172) || \
@@ -226,6 +226,9 @@ OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_mldsa65(void);
 OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_p384_mldsa65(void);
 OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_mldsa87(void);
 OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_p521_mldsa87(void);
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_CROSSrsdp128balanced(void);
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_OV_Ip_pkc(void);
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_OV_Ip_pkc_skc(void);
 OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_falcon512(void);
 OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_rsa3072_falcon512(void);
 OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_falconpadded512(void);
@@ -235,9 +238,6 @@ OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_mayo1(void);
 OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_mayo2(void);
 OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_mayo3(void);
 OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_mayo5(void);
-OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_OV_Ip_pkc(void);
-OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_OV_Ip_pkc_skc(void);
-OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_CROSSrsdp128balanced(void);
 OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_snova2454(void);
 OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_snova2454esk(void);
 OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_snova37172(void);
@@ -291,13 +291,13 @@ OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_ed25519(void);
 // request |EVP_pkey_dsa|, we could change that.
 OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_dsa(void);
 
-// EVP_pkey_rsa_pss_sha256 implements RSASSA-PSS keys, encoded as id-RSASSA-PSS
-// (RFC 4055, Section 3.1). The |EVP_PKEY_id| value is |EVP_PKEY_RSA_PSS|. This
+// EVP_pkey_rsa_pss_* implements RSASSA-PSS keys, encoded as id-RSASSA-PSS
+// (RFC 4055, Section 3.1). The |EVP_PKEY_id| value is |EVP_PKEY_RSA_PSS|. Each
 // |EVP_PKEY_ALG| only accepts keys whose parameters specify:
 //
-//  - A hashAlgorithm of SHA-256
-//  - A maskGenAlgorithm of MGF1 with SHA-256
-//  - A minimum saltLength of 32
+//  - A hashAlgorithm of the specified hash
+//  - A maskGenAlgorithm of MGF1 with the specified hash
+//  - A minimum saltLength of the specified hash's digest length
 //  - A trailerField of one (must be omitted in the encoding)
 //
 // Keys of this type will only be usable with RSASSA-PSS with matching signature
@@ -327,6 +327,8 @@ OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_dsa(void);
 // these keys. Callers that require this functionality should contact the
 // BoringSSL team.
 OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_rsa_pss_sha256(void);
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_rsa_pss_sha384(void);
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_rsa_pss_sha512(void);
 
 
 // Getting and setting concrete key types.

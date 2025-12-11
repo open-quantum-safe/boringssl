@@ -42,6 +42,9 @@ bool ssl_is_key_type_supported(int key_type) {
          key_type == EVP_PKEY_P384_MLDSA65 ||
          key_type == EVP_PKEY_MLDSA87 ||
          key_type == EVP_PKEY_P521_MLDSA87 ||
+         key_type == EVP_PKEY_CROSSRSDP128BALANCED ||
+         key_type == EVP_PKEY_OV_IP_PKC ||
+         key_type == EVP_PKEY_OV_IP_PKC_SKC ||
          key_type == EVP_PKEY_FALCON512 ||
          key_type == EVP_PKEY_RSA3072_FALCON512 ||
          key_type == EVP_PKEY_FALCONPADDED512 ||
@@ -51,9 +54,6 @@ bool ssl_is_key_type_supported(int key_type) {
          key_type == EVP_PKEY_MAYO2 ||
          key_type == EVP_PKEY_MAYO3 ||
          key_type == EVP_PKEY_MAYO5 ||
-         key_type == EVP_PKEY_OV_IP_PKC ||
-         key_type == EVP_PKEY_OV_IP_PKC_SKC ||
-         key_type == EVP_PKEY_CROSSRSDP128BALANCED ||
          key_type == EVP_PKEY_SNOVA2454 ||
          key_type == EVP_PKEY_SNOVA2454ESK ||
          key_type == EVP_PKEY_SNOVA37172 ||
@@ -142,6 +142,9 @@ static const SSL_SIGNATURE_ALGORITHM kSignatureAlgorithms[] = {
     {SSL_SIGN_P384_MLDSA65, EVP_PKEY_P384_MLDSA65, NID_undef, &EVP_sha384, false, true, true, false},
     {SSL_SIGN_MLDSA87, EVP_PKEY_MLDSA87, NID_undef, &EVP_sha512, false, true, true, false},
     {SSL_SIGN_P521_MLDSA87, EVP_PKEY_P521_MLDSA87, NID_undef, &EVP_sha512, false, true, true, false},
+    {SSL_SIGN_CROSSRSDP128BALANCED, EVP_PKEY_CROSSRSDP128BALANCED, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_OV_IP_PKC, EVP_PKEY_OV_IP_PKC, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_OV_IP_PKC_SKC, EVP_PKEY_OV_IP_PKC_SKC, NID_undef, &EVP_sha256, false, true, true, false},
     {SSL_SIGN_FALCON512, EVP_PKEY_FALCON512, NID_undef, &EVP_sha256, false, true, true, false},
     {SSL_SIGN_RSA3072_FALCON512, EVP_PKEY_RSA3072_FALCON512, NID_undef, &EVP_sha256, false, true, true, false},
     {SSL_SIGN_FALCONPADDED512, EVP_PKEY_FALCONPADDED512, NID_undef, &EVP_sha256, false, true, true, false},
@@ -151,9 +154,6 @@ static const SSL_SIGNATURE_ALGORITHM kSignatureAlgorithms[] = {
     {SSL_SIGN_MAYO2, EVP_PKEY_MAYO2, NID_undef, &EVP_sha256, false, true, true, false},
     {SSL_SIGN_MAYO3, EVP_PKEY_MAYO3, NID_undef, &EVP_sha384, false, true, true, false},
     {SSL_SIGN_MAYO5, EVP_PKEY_MAYO5, NID_undef, &EVP_sha512, false, true, true, false},
-    {SSL_SIGN_OV_IP_PKC, EVP_PKEY_OV_IP_PKC, NID_undef, &EVP_sha256, false, true, true, false},
-    {SSL_SIGN_OV_IP_PKC_SKC, EVP_PKEY_OV_IP_PKC_SKC, NID_undef, &EVP_sha256, false, true, true, false},
-    {SSL_SIGN_CROSSRSDP128BALANCED, EVP_PKEY_CROSSRSDP128BALANCED, NID_undef, &EVP_sha256, false, true, true, false},
     {SSL_SIGN_SNOVA2454, EVP_PKEY_SNOVA2454, NID_undef, &EVP_sha256, false, true, true, false},
     {SSL_SIGN_SNOVA2454ESK, EVP_PKEY_SNOVA2454ESK, NID_undef, &EVP_sha256, false, true, true, false},
     {SSL_SIGN_SNOVA37172, EVP_PKEY_SNOVA37172, NID_undef, &EVP_sha256, false, true, true, false},
@@ -196,6 +196,9 @@ bssl::UniquePtr<EVP_PKEY> ssl_parse_peer_subject_public_key_info(
       EVP_pkey_p384_mldsa65(),
       EVP_pkey_mldsa87(),
       EVP_pkey_p521_mldsa87(),
+      EVP_pkey_CROSSrsdp128balanced(),
+      EVP_pkey_OV_Ip_pkc(),
+      EVP_pkey_OV_Ip_pkc_skc(),
       EVP_pkey_falcon512(),
       EVP_pkey_rsa3072_falcon512(),
       EVP_pkey_falconpadded512(),
@@ -205,9 +208,6 @@ bssl::UniquePtr<EVP_PKEY> ssl_parse_peer_subject_public_key_info(
       EVP_pkey_mayo2(),
       EVP_pkey_mayo3(),
       EVP_pkey_mayo5(),
-      EVP_pkey_OV_Ip_pkc(),
-      EVP_pkey_OV_Ip_pkc_skc(),
-      EVP_pkey_CROSSrsdp128balanced(),
       EVP_pkey_snova2454(),
       EVP_pkey_snova2454esk(),
       EVP_pkey_snova37172(),
@@ -599,6 +599,9 @@ static const SignatureAlgorithmName kSignatureAlgorithmNames[] = {
     {SSL_SIGN_P384_MLDSA65, "p384_mldsa65"},
     {SSL_SIGN_MLDSA87, "mldsa87"},
     {SSL_SIGN_P521_MLDSA87, "p521_mldsa87"},
+    {SSL_SIGN_CROSSRSDP128BALANCED, "CROSSrsdp128balanced"},
+    {SSL_SIGN_OV_IP_PKC, "OV_Ip_pkc"},
+    {SSL_SIGN_OV_IP_PKC_SKC, "OV_Ip_pkc_skc"},
     {SSL_SIGN_FALCON512, "falcon512"},
     {SSL_SIGN_RSA3072_FALCON512, "rsa3072_falcon512"},
     {SSL_SIGN_FALCONPADDED512, "falconpadded512"},
@@ -608,9 +611,6 @@ static const SignatureAlgorithmName kSignatureAlgorithmNames[] = {
     {SSL_SIGN_MAYO2, "mayo2"},
     {SSL_SIGN_MAYO3, "mayo3"},
     {SSL_SIGN_MAYO5, "mayo5"},
-    {SSL_SIGN_OV_IP_PKC, "OV_Ip_pkc"},
-    {SSL_SIGN_OV_IP_PKC_SKC, "OV_Ip_pkc_skc"},
-    {SSL_SIGN_CROSSRSDP128BALANCED, "CROSSrsdp128balanced"},
     {SSL_SIGN_SNOVA2454, "snova2454"},
     {SSL_SIGN_SNOVA2454ESK, "snova2454esk"},
     {SSL_SIGN_SNOVA37172, "snova37172"},
@@ -799,6 +799,9 @@ static constexpr struct {
     {EVP_PKEY_P384_MLDSA65, NID_sha384, SSL_SIGN_P384_MLDSA65},
     {EVP_PKEY_MLDSA87, NID_sha512, SSL_SIGN_MLDSA87},
     {EVP_PKEY_P521_MLDSA87, NID_sha512, SSL_SIGN_P521_MLDSA87},
+    {EVP_PKEY_CROSSRSDP128BALANCED, NID_sha256, SSL_SIGN_CROSSRSDP128BALANCED},
+    {EVP_PKEY_OV_IP_PKC, NID_sha256, SSL_SIGN_OV_IP_PKC},
+    {EVP_PKEY_OV_IP_PKC_SKC, NID_sha256, SSL_SIGN_OV_IP_PKC_SKC},
     {EVP_PKEY_FALCON512, NID_sha256, SSL_SIGN_FALCON512},
     {EVP_PKEY_RSA3072_FALCON512, NID_sha256, SSL_SIGN_RSA3072_FALCON512},
     {EVP_PKEY_FALCONPADDED512, NID_sha256, SSL_SIGN_FALCONPADDED512},
@@ -808,9 +811,6 @@ static constexpr struct {
     {EVP_PKEY_MAYO2, NID_sha256, SSL_SIGN_MAYO2},
     {EVP_PKEY_MAYO3, NID_sha384, SSL_SIGN_MAYO3},
     {EVP_PKEY_MAYO5, NID_sha512, SSL_SIGN_MAYO5},
-    {EVP_PKEY_OV_IP_PKC, NID_sha256, SSL_SIGN_OV_IP_PKC},
-    {EVP_PKEY_OV_IP_PKC_SKC, NID_sha256, SSL_SIGN_OV_IP_PKC_SKC},
-    {EVP_PKEY_CROSSRSDP128BALANCED, NID_sha256, SSL_SIGN_CROSSRSDP128BALANCED},
     {EVP_PKEY_SNOVA2454, NID_sha256, SSL_SIGN_SNOVA2454},
     {EVP_PKEY_SNOVA2454ESK, NID_sha256, SSL_SIGN_SNOVA2454ESK},
     {EVP_PKEY_SNOVA37172, NID_sha256, SSL_SIGN_SNOVA37172},
