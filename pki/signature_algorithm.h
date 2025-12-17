@@ -50,11 +50,8 @@ enum class SignatureAlgorithm {
   kEcdsaSha384,
   kEcdsaSha512,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_SIGS_START
-  kMldsa44,
   kP256_mldsa44,
-  kMldsa65,
   kP384_mldsa65,
-  kMldsa87,
   kP521_mldsa87,
   kCrossrsdp128balanced,
   kOv_ip_pkc,
@@ -92,7 +89,8 @@ enum class SignatureAlgorithm {
   kRsaPssSha256,
   kRsaPssSha384,
   kRsaPssSha512,
-  kMaxValue = kRsaPssSha512,
+  kMtcProofDraftDavidben08,
+  kMaxValue = kMtcProofDraftDavidben08,
 };
 
 // Parses AlgorithmIdentifier as defined by RFC 5280 section 4.1.1.2:

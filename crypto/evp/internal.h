@@ -91,8 +91,10 @@ struct evp_pkey_asn1_method_st {
   int (*priv_encode)(CBB *out, const EVP_PKEY *key);
 
   int (*set_priv_raw)(EVP_PKEY *pkey, const uint8_t *in, size_t len);
+  int (*set_priv_seed)(EVP_PKEY *pkey, const uint8_t *in, size_t len);
   int (*set_pub_raw)(EVP_PKEY *pkey, const uint8_t *in, size_t len);
   int (*get_priv_raw)(const EVP_PKEY *pkey, uint8_t *out, size_t *out_len);
+  int (*get_priv_seed)(const EVP_PKEY *pkey, uint8_t *out, size_t *out_len);
   int (*get_pub_raw)(const EVP_PKEY *pkey, uint8_t *out, size_t *out_len);
 
   // TODO(davidben): Can these be merged with the functions above? OpenSSL does
@@ -113,7 +115,6 @@ struct evp_pkey_asn1_method_st {
   // OQS note: We've changed the return type from "int" to "size_t"
   // to allow for PQ algorithms with large signatures.
   size_t (*pkey_size)(const EVP_PKEY *pk);
-
   int (*pkey_bits)(const EVP_PKEY *pk);
 
   int (*param_missing)(const EVP_PKEY *pk);
@@ -259,23 +260,6 @@ struct evp_pkey_ctx_method_st {
 } /* EVP_PKEY_CTX_METHOD */;
 
 typedef struct {
-  // key is the concatenation of the private seed and public key. It is stored
-  // as a single 64-bit array to allow passing to |ED25519_sign|. If
-  // |has_private| is false, the first 32 bytes are uninitialized and the public
-  // key is in the last 32 bytes.
-  uint8_t key[64];
-  char has_private;
-} ED25519_KEY;
-
-#define ED25519_PUBLIC_KEY_OFFSET 32
-
-typedef struct {
-  uint8_t pub[32];
-  uint8_t priv[32];
-  char has_private;
-} X25519_KEY;
-
-typedef struct {
     OQS_SIG *ctx;
     uint8_t *pub;
     uint8_t *priv;
@@ -307,19 +291,9 @@ int is_oqs_hybrid_alg(int hybrid_nid);
 int is_EC_nid(int nid);
 int get_classical_sig_len(int classical_id);
 
-extern const EVP_PKEY_ASN1_METHOD dsa_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD ec_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD rsa_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD rsa_pss_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD ed25519_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD x25519_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD dh_asn1_meth;
 ///// OQS_TEMPLATE_FRAGMENT_DECLARE_ASN1_METHS_START
-extern const EVP_PKEY_ASN1_METHOD mldsa44_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD p256_mldsa44_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD mldsa65_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD p384_mldsa65_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD mldsa87_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD p521_mldsa87_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD CROSSrsdp128balanced_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD OV_Ip_pkc_asn1_meth;
@@ -360,11 +334,8 @@ extern const EVP_PKEY_CTX_METHOD x25519_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD hkdf_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD dh_pkey_meth;
 ///// OQS_TEMPLATE_FRAGMENT_DECLARE_PKEY_METHS_START
-extern const EVP_PKEY_CTX_METHOD mldsa44_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD p256_mldsa44_pkey_meth;
-extern const EVP_PKEY_CTX_METHOD mldsa65_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD p384_mldsa65_pkey_meth;
-extern const EVP_PKEY_CTX_METHOD mldsa87_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD p521_mldsa87_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD CROSSrsdp128balanced_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD OV_Ip_pkc_pkey_meth;
@@ -414,11 +385,8 @@ inline auto GetDefaultEVPAlgorithms() {
   // |EVP_parse_private_key|.
   return std::array{
 ///// OQS_TEMPLATE_FRAGMENT_LIST_PKEY_ASN1_METHS_START
-      EVP_pkey_mldsa44(),
       EVP_pkey_p256_mldsa44(),
-      EVP_pkey_mldsa65(),
       EVP_pkey_p384_mldsa65(),
-      EVP_pkey_mldsa87(),
       EVP_pkey_p521_mldsa87(),
       EVP_pkey_CROSSrsdp128balanced(),
       EVP_pkey_OV_Ip_pkc(),

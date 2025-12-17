@@ -21,6 +21,7 @@
 
 #include <utility>
 
+#include <openssl/cipher.h>
 #include <openssl/err.h>
 #include <openssl/hmac.h>
 #include <openssl/mem.h>
@@ -223,7 +224,7 @@ bool ssl_get_new_session(SSL_HANDSHAKE *hs) {
   }
 
   UniquePtr<SSL_SESSION> session = ssl_session_new(ssl->ctx->x509_method);
-  if (session == NULL) {
+  if (session == nullptr) {
     return false;
   }
 
@@ -258,7 +259,7 @@ bool ssl_get_new_session(SSL_HANDSHAKE *hs) {
   session->verify_result = X509_V_ERR_INVALID_CALL;
 
   hs->new_session = std::move(session);
-  ssl_set_session(ssl, NULL);
+  ssl_set_session(ssl, nullptr);
   return true;
 }
 
@@ -329,7 +330,7 @@ static int ssl_encrypt_ticket_with_cipher_ctx(SSL_HANDSHAKE *hs, CBB *out,
   SSL_CTX *tctx = hs->ssl->session_ctx.get();
   uint8_t iv[EVP_MAX_IV_LENGTH];
   uint8_t key_name[16];
-  if (tctx->ticket_key_cb != NULL) {
+  if (tctx->ticket_key_cb != nullptr) {
     int ret = tctx->ticket_key_cb(hs->ssl, key_name, iv, ctx.get(), hctx.get(),
                                   1 /* encrypt */);
     if (ret < 0) {
@@ -346,10 +347,10 @@ static int ssl_encrypt_ticket_with_cipher_ctx(SSL_HANDSHAKE *hs, CBB *out,
     }
     MutexReadLock lock(&tctx->lock);
     if (!RAND_bytes(iv, 16) ||
-        !EVP_EncryptInit_ex(ctx.get(), EVP_aes_128_cbc(), NULL,
+        !EVP_EncryptInit_ex(ctx.get(), EVP_aes_128_cbc(), nullptr,
                             tctx->ticket_key_current->aes_key, iv) ||
         !HMAC_Init_ex(hctx.get(), tctx->ticket_key_current->hmac_key, 16,
-                      tlsext_tick_md(), NULL)) {
+                      tlsext_tick_md(), nullptr)) {
       return 0;
     }
     OPENSSL_memcpy(key_name, tctx->ticket_key_current->name, 16);
@@ -367,13 +368,15 @@ static int ssl_encrypt_ticket_with_cipher_ctx(SSL_HANDSHAKE *hs, CBB *out,
     OPENSSL_memcpy(ptr, session_buf, session_len);
     total = session_len;
   } else {
-    int len;
-    if (!EVP_EncryptUpdate(ctx.get(), ptr + total, &len, session_buf,
-                           session_len)) {
+    size_t len;
+    if (!EVP_EncryptUpdate_ex(ctx.get(), ptr + total, &len,
+                              session_len + EVP_MAX_BLOCK_LENGTH - total,
+                              session_buf, session_len)) {
       return 0;
     }
     total += len;
-    if (!EVP_EncryptFinal_ex(ctx.get(), ptr + total, &len)) {
+    if (!EVP_EncryptFinal_ex2(ctx.get(), ptr + total, &len,
+                              session_len + EVP_MAX_BLOCK_LENGTH - total)) {
       return 0;
     }
     total += len;
@@ -465,7 +468,7 @@ bool ssl_session_is_context_valid(const SSL_HANDSHAKE *hs,
 }
 
 bool ssl_session_is_time_valid(const SSL *ssl, const SSL_SESSION *session) {
-  if (session == NULL) {
+  if (session == nullptr) {
     return false;
   }
 
@@ -665,7 +668,7 @@ void ssl_set_session(SSL *ssl, SSL_SESSION *session) {
 
 // locked by SSL_CTX in the calling function
 static void SSL_SESSION_list_remove(SSL_CTX *ctx, SSL_SESSION *session) {
-  if (session->next == NULL || session->prev == NULL) {
+  if (session->next == nullptr || session->prev == nullptr) {
     return;
   }
 
@@ -673,8 +676,8 @@ static void SSL_SESSION_list_remove(SSL_CTX *ctx, SSL_SESSION *session) {
     // last element in list
     if (session->prev == (SSL_SESSION *)&ctx->session_cache_head) {
       // only one element in list
-      ctx->session_cache_head = NULL;
-      ctx->session_cache_tail = NULL;
+      ctx->session_cache_head = nullptr;
+      ctx->session_cache_tail = nullptr;
     } else {
       ctx->session_cache_tail = session->prev;
       session->prev->next = (SSL_SESSION *)&(ctx->session_cache_tail);
@@ -689,15 +692,15 @@ static void SSL_SESSION_list_remove(SSL_CTX *ctx, SSL_SESSION *session) {
       session->prev->next = session->next;
     }
   }
-  session->prev = session->next = NULL;
+  session->prev = session->next = nullptr;
 }
 
 static void SSL_SESSION_list_add(SSL_CTX *ctx, SSL_SESSION *session) {
-  if (session->next != NULL && session->prev != NULL) {
+  if (session->next != nullptr && session->prev != nullptr) {
     SSL_SESSION_list_remove(ctx, session);
   }
 
-  if (ctx->session_cache_head == NULL) {
+  if (ctx->session_cache_head == nullptr) {
     ctx->session_cache_head = session;
     ctx->session_cache_tail = session;
     session->prev = (SSL_SESSION *)&(ctx->session_cache_head);
@@ -843,7 +846,7 @@ void SSL_SESSION_free(SSL_SESSION *session) {
 
 const uint8_t *SSL_SESSION_get_id(const SSL_SESSION *session,
                                   unsigned *out_len) {
-  if (out_len != NULL) {
+  if (out_len != nullptr) {
     *out_len = session->session_id.size();
   }
   return session->session_id.data();
@@ -864,7 +867,7 @@ uint32_t SSL_SESSION_get_timeout(const SSL_SESSION *session) {
 }
 
 uint64_t SSL_SESSION_get_time(const SSL_SESSION *session) {
-  if (session == NULL) {
+  if (session == nullptr) {
     // NULL should crash, but silently accept it here for compatibility.
     return 0;
   }
@@ -916,7 +919,7 @@ size_t SSL_SESSION_get_master_key(const SSL_SESSION *session, uint8_t *out,
 }
 
 uint64_t SSL_SESSION_set_time(SSL_SESSION *session, uint64_t time) {
-  if (session == NULL) {
+  if (session == nullptr) {
     return 0;
   }
 
@@ -925,7 +928,7 @@ uint64_t SSL_SESSION_set_time(SSL_SESSION *session, uint64_t time) {
 }
 
 uint32_t SSL_SESSION_set_timeout(SSL_SESSION *session, uint32_t timeout) {
-  if (session == NULL) {
+  if (session == nullptr) {
     return 0;
   }
 
@@ -936,7 +939,7 @@ uint32_t SSL_SESSION_set_timeout(SSL_SESSION *session, uint32_t timeout) {
 
 const uint8_t *SSL_SESSION_get0_id_context(const SSL_SESSION *session,
                                            unsigned *out_len) {
-  if (out_len != NULL) {
+  if (out_len != nullptr) {
     *out_len = session->sid_ctx.size();
   }
   return session->sid_ctx.data();
@@ -1061,7 +1064,7 @@ SSL_SESSION *SSL_get_session(const SSL *ssl) {
 
 SSL_SESSION *SSL_get1_session(SSL *ssl) {
   SSL_SESSION *ret = SSL_get_session(ssl);
-  if (ret != NULL) {
+  if (ret != nullptr) {
     SSL_SESSION_up_ref(ret);
   }
   return ret;
@@ -1095,7 +1098,7 @@ int SSL_CTX_remove_session(SSL_CTX *ctx, SSL_SESSION *session) {
 int SSL_set_session(SSL *ssl, SSL_SESSION *session) {
   // SSL_set_session may only be called before the handshake has started.
   if (ssl->s3->initial_handshake_complete ||  //
-      ssl->s3->hs == NULL ||                  //
+      ssl->s3->hs == nullptr ||               //
       ssl->s3->hs->state != 0) {
     abort();
   }
@@ -1105,7 +1108,7 @@ int SSL_set_session(SSL *ssl, SSL_SESSION *session) {
 }
 
 uint32_t SSL_CTX_set_timeout(SSL_CTX *ctx, uint32_t timeout) {
-  if (ctx == NULL) {
+  if (ctx == nullptr) {
     return 0;
   }
 
@@ -1120,7 +1123,7 @@ uint32_t SSL_CTX_set_timeout(SSL_CTX *ctx, uint32_t timeout) {
 }
 
 uint32_t SSL_CTX_get_timeout(const SSL_CTX *ctx) {
-  if (ctx == NULL) {
+  if (ctx == nullptr) {
     return 0;
   }
 
@@ -1148,7 +1151,7 @@ static void timeout_doall_arg(SSL_SESSION *session, void *void_param) {
     SSL_SESSION_list_remove(param->ctx, session);
     // TODO(https://crbug.com/boringssl/251): Callbacks should not be called
     // under a lock.
-    if (param->ctx->remove_session_cb != NULL) {
+    if (param->ctx->remove_session_cb != nullptr) {
       param->ctx->remove_session_cb(param->ctx, session);
     }
     SSL_SESSION_free(session);
@@ -1160,7 +1163,7 @@ void SSL_CTX_flush_sessions(SSL_CTX *ctx, uint64_t time) {
 
   tp.ctx = ctx;
   tp.cache = ctx->sessions;
-  if (tp.cache == NULL) {
+  if (tp.cache == nullptr) {
     return;
   }
   tp.time = time;

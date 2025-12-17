@@ -36,11 +36,8 @@ bool ssl_is_key_type_supported(int key_type) {
   return key_type == EVP_PKEY_RSA || key_type == EVP_PKEY_EC ||
          key_type == EVP_PKEY_ED25519 ||
 ///// OQS_TEMPLATE_FRAGMENT_CHECK_KEY_TYPE_START
-         key_type == EVP_PKEY_MLDSA44 ||
          key_type == EVP_PKEY_P256_MLDSA44 ||
-         key_type == EVP_PKEY_MLDSA65 ||
          key_type == EVP_PKEY_P384_MLDSA65 ||
-         key_type == EVP_PKEY_MLDSA87 ||
          key_type == EVP_PKEY_P521_MLDSA87 ||
          key_type == EVP_PKEY_CROSSRSDP128BALANCED ||
          key_type == EVP_PKEY_OV_IP_PKC ||
@@ -136,11 +133,8 @@ static const SSL_SIGNATURE_ALGORITHM kSignatureAlgorithms[] = {
      /*is_rsa_pss=*/false, /*tls12_ok=*/true, /*tls13_ok=*/true,
      /*client_only=*/false},
 ///// OQS_TEMPLATE_FRAGMENT_LIST_SSL_SIG_ALGS_START
-    {SSL_SIGN_MLDSA44, EVP_PKEY_MLDSA44, NID_undef, &EVP_sha256, false, true, true, false},
     {SSL_SIGN_P256_MLDSA44, EVP_PKEY_P256_MLDSA44, NID_undef, &EVP_sha256, false, true, true, false},
-    {SSL_SIGN_MLDSA65, EVP_PKEY_MLDSA65, NID_undef, &EVP_sha384, false, true, true, false},
     {SSL_SIGN_P384_MLDSA65, EVP_PKEY_P384_MLDSA65, NID_undef, &EVP_sha384, false, true, true, false},
-    {SSL_SIGN_MLDSA87, EVP_PKEY_MLDSA87, NID_undef, &EVP_sha512, false, true, true, false},
     {SSL_SIGN_P521_MLDSA87, EVP_PKEY_P521_MLDSA87, NID_undef, &EVP_sha512, false, true, true, false},
     {SSL_SIGN_CROSSRSDP128BALANCED, EVP_PKEY_CROSSRSDP128BALANCED, NID_undef, &EVP_sha256, false, true, true, false},
     {SSL_SIGN_OV_IP_PKC, EVP_PKEY_OV_IP_PKC, NID_undef, &EVP_sha256, false, true, true, false},
@@ -190,11 +184,8 @@ bssl::UniquePtr<EVP_PKEY> ssl_parse_peer_subject_public_key_info(
   // reachable from libssl.
   const EVP_PKEY_ALG *const algs[] = {
 ///// OQS_TEMPLATE_FRAGMENT_LIST_PEER_SIG_ALGS_START
-      EVP_pkey_mldsa44(),
       EVP_pkey_p256_mldsa44(),
-      EVP_pkey_mldsa65(),
       EVP_pkey_p384_mldsa65(),
-      EVP_pkey_mldsa87(),
       EVP_pkey_p521_mldsa87(),
       EVP_pkey_CROSSrsdp128balanced(),
       EVP_pkey_OV_Ip_pkc(),
@@ -236,7 +227,7 @@ bssl::UniquePtr<EVP_PKEY> ssl_parse_peer_subject_public_key_info(
 bool ssl_pkey_supports_algorithm(const SSL *ssl, EVP_PKEY *pkey,
                                  uint16_t sigalg, bool is_verify) {
   const SSL_SIGNATURE_ALGORITHM *alg = get_signature_algorithm(sigalg);
-  if (alg == NULL || EVP_PKEY_id(pkey) != alg->pkey_type) {
+  if (alg == nullptr || EVP_PKEY_id(pkey) != alg->pkey_type) {
     return false;
   }
 
@@ -296,13 +287,14 @@ static bool setup_ctx(SSL *ssl, EVP_MD_CTX *ctx, EVP_PKEY *pkey,
   }
 
   const SSL_SIGNATURE_ALGORITHM *alg = get_signature_algorithm(sigalg);
-  const EVP_MD *digest = alg->digest_func != NULL ? alg->digest_func() : NULL;
+  const EVP_MD *digest =
+      alg->digest_func != nullptr ? alg->digest_func() : nullptr;
   EVP_PKEY_CTX *pctx;
   if (is_verify) {
-    if (!EVP_DigestVerifyInit(ctx, &pctx, digest, NULL, pkey)) {
+    if (!EVP_DigestVerifyInit(ctx, &pctx, digest, nullptr, pkey)) {
       return false;
     }
-  } else if (!EVP_DigestSignInit(ctx, &pctx, digest, NULL, pkey)) {
+  } else if (!EVP_DigestSignInit(ctx, &pctx, digest, nullptr, pkey)) {
     return false;
   }
 
@@ -350,7 +342,7 @@ enum ssl_private_key_result_t ssl_private_key_sign(
   EVP_PKEY *privkey = cred->privkey.get();
   assert(!hs->can_release_private_key);
 
-  if (key_method != NULL) {
+  if (key_method != nullptr) {
     enum ssl_private_key_result_t ret;
     if (hs->pending_private_key_op) {
       ret = key_method->complete(ssl, out, out_len, max_out);
@@ -410,7 +402,7 @@ enum ssl_private_key_result_t ssl_private_key_decrypt(SSL_HANDSHAKE *hs,
   SSL *const ssl = hs->ssl;
   const SSL_CREDENTIAL *const cred = hs->credential.get();
   assert(!hs->can_release_private_key);
-  if (cred->key_method != NULL) {
+  if (cred->key_method != nullptr) {
     enum ssl_private_key_result_t ret;
     if (hs->pending_private_key_op) {
       ret = cred->key_method->complete(ssl, out, out_len, max_out);
@@ -426,7 +418,7 @@ enum ssl_private_key_result_t ssl_private_key_decrypt(SSL_HANDSHAKE *hs,
   }
 
   RSA *rsa = EVP_PKEY_get0_RSA(cred->privkey.get());
-  if (rsa == NULL) {
+  if (rsa == nullptr) {
     // Decrypt operations are only supported for RSA keys.
     OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
     return ssl_private_key_failure;
@@ -446,7 +438,7 @@ BSSL_NAMESPACE_END
 using namespace bssl;
 
 int SSL_use_RSAPrivateKey(SSL *ssl, RSA *rsa) {
-  if (rsa == NULL || ssl->config == NULL) {
+  if (rsa == nullptr || ssl->config == nullptr) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_PASSED_NULL_PARAMETER);
     return 0;
   }
@@ -472,7 +464,7 @@ int SSL_use_RSAPrivateKey_ASN1(SSL *ssl, const uint8_t *der, size_t der_len) {
 }
 
 int SSL_use_PrivateKey(SSL *ssl, EVP_PKEY *pkey) {
-  if (pkey == NULL || ssl->config == NULL) {
+  if (pkey == nullptr || ssl->config == nullptr) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_PASSED_NULL_PARAMETER);
     return 0;
   }
@@ -489,7 +481,7 @@ int SSL_use_PrivateKey_ASN1(int type, SSL *ssl, const uint8_t *der,
   }
 
   const uint8_t *p = der;
-  UniquePtr<EVP_PKEY> pkey(d2i_PrivateKey(type, NULL, &p, (long)der_len));
+  UniquePtr<EVP_PKEY> pkey(d2i_PrivateKey(type, nullptr, &p, (long)der_len));
   if (!pkey || p != der + der_len) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_ASN1_LIB);
     return 0;
@@ -499,7 +491,7 @@ int SSL_use_PrivateKey_ASN1(int type, SSL *ssl, const uint8_t *der,
 }
 
 int SSL_CTX_use_RSAPrivateKey(SSL_CTX *ctx, RSA *rsa) {
-  if (rsa == NULL) {
+  if (rsa == nullptr) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_PASSED_NULL_PARAMETER);
     return 0;
   }
@@ -525,7 +517,7 @@ int SSL_CTX_use_RSAPrivateKey_ASN1(SSL_CTX *ctx, const uint8_t *der,
 }
 
 int SSL_CTX_use_PrivateKey(SSL_CTX *ctx, EVP_PKEY *pkey) {
-  if (pkey == NULL) {
+  if (pkey == nullptr) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_PASSED_NULL_PARAMETER);
     return 0;
   }
@@ -542,7 +534,7 @@ int SSL_CTX_use_PrivateKey_ASN1(int type, SSL_CTX *ctx, const uint8_t *der,
   }
 
   const uint8_t *p = der;
-  UniquePtr<EVP_PKEY> pkey(d2i_PrivateKey(type, NULL, &p, (long)der_len));
+  UniquePtr<EVP_PKEY> pkey(d2i_PrivateKey(type, nullptr, &p, (long)der_len));
   if (!pkey || p != der + der_len) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_ASN1_LIB);
     return 0;
@@ -593,11 +585,8 @@ static const SignatureAlgorithmName kSignatureAlgorithmNames[] = {
     {SSL_SIGN_RSA_PSS_RSAE_SHA512, "rsa_pss_rsae_sha512"},
     {SSL_SIGN_ED25519, "ed25519"},
 ///// OQS_TEMPLATE_FRAGMENT_NAME_SIG_ALG_START
-    {SSL_SIGN_MLDSA44, "mldsa44"},
     {SSL_SIGN_P256_MLDSA44, "p256_mldsa44"},
-    {SSL_SIGN_MLDSA65, "mldsa65"},
     {SSL_SIGN_P384_MLDSA65, "p384_mldsa65"},
-    {SSL_SIGN_MLDSA87, "mldsa87"},
     {SSL_SIGN_P521_MLDSA87, "p521_mldsa87"},
     {SSL_SIGN_CROSSRSDP128BALANCED, "CROSSrsdp128balanced"},
     {SSL_SIGN_OV_IP_PKC, "OV_Ip_pkc"},
@@ -652,13 +641,13 @@ const char *SSL_get_signature_algorithm_name(uint16_t sigalg,
     }
   }
 
-  return NULL;
+  return nullptr;
 }
 
 size_t SSL_get_all_signature_algorithm_names(const char **out, size_t max_out) {
-  const char *kPredefinedNames[] = {"ecdsa_sha256", "ecdsa_sha384",
-                                    "ecdsa_sha512"};
-  return GetAllNames(out, max_out, kPredefinedNames,
+  const char *const kPredefinedNames[] = {"ecdsa_sha256", "ecdsa_sha384",
+                                          "ecdsa_sha512"};
+  return GetAllNames(out, max_out, Span(kPredefinedNames),
                      &SignatureAlgorithmName::name,
                      Span(kSignatureAlgorithmNames));
 }
@@ -793,11 +782,8 @@ static constexpr struct {
     {EVP_PKEY_EC, NID_sha512, SSL_SIGN_ECDSA_SECP521R1_SHA512},
     {EVP_PKEY_ED25519, NID_undef, SSL_SIGN_ED25519},
 ///// OQS_TEMPLATE_FRAGMENT_ADD_SIG_ALG_MAPPINGS_START
-    {EVP_PKEY_MLDSA44, NID_sha256, SSL_SIGN_MLDSA44},
     {EVP_PKEY_P256_MLDSA44, NID_sha256, SSL_SIGN_P256_MLDSA44},
-    {EVP_PKEY_MLDSA65, NID_sha384, SSL_SIGN_MLDSA65},
     {EVP_PKEY_P384_MLDSA65, NID_sha384, SSL_SIGN_P384_MLDSA65},
-    {EVP_PKEY_MLDSA87, NID_sha512, SSL_SIGN_MLDSA87},
     {EVP_PKEY_P521_MLDSA87, NID_sha512, SSL_SIGN_P521_MLDSA87},
     {EVP_PKEY_CROSSRSDP128BALANCED, NID_sha256, SSL_SIGN_CROSSRSDP128BALANCED},
     {EVP_PKEY_OV_IP_PKC, NID_sha256, SSL_SIGN_OV_IP_PKC},
@@ -1042,7 +1028,7 @@ static bool parse_sigalgs_list(Array<uint16_t> *out, const char *str) {
           buf[buf_used++] = c;
         } else {
           OPENSSL_PUT_ERROR(SSL, SSL_R_INVALID_SIGNATURE_ALGORITHM);
-          ERR_add_error_dataf("invalid character 0x%02x at offest %zu", c,
+          ERR_add_error_dataf("invalid character 0x%02x at offset %zu", c,
                               offset);
           return false;
         }

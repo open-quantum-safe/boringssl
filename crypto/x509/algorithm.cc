@@ -40,7 +40,7 @@ static int x509_digest_nid_ok(const int digest_nid) {
 
 int x509_digest_sign_algorithm(EVP_MD_CTX *ctx, X509_ALGOR *algor) {
   EVP_PKEY *pkey = EVP_PKEY_CTX_get0_pkey(ctx->pctx);
-  if (pkey == NULL) {
+  if (pkey == nullptr) {
     OPENSSL_PUT_ERROR(ASN1, ASN1_R_CONTEXT_NOT_INITIALISED);
     return 0;
   }
@@ -60,11 +60,8 @@ int x509_digest_sign_algorithm(EVP_MD_CTX *ctx, X509_ALGOR *algor) {
   int pkey_id = EVP_PKEY_id(pkey);
   if (pkey_id == EVP_PKEY_ED25519 ||
 ///// OQS_TEMPLATE_FRAGMENT_CHECK_PKEY_ID_START
-      pkey_id == EVP_PKEY_MLDSA44 ||
       pkey_id == EVP_PKEY_P256_MLDSA44 ||
-      pkey_id == EVP_PKEY_MLDSA65 ||
       pkey_id == EVP_PKEY_P384_MLDSA65 ||
-      pkey_id == EVP_PKEY_MLDSA87 ||
       pkey_id == EVP_PKEY_P521_MLDSA87 ||
       pkey_id == EVP_PKEY_CROSSRSDP128BALANCED ||
       pkey_id == EVP_PKEY_OV_IP_PKC ||
@@ -98,13 +95,13 @@ int x509_digest_sign_algorithm(EVP_MD_CTX *ctx, X509_ALGOR *algor) {
 ///// OQS_TEMPLATE_FRAGMENT_CHECK_PKEY_ID_END
       ) {
     // The NID == EVP_PKEY_id for ED25519 and the OQS schemes
-    return X509_ALGOR_set0(algor, OBJ_nid2obj(pkey_id), V_ASN1_UNDEF, NULL);
+    return X509_ALGOR_set0(algor, OBJ_nid2obj(pkey_id), V_ASN1_UNDEF, nullptr);
   }
 
   // Default behavior: look up the OID for the algorithm/hash pair and encode
   // that.
   const EVP_MD *digest = EVP_MD_CTX_get0_md(ctx);
-  if (digest == NULL) {
+  if (digest == nullptr) {
     OPENSSL_PUT_ERROR(ASN1, ASN1_R_CONTEXT_NOT_INITIALISED);
     return 0;
   }
@@ -121,7 +118,7 @@ int x509_digest_sign_algorithm(EVP_MD_CTX *ctx, X509_ALGOR *algor) {
   // it.
   int paramtype =
       (EVP_PKEY_id(pkey) == EVP_PKEY_RSA) ? V_ASN1_NULL : V_ASN1_UNDEF;
-  return X509_ALGOR_set0(algor, OBJ_nid2obj(sign_nid), paramtype, NULL);
+  return X509_ALGOR_set0(algor, OBJ_nid2obj(sign_nid), paramtype, nullptr);
 }
 
 int x509_digest_verify_init(EVP_MD_CTX *ctx, const X509_ALGOR *sigalg,
@@ -155,11 +152,11 @@ int x509_digest_verify_init(EVP_MD_CTX *ctx, const X509_ALGOR *sigalg,
       return x509_rsa_pss_to_ctx(ctx, sigalg, pkey);
     }
     if (sigalg_nid == NID_ED25519) {
-      if (sigalg->parameter != NULL) {
+      if (sigalg->parameter != nullptr) {
         OPENSSL_PUT_ERROR(X509, X509_R_INVALID_PARAMETER);
         return 0;
       }
-      return EVP_DigestVerifyInit(ctx, NULL, NULL, NULL, pkey);
+      return EVP_DigestVerifyInit(ctx, nullptr, nullptr, nullptr, pkey);
     }
     OPENSSL_PUT_ERROR(ASN1, ASN1_R_UNKNOWN_SIGNATURE_ALGORITHM);
     return 0;
@@ -170,17 +167,17 @@ int x509_digest_verify_init(EVP_MD_CTX *ctx, const X509_ALGOR *sigalg,
   //
   // TODO(davidben): Chromium's verifier allows both forms for RSA, but enforces
   // ECDSA more strictly. Align with Chromium and add a flag for b/167375496.
-  if (sigalg->parameter != NULL && sigalg->parameter->type != V_ASN1_NULL) {
+  if (sigalg->parameter != nullptr && sigalg->parameter->type != V_ASN1_NULL) {
     OPENSSL_PUT_ERROR(X509, X509_R_INVALID_PARAMETER);
     return 0;
   }
 
   // Otherwise, initialize with the digest from the OID.
   const EVP_MD *digest = EVP_get_digestbynid(digest_nid);
-  if (digest == NULL) {
+  if (digest == nullptr) {
     OPENSSL_PUT_ERROR(ASN1, ASN1_R_UNKNOWN_MESSAGE_DIGEST_ALGORITHM);
     return 0;
   }
 
-  return EVP_DigestVerifyInit(ctx, NULL, digest, NULL, pkey);
+  return EVP_DigestVerifyInit(ctx, nullptr, digest, nullptr, pkey);
 }

@@ -16,6 +16,7 @@
 
 #include <openssl/bytestring.h>
 #include <openssl/digest.h>
+#include <openssl/nid.h>
 
 #include "input.h"
 #include "parse_values.h"
@@ -25,6 +26,11 @@ BSSL_NAMESPACE_BEGIN
 
 namespace {
 
+// These OIDs do not reference libcrypto's OBJ table, as that table is very
+// large and includes many more OIDs than we need. However, where OIDs are
+// already in the table, we reuse the |OBJ_ENC_*| constants to avoid needing to
+// specify them a second time.
+
 // From RFC 5912:
 //
 //     sha1WithRSAEncryption OBJECT IDENTIFIER ::= {
@@ -32,8 +38,7 @@ namespace {
 //      pkcs-1(1) 5 }
 //
 // In dotted notation: 1.2.840.113549.1.1.5
-const uint8_t kOidSha1WithRsaEncryption[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
-                                             0x0d, 0x01, 0x01, 0x05};
+const uint8_t kOidSha1WithRsaEncryption[] = {OBJ_ENC_sha1WithRSAEncryption};
 
 // sha1WithRSASignature is a deprecated equivalent of
 // sha1WithRSAEncryption.
@@ -47,7 +52,7 @@ const uint8_t kOidSha1WithRsaEncryption[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
 // See also: https://bugzilla.mozilla.org/show_bug.cgi?id=1042479
 //
 // In dotted notation: 1.3.14.3.2.29
-const uint8_t kOidSha1WithRsaSignature[] = {0x2b, 0x0e, 0x03, 0x02, 0x1d};
+const uint8_t kOidSha1WithRsaSignature[] = {OBJ_ENC_sha1WithRSA};
 
 // From RFC 5912:
 //
@@ -59,24 +64,21 @@ const uint8_t kOidSha1WithRsaSignature[] = {0x2b, 0x0e, 0x03, 0x02, 0x1d};
 //     sha256WithRSAEncryption  OBJECT IDENTIFIER  ::=  { pkcs-1 11 }
 //
 // In dotted notation: 1.2.840.113549.1.1.11
-const uint8_t kOidSha256WithRsaEncryption[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
-                                               0x0d, 0x01, 0x01, 0x0b};
+const uint8_t kOidSha256WithRsaEncryption[] = {OBJ_ENC_sha256WithRSAEncryption};
 
 // From RFC 5912:
 //
 //     sha384WithRSAEncryption  OBJECT IDENTIFIER  ::=  { pkcs-1 12 }
 //
 // In dotted notation: 1.2.840.113549.1.1.11
-const uint8_t kOidSha384WithRsaEncryption[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
-                                               0x0d, 0x01, 0x01, 0x0c};
+const uint8_t kOidSha384WithRsaEncryption[] = {OBJ_ENC_sha384WithRSAEncryption};
 
 // From RFC 5912:
 //
 //     sha512WithRSAEncryption  OBJECT IDENTIFIER  ::=  { pkcs-1 13 }
 //
 // In dotted notation: 1.2.840.113549.1.1.13
-const uint8_t kOidSha512WithRsaEncryption[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
-                                               0x0d, 0x01, 0x01, 0x0d};
+const uint8_t kOidSha512WithRsaEncryption[] = {OBJ_ENC_sha512WithRSAEncryption};
 
 // From RFC 5912:
 //
@@ -85,7 +87,7 @@ const uint8_t kOidSha512WithRsaEncryption[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
 //      signatures(4) 1 }
 //
 // In dotted notation: 1.2.840.10045.4.1
-const uint8_t kOidEcdsaWithSha1[] = {0x2a, 0x86, 0x48, 0xce, 0x3d, 0x04, 0x01};
+const uint8_t kOidEcdsaWithSha1[] = {OBJ_ENC_ecdsa_with_SHA1};
 
 // From RFC 5912:
 //
@@ -94,8 +96,7 @@ const uint8_t kOidEcdsaWithSha1[] = {0x2a, 0x86, 0x48, 0xce, 0x3d, 0x04, 0x01};
 //      ecdsa-with-SHA2(3) 2 }
 //
 // In dotted notation: 1.2.840.10045.4.3.2
-const uint8_t kOidEcdsaWithSha256[] = {0x2a, 0x86, 0x48, 0xce,
-                                       0x3d, 0x04, 0x03, 0x02};
+const uint8_t kOidEcdsaWithSha256[] = {OBJ_ENC_ecdsa_with_SHA256};
 
 // From RFC 5912:
 //
@@ -104,8 +105,7 @@ const uint8_t kOidEcdsaWithSha256[] = {0x2a, 0x86, 0x48, 0xce,
 //      ecdsa-with-SHA2(3) 3 }
 //
 // In dotted notation: 1.2.840.10045.4.3.3
-const uint8_t kOidEcdsaWithSha384[] = {0x2a, 0x86, 0x48, 0xce,
-                                       0x3d, 0x04, 0x03, 0x03};
+const uint8_t kOidEcdsaWithSha384[] = {OBJ_ENC_ecdsa_with_SHA384};
 
 // From RFC 5912:
 //
@@ -114,31 +114,37 @@ const uint8_t kOidEcdsaWithSha384[] = {0x2a, 0x86, 0x48, 0xce,
 //      ecdsa-with-SHA2(3) 4 }
 //
 // In dotted notation: 1.2.840.10045.4.3.4
-const uint8_t kOidEcdsaWithSha512[] = {0x2a, 0x86, 0x48, 0xce,
-                                       0x3d, 0x04, 0x03, 0x04};
+const uint8_t kOidEcdsaWithSha512[] = {OBJ_ENC_ecdsa_with_SHA512};
 
 // From RFC 5912:
 //
 //     id-RSASSA-PSS  OBJECT IDENTIFIER  ::=  { pkcs-1 10 }
 //
 // In dotted notation: 1.2.840.113549.1.1.10
-const uint8_t kOidRsaSsaPss[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
-                                 0x0d, 0x01, 0x01, 0x0a};
+const uint8_t kOidRsaSsaPss[] = {OBJ_ENC_rsassaPss};
 
 // From RFC 5912:
 //
 //     id-mgf1  OBJECT IDENTIFIER  ::=  { pkcs-1 8 }
 //
 // In dotted notation: 1.2.840.113549.1.1.8
-const uint8_t kOidMgf1[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
-                            0x0d, 0x01, 0x01, 0x08};
+const uint8_t kOidMgf1[] = {OBJ_ENC_mgf1};
+
+// From draft-davidben-tls-merkle-tree-certs-08:
+//
+//   id-alg-mtcProof OBJECT IDENTIFIER ::= {
+//       iso(1) identified-organization(3) dod(6) internet(1) security(5)
+//       mechanisms(5) pkix(7) algorithms(6) TBD}
+//
+// Also from said draft:
+//   For initial experimentation, early implementations of this design will use
+//   the OID 1.3.6.1.4.1.44363.47.0 instead of id-alg-mtcProof.
+const uint8_t kOidAlgMtcProofDraftDavidben08[] = {0x2b, 0x06, 0x01, 0x04, 0x01,
+                                                  0x82, 0xda, 0x4b, 0x2f, 0x00};
 
 ///// OQS_TEMPLATE_FRAGMENT_LIST_SIG_OIDS_START
-const uint8_t kOidMldsa44[] = {0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x11};
 const uint8_t kOidP256_mldsa44[] = {0x2b, 0xce, 0x0f, 0x07, 0x05};
-const uint8_t kOidMldsa65[] = {0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x12};
 const uint8_t kOidP384_mldsa65[] = {0x2b, 0xce, 0x0f, 0x07, 0x07};
-const uint8_t kOidMldsa87[] = {0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x13};
 const uint8_t kOidP521_mldsa87[] = {0x2b, 0xce, 0x0f, 0x07, 0x08};
 const uint8_t kOidCrossrsdp128balanced[] = {0x2b, 0x06, 0x01, 0x04, 0x01, 0x83, 0xe6, 0x25, 0x02, 0x01, 0x01, 0x02, 0x02};
 const uint8_t kOidOv_ip_pkc[] = {0x2b, 0xce, 0x0f, 0x09, 0x06, 0x01};
@@ -425,20 +431,11 @@ std::optional<SignatureAlgorithm> ParseSignatureAlgorithm(
   }
 
 ///// OQS_TEMPLATE_FRAGMENT_PARSE_SIG_OIDS_START
-  if (oid == der::Input(kOidMldsa44)) {
-    return SignatureAlgorithm::kMldsa44;
-  }
   if (oid == der::Input(kOidP256_mldsa44)) {
     return SignatureAlgorithm::kP256_mldsa44;
   }
-  if (oid == der::Input(kOidMldsa65)) {
-    return SignatureAlgorithm::kMldsa65;
-  }
   if (oid == der::Input(kOidP384_mldsa65)) {
     return SignatureAlgorithm::kP384_mldsa65;
-  }
-  if (oid == der::Input(kOidMldsa87)) {
-    return SignatureAlgorithm::kMldsa87;
   }
   if (oid == der::Input(kOidP521_mldsa87)) {
     return SignatureAlgorithm::kP521_mldsa87;
@@ -536,6 +533,10 @@ std::optional<SignatureAlgorithm> ParseSignatureAlgorithm(
     return ParseRsaPss(params);
   }
 
+  if (oid == der::Input(kOidAlgMtcProofDraftDavidben08) && params.empty()) {
+    return SignatureAlgorithm::kMtcProofDraftDavidben08;
+  }
+
   // Unknown signature algorithm.
   return std::nullopt;
 }
@@ -566,7 +567,6 @@ std::optional<DigestAlgorithm> GetTlsServerEndpointDigestAlgorithm(
       return DigestAlgorithm::Sha512;
 
 ///// OQS_TEMPLATE_FRAGMENT_PAIR_SIGS_WITH_DIGESTS_START
-    case SignatureAlgorithm::kMldsa44:
     case SignatureAlgorithm::kP256_mldsa44:
     case SignatureAlgorithm::kCrossrsdp128balanced:
     case SignatureAlgorithm::kOv_ip_pkc:
@@ -585,7 +585,6 @@ std::optional<DigestAlgorithm> GetTlsServerEndpointDigestAlgorithm(
     case SignatureAlgorithm::kSphincsshake128ssimple:
       return DigestAlgorithm::Sha256;
 
-    case SignatureAlgorithm::kMldsa65:
     case SignatureAlgorithm::kP384_mldsa65:
     case SignatureAlgorithm::kMayo3:
     case SignatureAlgorithm::kSnova2455:
@@ -595,7 +594,6 @@ std::optional<DigestAlgorithm> GetTlsServerEndpointDigestAlgorithm(
     case SignatureAlgorithm::kSphincsshake192ssimple:
       return DigestAlgorithm::Sha384;
 
-    case SignatureAlgorithm::kMldsa87:
     case SignatureAlgorithm::kP521_mldsa87:
     case SignatureAlgorithm::kFalcon1024:
     case SignatureAlgorithm::kFalconpadded1024:
@@ -617,6 +615,10 @@ std::optional<DigestAlgorithm> GetTlsServerEndpointDigestAlgorithm(
       return DigestAlgorithm::Sha384;
     case SignatureAlgorithm::kRsaPssSha512:
       return DigestAlgorithm::Sha512;
+
+    // This is not implemented for MTCs.
+    case SignatureAlgorithm::kMtcProofDraftDavidben08:
+      return std::nullopt;
   }
   return std::nullopt;
 }

@@ -1140,11 +1140,8 @@ OPENSSL_EXPORT int SSL_set_ocsp_response(SSL *ssl, const uint8_t *response,
 #define SSL_SIGN_RSA_PSS_RSAE_SHA512 0x0806
 #define SSL_SIGN_ED25519 0x0807
 ///// OQS_TEMPLATE_FRAGMENT_DEFINE_SIG_CODEPOINTS_START
-#define SSL_SIGN_MLDSA44 0x0904
 #define SSL_SIGN_P256_MLDSA44 0xff06
-#define SSL_SIGN_MLDSA65 0x0905
 #define SSL_SIGN_P384_MLDSA65 0xff08
-#define SSL_SIGN_MLDSA87 0x0906
 #define SSL_SIGN_P521_MLDSA87 0xff09
 #define SSL_SIGN_CROSSRSDP128BALANCED 0xff53
 #define SSL_SIGN_OV_IP_PKC 0xff0f
@@ -1585,11 +1582,6 @@ OPENSSL_EXPORT uint16_t SSL_CIPHER_get_max_version(const SSL_CIPHER *cipher);
 // example, "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256".
 OPENSSL_EXPORT const char *SSL_CIPHER_standard_name(const SSL_CIPHER *cipher);
 
-// SSL_CIPHER_get_name returns the OpenSSL name of |cipher|. For example,
-// "ECDHE-RSA-AES128-GCM-SHA256". Callers are recommended to use
-// |SSL_CIPHER_standard_name| instead.
-OPENSSL_EXPORT const char *SSL_CIPHER_get_name(const SSL_CIPHER *cipher);
-
 // SSL_CIPHER_get_kx_name returns a string that describes the key-exchange
 // method used by |cipher|. For example, "ECDHE_ECDSA". TLS 1.3 AEAD-only
 // ciphers return the string "GENERIC".
@@ -1810,9 +1802,8 @@ OPENSSL_EXPORT STACK_OF(X509) *SSL_get_peer_cert_chain(const SSL *ssl);
 //
 // This is the same as |SSL_get_peer_cert_chain| except that this function
 // always returns the full chain, i.e. the first element of the return value
-// (if any) will be the leaf certificate. In constrast,
-// |SSL_get_peer_cert_chain| returns only the intermediate certificates if the
-// |ssl| is a server.
+// (if any) will be the leaf certificate. In contrast, |SSL_get_peer_cert_chain|
+// returns only the intermediate certificates if the |ssl| is a server.
 OPENSSL_EXPORT STACK_OF(X509) *SSL_get_peer_full_cert_chain(const SSL *ssl);
 
 // SSL_get0_peer_certificates returns the peer's certificate chain, or NULL if
@@ -2307,6 +2298,10 @@ OPENSSL_EXPORT int SSL_CTX_remove_session(SSL_CTX *ctx, SSL_SESSION *session);
 // of time |time|. If |time| is zero, all sessions are removed.
 OPENSSL_EXPORT void SSL_CTX_flush_sessions(SSL_CTX *ctx, uint64_t time);
 
+// SSL_new_session_cb is the type of the callback that is called when a new
+// session is established and ready to be cached.
+typedef int (*SSL_new_session_cb)(SSL *ssl, SSL_SESSION *session);
+
 // SSL_CTX_sess_set_new_cb sets the callback to be called when a new session is
 // established and ready to be cached. If the session cache is disabled (the
 // appropriate one of |SSL_SESS_CACHE_CLIENT| or |SSL_SESS_CACHE_SERVER| is
@@ -2325,13 +2320,16 @@ OPENSSL_EXPORT void SSL_CTX_flush_sessions(SSL_CTX *ctx, uint64_t time);
 // |SSL_do_handshake| or |SSL_connect| completes if False Start is enabled. Thus
 // it's recommended to use this callback over calling |SSL_get_session| on
 // handshake completion.
-OPENSSL_EXPORT void SSL_CTX_sess_set_new_cb(
-    SSL_CTX *ctx, int (*new_session_cb)(SSL *ssl, SSL_SESSION *session));
+OPENSSL_EXPORT void SSL_CTX_sess_set_new_cb(SSL_CTX *ctx,
+                                            SSL_new_session_cb new_session_cb);
 
 // SSL_CTX_sess_get_new_cb returns the callback set by
 // |SSL_CTX_sess_set_new_cb|.
-OPENSSL_EXPORT int (*SSL_CTX_sess_get_new_cb(SSL_CTX *ctx))(
-    SSL *ssl, SSL_SESSION *session);
+OPENSSL_EXPORT SSL_new_session_cb SSL_CTX_sess_get_new_cb(SSL_CTX *ctx);
+
+// SSL_remove_session_cb is the type of the callback that is called when a
+// session is removed from the internal session cache.
+typedef void (*SSL_remove_session_cb)(SSL_CTX *ctx, SSL_SESSION *session);
 
 // SSL_CTX_sess_set_remove_cb sets a callback which is called when a session is
 // removed from the internal session cache.
@@ -2339,13 +2337,16 @@ OPENSSL_EXPORT int (*SSL_CTX_sess_get_new_cb(SSL_CTX *ctx))(
 // TODO(davidben): What is the point of this callback? It seems useless since it
 // only fires on sessions in the internal cache.
 OPENSSL_EXPORT void SSL_CTX_sess_set_remove_cb(
-    SSL_CTX *ctx,
-    void (*remove_session_cb)(SSL_CTX *ctx, SSL_SESSION *session));
+    SSL_CTX *ctx, SSL_remove_session_cb remove_session_cb);
 
 // SSL_CTX_sess_get_remove_cb returns the callback set by
 // |SSL_CTX_sess_set_remove_cb|.
-OPENSSL_EXPORT void (*SSL_CTX_sess_get_remove_cb(SSL_CTX *ctx))(
-    SSL_CTX *ctx, SSL_SESSION *session);
+OPENSSL_EXPORT SSL_remove_session_cb SSL_CTX_sess_get_remove_cb(SSL_CTX *ctx);
+
+// SSL_get_session_cb is the type of the callback that is called to look up a
+// session by ID for a server.
+typedef SSL_SESSION *(*SSL_get_session_cb)(SSL *ssl, const uint8_t *id,
+                                           int id_len, int *out_copy);
 
 // SSL_CTX_sess_set_get_cb sets a callback to look up a session by ID for a
 // server. The callback is passed the session ID and should return a matching
@@ -2366,14 +2367,12 @@ OPENSSL_EXPORT void (*SSL_CTX_sess_get_remove_cb(SSL_CTX *ctx))(
 //
 // If the internal session cache is enabled, the callback is only consulted if
 // the internal cache does not return a match.
-OPENSSL_EXPORT void SSL_CTX_sess_set_get_cb(
-    SSL_CTX *ctx, SSL_SESSION *(*get_session_cb)(SSL *ssl, const uint8_t *id,
-                                                 int id_len, int *out_copy));
+OPENSSL_EXPORT void SSL_CTX_sess_set_get_cb(SSL_CTX *ctx,
+                                            SSL_get_session_cb get_session_cb);
 
 // SSL_CTX_sess_get_get_cb returns the callback set by
 // |SSL_CTX_sess_set_get_cb|.
-OPENSSL_EXPORT SSL_SESSION *(*SSL_CTX_sess_get_get_cb(SSL_CTX *ctx))(
-    SSL *ssl, const uint8_t *id, int id_len, int *out_copy);
+OPENSSL_EXPORT SSL_get_session_cb SSL_CTX_sess_get_get_cb(SSL_CTX *ctx);
 
 // SSL_magic_pending_session_ptr returns a magic |SSL_SESSION|* which indicates
 // that the session isn't currently unavailable. |SSL_get_error| will then
@@ -2504,7 +2503,7 @@ enum ssl_ticket_aead_result_t BORINGSSL_ENUM_INT {
   // ssl_ticket_aead_ignore_ticket indicates that the ticket should be ignored
   // (i.e. is corrupt or otherwise undecryptable).
   ssl_ticket_aead_ignore_ticket,
-  // ssl_ticket_aead_error indicates that a fatal error occured and the
+  // ssl_ticket_aead_error indicates that a fatal error occurred and the
   // handshake should be terminated.
   ssl_ticket_aead_error,
 };
@@ -2597,11 +2596,6 @@ OPENSSL_EXPORT size_t SSL_CTX_get_num_tickets(const SSL_CTX *ctx);
 #define SSL_GROUP_MLKEM512 512
 #define SSL_GROUP_P256_MLKEM512 12107
 #define SSL_GROUP_X25519_MLKEM512 12214
-#define SSL_GROUP_MLKEM768 513
-#define SSL_GROUP_P256_MLKEM768 4587
-#define SSL_GROUP_P384_MLKEM768 12108
-#define SSL_GROUP_P384_MLKEM1024 4589
-#define SSL_GROUP_P521_MLKEM1024 12109
 #define SSL_GROUP_FRODO640AES 65024
 #define SSL_GROUP_P256_FRODO640AES 65025
 #define SSL_GROUP_X25519_FRODO640AES 65026
@@ -5091,7 +5085,7 @@ enum ssl_select_cert_result_t BORINGSSL_ENUM_INT {
   // ssl_select_cert_retry indicates that the operation could not be
   // immediately completed and must be reattempted at a later point.
   ssl_select_cert_retry = 0,
-  // ssl_select_cert_error indicates that a fatal error occured and the
+  // ssl_select_cert_error indicates that a fatal error occurred and the
   // handshake should be terminated.
   ssl_select_cert_error = -1,
   // ssl_select_cert_disable_ech indicates that, although an encrypted
@@ -5369,6 +5363,11 @@ OPENSSL_EXPORT const char *SSL_CIPHER_get_version(const SSL_CIPHER *cipher);
 // 0x03000000. This is part of OpenSSL's SSL 2.0 legacy. SSL 2.0 has long since
 // been removed from BoringSSL. Use |SSL_CIPHER_get_protocol_id| instead.
 OPENSSL_EXPORT uint32_t SSL_CIPHER_get_id(const SSL_CIPHER *cipher);
+
+// SSL_CIPHER_get_name returns the OpenSSL name of |cipher|. For example,
+// "ECDHE-RSA-AES128-GCM-SHA256". Callers are recommended to use
+// |SSL_CIPHER_standard_name| instead.
+OPENSSL_EXPORT const char *SSL_CIPHER_get_name(const SSL_CIPHER *cipher);
 
 typedef void COMP_METHOD;
 typedef struct ssl_comp_st SSL_COMP;
@@ -6115,7 +6114,7 @@ enum ssl_compliance_policy_t BORINGSSL_ENUM_INT {
   // dominate other considerations.
   ssl_compliance_policy_wpa3_192_202304,
 
-  // ssl_compliance_policy_cnsa_202407 confingures a TLS connection to use:
+  // ssl_compliance_policy_cnsa_202407 configures a TLS connection to use:
   //   * For TLS 1.3, AES-256-GCM over AES-128-GCM over ChaCha20-Poly1305.
   //
   // I.e. it ensures that AES-GCM will be used whenever the client supports it.

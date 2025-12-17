@@ -297,24 +297,12 @@ static int get_classical_key_len(oqs_key_type_t keytype, int classical_id) {
 }
 
 ///// OQS_TEMPLATE_FRAGMENT_DEF_EVP_PKEY_ALGS_START
-const EVP_PKEY_ALG *EVP_pkey_mldsa44(void) {
-  static const EVP_PKEY_ALG kAlg = { &mldsa44_asn1_meth };
-  return &kAlg;
-}
 const EVP_PKEY_ALG *EVP_pkey_p256_mldsa44(void) {
   static const EVP_PKEY_ALG kAlg = { &p256_mldsa44_asn1_meth };
   return &kAlg;
 }
-const EVP_PKEY_ALG *EVP_pkey_mldsa65(void) {
-  static const EVP_PKEY_ALG kAlg = { &mldsa65_asn1_meth };
-  return &kAlg;
-}
 const EVP_PKEY_ALG *EVP_pkey_p384_mldsa65(void) {
   static const EVP_PKEY_ALG kAlg = { &p384_mldsa65_asn1_meth };
-  return &kAlg;
-}
-const EVP_PKEY_ALG *EVP_pkey_mldsa87(void) {
-  static const EVP_PKEY_ALG kAlg = { &mldsa87_asn1_meth };
   return &kAlg;
 }
 const EVP_PKEY_ALG *EVP_pkey_p521_mldsa87(void) {
@@ -576,8 +564,10 @@ end:
       ALG##_priv_decode,                                \
       NULL /* priv_encode */,                           \
       ALG##_set_priv_raw,                               \
+      NULL /* set_priv_seed */,                         \
       ALG##_set_pub_raw,                                \
       NULL /* get_priv_raw */,                          \
+      NULL /* get_priv_seed */,                         \
       NULL /* get_pub_raw */,                           \
       NULL /* int set1_tls_encodedpoint */,             \
       NULL /* size_t set1_tls_encodedpoint */,          \
@@ -592,20 +582,11 @@ end:
 
 // the OIDs can also be found in the kObjectData array in crypto/obj/obj_dat.h
 ///// OQS_TEMPLATE_FRAGMENT_DEF_ASN1_METHODS_START
-DEFINE_OQS_ASN1_METHODS(mldsa44, OQS_SIG_alg_ml_dsa_44, EVP_PKEY_MLDSA44)
-DEFINE_OQS_PKEY_ASN1_METHOD(mldsa44, EVP_PKEY_MLDSA44, OID(0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x11))
-
 DEFINE_OQS_ASN1_METHODS(p256_mldsa44, OQS_SIG_alg_ml_dsa_44, EVP_PKEY_P256_MLDSA44)
 DEFINE_OQS_PKEY_ASN1_METHOD(p256_mldsa44, EVP_PKEY_P256_MLDSA44, OID(0x2B, 0xCE, 0x0F, 0x07, 0x05))
 
-DEFINE_OQS_ASN1_METHODS(mldsa65, OQS_SIG_alg_ml_dsa_65, EVP_PKEY_MLDSA65)
-DEFINE_OQS_PKEY_ASN1_METHOD(mldsa65, EVP_PKEY_MLDSA65, OID(0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x12))
-
 DEFINE_OQS_ASN1_METHODS(p384_mldsa65, OQS_SIG_alg_ml_dsa_65, EVP_PKEY_P384_MLDSA65)
 DEFINE_OQS_PKEY_ASN1_METHOD(p384_mldsa65, EVP_PKEY_P384_MLDSA65, OID(0x2B, 0xCE, 0x0F, 0x07, 0x07))
-
-DEFINE_OQS_ASN1_METHODS(mldsa87, OQS_SIG_alg_ml_dsa_87, EVP_PKEY_MLDSA87)
-DEFINE_OQS_PKEY_ASN1_METHOD(mldsa87, EVP_PKEY_MLDSA87, OID(0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x13))
 
 DEFINE_OQS_ASN1_METHODS(p521_mldsa87, OQS_SIG_alg_ml_dsa_87, EVP_PKEY_P521_MLDSA87)
 DEFINE_OQS_PKEY_ASN1_METHOD(p521_mldsa87, EVP_PKEY_P521_MLDSA87, OID(0x2B, 0xCE, 0x0F, 0x07, 0x08))

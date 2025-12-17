@@ -2290,15 +2290,15 @@ TEST(X509Test, RSASign) {
   ASSERT_TRUE(pkey);
   // Test PKCS#1 v1.5.
   bssl::ScopedEVP_MD_CTX md_ctx;
-  ASSERT_TRUE(
-      EVP_DigestSignInit(md_ctx.get(), NULL, EVP_sha256(), NULL, pkey.get()));
+  ASSERT_TRUE(EVP_DigestSignInit(md_ctx.get(), nullptr, EVP_sha256(), nullptr,
+                                 pkey.get()));
   ASSERT_TRUE(SignatureRoundTrips(md_ctx.get(), pkey.get()));
 
   // RSA-PSS with salt length matching hash length should work when passing in
   // |RSA_PSS_SALTLEN_DIGEST| or the value explicitly.
   md_ctx.Reset();
   EVP_PKEY_CTX *pkey_ctx;
-  ASSERT_TRUE(EVP_DigestSignInit(md_ctx.get(), &pkey_ctx, EVP_sha256(), NULL,
+  ASSERT_TRUE(EVP_DigestSignInit(md_ctx.get(), &pkey_ctx, EVP_sha256(), nullptr,
                                  pkey.get()));
   ASSERT_TRUE(EVP_PKEY_CTX_set_rsa_padding(pkey_ctx, RSA_PKCS1_PSS_PADDING));
   ASSERT_TRUE(
@@ -2306,7 +2306,7 @@ TEST(X509Test, RSASign) {
   ASSERT_TRUE(SignatureRoundTrips(md_ctx.get(), pkey.get()));
 
   md_ctx.Reset();
-  ASSERT_TRUE(EVP_DigestSignInit(md_ctx.get(), &pkey_ctx, EVP_sha256(), NULL,
+  ASSERT_TRUE(EVP_DigestSignInit(md_ctx.get(), &pkey_ctx, EVP_sha256(), nullptr,
                                  pkey.get()));
   ASSERT_TRUE(EVP_PKEY_CTX_set_rsa_padding(pkey_ctx, RSA_PKCS1_PSS_PADDING));
   ASSERT_TRUE(EVP_PKEY_CTX_set_rsa_pss_saltlen(pkey_ctx, 32));
@@ -2314,7 +2314,7 @@ TEST(X509Test, RSASign) {
 
   // RSA-PSS with SHA-1 is not supported.
   md_ctx.Reset();
-  ASSERT_TRUE(EVP_DigestSignInit(md_ctx.get(), &pkey_ctx, EVP_sha1(), NULL,
+  ASSERT_TRUE(EVP_DigestSignInit(md_ctx.get(), &pkey_ctx, EVP_sha1(), nullptr,
                                  pkey.get()));
   ASSERT_TRUE(EVP_PKEY_CTX_set_rsa_padding(pkey_ctx, RSA_PKCS1_PSS_PADDING));
   ASSERT_TRUE(
@@ -2325,7 +2325,7 @@ TEST(X509Test, RSASign) {
 
   // RSA-PSS with mismatched hashes is not supported.
   md_ctx.Reset();
-  ASSERT_TRUE(EVP_DigestSignInit(md_ctx.get(), &pkey_ctx, EVP_sha256(), NULL,
+  ASSERT_TRUE(EVP_DigestSignInit(md_ctx.get(), &pkey_ctx, EVP_sha256(), nullptr,
                                  pkey.get()));
   ASSERT_TRUE(EVP_PKEY_CTX_set_rsa_padding(pkey_ctx, RSA_PKCS1_PSS_PADDING));
   ASSERT_TRUE(
@@ -2337,7 +2337,7 @@ TEST(X509Test, RSASign) {
 
   // RSA-PSS with the wrong salt length is not supported.
   md_ctx.Reset();
-  ASSERT_TRUE(EVP_DigestSignInit(md_ctx.get(), &pkey_ctx, EVP_sha256(), NULL,
+  ASSERT_TRUE(EVP_DigestSignInit(md_ctx.get(), &pkey_ctx, EVP_sha256(), nullptr,
                                  pkey.get()));
   ASSERT_TRUE(EVP_PKEY_CTX_set_rsa_padding(pkey_ctx, RSA_PKCS1_PSS_PADDING));
   ASSERT_TRUE(EVP_PKEY_CTX_set_rsa_pss_saltlen(pkey_ctx, 33));
@@ -2827,7 +2827,7 @@ TEST(X509Test, TestFromBufferReused) {
   ASSERT_TRUE(PEMToDER(&data2, &data2_len, kLeafPEM));
   EXPECT_EQ(root->buf, buf.get());
 
-  // Historically, this function tested the interaction betweeen
+  // Historically, this function tested the interaction between
   // |X509_parse_from_buffer| and object reuse. We no longer support object
   // reuse, so |d2i_X509| will replace |raw| with a new object. However, we
   // retain this test to verify that releasing objects from |d2i_X509| works
@@ -3840,7 +3840,9 @@ rsn4lSYsqI4OI4ei
 // Test that the library enforces versions are valid and match the fields
 // present.
 TEST(X509Test, InvalidVersion) {
-  EXPECT_FALSE(CertFromPEM(kExplicitDefaultVersionPEM));
+  // kExplicitDefaultVersionPEM is invalid but, for now, we accept it. See
+  // https://crbug.com/42290225.
+  EXPECT_TRUE(CertFromPEM(kExplicitDefaultVersionPEM));
   EXPECT_FALSE(CRLFromPEM(kExplicitDefaultVersionCRLPEM));
   EXPECT_FALSE(CertFromPEM(kNegativeVersionPEM));
   EXPECT_FALSE(CertFromPEM(kFutureVersionPEM));
@@ -8977,6 +8979,9 @@ TEST(X509Test, VerifyUnusualTBSCert) {
       // A FALSE critical bit is encoded instead of omitted as DEFAULT.
       // TODO(crbug.com/442221114): The parser should reject this.
       "crypto/x509/test/unusual_tbs_critical_false_not_omitted.pem",
+      // Empty extension instead of omitting the entire field.
+      // TODO(crbug.com/442221114): The parser should reject this.
+      "crypto/x509/test/unusual_tbs_empty_extension_not_omitted.pem",
       // ecdsa-with-SHA256 AlgorithmIdentifier parameters are NULL instead of
       // omitted. We accept this due to b/167375496.
       "crypto/x509/test/unusual_tbs_null_sigalg_param.pem",
@@ -8985,6 +8990,9 @@ TEST(X509Test, VerifyUnusualTBSCert) {
       "crypto/x509/test/unusual_tbs_uid_both.pem",
       "crypto/x509/test/unusual_tbs_uid_issuer.pem",
       "crypto/x509/test/unusual_tbs_uid_subject.pem",
+      // A v1 version is explicit encoded instead of omitted as DEFAULT.
+      // TODO(crbug.com/42290225): The parser should reject this.
+      "crypto/x509/test/unusual_tbs_v1_not_omitted.pem",
       // Within a RelativeDistinguishedName, attributes should be sorted in
       // canonical SET OF order. These are inverted.
       // TODO(crbug.com/42290219): The parser should reject this.
@@ -8995,20 +9003,6 @@ TEST(X509Test, VerifyUnusualTBSCert) {
     bssl::UniquePtr<X509> cert = CertFromPEM(GetTestData(path));
     ASSERT_TRUE(cert);
     EXPECT_TRUE(X509_verify(cert.get(), key.get()));
-  }
-
-  // The following inputs were once accepted, and thus preserved in signature
-  // verification, but we no longer parse them at all.
-  const char *kInvalidPaths[] = {
-      // Empty extension instead of omitting the entire field.
-      "crypto/x509/test/unusual_tbs_empty_extension_not_omitted.pem",
-      // A v1 version is explicit encoded instead of omitted as DEFAULT.
-      "crypto/x509/test/unusual_tbs_v1_not_omitted.pem",
-  };
-  for (const char *path : kInvalidPaths) {
-    SCOPED_TRACE(path);
-    bssl::UniquePtr<X509> cert = CertFromPEM(GetTestData(path));
-    EXPECT_FALSE(cert);
   }
 }
 

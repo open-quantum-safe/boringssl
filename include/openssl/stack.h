@@ -521,6 +521,7 @@ DEFINE_NAMED_STACK_OF(OPENSSL_STRING, char)
 #endif
 
 #if !defined(BORINGSSL_NO_CXX)
+// Work around consumers including our headers under extern "C".
 extern "C++" {
 
 #include <type_traits>

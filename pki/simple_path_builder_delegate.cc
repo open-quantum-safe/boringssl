@@ -88,11 +88,8 @@ bool SimplePathBuilderDelegate::IsSignatureAlgorithmAcceptable(
     case SignatureAlgorithm::kEcdsaSha384:
     case SignatureAlgorithm::kEcdsaSha512:
 ///// OQS_TEMPLATE_FRAGMENT_LIST_SIGS_START
-    case SignatureAlgorithm::kMldsa44:
     case SignatureAlgorithm::kP256_mldsa44:
-    case SignatureAlgorithm::kMldsa65:
     case SignatureAlgorithm::kP384_mldsa65:
-    case SignatureAlgorithm::kMldsa87:
     case SignatureAlgorithm::kP521_mldsa87:
     case SignatureAlgorithm::kCrossrsdp128balanced:
     case SignatureAlgorithm::kOv_ip_pkc:
@@ -127,6 +124,7 @@ bool SimplePathBuilderDelegate::IsSignatureAlgorithmAcceptable(
     case SignatureAlgorithm::kRsaPssSha256:
     case SignatureAlgorithm::kRsaPssSha384:
     case SignatureAlgorithm::kRsaPssSha512:
+    case SignatureAlgorithm::kMtcProofDraftDavidben08:
       return true;
   }
   return false;

@@ -416,7 +416,8 @@ class TLSFuzzer {
     }
 
     const uint8_t *bufp = kCertificateDER;
-    bssl::UniquePtr<X509> cert(d2i_X509(NULL, &bufp, sizeof(kCertificateDER)));
+    bssl::UniquePtr<X509> cert(
+        d2i_X509(nullptr, &bufp, sizeof(kCertificateDER)));
     if (!cert ||
         !SSL_CTX_use_certificate(ctx_.get(), cert.get()) ||
         !SSL_CTX_set_ocsp_response(ctx_.get(), kOCSPResponse,
@@ -458,11 +459,6 @@ class TLSFuzzer {
         SSL_GROUP_MLKEM512,
         SSL_GROUP_P256_MLKEM512,
         SSL_GROUP_X25519_MLKEM512,
-        SSL_GROUP_MLKEM768,
-        SSL_GROUP_P256_MLKEM768,
-        SSL_GROUP_P384_MLKEM768,
-        SSL_GROUP_P384_MLKEM1024,
-        SSL_GROUP_P521_MLKEM1024,
         SSL_GROUP_FRODO640AES,
         SSL_GROUP_P256_FRODO640AES,
         SSL_GROUP_X25519_FRODO640AES,

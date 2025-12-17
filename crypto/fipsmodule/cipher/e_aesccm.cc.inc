@@ -19,6 +19,7 @@
 #include <openssl/cipher.h>
 #include <openssl/err.h>
 #include <openssl/mem.h>
+#include <openssl/span.h>
 
 #include "../aes/internal.h"
 #include "../delocate.h"
@@ -58,7 +59,7 @@ static size_t CRYPTO_ccm128_max_input(const struct ccm128_context *ctx) {
 static int ccm128_init_state(const struct ccm128_context *ctx,
                              struct ccm128_state *state, const AES_KEY *key,
                              const uint8_t *nonce, size_t nonce_len,
-                             const uint8_t *aad, size_t aad_len,
+                             bssl::Span<const CRYPTO_IVEC> aadvecs,
                              size_t plaintext_len) {
   const block128_f block = ctx->block;
   const unsigned M = ctx->M;
@@ -73,6 +74,7 @@ static int ccm128_init_state(const struct ccm128_context *ctx,
   // Assemble the first block for computing the MAC.
   OPENSSL_memset(state, 0, sizeof(*state));
   state->nonce[0] = (uint8_t)((L - 1) | ((M - 2) / 2) << 3);
+  size_t aad_len = bssl::iovec::TotalLength(aadvecs);
   if (aad_len != 0) {
     state->nonce[0] |= 0x40;  // Set AAD Flag
   }
@@ -114,16 +116,26 @@ static int ccm128_init_state(const struct ccm128_context *ctx,
       i = 10;
     }
 
-    do {
-      for (; i < 16 && aad_len != 0; i++) {
-        state->cmac[i] ^= *aad;
-        aad++;
-        aad_len--;
+    while (!aadvecs.empty() && aadvecs.front().len == 0) {
+      aadvecs = aadvecs.subspan(1);
+    }
+    size_t offset = 0;
+    while (!aadvecs.empty()) {
+      for (; i < 16 && !aadvecs.empty(); i++) {
+        state->cmac[i] ^= aadvecs.front().in[offset];
+        ++offset;
+        if (offset >= aadvecs.front().len) {
+          aadvecs = aadvecs.subspan(1);
+          while (!aadvecs.empty() && aadvecs.front().len == 0) {
+            aadvecs = aadvecs.subspan(1);
+          }
+          offset = 0;
+        }
       }
       (*block)(state->cmac, state->cmac, key);
       blocks++;
       i = 0;
-    } while (aad_len != 0);
+    }
   }
 
   // Per RFC 3610, section 2.6, the total number of block cipher operations done
@@ -145,7 +157,7 @@ static int ccm128_init_state(const struct ccm128_context *ctx,
 
 static int ccm128_encrypt(const struct ccm128_context *ctx,
                           struct ccm128_state *state, const AES_KEY *key,
-                          uint8_t *out, const uint8_t *in, size_t len) {
+                          bssl::Span<const CRYPTO_IOVEC> iovecs) {
   // The counter for encryption begins at one.
   for (unsigned i = 0; i < ctx->L; i++) {
     state->nonce[15 - i] = 0;
@@ -154,32 +166,44 @@ static int ccm128_encrypt(const struct ccm128_context *ctx,
 
   uint8_t partial_buf[16];
   unsigned num = 0;
-  CRYPTO_ctr128_encrypt_ctr32(in, out, len, key, state->nonce, partial_buf,
-                              &num, ctx->ctr);
+  for (const CRYPTO_IOVEC &iovec : iovecs) {
+    CRYPTO_ctr128_encrypt_ctr32(iovec.in, iovec.out, iovec.len, key,
+                                state->nonce, partial_buf, &num, ctx->ctr);
+  }
   return 1;
 }
 
 static int ccm128_compute_mac(const struct ccm128_context *ctx,
                               struct ccm128_state *state, const AES_KEY *key,
                               uint8_t *out_tag, size_t tag_len,
-                              const uint8_t *in, size_t len) {
+                              bssl::Span<const CRYPTO_IOVEC> iovecs,
+                              bool encrypt) {
   block128_f block = ctx->block;
   if (tag_len != ctx->M) {
     return 0;
   }
 
-  // Incorporate |in| into the MAC.
-  while (len >= 16) {
-    CRYPTO_xor16(state->cmac, state->cmac, in);
-    (*block)(state->cmac, state->cmac, key);
-    in += 16;
-    len -= 16;
-  }
-  if (len > 0) {
-    for (size_t i = 0; i < len; i++) {
-      state->cmac[i] ^= in[i];
+  auto update_mac = [&](const uint8_t *in, size_t len) {
+    while (len >= 16) {
+      CRYPTO_xor16(state->cmac, state->cmac, in);
+      (*block)(state->cmac, state->cmac, key);
+      in += 16;
+      len -= 16;
     }
-    (*block)(state->cmac, state->cmac, key);
+    if (len != 0) {
+      for (size_t i = 0; i < len; i++) {
+        state->cmac[i] ^= in[i];
+      }
+      (*block)(state->cmac, state->cmac, key);
+    }
+    return true;
+  };
+
+  // Incorporate the plaintext into the MAC.
+  if (encrypt) {
+    bssl::iovec::ForEachBlockRange<16>(iovecs, update_mac, update_mac);
+  } else {
+    bssl::iovec::ForEachOutBlockRange<16>(iovecs, update_mac, update_mac);
   }
 
   // Encrypt the MAC with counter zero.
@@ -195,29 +219,31 @@ static int ccm128_compute_mac(const struct ccm128_context *ctx,
 }
 
 static int CRYPTO_ccm128_encrypt(const struct ccm128_context *ctx,
-                                 const AES_KEY *key, uint8_t *out,
+                                 const AES_KEY *key,
+                                 bssl::Span<const CRYPTO_IOVEC> iovecs,
                                  uint8_t *out_tag, size_t tag_len,
                                  const uint8_t *nonce, size_t nonce_len,
-                                 const uint8_t *in, size_t len,
-                                 const uint8_t *aad, size_t aad_len) {
+                                 bssl::Span<const CRYPTO_IVEC> aadvecs) {
   struct ccm128_state state;
-  return ccm128_init_state(ctx, &state, key, nonce, nonce_len, aad, aad_len,
-                           len) &&
-         ccm128_compute_mac(ctx, &state, key, out_tag, tag_len, in, len) &&
-         ccm128_encrypt(ctx, &state, key, out, in, len);
+  return ccm128_init_state(ctx, &state, key, nonce, nonce_len, aadvecs,
+                           bssl::iovec::TotalLength(iovecs)) &&
+         ccm128_compute_mac(ctx, &state, key, out_tag, tag_len, iovecs,
+                            /*encrypt=*/true) &&
+         ccm128_encrypt(ctx, &state, key, iovecs);
 }
 
 static int CRYPTO_ccm128_decrypt(const struct ccm128_context *ctx,
-                                 const AES_KEY *key, uint8_t *out,
+                                 const AES_KEY *key,
+                                 bssl::Span<const CRYPTO_IOVEC> iovecs,
                                  uint8_t *out_tag, size_t tag_len,
                                  const uint8_t *nonce, size_t nonce_len,
-                                 const uint8_t *in, size_t len,
-                                 const uint8_t *aad, size_t aad_len) {
+                                 bssl::Span<const CRYPTO_IVEC> aadvecs) {
   struct ccm128_state state;
-  return ccm128_init_state(ctx, &state, key, nonce, nonce_len, aad, aad_len,
-                           len) &&
-         ccm128_encrypt(ctx, &state, key, out, in, len) &&
-         ccm128_compute_mac(ctx, &state, key, out_tag, tag_len, out, len);
+  return ccm128_init_state(ctx, &state, key, nonce, nonce_len, aadvecs,
+                           bssl::iovec::TotalLength(iovecs)) &&
+         ccm128_encrypt(ctx, &state, key, iovecs) &&
+         ccm128_compute_mac(ctx, &state, key, out_tag, tag_len, iovecs,
+                            /*encrypt=*/false);
 }
 
 #define EVP_AEAD_AES_CCM_MAX_TAG_LEN 16
@@ -232,7 +258,7 @@ struct aead_aes_ccm_ctx {
 };
 }  // namespace
 
-static_assert(sizeof(((EVP_AEAD_CTX *)NULL)->state) >=
+static_assert(sizeof(((EVP_AEAD_CTX *)nullptr)->state) >=
                   sizeof(struct aead_aes_ccm_ctx),
               "AEAD state is too small");
 static_assert(alignof(union evp_aead_ctx_st_state) >=
@@ -263,7 +289,8 @@ static int aead_aes_ccm_init(EVP_AEAD_CTX *ctx, const uint8_t *key,
   struct aead_aes_ccm_ctx *ccm_ctx = (struct aead_aes_ccm_ctx *)&ctx->state;
 
   block128_f block;
-  ctr128_f ctr = aes_ctr_set_key(&ccm_ctx->ks.ks, NULL, &block, key, key_len);
+  ctr128_f ctr =
+      aes_ctr_set_key(&ccm_ctx->ks.ks, nullptr, &block, key, key_len);
   ctx->tag_len = tag_len;
   if (!CRYPTO_ccm128_init(&ccm_ctx->ccm, &ccm_ctx->ks.ks, block, ctr, M, L)) {
     OPENSSL_PUT_ERROR(CIPHER, ERR_R_INTERNAL_ERROR);
@@ -275,15 +302,17 @@ static int aead_aes_ccm_init(EVP_AEAD_CTX *ctx, const uint8_t *key,
 
 static void aead_aes_ccm_cleanup(EVP_AEAD_CTX *ctx) {}
 
-static int aead_aes_ccm_seal_scatter(
-    const EVP_AEAD_CTX *ctx, uint8_t *out, uint8_t *out_tag,
-    size_t *out_tag_len, size_t max_out_tag_len, const uint8_t *nonce,
-    size_t nonce_len, const uint8_t *in, size_t in_len, const uint8_t *extra_in,
-    size_t extra_in_len, const uint8_t *ad, size_t ad_len) {
+static int aead_aes_ccm_sealv(const EVP_AEAD_CTX *ctx,
+                              bssl::Span<const CRYPTO_IOVEC> iovecs,
+                              uint8_t *out_tag, size_t *out_tag_len,
+                              size_t max_out_tag_len, const uint8_t *nonce,
+                              size_t nonce_len,
+                              bssl::Span<const CRYPTO_IVEC> aadvecs) {
   const struct aead_aes_ccm_ctx *ccm_ctx =
       (struct aead_aes_ccm_ctx *)&ctx->state;
 
-  if (in_len > CRYPTO_ccm128_max_input(&ccm_ctx->ccm)) {
+  if (bssl::iovec::TotalLength(iovecs) >
+      CRYPTO_ccm128_max_input(&ccm_ctx->ccm)) {
     OPENSSL_PUT_ERROR(CIPHER, CIPHER_R_TOO_LARGE);
     return 0;
   }
@@ -298,9 +327,8 @@ static int aead_aes_ccm_seal_scatter(
     return 0;
   }
 
-  if (!CRYPTO_ccm128_encrypt(&ccm_ctx->ccm, &ccm_ctx->ks.ks, out, out_tag,
-                             ctx->tag_len, nonce, nonce_len, in, in_len, ad,
-                             ad_len)) {
+  if (!CRYPTO_ccm128_encrypt(&ccm_ctx->ccm, &ccm_ctx->ks.ks, iovecs, out_tag,
+                             ctx->tag_len, nonce, nonce_len, aadvecs)) {
     OPENSSL_PUT_ERROR(CIPHER, CIPHER_R_TOO_LARGE);
     return 0;
   }
@@ -310,15 +338,16 @@ static int aead_aes_ccm_seal_scatter(
   return 1;
 }
 
-static int aead_aes_ccm_open_gather(const EVP_AEAD_CTX *ctx, uint8_t *out,
-                                    const uint8_t *nonce, size_t nonce_len,
-                                    const uint8_t *in, size_t in_len,
-                                    const uint8_t *in_tag, size_t in_tag_len,
-                                    const uint8_t *ad, size_t ad_len) {
+static int aead_aes_ccm_openv_detached(const EVP_AEAD_CTX *ctx,
+                                       bssl::Span<const CRYPTO_IOVEC> iovecs,
+                                       const uint8_t *nonce, size_t nonce_len,
+                                       const uint8_t *in_tag, size_t in_tag_len,
+                                       bssl::Span<const CRYPTO_IVEC> aadvecs) {
   const struct aead_aes_ccm_ctx *ccm_ctx =
       (struct aead_aes_ccm_ctx *)&ctx->state;
 
-  if (in_len > CRYPTO_ccm128_max_input(&ccm_ctx->ccm)) {
+  if (bssl::iovec::TotalLength(iovecs) >
+      CRYPTO_ccm128_max_input(&ccm_ctx->ccm)) {
     OPENSSL_PUT_ERROR(CIPHER, CIPHER_R_TOO_LARGE);
     return 0;
   }
@@ -335,9 +364,8 @@ static int aead_aes_ccm_open_gather(const EVP_AEAD_CTX *ctx, uint8_t *out,
 
   uint8_t tag[EVP_AEAD_AES_CCM_MAX_TAG_LEN];
   assert(ctx->tag_len <= EVP_AEAD_AES_CCM_MAX_TAG_LEN);
-  if (!CRYPTO_ccm128_decrypt(&ccm_ctx->ccm, &ccm_ctx->ks.ks, out, tag,
-                             ctx->tag_len, nonce, nonce_len, in, in_len, ad,
-                             ad_len)) {
+  if (!CRYPTO_ccm128_decrypt(&ccm_ctx->ccm, &ccm_ctx->ks.ks, iovecs, tag,
+                             ctx->tag_len, nonce, nonce_len, aadvecs)) {
     OPENSSL_PUT_ERROR(CIPHER, CIPHER_R_TOO_LARGE);
     return 0;
   }
@@ -366,8 +394,8 @@ DEFINE_METHOD_FUNCTION(EVP_AEAD, EVP_aead_aes_128_ccm_bluetooth) {
 
   out->init = aead_aes_ccm_bluetooth_init;
   out->cleanup = aead_aes_ccm_cleanup;
-  out->seal_scatter = aead_aes_ccm_seal_scatter;
-  out->open_gather = aead_aes_ccm_open_gather;
+  out->sealv = aead_aes_ccm_sealv;
+  out->openv_detached = aead_aes_ccm_openv_detached;
 }
 
 static int aead_aes_ccm_bluetooth_8_init(EVP_AEAD_CTX *ctx, const uint8_t *key,
@@ -385,8 +413,8 @@ DEFINE_METHOD_FUNCTION(EVP_AEAD, EVP_aead_aes_128_ccm_bluetooth_8) {
 
   out->init = aead_aes_ccm_bluetooth_8_init;
   out->cleanup = aead_aes_ccm_cleanup;
-  out->seal_scatter = aead_aes_ccm_seal_scatter;
-  out->open_gather = aead_aes_ccm_open_gather;
+  out->sealv = aead_aes_ccm_sealv;
+  out->openv_detached = aead_aes_ccm_openv_detached;
 }
 
 static int aead_aes_ccm_matter_init(EVP_AEAD_CTX *ctx, const uint8_t *key,
@@ -404,6 +432,6 @@ DEFINE_METHOD_FUNCTION(EVP_AEAD, EVP_aead_aes_128_ccm_matter) {
 
   out->init = aead_aes_ccm_matter_init;
   out->cleanup = aead_aes_ccm_cleanup;
-  out->seal_scatter = aead_aes_ccm_seal_scatter;
-  out->open_gather = aead_aes_ccm_open_gather;
+  out->sealv = aead_aes_ccm_sealv;
+  out->openv_detached = aead_aes_ccm_openv_detached;
 }

@@ -753,7 +753,7 @@ static void poly3_invert_vec(struct poly3 *out, const struct poly3 *in) {
     const crypto_word_t delta_is_non_zero = ~constant_time_is_zero_w(delta);
     const vec_t g_has_constant_term = vec_broadcast_bit(g_a[0]);
     const vec_t mask_w = {
-        static_cast<std::remove_reference<decltype(mask_w[0])>::type>(
+        static_cast<std::remove_reference_t<decltype(mask_w[0])>>(
             delta_is_non_negative & delta_is_non_zero)};
     const vec_t mask = vec_broadcast_bit(mask_w) & g_has_constant_term;
 
@@ -1637,7 +1637,7 @@ static int poly_unmarshal(struct poly *out, const uint8_t in[POLY_BYTES]) {
     return 0;
   }
 
-  // Set the final coefficient as specifed in [HRSSNIST] 1.9.2 step 6.
+  // Set the final coefficient as specified in [HRSSNIST] 1.9.2 step 6.
   uint32_t sum = 0;
   for (size_t i = 0; i < N - 1; i++) {
     sum += out->v[i];
@@ -1885,8 +1885,8 @@ static struct private_key *private_key_from_external(
 static void *malloc_align32(void **out_ptr, size_t size) {
   void *ptr = OPENSSL_malloc(size + 31);
   if (!ptr) {
-    *out_ptr = NULL;
-    return NULL;
+    *out_ptr = nullptr;
+    return nullptr;
   }
 
   *out_ptr = ptr;

@@ -98,7 +98,6 @@
 #include "mlkem/mlkem.cc.inc"
 #include "rand/ctrdrbg.cc.inc"
 #include "rand/rand.cc.inc"
-#include "rsa/blinding.cc.inc"
 #include "rsa/padding.cc.inc"
 #include "rsa/rsa.cc.inc"
 #include "rsa/rsa_impl.cc.inc"
@@ -230,7 +229,7 @@ int BORINGSSL_integrity_test(void) {
   HMAC_CTX hmac_ctx;
   HMAC_CTX_init(&hmac_ctx);
   if (!HMAC_Init_ex(&hmac_ctx, kHMACKey, sizeof(kHMACKey), kHashFunction,
-                    NULL /* no ENGINE */)) {
+                    nullptr /* no ENGINE */)) {
     fprintf(CRYPTO_get_stderr(), "HMAC_Init_ex failed.\n");
     return 0;
   }

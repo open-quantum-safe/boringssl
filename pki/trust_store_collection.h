@@ -44,6 +44,9 @@ class OPENSSL_EXPORT TrustStoreCollection : public TrustStore {
                         ParsedCertificateList *issuers) override;
   CertificateTrust GetTrust(const ParsedCertificate *cert) override;
 
+  // TODO(nharper): Add override of GetTrustedMTCIssuerOf; see
+  // https://boringssl-review.googlesource.com/c/boringssl/+/82727/comment/9657a5fb_d10cf988/.
+
  private:
   std::vector<TrustStore *> stores_;
 };

@@ -14,11 +14,6 @@ kexs = [
         'mlkem512',
         'p256_mlkem512',
         'x25519_mlkem512',
-        'mlkem768',
-        'p256_mlkem768',
-        'p384_mlkem768',
-        'p384_mlkem1024',
-        'p521_mlkem1024',
         'frodo640aes',
         'p256_frodo640aes',
         'x25519_frodo640aes',
@@ -46,11 +41,8 @@ kexs = [
 sigs = [
         'prime256v1',
 ##### OQS_TEMPLATE_FRAGMENT_LIST_ALL_SIGS_START
-        'mldsa44',
         'p256_mldsa44',
-        'mldsa65',
         'p384_mldsa65',
-        'mldsa87',
         'p521_mldsa87',
         'CROSSrsdp128balanced',
         'OV_Ip_pkc',

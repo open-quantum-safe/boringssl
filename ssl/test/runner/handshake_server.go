@@ -794,7 +794,7 @@ func (hs *serverHandshakeState) doTLS13Handshake() error {
 		hs.writeServerHash(helloRetryRequest.marshal())
 		if c.config.Bugs.PartialServerHelloWithHelloRetryRequest {
 			data := helloRetryRequest.marshal()
-			c.writeRecord(recordTypeHandshake, append(data[:len(data):len(data)], typeServerHello))
+			c.writeRecord(recordTypeHandshake, append(slices.Clip(data), typeServerHello))
 		} else {
 			c.writeRecord(recordTypeHandshake, helloRetryRequest.marshal())
 		}
@@ -1100,7 +1100,7 @@ func (hs *serverHandshakeState) doTLS13Handshake() error {
 		helloBytes = helloBytes[1:]
 	}
 	if config.Bugs.PartialEncryptedExtensionsWithServerHello {
-		c.writeRecord(recordTypeHandshake, append(helloBytes[:len(helloBytes):len(helloBytes)], typeEncryptedExtensions))
+		c.writeRecord(recordTypeHandshake, append(slices.Clip(helloBytes), typeEncryptedExtensions))
 	} else {
 		c.writeRecord(recordTypeHandshake, helloBytes)
 	}
@@ -1910,7 +1910,7 @@ func (hs *serverHandshakeState) doFullHandshake() error {
 	c := hs.c
 
 	isPSK := hs.suite.flags&suitePSK != 0
-	if !isPSK && hs.clientHello.ocspStapling && len(hs.cert.OCSPStaple) > 0 && !c.config.Bugs.NoOCSPStapling {
+	if !isPSK && hs.clientHello.ocspStapling && hs.cert.OCSPStaple != nil && !c.config.Bugs.NoOCSPStapling {
 		hs.hello.extensions.ocspStapling = true
 	}
 
@@ -2034,7 +2034,7 @@ func (hs *serverHandshakeState) doFullHandshake() error {
 		toAppend = typeFinished
 	}
 	if toAppend != 0 {
-		c.writeRecord(recordTypeHandshake, append(helloDoneBytes[:len(helloDoneBytes):len(helloDoneBytes)], toAppend))
+		c.writeRecord(recordTypeHandshake, append(slices.Clip(helloDoneBytes), toAppend))
 	} else {
 		c.writeRecord(recordTypeHandshake, helloDoneBytes)
 	}

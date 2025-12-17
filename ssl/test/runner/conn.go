@@ -196,7 +196,7 @@ func (c *Conn) SetReadDeadline(t time.Time) error {
 	return c.conn.SetReadDeadline(t)
 }
 
-// SetWriteDeadline sets the write deadline on the underlying conneciton.
+// SetWriteDeadline sets the write deadline on the underlying connection.
 // A zero value for t means Write will not time out.
 // After a Write has timed out, the TLS state is corrupt and all future writes will return the same error.
 func (c *Conn) SetWriteDeadline(t time.Time) error {
@@ -1278,7 +1278,7 @@ func (c *Conn) writeRecord(typ recordType, data []byte) (n int, err error) {
 		if c.config.Bugs.TrailingDataWithFinished && msgType == typeFinished {
 			// Add a 0 to the record. Note unused bytes in |data| may be owned by the
 			// caller, so we force a new allocation.
-			data = append(data[:len(data):len(data)], 0)
+			data = append(slices.Clip(data), 0)
 		}
 	}
 
