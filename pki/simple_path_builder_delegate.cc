@@ -123,6 +123,18 @@ bool SimplePathBuilderDelegate::IsSignatureAlgorithmAcceptable(
     case SignatureAlgorithm::kSphincsshake192ssimple:
     case SignatureAlgorithm::kSphincsshake256fsimple:
     case SignatureAlgorithm::kSphincsshake256ssimple:
+    case SignatureAlgorithm::kSlhdsa_sha2_128s:
+    case SignatureAlgorithm::kSlhdsa_sha2_128f:
+    case SignatureAlgorithm::kSlhdsa_sha2_192s:
+    case SignatureAlgorithm::kSlhdsa_sha2_192f:
+    case SignatureAlgorithm::kSlhdsa_sha2_256s:
+    case SignatureAlgorithm::kSlhdsa_sha2_256f:
+    case SignatureAlgorithm::kSlhdsa_shake_128s:
+    case SignatureAlgorithm::kSlhdsa_shake_128f:
+    case SignatureAlgorithm::kSlhdsa_shake_192s:
+    case SignatureAlgorithm::kSlhdsa_shake_192f:
+    case SignatureAlgorithm::kSlhdsa_shake_256s:
+    case SignatureAlgorithm::kSlhdsa_shake_256f:
 ///// OQS_TEMPLATE_FRAGMENT_LIST_SIGS_END
     case SignatureAlgorithm::kRsaPssSha256:
     case SignatureAlgorithm::kRsaPssSha384:

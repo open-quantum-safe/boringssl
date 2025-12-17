@@ -437,6 +437,54 @@ const EVP_PKEY_ALG *EVP_pkey_sphincsshake256ssimple(void) {
   static const EVP_PKEY_ALG kAlg = { &sphincsshake256ssimple_asn1_meth };
   return &kAlg;
 }
+const EVP_PKEY_ALG *EVP_pkey_slhdsa_sha2_128s(void) {
+  static const EVP_PKEY_ALG kAlg = { &slhdsa_sha2_128s_asn1_meth };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_slhdsa_sha2_128f(void) {
+  static const EVP_PKEY_ALG kAlg = { &slhdsa_sha2_128f_asn1_meth };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_slhdsa_sha2_192s(void) {
+  static const EVP_PKEY_ALG kAlg = { &slhdsa_sha2_192s_asn1_meth };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_slhdsa_sha2_192f(void) {
+  static const EVP_PKEY_ALG kAlg = { &slhdsa_sha2_192f_asn1_meth };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_slhdsa_sha2_256s(void) {
+  static const EVP_PKEY_ALG kAlg = { &slhdsa_sha2_256s_asn1_meth };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_slhdsa_sha2_256f(void) {
+  static const EVP_PKEY_ALG kAlg = { &slhdsa_sha2_256f_asn1_meth };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_slhdsa_shake_128s(void) {
+  static const EVP_PKEY_ALG kAlg = { &slhdsa_shake_128s_asn1_meth };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_slhdsa_shake_128f(void) {
+  static const EVP_PKEY_ALG kAlg = { &slhdsa_shake_128f_asn1_meth };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_slhdsa_shake_192s(void) {
+  static const EVP_PKEY_ALG kAlg = { &slhdsa_shake_192s_asn1_meth };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_slhdsa_shake_192f(void) {
+  static const EVP_PKEY_ALG kAlg = { &slhdsa_shake_192f_asn1_meth };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_slhdsa_shake_256s(void) {
+  static const EVP_PKEY_ALG kAlg = { &slhdsa_shake_256s_asn1_meth };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_slhdsa_shake_256f(void) {
+  static const EVP_PKEY_ALG kAlg = { &slhdsa_shake_256f_asn1_meth };
+  return &kAlg;
+}
 ///// OQS_TEMPLATE_FRAGMENT_DEF_EVP_PKEY_ALGS_END
 
 int get_classical_nid(int hybrid_id) {
@@ -698,5 +746,41 @@ DEFINE_OQS_PKEY_ASN1_METHOD(sphincsshake256fsimple, EVP_PKEY_SPHINCSSHAKE256FSIM
 
 DEFINE_OQS_ASN1_METHODS(sphincsshake256ssimple, OQS_SIG_alg_sphincs_shake_256s_simple, EVP_PKEY_SPHINCSSHAKE256SSIMPLE)
 DEFINE_OQS_PKEY_ASN1_METHOD(sphincsshake256ssimple, EVP_PKEY_SPHINCSSHAKE256SSIMPLE, OID(0x2B, 0xCE, 0x0F, 0x06, 0x09, 0x0C))
+
+DEFINE_OQS_ASN1_METHODS(slhdsa_sha2_128s, OQS_SIG_alg_slh_dsa_pure_sha2_128s, EVP_PKEY_SLHDSA_SHA2_128S)
+DEFINE_OQS_PKEY_ASN1_METHOD(slhdsa_sha2_128s, EVP_PKEY_SLHDSA_SHA2_128S, OID(0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x14))
+
+DEFINE_OQS_ASN1_METHODS(slhdsa_sha2_128f, OQS_SIG_alg_slh_dsa_pure_sha2_128f, EVP_PKEY_SLHDSA_SHA2_128F)
+DEFINE_OQS_PKEY_ASN1_METHOD(slhdsa_sha2_128f, EVP_PKEY_SLHDSA_SHA2_128F, OID(0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x15))
+
+DEFINE_OQS_ASN1_METHODS(slhdsa_sha2_192s, OQS_SIG_alg_slh_dsa_pure_sha2_192s, EVP_PKEY_SLHDSA_SHA2_192S)
+DEFINE_OQS_PKEY_ASN1_METHOD(slhdsa_sha2_192s, EVP_PKEY_SLHDSA_SHA2_192S, OID(0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x16))
+
+DEFINE_OQS_ASN1_METHODS(slhdsa_sha2_192f, OQS_SIG_alg_slh_dsa_pure_sha2_192f, EVP_PKEY_SLHDSA_SHA2_192F)
+DEFINE_OQS_PKEY_ASN1_METHOD(slhdsa_sha2_192f, EVP_PKEY_SLHDSA_SHA2_192F, OID(0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x17))
+
+DEFINE_OQS_ASN1_METHODS(slhdsa_sha2_256s, OQS_SIG_alg_slh_dsa_pure_sha2_256s, EVP_PKEY_SLHDSA_SHA2_256S)
+DEFINE_OQS_PKEY_ASN1_METHOD(slhdsa_sha2_256s, EVP_PKEY_SLHDSA_SHA2_256S, OID(0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x18))
+
+DEFINE_OQS_ASN1_METHODS(slhdsa_sha2_256f, OQS_SIG_alg_slh_dsa_pure_sha2_256f, EVP_PKEY_SLHDSA_SHA2_256F)
+DEFINE_OQS_PKEY_ASN1_METHOD(slhdsa_sha2_256f, EVP_PKEY_SLHDSA_SHA2_256F, OID(0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x19))
+
+DEFINE_OQS_ASN1_METHODS(slhdsa_shake_128s, OQS_SIG_alg_slh_dsa_pure_shake_128s, EVP_PKEY_SLHDSA_SHAKE_128S)
+DEFINE_OQS_PKEY_ASN1_METHOD(slhdsa_shake_128s, EVP_PKEY_SLHDSA_SHAKE_128S, OID(0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x1A))
+
+DEFINE_OQS_ASN1_METHODS(slhdsa_shake_128f, OQS_SIG_alg_slh_dsa_pure_shake_128f, EVP_PKEY_SLHDSA_SHAKE_128F)
+DEFINE_OQS_PKEY_ASN1_METHOD(slhdsa_shake_128f, EVP_PKEY_SLHDSA_SHAKE_128F, OID(0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x1B))
+
+DEFINE_OQS_ASN1_METHODS(slhdsa_shake_192s, OQS_SIG_alg_slh_dsa_pure_shake_192s, EVP_PKEY_SLHDSA_SHAKE_192S)
+DEFINE_OQS_PKEY_ASN1_METHOD(slhdsa_shake_192s, EVP_PKEY_SLHDSA_SHAKE_192S, OID(0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x1C))
+
+DEFINE_OQS_ASN1_METHODS(slhdsa_shake_192f, OQS_SIG_alg_slh_dsa_pure_shake_192f, EVP_PKEY_SLHDSA_SHAKE_192F)
+DEFINE_OQS_PKEY_ASN1_METHOD(slhdsa_shake_192f, EVP_PKEY_SLHDSA_SHAKE_192F, OID(0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x1D))
+
+DEFINE_OQS_ASN1_METHODS(slhdsa_shake_256s, OQS_SIG_alg_slh_dsa_pure_shake_256s, EVP_PKEY_SLHDSA_SHAKE_256S)
+DEFINE_OQS_PKEY_ASN1_METHOD(slhdsa_shake_256s, EVP_PKEY_SLHDSA_SHAKE_256S, OID(0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x1E))
+
+DEFINE_OQS_ASN1_METHODS(slhdsa_shake_256f, OQS_SIG_alg_slh_dsa_pure_shake_256f, EVP_PKEY_SLHDSA_SHAKE_256F)
+DEFINE_OQS_PKEY_ASN1_METHOD(slhdsa_shake_256f, EVP_PKEY_SLHDSA_SHAKE_256F, OID(0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x1F))
 
 ///// OQS_TEMPLATE_FRAGMENT_DEF_ASN1_METHODS_END

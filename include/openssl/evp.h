@@ -146,6 +146,18 @@ OPENSSL_EXPORT int EVP_PKEY_bits(const EVP_PKEY *pkey);
 #define EVP_PKEY_SPHINCSSHAKE192SSIMPLE NID_sphincsshake192ssimple
 #define EVP_PKEY_SPHINCSSHAKE256FSIMPLE NID_sphincsshake256fsimple
 #define EVP_PKEY_SPHINCSSHAKE256SSIMPLE NID_sphincsshake256ssimple
+#define EVP_PKEY_SLHDSA_SHA2_128S NID_slhdsa_sha2_128s
+#define EVP_PKEY_SLHDSA_SHA2_128F NID_slhdsa_sha2_128f
+#define EVP_PKEY_SLHDSA_SHA2_192S NID_slhdsa_sha2_192s
+#define EVP_PKEY_SLHDSA_SHA2_192F NID_slhdsa_sha2_192f
+#define EVP_PKEY_SLHDSA_SHA2_256S NID_slhdsa_sha2_256s
+#define EVP_PKEY_SLHDSA_SHA2_256F NID_slhdsa_sha2_256f
+#define EVP_PKEY_SLHDSA_SHAKE_128S NID_slhdsa_shake_128s
+#define EVP_PKEY_SLHDSA_SHAKE_128F NID_slhdsa_shake_128f
+#define EVP_PKEY_SLHDSA_SHAKE_192S NID_slhdsa_shake_192s
+#define EVP_PKEY_SLHDSA_SHAKE_192F NID_slhdsa_shake_192f
+#define EVP_PKEY_SLHDSA_SHAKE_256S NID_slhdsa_shake_256s
+#define EVP_PKEY_SLHDSA_SHAKE_256F NID_slhdsa_shake_256f
 
 #define IS_OQS_PKEY(pkey_id) ( \
    (pkey_id == NID_CROSSrsdp128balanced) || \
@@ -183,6 +195,18 @@ OPENSSL_EXPORT int EVP_PKEY_bits(const EVP_PKEY *pkey);
    (pkey_id == NID_sphincsshake192ssimple) || \
    (pkey_id == NID_sphincsshake256fsimple) || \
    (pkey_id == NID_sphincsshake256ssimple) || \
+   (pkey_id == NID_slhdsa_sha2_128s) || \
+   (pkey_id == NID_slhdsa_sha2_128f) || \
+   (pkey_id == NID_slhdsa_sha2_192s) || \
+   (pkey_id == NID_slhdsa_sha2_192f) || \
+   (pkey_id == NID_slhdsa_sha2_256s) || \
+   (pkey_id == NID_slhdsa_sha2_256f) || \
+   (pkey_id == NID_slhdsa_shake_128s) || \
+   (pkey_id == NID_slhdsa_shake_128f) || \
+   (pkey_id == NID_slhdsa_shake_192s) || \
+   (pkey_id == NID_slhdsa_shake_192f) || \
+   (pkey_id == NID_slhdsa_shake_256s) || \
+   (pkey_id == NID_slhdsa_shake_256f) || \
 0 )
 ///// OQS_TEMPLATE_FRAGMENT_DEFINE_EVP_PKEYS_END
 
@@ -259,6 +283,18 @@ OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_sphincsshake192fsimple(void);
 OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_sphincsshake192ssimple(void);
 OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_sphincsshake256fsimple(void);
 OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_sphincsshake256ssimple(void);
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_slhdsa_sha2_128s(void);
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_slhdsa_sha2_128f(void);
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_slhdsa_sha2_192s(void);
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_slhdsa_sha2_192f(void);
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_slhdsa_sha2_256s(void);
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_slhdsa_sha2_256f(void);
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_slhdsa_shake_128s(void);
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_slhdsa_shake_128f(void);
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_slhdsa_shake_192s(void);
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_slhdsa_shake_192f(void);
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_slhdsa_shake_256s(void);
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_slhdsa_shake_256f(void);
 ///// OQS_TEMPLATE_FRAGMENT_DEFINE_EVP_PKEY_ALGS_END
 
 // EVP_pkey_ec_* implement EC keys, encoded as id-ecPublicKey (RFC 5480,

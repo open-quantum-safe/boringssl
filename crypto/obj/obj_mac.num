@@ -1014,3 +1014,15 @@ p384_mlkem768		1031
 mldsa44		1032
 mldsa65		1033
 mldsa87		1034
+slhdsa_sha2_128s		1035
+slhdsa_sha2_128f		1036
+slhdsa_sha2_192s		1037
+slhdsa_sha2_192f		1038
+slhdsa_sha2_256s		1039
+slhdsa_sha2_256f		1040
+slhdsa_shake_128s		1041
+slhdsa_shake_128f		1042
+slhdsa_shake_192s		1043
+slhdsa_shake_192f		1044
+slhdsa_shake_256s		1045
+slhdsa_shake_256f		1046

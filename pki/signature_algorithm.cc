@@ -178,6 +178,18 @@ const uint8_t kOidSphincsshake192fsimple[] = {0x2b, 0xce, 0x0f, 0x06, 0x08, 0x0a
 const uint8_t kOidSphincsshake192ssimple[] = {0x2b, 0xce, 0x0f, 0x06, 0x08, 0x0c};
 const uint8_t kOidSphincsshake256fsimple[] = {0x2b, 0xce, 0x0f, 0x06, 0x09, 0x0a};
 const uint8_t kOidSphincsshake256ssimple[] = {0x2b, 0xce, 0x0f, 0x06, 0x09, 0x0c};
+const uint8_t kOidSlhdsa_sha2_128s[] = {0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x14};
+const uint8_t kOidSlhdsa_sha2_128f[] = {0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x15};
+const uint8_t kOidSlhdsa_sha2_192s[] = {0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x16};
+const uint8_t kOidSlhdsa_sha2_192f[] = {0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x17};
+const uint8_t kOidSlhdsa_sha2_256s[] = {0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x18};
+const uint8_t kOidSlhdsa_sha2_256f[] = {0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x19};
+const uint8_t kOidSlhdsa_shake_128s[] = {0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x1a};
+const uint8_t kOidSlhdsa_shake_128f[] = {0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x1b};
+const uint8_t kOidSlhdsa_shake_192s[] = {0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x1c};
+const uint8_t kOidSlhdsa_shake_192f[] = {0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x1d};
+const uint8_t kOidSlhdsa_shake_256s[] = {0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x1e};
+const uint8_t kOidSlhdsa_shake_256f[] = {0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x1f};
 ///// OQS_TEMPLATE_FRAGMENT_LIST_SIG_OIDS_END
 
 // Returns true if the entirety of the input is a NULL value.
@@ -539,6 +551,42 @@ std::optional<SignatureAlgorithm> ParseSignatureAlgorithm(
   if (oid == der::Input(kOidSphincsshake256ssimple)) {
     return SignatureAlgorithm::kSphincsshake256ssimple;
   }
+  if (oid == der::Input(kOidSlhdsa_sha2_128s)) {
+    return SignatureAlgorithm::kSlhdsa_sha2_128s;
+  }
+  if (oid == der::Input(kOidSlhdsa_sha2_128f)) {
+    return SignatureAlgorithm::kSlhdsa_sha2_128f;
+  }
+  if (oid == der::Input(kOidSlhdsa_sha2_192s)) {
+    return SignatureAlgorithm::kSlhdsa_sha2_192s;
+  }
+  if (oid == der::Input(kOidSlhdsa_sha2_192f)) {
+    return SignatureAlgorithm::kSlhdsa_sha2_192f;
+  }
+  if (oid == der::Input(kOidSlhdsa_sha2_256s)) {
+    return SignatureAlgorithm::kSlhdsa_sha2_256s;
+  }
+  if (oid == der::Input(kOidSlhdsa_sha2_256f)) {
+    return SignatureAlgorithm::kSlhdsa_sha2_256f;
+  }
+  if (oid == der::Input(kOidSlhdsa_shake_128s)) {
+    return SignatureAlgorithm::kSlhdsa_shake_128s;
+  }
+  if (oid == der::Input(kOidSlhdsa_shake_128f)) {
+    return SignatureAlgorithm::kSlhdsa_shake_128f;
+  }
+  if (oid == der::Input(kOidSlhdsa_shake_192s)) {
+    return SignatureAlgorithm::kSlhdsa_shake_192s;
+  }
+  if (oid == der::Input(kOidSlhdsa_shake_192f)) {
+    return SignatureAlgorithm::kSlhdsa_shake_192f;
+  }
+  if (oid == der::Input(kOidSlhdsa_shake_256s)) {
+    return SignatureAlgorithm::kSlhdsa_shake_256s;
+  }
+  if (oid == der::Input(kOidSlhdsa_shake_256f)) {
+    return SignatureAlgorithm::kSlhdsa_shake_256f;
+  }
 ///// OQS_TEMPLATE_FRAGMENT_PARSE_SIG_OIDS_END
 
   if (oid == der::Input(kOidRsaSsaPss)) {
@@ -596,6 +644,10 @@ std::optional<DigestAlgorithm> GetTlsServerEndpointDigestAlgorithm(
     case SignatureAlgorithm::kSphincssha2128ssimple:
     case SignatureAlgorithm::kSphincsshake128fsimple:
     case SignatureAlgorithm::kSphincsshake128ssimple:
+    case SignatureAlgorithm::kSlhdsa_sha2_128s:
+    case SignatureAlgorithm::kSlhdsa_sha2_128f:
+    case SignatureAlgorithm::kSlhdsa_shake_128s:
+    case SignatureAlgorithm::kSlhdsa_shake_128f:
       return DigestAlgorithm::Sha256;
 
     case SignatureAlgorithm::kMayo3:
@@ -606,6 +658,10 @@ std::optional<DigestAlgorithm> GetTlsServerEndpointDigestAlgorithm(
     case SignatureAlgorithm::kSphincssha2192ssimple:
     case SignatureAlgorithm::kSphincsshake192fsimple:
     case SignatureAlgorithm::kSphincsshake192ssimple:
+    case SignatureAlgorithm::kSlhdsa_sha2_192s:
+    case SignatureAlgorithm::kSlhdsa_sha2_192f:
+    case SignatureAlgorithm::kSlhdsa_shake_192s:
+    case SignatureAlgorithm::kSlhdsa_shake_192f:
       return DigestAlgorithm::Sha384;
 
     case SignatureAlgorithm::kFalcon1024:
@@ -618,6 +674,10 @@ std::optional<DigestAlgorithm> GetTlsServerEndpointDigestAlgorithm(
     case SignatureAlgorithm::kSphincssha2256ssimple:
     case SignatureAlgorithm::kSphincsshake256fsimple:
     case SignatureAlgorithm::kSphincsshake256ssimple:
+    case SignatureAlgorithm::kSlhdsa_sha2_256s:
+    case SignatureAlgorithm::kSlhdsa_sha2_256f:
+    case SignatureAlgorithm::kSlhdsa_shake_256s:
+    case SignatureAlgorithm::kSlhdsa_shake_256f:
       return DigestAlgorithm::Sha512;
 ///// OQS_TEMPLATE_FRAGMENT_PAIR_SIGS_WITH_DIGESTS_END
 

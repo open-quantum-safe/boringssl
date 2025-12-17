@@ -94,7 +94,19 @@ int x509_digest_sign_algorithm(EVP_MD_CTX *ctx, X509_ALGOR *algor) {
       pkey_id == EVP_PKEY_SPHINCSSHAKE192FSIMPLE ||
       pkey_id == EVP_PKEY_SPHINCSSHAKE192SSIMPLE ||
       pkey_id == EVP_PKEY_SPHINCSSHAKE256FSIMPLE ||
-      pkey_id == EVP_PKEY_SPHINCSSHAKE256SSIMPLE
+      pkey_id == EVP_PKEY_SPHINCSSHAKE256SSIMPLE ||
+      pkey_id == EVP_PKEY_SLHDSA_SHA2_128S ||
+      pkey_id == EVP_PKEY_SLHDSA_SHA2_128F ||
+      pkey_id == EVP_PKEY_SLHDSA_SHA2_192S ||
+      pkey_id == EVP_PKEY_SLHDSA_SHA2_192F ||
+      pkey_id == EVP_PKEY_SLHDSA_SHA2_256S ||
+      pkey_id == EVP_PKEY_SLHDSA_SHA2_256F ||
+      pkey_id == EVP_PKEY_SLHDSA_SHAKE_128S ||
+      pkey_id == EVP_PKEY_SLHDSA_SHAKE_128F ||
+      pkey_id == EVP_PKEY_SLHDSA_SHAKE_192S ||
+      pkey_id == EVP_PKEY_SLHDSA_SHAKE_192F ||
+      pkey_id == EVP_PKEY_SLHDSA_SHAKE_256S ||
+      pkey_id == EVP_PKEY_SLHDSA_SHAKE_256F
 ///// OQS_TEMPLATE_FRAGMENT_CHECK_PKEY_ID_END
       ) {
     // The NID == EVP_PKEY_id for ED25519 and the OQS schemes

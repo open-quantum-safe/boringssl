@@ -5771,6 +5771,90 @@ extern "C" {
 #define OBJ_mldsa87 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 19L
 #define OBJ_ENC_mldsa87 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x13
 
+#define SN_slhdsa_sha2_128s "slhdsa_sha2_128s"
+#define LN_slhdsa_sha2_128s "slhdsa_sha2_128s"
+#define NID_slhdsa_sha2_128s 1035
+#define OBJ_slhdsa_sha2_128s 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 20L
+#define OBJ_ENC_slhdsa_sha2_128s \
+  0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x14
+
+#define SN_slhdsa_sha2_128f "slhdsa_sha2_128f"
+#define LN_slhdsa_sha2_128f "slhdsa_sha2_128f"
+#define NID_slhdsa_sha2_128f 1036
+#define OBJ_slhdsa_sha2_128f 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 21L
+#define OBJ_ENC_slhdsa_sha2_128f \
+  0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x15
+
+#define SN_slhdsa_sha2_192s "slhdsa_sha2_192s"
+#define LN_slhdsa_sha2_192s "slhdsa_sha2_192s"
+#define NID_slhdsa_sha2_192s 1037
+#define OBJ_slhdsa_sha2_192s 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 22L
+#define OBJ_ENC_slhdsa_sha2_192s \
+  0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x16
+
+#define SN_slhdsa_sha2_192f "slhdsa_sha2_192f"
+#define LN_slhdsa_sha2_192f "slhdsa_sha2_192f"
+#define NID_slhdsa_sha2_192f 1038
+#define OBJ_slhdsa_sha2_192f 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 23L
+#define OBJ_ENC_slhdsa_sha2_192f \
+  0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x17
+
+#define SN_slhdsa_sha2_256s "slhdsa_sha2_256s"
+#define LN_slhdsa_sha2_256s "slhdsa_sha2_256s"
+#define NID_slhdsa_sha2_256s 1039
+#define OBJ_slhdsa_sha2_256s 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 24L
+#define OBJ_ENC_slhdsa_sha2_256s \
+  0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x18
+
+#define SN_slhdsa_sha2_256f "slhdsa_sha2_256f"
+#define LN_slhdsa_sha2_256f "slhdsa_sha2_256f"
+#define NID_slhdsa_sha2_256f 1040
+#define OBJ_slhdsa_sha2_256f 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 25L
+#define OBJ_ENC_slhdsa_sha2_256f \
+  0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x19
+
+#define SN_slhdsa_shake_128s "slhdsa_shake_128s"
+#define LN_slhdsa_shake_128s "slhdsa_shake_128s"
+#define NID_slhdsa_shake_128s 1041
+#define OBJ_slhdsa_shake_128s 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 26L
+#define OBJ_ENC_slhdsa_shake_128s \
+  0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x1a
+
+#define SN_slhdsa_shake_128f "slhdsa_shake_128f"
+#define LN_slhdsa_shake_128f "slhdsa_shake_128f"
+#define NID_slhdsa_shake_128f 1042
+#define OBJ_slhdsa_shake_128f 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 27L
+#define OBJ_ENC_slhdsa_shake_128f \
+  0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x1b
+
+#define SN_slhdsa_shake_192s "slhdsa_shake_192s"
+#define LN_slhdsa_shake_192s "slhdsa_shake_192s"
+#define NID_slhdsa_shake_192s 1043
+#define OBJ_slhdsa_shake_192s 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 28L
+#define OBJ_ENC_slhdsa_shake_192s \
+  0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x1c
+
+#define SN_slhdsa_shake_192f "slhdsa_shake_192f"
+#define LN_slhdsa_shake_192f "slhdsa_shake_192f"
+#define NID_slhdsa_shake_192f 1044
+#define OBJ_slhdsa_shake_192f 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 29L
+#define OBJ_ENC_slhdsa_shake_192f \
+  0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x1d
+
+#define SN_slhdsa_shake_256s "slhdsa_shake_256s"
+#define LN_slhdsa_shake_256s "slhdsa_shake_256s"
+#define NID_slhdsa_shake_256s 1045
+#define OBJ_slhdsa_shake_256s 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 30L
+#define OBJ_ENC_slhdsa_shake_256s \
+  0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x1e
+
+#define SN_slhdsa_shake_256f "slhdsa_shake_256f"
+#define LN_slhdsa_shake_256f "slhdsa_shake_256f"
+#define NID_slhdsa_shake_256f 1046
+#define OBJ_slhdsa_shake_256f 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 31L
+#define OBJ_ENC_slhdsa_shake_256f \
+  0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x1f
+
 
 #if defined(__cplusplus)
 } /* extern C */

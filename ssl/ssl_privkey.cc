@@ -70,7 +70,19 @@ bool ssl_is_key_type_supported(int key_type) {
          key_type == EVP_PKEY_SPHINCSSHAKE192FSIMPLE ||
          key_type == EVP_PKEY_SPHINCSSHAKE192SSIMPLE ||
          key_type == EVP_PKEY_SPHINCSSHAKE256FSIMPLE ||
-         key_type == EVP_PKEY_SPHINCSSHAKE256SSIMPLE;
+         key_type == EVP_PKEY_SPHINCSSHAKE256SSIMPLE ||
+         key_type == EVP_PKEY_SLHDSA_SHA2_128S ||
+         key_type == EVP_PKEY_SLHDSA_SHA2_128F ||
+         key_type == EVP_PKEY_SLHDSA_SHA2_192S ||
+         key_type == EVP_PKEY_SLHDSA_SHA2_192F ||
+         key_type == EVP_PKEY_SLHDSA_SHA2_256S ||
+         key_type == EVP_PKEY_SLHDSA_SHA2_256F ||
+         key_type == EVP_PKEY_SLHDSA_SHAKE_128S ||
+         key_type == EVP_PKEY_SLHDSA_SHAKE_128F ||
+         key_type == EVP_PKEY_SLHDSA_SHAKE_192S ||
+         key_type == EVP_PKEY_SLHDSA_SHAKE_192F ||
+         key_type == EVP_PKEY_SLHDSA_SHAKE_256S ||
+         key_type == EVP_PKEY_SLHDSA_SHAKE_256F;
 ///// OQS_TEMPLATE_FRAGMENT_CHECK_KEY_TYPE_END
 }
 
@@ -171,6 +183,18 @@ static const SSL_SIGNATURE_ALGORITHM kSignatureAlgorithms[] = {
     {SSL_SIGN_SPHINCSSHAKE192SSIMPLE, EVP_PKEY_SPHINCSSHAKE192SSIMPLE, NID_undef, &EVP_sha384, false, true, true, false},
     {SSL_SIGN_SPHINCSSHAKE256FSIMPLE, EVP_PKEY_SPHINCSSHAKE256FSIMPLE, NID_undef, &EVP_sha512, false, true, true, false},
     {SSL_SIGN_SPHINCSSHAKE256SSIMPLE, EVP_PKEY_SPHINCSSHAKE256SSIMPLE, NID_undef, &EVP_sha512, false, true, true, false},
+    {SSL_SIGN_SLHDSA_SHA2_128S, EVP_PKEY_SLHDSA_SHA2_128S, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_SLHDSA_SHA2_128F, EVP_PKEY_SLHDSA_SHA2_128F, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_SLHDSA_SHA2_192S, EVP_PKEY_SLHDSA_SHA2_192S, NID_undef, &EVP_sha384, false, true, true, false},
+    {SSL_SIGN_SLHDSA_SHA2_192F, EVP_PKEY_SLHDSA_SHA2_192F, NID_undef, &EVP_sha384, false, true, true, false},
+    {SSL_SIGN_SLHDSA_SHA2_256S, EVP_PKEY_SLHDSA_SHA2_256S, NID_undef, &EVP_sha512, false, true, true, false},
+    {SSL_SIGN_SLHDSA_SHA2_256F, EVP_PKEY_SLHDSA_SHA2_256F, NID_undef, &EVP_sha512, false, true, true, false},
+    {SSL_SIGN_SLHDSA_SHAKE_128S, EVP_PKEY_SLHDSA_SHAKE_128S, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_SLHDSA_SHAKE_128F, EVP_PKEY_SLHDSA_SHAKE_128F, NID_undef, &EVP_sha256, false, true, true, false},
+    {SSL_SIGN_SLHDSA_SHAKE_192S, EVP_PKEY_SLHDSA_SHAKE_192S, NID_undef, &EVP_sha384, false, true, true, false},
+    {SSL_SIGN_SLHDSA_SHAKE_192F, EVP_PKEY_SLHDSA_SHAKE_192F, NID_undef, &EVP_sha384, false, true, true, false},
+    {SSL_SIGN_SLHDSA_SHAKE_256S, EVP_PKEY_SLHDSA_SHAKE_256S, NID_undef, &EVP_sha512, false, true, true, false},
+    {SSL_SIGN_SLHDSA_SHAKE_256F, EVP_PKEY_SLHDSA_SHAKE_256F, NID_undef, &EVP_sha512, false, true, true, false},
 ///// OQS_TEMPLATE_FRAGMENT_LIST_SSL_SIG_ALGS_END
 };
 
@@ -225,6 +249,18 @@ bssl::UniquePtr<EVP_PKEY> ssl_parse_peer_subject_public_key_info(
       EVP_pkey_sphincsshake192ssimple(),
       EVP_pkey_sphincsshake256fsimple(),
       EVP_pkey_sphincsshake256ssimple(),
+      EVP_pkey_slhdsa_sha2_128s(),
+      EVP_pkey_slhdsa_sha2_128f(),
+      EVP_pkey_slhdsa_sha2_192s(),
+      EVP_pkey_slhdsa_sha2_192f(),
+      EVP_pkey_slhdsa_sha2_256s(),
+      EVP_pkey_slhdsa_sha2_256f(),
+      EVP_pkey_slhdsa_shake_128s(),
+      EVP_pkey_slhdsa_shake_128f(),
+      EVP_pkey_slhdsa_shake_192s(),
+      EVP_pkey_slhdsa_shake_192f(),
+      EVP_pkey_slhdsa_shake_256s(),
+      EVP_pkey_slhdsa_shake_256f(),
 ///// OQS_TEMPLATE_FRAGMENT_LIST_PEER_SIG_ALGS_END
       EVP_pkey_rsa(),     EVP_pkey_ec_p256(), EVP_pkey_ec_p384(),
       EVP_pkey_ec_p521(), EVP_pkey_ed25519(),
@@ -629,6 +665,18 @@ static const SignatureAlgorithmName kSignatureAlgorithmNames[] = {
     {SSL_SIGN_SPHINCSSHAKE192SSIMPLE, "sphincsshake192ssimple"},
     {SSL_SIGN_SPHINCSSHAKE256FSIMPLE, "sphincsshake256fsimple"},
     {SSL_SIGN_SPHINCSSHAKE256SSIMPLE, "sphincsshake256ssimple"},
+    {SSL_SIGN_SLHDSA_SHA2_128S, "slhdsa_sha2_128s"},
+    {SSL_SIGN_SLHDSA_SHA2_128F, "slhdsa_sha2_128f"},
+    {SSL_SIGN_SLHDSA_SHA2_192S, "slhdsa_sha2_192s"},
+    {SSL_SIGN_SLHDSA_SHA2_192F, "slhdsa_sha2_192f"},
+    {SSL_SIGN_SLHDSA_SHA2_256S, "slhdsa_sha2_256s"},
+    {SSL_SIGN_SLHDSA_SHA2_256F, "slhdsa_sha2_256f"},
+    {SSL_SIGN_SLHDSA_SHAKE_128S, "slhdsa_shake_128s"},
+    {SSL_SIGN_SLHDSA_SHAKE_128F, "slhdsa_shake_128f"},
+    {SSL_SIGN_SLHDSA_SHAKE_192S, "slhdsa_shake_192s"},
+    {SSL_SIGN_SLHDSA_SHAKE_192F, "slhdsa_shake_192f"},
+    {SSL_SIGN_SLHDSA_SHAKE_256S, "slhdsa_shake_256s"},
+    {SSL_SIGN_SLHDSA_SHAKE_256F, "slhdsa_shake_256f"},
 ///// OQS_TEMPLATE_FRAGMENT_NAME_SIG_ALG_END
 };
 
@@ -829,6 +877,18 @@ static constexpr struct {
     {EVP_PKEY_SPHINCSSHAKE192SSIMPLE, NID_sha384, SSL_SIGN_SPHINCSSHAKE192SSIMPLE},
     {EVP_PKEY_SPHINCSSHAKE256FSIMPLE, NID_sha512, SSL_SIGN_SPHINCSSHAKE256FSIMPLE},
     {EVP_PKEY_SPHINCSSHAKE256SSIMPLE, NID_sha512, SSL_SIGN_SPHINCSSHAKE256SSIMPLE},
+    {EVP_PKEY_SLHDSA_SHA2_128S, NID_sha256, SSL_SIGN_SLHDSA_SHA2_128S},
+    {EVP_PKEY_SLHDSA_SHA2_128F, NID_sha256, SSL_SIGN_SLHDSA_SHA2_128F},
+    {EVP_PKEY_SLHDSA_SHA2_192S, NID_sha384, SSL_SIGN_SLHDSA_SHA2_192S},
+    {EVP_PKEY_SLHDSA_SHA2_192F, NID_sha384, SSL_SIGN_SLHDSA_SHA2_192F},
+    {EVP_PKEY_SLHDSA_SHA2_256S, NID_sha512, SSL_SIGN_SLHDSA_SHA2_256S},
+    {EVP_PKEY_SLHDSA_SHA2_256F, NID_sha512, SSL_SIGN_SLHDSA_SHA2_256F},
+    {EVP_PKEY_SLHDSA_SHAKE_128S, NID_sha256, SSL_SIGN_SLHDSA_SHAKE_128S},
+    {EVP_PKEY_SLHDSA_SHAKE_128F, NID_sha256, SSL_SIGN_SLHDSA_SHAKE_128F},
+    {EVP_PKEY_SLHDSA_SHAKE_192S, NID_sha384, SSL_SIGN_SLHDSA_SHAKE_192S},
+    {EVP_PKEY_SLHDSA_SHAKE_192F, NID_sha384, SSL_SIGN_SLHDSA_SHAKE_192F},
+    {EVP_PKEY_SLHDSA_SHAKE_256S, NID_sha512, SSL_SIGN_SLHDSA_SHAKE_256S},
+    {EVP_PKEY_SLHDSA_SHAKE_256F, NID_sha512, SSL_SIGN_SLHDSA_SHAKE_256F},
 ///// OQS_TEMPLATE_FRAGMENT_ADD_SIG_ALG_MAPPINGS_END
 };
 

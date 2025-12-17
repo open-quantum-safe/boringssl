@@ -71,7 +71,7 @@ Along with `X25519MLKEM768` and `MLKEM1024` supported by BoringSSL through Googl
 <!--- OQS_TEMPLATE_FRAGMENT_LIST_KEXS_START -->
 - **BIKE**: `bikel3`, `p384_bikel3`, `bikel5`, `p521_bikel5`
 - **FrodoKEM**: `frodo1344aes`, `p521_frodo1344aes`, `frodo1344shake`, `p521_frodo1344shake`, `frodo640aes`, `p256_frodo640aes`, `x25519_frodo640aes`, `frodo640shake`, `p256_frodo640shake`, `x25519_frodo640shake`, `frodo976aes`, `p384_frodo976aes`, `frodo976shake`, `p384_frodo976shake`
-- **ML-KEM**: `mlkem1024`, `p384_mlkem1024`, `p521_mlkem1024`, `mlkem512`, `p256_mlkem512`, `mlkem768`, `p256_mlkem768`, `p384_mlkem768`, `x25519_mlkem768`
+- **ML-KEM**: `p384_mlkem1024`, `p521_mlkem1024`, `mlkem512`, `p256_mlkem512`, `mlkem768`, `p256_mlkem768`, `p384_mlkem768`
 <!--- OQS_TEMPLATE_FRAGMENT_LIST_KEXS_END -->
 
 Be aware that hybrid algorithms utlizing `X448` are not supported. If those are needed for a project please use [OQS-provider](https://github.com/open-quantum-safe/oqs-provider) which supports them out of the box, or implement them and create a pull request, or [create an issue](https://github.com/open-quantum-safe/boringssl/issues).
@@ -87,6 +87,7 @@ The following quantum-safe digital signature algorithms from liboqs are supporte
 - **Falcon**: `falcon1024`, `falcon512`, `rsa3072_falcon512`, `falconpadded1024`, `falconpadded512`
 - **MAYO**: `mayo1`, `mayo2`, `mayo3`, `mayo5`
 - **ML-DSA**: `mldsa44`, `p256_mldsa44`, `mldsa65`, `p384_mldsa65`, `mldsa87`, `p521_mldsa87`
+- **SLH-DSA**: `slhdsa_sha2_128s`, `slhdsa_sha2_128f`, `slhdsa_sha2_192s`, `slhdsa_sha2_192f`, `slhdsa_sha2_256s`, `slhdsa_sha2_256f`, `slhdsa_shake_128s`, `slhdsa_shake_128f`, `slhdsa_shake_192s`, `slhdsa_shake_192f`, `slhdsa_shake_256s`, `slhdsa_shake_256f`
 - **SNOVA**: `snova2454`, `snova2454esk`, `snova37172`, `snova2455`, `snova2965`
 - **SPHINCS-SHA2**: `sphincssha2128fsimple`, `sphincssha2128ssimple`, `sphincssha2192fsimple`, `sphincssha2192ssimple`, `sphincssha2256fsimple`, `sphincssha2256ssimple`
 - **SPHINCS-SHAKE**: `sphincsshake128fsimple`, `sphincsshake128ssimple`, `sphincsshake192fsimple`, `sphincsshake192ssimple`, `sphincsshake256fsimple`, `sphincsshake256ssimple`

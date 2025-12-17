@@ -83,6 +83,18 @@ static const nid_triple kTriples[] = {
     {NID_sphincsshake192ssimple, NID_sha384, NID_sphincsshake192ssimple},
     {NID_sphincsshake256fsimple, NID_sha512, NID_sphincsshake256fsimple},
     {NID_sphincsshake256ssimple, NID_sha512, NID_sphincsshake256ssimple},
+    {NID_slhdsa_sha2_128s, NID_sha256, NID_slhdsa_sha2_128s},
+    {NID_slhdsa_sha2_128f, NID_sha256, NID_slhdsa_sha2_128f},
+    {NID_slhdsa_sha2_192s, NID_sha384, NID_slhdsa_sha2_192s},
+    {NID_slhdsa_sha2_192f, NID_sha384, NID_slhdsa_sha2_192f},
+    {NID_slhdsa_sha2_256s, NID_sha512, NID_slhdsa_sha2_256s},
+    {NID_slhdsa_sha2_256f, NID_sha512, NID_slhdsa_sha2_256f},
+    {NID_slhdsa_shake_128s, NID_sha256, NID_slhdsa_shake_128s},
+    {NID_slhdsa_shake_128f, NID_sha256, NID_slhdsa_shake_128f},
+    {NID_slhdsa_shake_192s, NID_sha384, NID_slhdsa_shake_192s},
+    {NID_slhdsa_shake_192f, NID_sha384, NID_slhdsa_shake_192f},
+    {NID_slhdsa_shake_256s, NID_sha512, NID_slhdsa_shake_256s},
+    {NID_slhdsa_shake_256f, NID_sha512, NID_slhdsa_shake_256f},
 ///// OQS_TEMPLATE_FRAGMENT_DEFINE_NID_TRIPLES_END
 };
 

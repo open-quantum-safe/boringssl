@@ -67,6 +67,18 @@ static const EVP_PKEY_CTX_METHOD *const evp_methods[] = {
     &sphincsshake192ssimple_pkey_meth,
     &sphincsshake256fsimple_pkey_meth,
     &sphincsshake256ssimple_pkey_meth,
+    &slhdsa_sha2_128s_pkey_meth,
+    &slhdsa_sha2_128f_pkey_meth,
+    &slhdsa_sha2_192s_pkey_meth,
+    &slhdsa_sha2_192f_pkey_meth,
+    &slhdsa_sha2_256s_pkey_meth,
+    &slhdsa_sha2_256f_pkey_meth,
+    &slhdsa_shake_128s_pkey_meth,
+    &slhdsa_shake_128f_pkey_meth,
+    &slhdsa_shake_192s_pkey_meth,
+    &slhdsa_shake_192f_pkey_meth,
+    &slhdsa_shake_256s_pkey_meth,
+    &slhdsa_shake_256f_pkey_meth,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_PKEY_METHS_END
 };
 

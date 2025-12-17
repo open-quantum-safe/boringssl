@@ -85,6 +85,18 @@ enum class SignatureAlgorithm {
   kSphincsshake192ssimple,
   kSphincsshake256fsimple,
   kSphincsshake256ssimple,
+  kSlhdsa_sha2_128s,
+  kSlhdsa_sha2_128f,
+  kSlhdsa_sha2_192s,
+  kSlhdsa_sha2_192f,
+  kSlhdsa_sha2_256s,
+  kSlhdsa_sha2_256f,
+  kSlhdsa_shake_128s,
+  kSlhdsa_shake_128f,
+  kSlhdsa_shake_192s,
+  kSlhdsa_shake_192f,
+  kSlhdsa_shake_256s,
+  kSlhdsa_shake_256f,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_SIGS_END
   // These RSA-PSS constants match RFC 8446 and refer to RSASSA-PSS with MGF-1,
   // using the specified hash as both the signature and MGF-1 hash, and the hash
