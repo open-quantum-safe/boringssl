@@ -425,7 +425,7 @@ static const CipherTest kCipherTests[] = {
         },
         false,
     },
-    // Although alises like "RSA" do not match 3DES when adding ciphers, they do
+    // Although aliases like "RSA" do not match 3DES when adding ciphers, they do
     // match it when removing ciphers.
     {
         "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256:RSA:RSA+3DES:!RSA",
@@ -527,26 +527,31 @@ static const CurveTest kCurveTests[] = {
     },
 ///// OQS_TEMPLATE_FRAGMENT_ADD_CURVETEST_START
     {
-        "mlkem512:p256_mlkem512:x25519_mlkem512",
+        "bikel3:p384_bikel3",
         {
-            SSL_GROUP_MLKEM512,
-            SSL_GROUP_P256_MLKEM512,
-            SSL_GROUP_X25519_MLKEM512,
+            SSL_GROUP_BIKEL3,
+            SSL_GROUP_P384_BIKEL3,
         },
     },
     {
-        "mlkem768:p256_mlkem768:p384_mlkem768",
+        "bikel5:p521_bikel5",
         {
-            SSL_GROUP_MLKEM768,
-            SSL_GROUP_P256_MLKEM768,
-            SSL_GROUP_P384_MLKEM768,
+            SSL_GROUP_BIKEL5,
+            SSL_GROUP_P521_BIKEL5,
         },
     },
     {
-        "p384_mlkem1024:p521_mlkem1024",
+        "frodo1344aes:p521_frodo1344aes",
         {
-            SSL_GROUP_P384_MLKEM1024,
-            SSL_GROUP_P521_MLKEM1024,
+            SSL_GROUP_FRODO1344AES,
+            SSL_GROUP_P521_FRODO1344AES,
+        },
+    },
+    {
+        "frodo1344shake:p521_frodo1344shake",
+        {
+            SSL_GROUP_FRODO1344SHAKE,
+            SSL_GROUP_P521_FRODO1344SHAKE,
         },
     },
     {
@@ -580,39 +585,25 @@ static const CurveTest kCurveTests[] = {
         },
     },
     {
-        "frodo1344aes:p521_frodo1344aes",
+        "p384_mlkem1024:p521_mlkem1024",
         {
-            SSL_GROUP_FRODO1344AES,
-            SSL_GROUP_P521_FRODO1344AES,
+            SSL_GROUP_P384_MLKEM1024,
+            SSL_GROUP_P521_MLKEM1024,
         },
     },
     {
-        "frodo1344shake:p521_frodo1344shake",
+        "mlkem512:p256_mlkem512",
         {
-            SSL_GROUP_FRODO1344SHAKE,
-            SSL_GROUP_P521_FRODO1344SHAKE,
+            SSL_GROUP_MLKEM512,
+            SSL_GROUP_P256_MLKEM512,
         },
     },
     {
-        "bikel1:p256_bikel1:x25519_bikel1",
+        "mlkem768:p256_mlkem768:p384_mlkem768",
         {
-            SSL_GROUP_BIKEL1,
-            SSL_GROUP_P256_BIKEL1,
-            SSL_GROUP_X25519_BIKEL1,
-        },
-    },
-    {
-        "bikel3:p384_bikel3",
-        {
-            SSL_GROUP_BIKEL3,
-            SSL_GROUP_P384_BIKEL3,
-        },
-    },
-    {
-        "bikel5:p521_bikel5",
-        {
-            SSL_GROUP_BIKEL5,
-            SSL_GROUP_P521_BIKEL5,
+            SSL_GROUP_MLKEM768,
+            SSL_GROUP_P256_MLKEM768,
+            SSL_GROUP_P384_MLKEM768,
         },
     },
 ///// OQS_TEMPLATE_FRAGMENT_ADD_CURVETEST_END
@@ -764,12 +755,6 @@ TEST(SSLTest, DefaultCurves) {
   const uint16_t kDefaults[] = {SSL_GROUP_X25519, SSL_GROUP_SECP256R1,
                                 SSL_GROUP_SECP384R1,
 ///// OQS_TEMPLATE_FRAGMENT_ADD_DEFAULT_KEMS_START
-                                SSL_GROUP_X25519_MLKEM512,
-                                SSL_GROUP_P256_MLKEM768,
-                                SSL_GROUP_P384_MLKEM1024,
-                                SSL_GROUP_X25519_FRODO640AES,
-                                SSL_GROUP_P521_FRODO1344AES,
-                                SSL_GROUP_X25519_BIKEL1,
 ///// OQS_TEMPLATE_FRAGMENT_ADD_DEFAULT_KEMS_END
   };
 
@@ -1355,12 +1340,12 @@ TEST(SSLTest, SessionEncoding) {
 
     // Verify the SSL_SESSION also decodes with the legacy API.
     const uint8_t *cptr = input.data();
-    session.reset(d2i_SSL_SESSION(NULL, &cptr, input.size()));
+    session.reset(d2i_SSL_SESSION(nullptr, &cptr, input.size()));
     ASSERT_TRUE(session) << "d2i_SSL_SESSION failed";
     EXPECT_EQ(cptr, input.data() + input.size());
 
     // Verify the SSL_SESSION encoding round-trips via the legacy API.
-    int len = i2d_SSL_SESSION(session.get(), NULL);
+    int len = i2d_SSL_SESSION(session.get(), nullptr);
     ASSERT_GT(len, 0) << "i2d_SSL_SESSION failed";
     ASSERT_EQ(static_cast<size_t>(len), input.size())
         << "i2d_SSL_SESSION(NULL) returned invalid length";
@@ -1761,7 +1746,7 @@ static bssl::UniquePtr<X509> X509FromBuffer(
   }
   const uint8_t *derp = CRYPTO_BUFFER_data(buffer.get());
   return bssl::UniquePtr<X509>(
-      d2i_X509(NULL, &derp, CRYPTO_BUFFER_len(buffer.get())));
+      d2i_X509(nullptr, &derp, CRYPTO_BUFFER_len(buffer.get())));
 }
 
 static bssl::UniquePtr<X509> GetTestCertificate() {
@@ -3949,11 +3934,11 @@ TEST_P(SSLVersionTest, GetPeerCertificate) {
   SSL_CTX_set_verify(client_ctx_.get(),
                      SSL_VERIFY_PEER | SSL_VERIFY_FAIL_IF_NO_PEER_CERT,
                      nullptr);
-  SSL_CTX_set_cert_verify_callback(client_ctx_.get(), VerifySucceed, NULL);
+  SSL_CTX_set_cert_verify_callback(client_ctx_.get(), VerifySucceed, nullptr);
   SSL_CTX_set_verify(server_ctx_.get(),
                      SSL_VERIFY_PEER | SSL_VERIFY_FAIL_IF_NO_PEER_CERT,
                      nullptr);
-  SSL_CTX_set_cert_verify_callback(server_ctx_.get(), VerifySucceed, NULL);
+  SSL_CTX_set_cert_verify_callback(server_ctx_.get(), VerifySucceed, nullptr);
 
   ASSERT_TRUE(Connect());
 
@@ -3979,8 +3964,8 @@ TEST_P(SSLVersionTest, GetPeerCertificate) {
 
 TEST_P(SSLVersionTest, NoPeerCertificate) {
   SSL_CTX_set_verify(server_ctx_.get(), SSL_VERIFY_PEER, nullptr);
-  SSL_CTX_set_cert_verify_callback(server_ctx_.get(), VerifySucceed, NULL);
-  SSL_CTX_set_cert_verify_callback(client_ctx_.get(), VerifySucceed, NULL);
+  SSL_CTX_set_cert_verify_callback(server_ctx_.get(), VerifySucceed, nullptr);
+  SSL_CTX_set_cert_verify_callback(client_ctx_.get(), VerifySucceed, nullptr);
 
   ASSERT_TRUE(Connect());
 
@@ -3991,7 +3976,7 @@ TEST_P(SSLVersionTest, NoPeerCertificate) {
 }
 
 TEST_P(SSLVersionTest, RetainOnlySHA256OfCerts) {
-  uint8_t *cert_der = NULL;
+  uint8_t *cert_der = nullptr;
   int cert_der_len = i2d_X509(cert_.get(), &cert_der);
   ASSERT_GE(cert_der_len, 0);
   bssl::UniquePtr<uint8_t> free_cert_der(cert_der);
@@ -4009,8 +3994,8 @@ TEST_P(SSLVersionTest, RetainOnlySHA256OfCerts) {
   SSL_CTX_set_verify(server_ctx_.get(),
                      SSL_VERIFY_PEER | SSL_VERIFY_FAIL_IF_NO_PEER_CERT,
                      nullptr);
-  SSL_CTX_set_cert_verify_callback(client_ctx_.get(), VerifySucceed, NULL);
-  SSL_CTX_set_cert_verify_callback(server_ctx_.get(), VerifySucceed, NULL);
+  SSL_CTX_set_cert_verify_callback(client_ctx_.get(), VerifySucceed, nullptr);
+  SSL_CTX_set_cert_verify_callback(server_ctx_.get(), VerifySucceed, nullptr);
   SSL_CTX_set_retain_only_sha256_of_client_certs(server_ctx_.get(), 1);
 
   ASSERT_TRUE(Connect());
@@ -4267,8 +4252,9 @@ static int RenewTicketCallback(SSL *ssl, uint8_t *key_name, uint8_t *iv,
     return 0;
   }
 
-  if (!HMAC_Init_ex(hmac_ctx, kZeros, sizeof(kZeros), EVP_sha256(), NULL) ||
-      !EVP_CipherInit_ex(ctx, EVP_aes_128_cbc(), NULL, kZeros, iv, encrypt)) {
+  if (!HMAC_Init_ex(hmac_ctx, kZeros, sizeof(kZeros), EVP_sha256(), nullptr) ||
+      !EVP_CipherInit_ex(ctx, EVP_aes_128_cbc(), nullptr, kZeros, iv,
+                         encrypt)) {
     return -1;
   }
 
@@ -4403,7 +4389,7 @@ TEST_P(SSLVersionTest, SessionTimeout) {
       g_current_time.tv_sec = new_start_time + timeout + 1;
       TRACED_CALL(ExpectSessionReused(client_ctx_.get(), server_ctx_.get(),
                                       new_session.get(),
-                                      false /* expect session ot reused */));
+                                      false /* expect session not reused */));
 
       // Renew the session until it begins just past the auth timeout.
       time_t auth_end_time = kStartTime + SSL_DEFAULT_SESSION_AUTH_TIMEOUT;
@@ -4426,7 +4412,7 @@ TEST_P(SSLVersionTest, SessionTimeout) {
       g_current_time.tv_sec = auth_end_time + 1;
       TRACED_CALL(ExpectSessionReused(client_ctx_.get(), server_ctx_.get(),
                                       new_session.get(),
-                                      false /* expect session ot reused */));
+                                      false /* expect session not reused */));
     } else {
       // The new session is usable just before the old expiration.
       g_current_time.tv_sec = kStartTime + timeout - 1;
@@ -4846,8 +4832,8 @@ TEST_P(SSLVersionTest, AutoChain) {
   SSL_CTX_set_verify(server_ctx_.get(),
                      SSL_VERIFY_PEER | SSL_VERIFY_FAIL_IF_NO_PEER_CERT,
                      nullptr);
-  SSL_CTX_set_cert_verify_callback(client_ctx_.get(), VerifySucceed, NULL);
-  SSL_CTX_set_cert_verify_callback(server_ctx_.get(), VerifySucceed, NULL);
+  SSL_CTX_set_cert_verify_callback(client_ctx_.get(), VerifySucceed, nullptr);
+  SSL_CTX_set_cert_verify_callback(server_ctx_.get(), VerifySucceed, nullptr);
 
   // By default, the client and server should each only send the leaf.
   ASSERT_TRUE(Connect());
@@ -5269,8 +5255,8 @@ TEST_P(SSLVersionTest, SmallBuffer) {
 }
 
 TEST(SSLTest, AddChainCertHack) {
-  // Ensure that we don't accidently break the hack that we have in place to
-  // keep curl and serf happy when they use an |X509| even after transfering
+  // Ensure that we don't accidentally break the hack that we have in place to
+  // keep curl and serf happy when they use an |X509| even after transferring
   // ownership.
 
   bssl::UniquePtr<SSL_CTX> ctx(SSL_CTX_new(TLS_method()));
@@ -6453,6 +6439,30 @@ TEST(SSLTest, SignatureAlgorithmProperties) {
             SSL_get_signature_algorithm_digest(SSL_SIGN_RSA_PSS_RSAE_SHA384));
   EXPECT_TRUE(SSL_is_signature_algorithm_rsa_pss(SSL_SIGN_RSA_PSS_RSAE_SHA384));
 ///// OQS_TEMPLATE_FRAGMENT_ADD_SIG_ALG_PROP_TESTS_START
+  EXPECT_EQ(EVP_PKEY_CROSSRSDP128BALANCED,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_CROSSRSDP128BALANCED));
+  EXPECT_EQ(EVP_PKEY_OV_IP_PKC,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_OV_IP_PKC));
+  EXPECT_EQ(EVP_PKEY_OV_IP_PKC_SKC,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_OV_IP_PKC_SKC));
+  EXPECT_EQ(EVP_PKEY_FALCON1024,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_FALCON1024));
+  EXPECT_EQ(EVP_PKEY_FALCON512,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_FALCON512));
+  EXPECT_EQ(EVP_PKEY_RSA3072_FALCON512,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_RSA3072_FALCON512));
+  EXPECT_EQ(EVP_PKEY_FALCONPADDED1024,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_FALCONPADDED1024));
+  EXPECT_EQ(EVP_PKEY_FALCONPADDED512,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_FALCONPADDED512));
+  EXPECT_EQ(EVP_PKEY_MAYO1,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_MAYO1));
+  EXPECT_EQ(EVP_PKEY_MAYO2,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_MAYO2));
+  EXPECT_EQ(EVP_PKEY_MAYO3,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_MAYO3));
+  EXPECT_EQ(EVP_PKEY_MAYO5,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_MAYO5));
   EXPECT_EQ(EVP_PKEY_MLDSA44,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_MLDSA44));
   EXPECT_EQ(EVP_PKEY_P256_MLDSA44,
@@ -6465,30 +6475,6 @@ TEST(SSLTest, SignatureAlgorithmProperties) {
             SSL_get_signature_algorithm_key_type(SSL_SIGN_MLDSA87));
   EXPECT_EQ(EVP_PKEY_P521_MLDSA87,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_P521_MLDSA87));
-  EXPECT_EQ(EVP_PKEY_CROSSRSDP128BALANCED,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_CROSSRSDP128BALANCED));
-  EXPECT_EQ(EVP_PKEY_OV_IP_PKC,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_OV_IP_PKC));
-  EXPECT_EQ(EVP_PKEY_OV_IP_PKC_SKC,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_OV_IP_PKC_SKC));
-  EXPECT_EQ(EVP_PKEY_FALCON512,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_FALCON512));
-  EXPECT_EQ(EVP_PKEY_RSA3072_FALCON512,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_RSA3072_FALCON512));
-  EXPECT_EQ(EVP_PKEY_FALCONPADDED512,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_FALCONPADDED512));
-  EXPECT_EQ(EVP_PKEY_FALCON1024,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_FALCON1024));
-  EXPECT_EQ(EVP_PKEY_FALCONPADDED1024,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_FALCONPADDED1024));
-  EXPECT_EQ(EVP_PKEY_MAYO1,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_MAYO1));
-  EXPECT_EQ(EVP_PKEY_MAYO2,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_MAYO2));
-  EXPECT_EQ(EVP_PKEY_MAYO3,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_MAYO3));
-  EXPECT_EQ(EVP_PKEY_MAYO5,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_MAYO5));
   EXPECT_EQ(EVP_PKEY_SNOVA2454,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_SNOVA2454));
   EXPECT_EQ(EVP_PKEY_SNOVA2454ESK,
@@ -6849,24 +6835,24 @@ TEST(SSLTest, SigAlgs) {
        true,
        {SSL_SIGN_ED25519, SSL_SIGN_ECDSA_SECP384R1_SHA384}},
 ///// OQS_TEMPLATE_FRAGMENT_ADD_SIG_ALG_EQ_TESTS_START
+      {{NID_sha256, EVP_PKEY_CROSSRSDP128BALANCED}, true, {SSL_SIGN_CROSSRSDP128BALANCED}},
+      {{NID_sha256, EVP_PKEY_OV_IP_PKC}, true, {SSL_SIGN_OV_IP_PKC}},
+      {{NID_sha256, EVP_PKEY_OV_IP_PKC_SKC}, true, {SSL_SIGN_OV_IP_PKC_SKC}},
+      {{NID_sha512, EVP_PKEY_FALCON1024}, true, {SSL_SIGN_FALCON1024}},
+      {{NID_sha256, EVP_PKEY_FALCON512}, true, {SSL_SIGN_FALCON512}},
+      {{NID_sha256, EVP_PKEY_RSA3072_FALCON512}, true, {SSL_SIGN_RSA3072_FALCON512}},
+      {{NID_sha512, EVP_PKEY_FALCONPADDED1024}, true, {SSL_SIGN_FALCONPADDED1024}},
+      {{NID_sha256, EVP_PKEY_FALCONPADDED512}, true, {SSL_SIGN_FALCONPADDED512}},
+      {{NID_sha256, EVP_PKEY_MAYO1}, true, {SSL_SIGN_MAYO1}},
+      {{NID_sha256, EVP_PKEY_MAYO2}, true, {SSL_SIGN_MAYO2}},
+      {{NID_sha384, EVP_PKEY_MAYO3}, true, {SSL_SIGN_MAYO3}},
+      {{NID_sha512, EVP_PKEY_MAYO5}, true, {SSL_SIGN_MAYO5}},
       {{NID_sha256, EVP_PKEY_MLDSA44}, true, {SSL_SIGN_MLDSA44}},
       {{NID_sha256, EVP_PKEY_P256_MLDSA44}, true, {SSL_SIGN_P256_MLDSA44}},
       {{NID_sha384, EVP_PKEY_MLDSA65}, true, {SSL_SIGN_MLDSA65}},
       {{NID_sha384, EVP_PKEY_P384_MLDSA65}, true, {SSL_SIGN_P384_MLDSA65}},
       {{NID_sha512, EVP_PKEY_MLDSA87}, true, {SSL_SIGN_MLDSA87}},
       {{NID_sha512, EVP_PKEY_P521_MLDSA87}, true, {SSL_SIGN_P521_MLDSA87}},
-      {{NID_sha256, EVP_PKEY_CROSSRSDP128BALANCED}, true, {SSL_SIGN_CROSSRSDP128BALANCED}},
-      {{NID_sha256, EVP_PKEY_OV_IP_PKC}, true, {SSL_SIGN_OV_IP_PKC}},
-      {{NID_sha256, EVP_PKEY_OV_IP_PKC_SKC}, true, {SSL_SIGN_OV_IP_PKC_SKC}},
-      {{NID_sha256, EVP_PKEY_FALCON512}, true, {SSL_SIGN_FALCON512}},
-      {{NID_sha256, EVP_PKEY_RSA3072_FALCON512}, true, {SSL_SIGN_RSA3072_FALCON512}},
-      {{NID_sha256, EVP_PKEY_FALCONPADDED512}, true, {SSL_SIGN_FALCONPADDED512}},
-      {{NID_sha512, EVP_PKEY_FALCON1024}, true, {SSL_SIGN_FALCON1024}},
-      {{NID_sha512, EVP_PKEY_FALCONPADDED1024}, true, {SSL_SIGN_FALCONPADDED1024}},
-      {{NID_sha256, EVP_PKEY_MAYO1}, true, {SSL_SIGN_MAYO1}},
-      {{NID_sha256, EVP_PKEY_MAYO2}, true, {SSL_SIGN_MAYO2}},
-      {{NID_sha384, EVP_PKEY_MAYO3}, true, {SSL_SIGN_MAYO3}},
-      {{NID_sha512, EVP_PKEY_MAYO5}, true, {SSL_SIGN_MAYO5}},
       {{NID_sha256, EVP_PKEY_SNOVA2454}, true, {SSL_SIGN_SNOVA2454}},
       {{NID_sha256, EVP_PKEY_SNOVA2454ESK}, true, {SSL_SIGN_SNOVA2454ESK}},
       {{NID_sha256, EVP_PKEY_SNOVA37172}, true, {SSL_SIGN_SNOVA37172}},
@@ -6942,24 +6928,24 @@ TEST(SSLTest, SigAlgsList) {
       {"RSA-PSS+SHA256", true, {SSL_SIGN_RSA_PSS_RSAE_SHA256}},
       {"PSS+SHA256", true, {SSL_SIGN_RSA_PSS_RSAE_SHA256}},
 ///// OQS_TEMPLATE_FRAGMENT_SIGALGS_LIST_TESTS_START
+      {"CROSSrsdp128balanced", true, {SSL_SIGN_CROSSRSDP128BALANCED}},
+      {"OV_Ip_pkc", true, {SSL_SIGN_OV_IP_PKC}},
+      {"OV_Ip_pkc_skc", true, {SSL_SIGN_OV_IP_PKC_SKC}},
+      {"falcon1024", true, {SSL_SIGN_FALCON1024}},
+      {"falcon512", true, {SSL_SIGN_FALCON512}},
+      {"rsa3072_falcon512", true, {SSL_SIGN_RSA3072_FALCON512}},
+      {"falconpadded1024", true, {SSL_SIGN_FALCONPADDED1024}},
+      {"falconpadded512", true, {SSL_SIGN_FALCONPADDED512}},
+      {"mayo1", true, {SSL_SIGN_MAYO1}},
+      {"mayo2", true, {SSL_SIGN_MAYO2}},
+      {"mayo3", true, {SSL_SIGN_MAYO3}},
+      {"mayo5", true, {SSL_SIGN_MAYO5}},
       {"mldsa44", true, {SSL_SIGN_MLDSA44}},
       {"p256_mldsa44", true, {SSL_SIGN_P256_MLDSA44}},
       {"mldsa65", true, {SSL_SIGN_MLDSA65}},
       {"p384_mldsa65", true, {SSL_SIGN_P384_MLDSA65}},
       {"mldsa87", true, {SSL_SIGN_MLDSA87}},
       {"p521_mldsa87", true, {SSL_SIGN_P521_MLDSA87}},
-      {"CROSSrsdp128balanced", true, {SSL_SIGN_CROSSRSDP128BALANCED}},
-      {"OV_Ip_pkc", true, {SSL_SIGN_OV_IP_PKC}},
-      {"OV_Ip_pkc_skc", true, {SSL_SIGN_OV_IP_PKC_SKC}},
-      {"falcon512", true, {SSL_SIGN_FALCON512}},
-      {"rsa3072_falcon512", true, {SSL_SIGN_RSA3072_FALCON512}},
-      {"falconpadded512", true, {SSL_SIGN_FALCONPADDED512}},
-      {"falcon1024", true, {SSL_SIGN_FALCON1024}},
-      {"falconpadded1024", true, {SSL_SIGN_FALCONPADDED1024}},
-      {"mayo1", true, {SSL_SIGN_MAYO1}},
-      {"mayo2", true, {SSL_SIGN_MAYO2}},
-      {"mayo3", true, {SSL_SIGN_MAYO3}},
-      {"mayo5", true, {SSL_SIGN_MAYO5}},
       {"snova2454", true, {SSL_SIGN_SNOVA2454}},
       {"snova2454esk", true, {SSL_SIGN_SNOVA2454ESK}},
       {"snova37172", true, {SSL_SIGN_SNOVA37172}},
@@ -7081,12 +7067,6 @@ TEST(SSLTest, ApplyHandoffRemovesUnsupportedCurves) {
               ElementsAreArray({SSL_GROUP_X25519, SSL_GROUP_SECP256R1,
                                 SSL_GROUP_SECP384R1,
 ///// OQS_TEMPLATE_FRAGMENT_ADD_DEF_KEMS_START
-                                SSL_GROUP_X25519_MLKEM512,
-                                SSL_GROUP_P256_MLKEM768,
-                                SSL_GROUP_P384_MLKEM1024,
-                                SSL_GROUP_X25519_FRODO640AES,
-                                SSL_GROUP_P521_FRODO1344AES,
-                                SSL_GROUP_X25519_BIKEL1,
 ///// OQS_TEMPLATE_FRAGMENT_ADD_DEF_KEMS_END
   }));
   ASSERT_TRUE(SSL_apply_handoff(server.get(), handoff));
@@ -7095,8 +7075,8 @@ TEST(SSLTest, ApplyHandoffRemovesUnsupportedCurves) {
 }
 
 TEST(SSLTest, ZeroSizedWiteFlushesHandshakeMessages) {
-  // If there are pending handshake mesages, an |SSL_write| of zero bytes should
-  // flush them.
+  // If there are pending handshake messages, an |SSL_write| of zero bytes
+  // should flush them.
   bssl::UniquePtr<SSL_CTX> server_ctx(
       CreateContextWithTestCertificate(TLS_method()));
   ASSERT_TRUE(server_ctx);
@@ -8846,9 +8826,11 @@ TEST_F(QUICMethodTest, QuicCodePointDefault) {
   ASSERT_TRUE(CompleteHandshakesForQUIC());
 }
 
-extern "C" {
-int BORINGSSL_enum_c_type_test(void);
-}
+}  // namespace
+
+extern "C" int BORINGSSL_enum_c_type_test(void);
+
+namespace {
 
 TEST(SSLTest, EnumTypes) {
   EXPECT_EQ(sizeof(int), sizeof(ssl_private_key_result_t));
@@ -9313,14 +9295,14 @@ struct TLSGroup {
 // is suspected to be the cause of the non-deterministic OQS test failures.
 static const TLSGroup kOQSGroups[] = {
 ///// OQS_TEMPLATE_FRAGMENT_LIST_ALL_OQS_KEMS_START
-    {NID_mlkem512, SSL_GROUP_MLKEM512},
-    {NID_p256_mlkem512, SSL_GROUP_P256_MLKEM512},
-    {NID_x25519_mlkem512, SSL_GROUP_X25519_MLKEM512},
-    {NID_mlkem768, SSL_GROUP_MLKEM768},
-    {NID_p256_mlkem768, SSL_GROUP_P256_MLKEM768},
-    {NID_p384_mlkem768, SSL_GROUP_P384_MLKEM768},
-    {NID_p384_mlkem1024, SSL_GROUP_P384_MLKEM1024},
-    {NID_p521_mlkem1024, SSL_GROUP_P521_MLKEM1024},
+    {NID_bikel3, SSL_GROUP_BIKEL3},
+    {NID_p384_bikel3, SSL_GROUP_P384_BIKEL3},
+    {NID_bikel5, SSL_GROUP_BIKEL5},
+    {NID_p521_bikel5, SSL_GROUP_P521_BIKEL5},
+    {NID_frodo1344aes, SSL_GROUP_FRODO1344AES},
+    {NID_p521_frodo1344aes, SSL_GROUP_P521_FRODO1344AES},
+    {NID_frodo1344shake, SSL_GROUP_FRODO1344SHAKE},
+    {NID_p521_frodo1344shake, SSL_GROUP_P521_FRODO1344SHAKE},
     {NID_frodo640aes, SSL_GROUP_FRODO640AES},
     {NID_p256_frodo640aes, SSL_GROUP_P256_FRODO640AES},
     {NID_x25519_frodo640aes, SSL_GROUP_X25519_FRODO640AES},
@@ -9331,17 +9313,13 @@ static const TLSGroup kOQSGroups[] = {
     {NID_p384_frodo976aes, SSL_GROUP_P384_FRODO976AES},
     {NID_frodo976shake, SSL_GROUP_FRODO976SHAKE},
     {NID_p384_frodo976shake, SSL_GROUP_P384_FRODO976SHAKE},
-    {NID_frodo1344aes, SSL_GROUP_FRODO1344AES},
-    {NID_p521_frodo1344aes, SSL_GROUP_P521_FRODO1344AES},
-    {NID_frodo1344shake, SSL_GROUP_FRODO1344SHAKE},
-    {NID_p521_frodo1344shake, SSL_GROUP_P521_FRODO1344SHAKE},
-    {NID_bikel1, SSL_GROUP_BIKEL1},
-    {NID_p256_bikel1, SSL_GROUP_P256_BIKEL1},
-    {NID_x25519_bikel1, SSL_GROUP_X25519_BIKEL1},
-    {NID_bikel3, SSL_GROUP_BIKEL3},
-    {NID_p384_bikel3, SSL_GROUP_P384_BIKEL3},
-    {NID_bikel5, SSL_GROUP_BIKEL5},
-    {NID_p521_bikel5, SSL_GROUP_P521_BIKEL5},
+    {NID_p384_mlkem1024, SSL_GROUP_P384_MLKEM1024},
+    {NID_p521_mlkem1024, SSL_GROUP_P521_MLKEM1024},
+    {NID_mlkem512, SSL_GROUP_MLKEM512},
+    {NID_p256_mlkem512, SSL_GROUP_P256_MLKEM512},
+    {NID_mlkem768, SSL_GROUP_MLKEM768},
+    {NID_p256_mlkem768, SSL_GROUP_P256_MLKEM768},
+    {NID_p384_mlkem768, SSL_GROUP_P384_MLKEM768},
 ///// OQS_TEMPLATE_FRAGMENT_LIST_ALL_OQS_KEMS_END
 };
 
@@ -9433,24 +9411,24 @@ class OQSHandshakeTest : public ::testing::TestWithParam<int> {
 INSTANTIATE_TEST_SUITE_P(WithSignatureNIDs, OQSHandshakeTest,
                          testing::Values(
 ///// OQS_TEMPLATE_FRAGMENT_LIST_ALL_OQS_SIGS_START
+                            NID_CROSSrsdp128balanced,
+                            NID_OV_Ip_pkc,
+                            NID_OV_Ip_pkc_skc,
+                            NID_falcon1024,
+                            NID_falcon512,
+                            NID_rsa3072_falcon512,
+                            NID_falconpadded1024,
+                            NID_falconpadded512,
+                            NID_mayo1,
+                            NID_mayo2,
+                            NID_mayo3,
+                            NID_mayo5,
                             NID_mldsa44,
                             NID_p256_mldsa44,
                             NID_mldsa65,
                             NID_p384_mldsa65,
                             NID_mldsa87,
                             NID_p521_mldsa87,
-                            NID_CROSSrsdp128balanced,
-                            NID_OV_Ip_pkc,
-                            NID_OV_Ip_pkc_skc,
-                            NID_falcon512,
-                            NID_rsa3072_falcon512,
-                            NID_falconpadded512,
-                            NID_falcon1024,
-                            NID_falconpadded1024,
-                            NID_mayo1,
-                            NID_mayo2,
-                            NID_mayo3,
-                            NID_mayo5,
                             NID_snova2454,
                             NID_snova2454esk,
                             NID_snova37172,
@@ -11402,7 +11380,8 @@ TEST(SSLTest, ParseClientHello) {
         // record_size_limit
         0x00, 0x1c, 0x00, 0x02, 0x40, 0x01};
 
-    auto in = dtls ? Span(kClientHelloDTLS) : Span(kClientHelloTLS);
+    auto in = dtls ? Span<const uint8_t>(kClientHelloDTLS)
+                   : Span<const uint8_t>(kClientHelloTLS);
     SSL_CLIENT_HELLO client_hello;
     ASSERT_TRUE(
         SSL_parse_client_hello(ssl.get(), &client_hello, in.data(), in.size()));

@@ -720,7 +720,10 @@ OPENSSL_EXPORT int ASN1_mbstring_ncopy(ASN1_STRING **out, const uint8_t *in,
 // |mask|, |minsize|, and |maxsize| based on |nid|. When |nid| is a recognized
 // X.509 attribute type, it will pick a suitable ASN.1 string type and bounds.
 // For most attribute types, it preferentially chooses UTF8String. If |nid| is
-// unrecognized, it uses UTF8String by default.
+// unrecognized, it uses UTF8String by default. This function will also enforce
+// any known attribute-specific constraints on the sizes of the string and fail
+// if the size is invalid. In RFC 5280, these bounds are specified by
+// constraints like "SIZE (1..ub-common-name)" in ASN.1.
 //
 // Slightly unlike |ASN1_mbstring_ncopy|, this function interprets |out| and
 // returns its result as follows: If |out| is NULL, it returns a newly-allocated
@@ -754,7 +757,7 @@ OPENSSL_EXPORT ASN1_STRING *ASN1_STRING_set_by_NID(ASN1_STRING **out,
 //
 // WARNING: This function affects global state in the library. If two libraries
 // in the same address space register information for the same OID, one call
-// will fail. Prefer directly passing the desired parametrs to
+// will fail. Prefer directly passing the desired parameters to
 // |ASN1_mbstring_copy| or |ASN1_mbstring_ncopy| instead.
 OPENSSL_EXPORT int ASN1_STRING_TABLE_add(int nid, long minsize, long maxsize,
                                          unsigned long mask,
@@ -928,7 +931,7 @@ OPENSSL_EXPORT int ASN1_BIT_STRING_set(ASN1_BIT_STRING *str,
 
 // ASN1_BIT_STRING_set_bit sets bit |n| of |str| to one if |value| is non-zero
 // and zero if |value| is zero, resizing |str| as needed. It then truncates
-// trailing zeros in |str| to align with the DER represention for a bit string
+// trailing zeros in |str| to align with the DER representation for a bit string
 // with named bits. It returns one on success and zero on error. |n| is indexed
 // beginning from zero.
 OPENSSL_EXPORT int ASN1_BIT_STRING_set_bit(ASN1_BIT_STRING *str, int n,

@@ -719,14 +719,14 @@ constexpr NamedGroup kNamedGroups[] = {
     {NID_secp384r1, SSL_GROUP_SECP384R1, "P-384", "secp384r1"},
     {NID_secp521r1, SSL_GROUP_SECP521R1, "P-521", "secp521r1"},
 ///// OQS_TEMPLATE_FRAGMENT_DEF_NAMEDGROUPS_START
-    {NID_mlkem512, SSL_GROUP_MLKEM512, "mlkem512", "mlkem512"},
-    {NID_p256_mlkem512, SSL_GROUP_P256_MLKEM512, "p256_mlkem512", "p256_mlkem512"},
-    {NID_x25519_mlkem512, SSL_GROUP_X25519_MLKEM512, "x25519_mlkem512", "x25519_mlkem512"},
-    {NID_mlkem768, SSL_GROUP_MLKEM768, "mlkem768", "mlkem768"},
-    {NID_p256_mlkem768, SSL_GROUP_P256_MLKEM768, "p256_mlkem768", "p256_mlkem768"},
-    {NID_p384_mlkem768, SSL_GROUP_P384_MLKEM768, "p384_mlkem768", "p384_mlkem768"},
-    {NID_p384_mlkem1024, SSL_GROUP_P384_MLKEM1024, "p384_mlkem1024", "p384_mlkem1024"},
-    {NID_p521_mlkem1024, SSL_GROUP_P521_MLKEM1024, "p521_mlkem1024", "p521_mlkem1024"},
+    {NID_bikel3, SSL_GROUP_BIKEL3, "bikel3", "bikel3"},
+    {NID_p384_bikel3, SSL_GROUP_P384_BIKEL3, "p384_bikel3", "p384_bikel3"},
+    {NID_bikel5, SSL_GROUP_BIKEL5, "bikel5", "bikel5"},
+    {NID_p521_bikel5, SSL_GROUP_P521_BIKEL5, "p521_bikel5", "p521_bikel5"},
+    {NID_frodo1344aes, SSL_GROUP_FRODO1344AES, "frodo1344aes", "frodo1344aes"},
+    {NID_p521_frodo1344aes, SSL_GROUP_P521_FRODO1344AES, "p521_frodo1344aes", "p521_frodo1344aes"},
+    {NID_frodo1344shake, SSL_GROUP_FRODO1344SHAKE, "frodo1344shake", "frodo1344shake"},
+    {NID_p521_frodo1344shake, SSL_GROUP_P521_FRODO1344SHAKE, "p521_frodo1344shake", "p521_frodo1344shake"},
     {NID_frodo640aes, SSL_GROUP_FRODO640AES, "frodo640aes", "frodo640aes"},
     {NID_p256_frodo640aes, SSL_GROUP_P256_FRODO640AES, "p256_frodo640aes", "p256_frodo640aes"},
     {NID_x25519_frodo640aes, SSL_GROUP_X25519_FRODO640AES, "x25519_frodo640aes", "x25519_frodo640aes"},
@@ -737,23 +737,19 @@ constexpr NamedGroup kNamedGroups[] = {
     {NID_p384_frodo976aes, SSL_GROUP_P384_FRODO976AES, "p384_frodo976aes", "p384_frodo976aes"},
     {NID_frodo976shake, SSL_GROUP_FRODO976SHAKE, "frodo976shake", "frodo976shake"},
     {NID_p384_frodo976shake, SSL_GROUP_P384_FRODO976SHAKE, "p384_frodo976shake", "p384_frodo976shake"},
-    {NID_frodo1344aes, SSL_GROUP_FRODO1344AES, "frodo1344aes", "frodo1344aes"},
-    {NID_p521_frodo1344aes, SSL_GROUP_P521_FRODO1344AES, "p521_frodo1344aes", "p521_frodo1344aes"},
-    {NID_frodo1344shake, SSL_GROUP_FRODO1344SHAKE, "frodo1344shake", "frodo1344shake"},
-    {NID_p521_frodo1344shake, SSL_GROUP_P521_FRODO1344SHAKE, "p521_frodo1344shake", "p521_frodo1344shake"},
-    {NID_bikel1, SSL_GROUP_BIKEL1, "bikel1", "bikel1"},
-    {NID_p256_bikel1, SSL_GROUP_P256_BIKEL1, "p256_bikel1", "p256_bikel1"},
-    {NID_x25519_bikel1, SSL_GROUP_X25519_BIKEL1, "x25519_bikel1", "x25519_bikel1"},
-    {NID_bikel3, SSL_GROUP_BIKEL3, "bikel3", "bikel3"},
-    {NID_p384_bikel3, SSL_GROUP_P384_BIKEL3, "p384_bikel3", "p384_bikel3"},
-    {NID_bikel5, SSL_GROUP_BIKEL5, "bikel5", "bikel5"},
-    {NID_p521_bikel5, SSL_GROUP_P521_BIKEL5, "p521_bikel5", "p521_bikel5"},
+    {NID_p384_mlkem1024, SSL_GROUP_P384_MLKEM1024, "p384_mlkem1024", "p384_mlkem1024"},
+    {NID_p521_mlkem1024, SSL_GROUP_P521_MLKEM1024, "p521_mlkem1024", "p521_mlkem1024"},
+    {NID_mlkem512, SSL_GROUP_MLKEM512, "mlkem512", "mlkem512"},
+    {NID_p256_mlkem512, SSL_GROUP_P256_MLKEM512, "p256_mlkem512", "p256_mlkem512"},
+    {NID_mlkem768, SSL_GROUP_MLKEM768, "mlkem768", "mlkem768"},
+    {NID_p256_mlkem768, SSL_GROUP_P256_MLKEM768, "p256_mlkem768", "p256_mlkem768"},
+    {NID_p384_mlkem768, SSL_GROUP_P384_MLKEM768, "p384_mlkem768", "p384_mlkem768"},
 ///// OQS_TEMPLATE_FRAGMENT_DEF_NAMEDGROUPS_END
     {NID_X25519, SSL_GROUP_X25519, "X25519", "x25519"},
     {NID_X25519Kyber768Draft00, SSL_GROUP_X25519_KYBER768_DRAFT00,
      "X25519Kyber768Draft00", ""},
     {NID_X25519MLKEM768, SSL_GROUP_X25519_MLKEM768, "X25519MLKEM768", ""},
-    {NID_MLKEM1024, SSL_GROUP_MLKEM1024, "MLKEM1024", ""},
+    {NID_ML_KEM_1024, SSL_GROUP_MLKEM1024, "MLKEM1024", ""},
 };
 
 static_assert(std::size(kNamedGroups) == kNumNamedGroups,
@@ -769,12 +765,6 @@ Span<const uint16_t> DefaultSupportedGroupIds() {
       SSL_GROUP_SECP256R1,
       SSL_GROUP_SECP384R1,
 ///// OQS_TEMPLATE_FRAGMENT_ADD_DEFAULT_KEMS_START
-      SSL_GROUP_X25519_MLKEM512,
-      SSL_GROUP_P256_MLKEM768,
-      SSL_GROUP_P384_MLKEM1024,
-      SSL_GROUP_X25519_FRODO640AES,
-      SSL_GROUP_P521_FRODO1344AES,
-      SSL_GROUP_X25519_BIKEL1,
 ///// OQS_TEMPLATE_FRAGMENT_ADD_DEFAULT_KEMS_END
   };
   return Span(kDefaultSupportedGroupIds);
@@ -789,22 +779,22 @@ UniquePtr<SSLKeyShare> SSLKeyShare::Create(uint16_t group_id) {
     case SSL_GROUP_SECP521R1:
       return MakeUnique<ECKeyShare>(EC_group_p521(), SSL_GROUP_SECP521R1);
 ///// OQS_TEMPLATE_FRAGMENT_HANDLE_GROUP_IDS_START
-    case SSL_GROUP_MLKEM512:
-      return MakeUnique<OQSKeyShare>(SSL_GROUP_MLKEM512, OQS_KEM_alg_ml_kem_512);
-    case SSL_GROUP_P256_MLKEM512:
-      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P256_MLKEM512, SSL_GROUP_SECP256R1, OQS_KEM_alg_ml_kem_512);
-    case SSL_GROUP_X25519_MLKEM512:
-      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_X25519_MLKEM512, SSL_GROUP_X25519, OQS_KEM_alg_ml_kem_512);
-    case SSL_GROUP_MLKEM768:
-      return MakeUnique<OQSKeyShare>(SSL_GROUP_MLKEM768, OQS_KEM_alg_ml_kem_768);
-    case SSL_GROUP_P256_MLKEM768:
-      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P256_MLKEM768, SSL_GROUP_SECP256R1, OQS_KEM_alg_ml_kem_768);
-    case SSL_GROUP_P384_MLKEM768:
-      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P384_MLKEM768, SSL_GROUP_SECP384R1, OQS_KEM_alg_ml_kem_768);
-    case SSL_GROUP_P384_MLKEM1024:
-      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P384_MLKEM1024, SSL_GROUP_SECP384R1, OQS_KEM_alg_ml_kem_1024);
-    case SSL_GROUP_P521_MLKEM1024:
-      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P521_MLKEM1024, SSL_GROUP_SECP521R1, OQS_KEM_alg_ml_kem_1024);
+    case SSL_GROUP_BIKEL3:
+      return MakeUnique<OQSKeyShare>(SSL_GROUP_BIKEL3, OQS_KEM_alg_bike_l3);
+    case SSL_GROUP_P384_BIKEL3:
+      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P384_BIKEL3, SSL_GROUP_SECP384R1, OQS_KEM_alg_bike_l3);
+    case SSL_GROUP_BIKEL5:
+      return MakeUnique<OQSKeyShare>(SSL_GROUP_BIKEL5, OQS_KEM_alg_bike_l5);
+    case SSL_GROUP_P521_BIKEL5:
+      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P521_BIKEL5, SSL_GROUP_SECP521R1, OQS_KEM_alg_bike_l5);
+    case SSL_GROUP_FRODO1344AES:
+      return MakeUnique<OQSKeyShare>(SSL_GROUP_FRODO1344AES, OQS_KEM_alg_frodokem_1344_aes);
+    case SSL_GROUP_P521_FRODO1344AES:
+      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P521_FRODO1344AES, SSL_GROUP_SECP521R1, OQS_KEM_alg_frodokem_1344_aes);
+    case SSL_GROUP_FRODO1344SHAKE:
+      return MakeUnique<OQSKeyShare>(SSL_GROUP_FRODO1344SHAKE, OQS_KEM_alg_frodokem_1344_shake);
+    case SSL_GROUP_P521_FRODO1344SHAKE:
+      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P521_FRODO1344SHAKE, SSL_GROUP_SECP521R1, OQS_KEM_alg_frodokem_1344_shake);
     case SSL_GROUP_FRODO640AES:
       return MakeUnique<OQSKeyShare>(SSL_GROUP_FRODO640AES, OQS_KEM_alg_frodokem_640_aes);
     case SSL_GROUP_P256_FRODO640AES:
@@ -825,28 +815,20 @@ UniquePtr<SSLKeyShare> SSLKeyShare::Create(uint16_t group_id) {
       return MakeUnique<OQSKeyShare>(SSL_GROUP_FRODO976SHAKE, OQS_KEM_alg_frodokem_976_shake);
     case SSL_GROUP_P384_FRODO976SHAKE:
       return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P384_FRODO976SHAKE, SSL_GROUP_SECP384R1, OQS_KEM_alg_frodokem_976_shake);
-    case SSL_GROUP_FRODO1344AES:
-      return MakeUnique<OQSKeyShare>(SSL_GROUP_FRODO1344AES, OQS_KEM_alg_frodokem_1344_aes);
-    case SSL_GROUP_P521_FRODO1344AES:
-      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P521_FRODO1344AES, SSL_GROUP_SECP521R1, OQS_KEM_alg_frodokem_1344_aes);
-    case SSL_GROUP_FRODO1344SHAKE:
-      return MakeUnique<OQSKeyShare>(SSL_GROUP_FRODO1344SHAKE, OQS_KEM_alg_frodokem_1344_shake);
-    case SSL_GROUP_P521_FRODO1344SHAKE:
-      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P521_FRODO1344SHAKE, SSL_GROUP_SECP521R1, OQS_KEM_alg_frodokem_1344_shake);
-    case SSL_GROUP_BIKEL1:
-      return MakeUnique<OQSKeyShare>(SSL_GROUP_BIKEL1, OQS_KEM_alg_bike_l1);
-    case SSL_GROUP_P256_BIKEL1:
-      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P256_BIKEL1, SSL_GROUP_SECP256R1, OQS_KEM_alg_bike_l1);
-    case SSL_GROUP_X25519_BIKEL1:
-      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_X25519_BIKEL1, SSL_GROUP_X25519, OQS_KEM_alg_bike_l1);
-    case SSL_GROUP_BIKEL3:
-      return MakeUnique<OQSKeyShare>(SSL_GROUP_BIKEL3, OQS_KEM_alg_bike_l3);
-    case SSL_GROUP_P384_BIKEL3:
-      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P384_BIKEL3, SSL_GROUP_SECP384R1, OQS_KEM_alg_bike_l3);
-    case SSL_GROUP_BIKEL5:
-      return MakeUnique<OQSKeyShare>(SSL_GROUP_BIKEL5, OQS_KEM_alg_bike_l5);
-    case SSL_GROUP_P521_BIKEL5:
-      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P521_BIKEL5, SSL_GROUP_SECP521R1, OQS_KEM_alg_bike_l5);
+    case SSL_GROUP_P384_MLKEM1024:
+      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P384_MLKEM1024, SSL_GROUP_SECP384R1, OQS_KEM_alg_ml_kem_1024);
+    case SSL_GROUP_P521_MLKEM1024:
+      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P521_MLKEM1024, SSL_GROUP_SECP521R1, OQS_KEM_alg_ml_kem_1024);
+    case SSL_GROUP_MLKEM512:
+      return MakeUnique<OQSKeyShare>(SSL_GROUP_MLKEM512, OQS_KEM_alg_ml_kem_512);
+    case SSL_GROUP_P256_MLKEM512:
+      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P256_MLKEM512, SSL_GROUP_SECP256R1, OQS_KEM_alg_ml_kem_512);
+    case SSL_GROUP_MLKEM768:
+      return MakeUnique<OQSKeyShare>(SSL_GROUP_MLKEM768, OQS_KEM_alg_ml_kem_768);
+    case SSL_GROUP_P256_MLKEM768:
+      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P256_MLKEM768, SSL_GROUP_SECP256R1, OQS_KEM_alg_ml_kem_768);
+    case SSL_GROUP_P384_MLKEM768:
+      return MakeUnique<ClassicalWithOQSKeyShare>(SSL_GROUP_P384_MLKEM768, SSL_GROUP_SECP384R1, OQS_KEM_alg_ml_kem_768);
 ///// OQS_TEMPLATE_FRAGMENT_HANDLE_GROUP_IDS_END
     case SSL_GROUP_X25519:
       return MakeUnique<X25519KeyShare>();
@@ -911,6 +893,6 @@ const char *SSL_get_group_name(uint16_t group_id) {
 }
 
 size_t SSL_get_all_group_names(const char **out, size_t max_out) {
-  return GetAllNames(out, max_out, Span<const char *>(), &NamedGroup::name,
+  return GetAllNames(out, max_out, Span<const char *const>(), &NamedGroup::name,
                      Span(kNamedGroups));
 }

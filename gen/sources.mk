@@ -85,7 +85,6 @@ boringssl_bcm_internal_headers := \
   crypto/fipsmodule/mlkem/mlkem.cc.inc \
   crypto/fipsmodule/rand/ctrdrbg.cc.inc \
   crypto/fipsmodule/rand/rand.cc.inc \
-  crypto/fipsmodule/rsa/blinding.cc.inc \
   crypto/fipsmodule/rsa/padding.cc.inc \
   crypto/fipsmodule/rsa/rsa.cc.inc \
   crypto/fipsmodule/rsa/rsa_impl.cc.inc \
@@ -232,6 +231,33 @@ boringssl_bcm_sources_nasm := \
   gen/bcm/x86_64-mont-win.asm \
   gen/bcm/x86_64-mont5-win.asm
 
+boringssl_bench_sources := \
+  bench/aead.cc \
+  bench/aes.cc \
+  bench/base64.cc \
+  bench/curve25519.cc \
+  bench/ecdh.cc \
+  bench/ecdsa.cc \
+  bench/hash.cc \
+  bench/hash_to_curve.cc \
+  bench/hrss.cc \
+  bench/main.cc \
+  bench/mldsa.cc \
+  bench/mlkem.cc \
+  bench/rand.cc \
+  bench/rsa.cc \
+  bench/rsakeygen.cc \
+  bench/scrypt.cc \
+  bench/selftest.cc \
+  bench/siphash.cc \
+  bench/slhdsa.cc \
+  bench/spake2.cc \
+  bench/trust_token.cc \
+  bench/x509.cc
+
+boringssl_bench_internal_headers := \
+  bench/internal.h
+
 boringssl_bssl_sources := \
   tool/args.cc \
   tool/ciphers.cc \
@@ -247,7 +273,6 @@ boringssl_bssl_sources := \
   tool/rand.cc \
   tool/server.cc \
   tool/sign.cc \
-  tool/speed.cc \
   tool/tool.cc \
   tool/transport_common.cc
 
@@ -354,19 +379,15 @@ boringssl_crypto_sources := \
   crypto/evp/evp_asn1.cc \
   crypto/evp/evp_ctx.cc \
   crypto/evp/p_dh.cc \
-  crypto/evp/p_dh_asn1.cc \
-  crypto/evp/p_dsa_asn1.cc \
+  crypto/evp/p_dsa.cc \
   crypto/evp/p_ec.cc \
-  crypto/evp/p_ec_asn1.cc \
   crypto/evp/p_ed25519.cc \
-  crypto/evp/p_ed25519_asn1.cc \
   crypto/evp/p_hkdf.cc \
+  crypto/evp/p_mldsa.cc \
   crypto/evp/p_oqs.cc \
   crypto/evp/p_oqs_asn1.cc \
   crypto/evp/p_rsa.cc \
-  crypto/evp/p_rsa_asn1.cc \
   crypto/evp/p_x25519.cc \
-  crypto/evp/p_x25519_asn1.cc \
   crypto/evp/pbkdf.cc \
   crypto/evp/print.cc \
   crypto/evp/scrypt.cc \
@@ -514,7 +535,6 @@ boringssl_crypto_headers := \
   include/openssl/asn1t.h \
   include/openssl/base.h \
   include/openssl/base64.h \
-  include/openssl/bcm_public.h \
   include/openssl/bio.h \
   include/openssl/blake2.h \
   include/openssl/blowfish.h \
@@ -826,6 +846,7 @@ boringssl_crypto_test_data := \
   crypto/evp/test/ec_tests.txt \
   crypto/evp/test/ed25519_tests.txt \
   crypto/evp/test/evp_tests.txt \
+  crypto/evp/test/mldsa_tests.txt \
   crypto/evp/test/rsa_tests.txt \
   crypto/evp/test/scrypt_tests.txt \
   crypto/evp/test/x25519_tests.txt \
@@ -904,10 +925,13 @@ boringssl_crypto_test_data := \
   crypto/rsa/test/rsa8193.pem \
   crypto/rsa/test/rsa8193pub.pem \
   crypto/siphash/siphash_tests.txt \
-  crypto/slhdsa/slhdsa_keygen.txt \
-  crypto/slhdsa/slhdsa_prehash.txt \
-  crypto/slhdsa/slhdsa_siggen.txt \
-  crypto/slhdsa/slhdsa_sigver.txt \
+  crypto/slhdsa/slhdsa_sha2_128s_keygen.txt \
+  crypto/slhdsa/slhdsa_sha2_128s_prehash.txt \
+  crypto/slhdsa/slhdsa_sha2_128s_siggen.txt \
+  crypto/slhdsa/slhdsa_sha2_128s_sigver.txt \
+  crypto/slhdsa/slhdsa_shake_256f_keygen.txt \
+  crypto/slhdsa/slhdsa_shake_256f_siggen.txt \
+  crypto/slhdsa/slhdsa_shake_256f_sigver.txt \
   crypto/x509/test/basic_constraints_ca.pem \
   crypto/x509/test/basic_constraints_ca_pathlen_0.pem \
   crypto/x509/test/basic_constraints_ca_pathlen_1.pem \
@@ -1010,8 +1034,17 @@ boringssl_crypto_test_data := \
   third_party/wycheproof_testvectors/aes_eax_test.txt \
   third_party/wycheproof_testvectors/aes_gcm_siv_test.txt \
   third_party/wycheproof_testvectors/aes_gcm_test.txt \
+  third_party/wycheproof_testvectors/aes_kwp_test.txt \
+  third_party/wycheproof_testvectors/aes_wrap_test.txt \
   third_party/wycheproof_testvectors/chacha20_poly1305_test.txt \
-  third_party/wycheproof_testvectors/dsa_test.txt \
+  third_party/wycheproof_testvectors/dsa_2048_224_sha224_p1363_test.txt \
+  third_party/wycheproof_testvectors/dsa_2048_224_sha224_test.txt \
+  third_party/wycheproof_testvectors/dsa_2048_224_sha256_p1363_test.txt \
+  third_party/wycheproof_testvectors/dsa_2048_224_sha256_test.txt \
+  third_party/wycheproof_testvectors/dsa_2048_256_sha256_p1363_test.txt \
+  third_party/wycheproof_testvectors/dsa_2048_256_sha256_test.txt \
+  third_party/wycheproof_testvectors/dsa_3072_256_sha256_p1363_test.txt \
+  third_party/wycheproof_testvectors/dsa_3072_256_sha256_test.txt \
   third_party/wycheproof_testvectors/ecdh_secp224r1_test.txt \
   third_party/wycheproof_testvectors/ecdh_secp256r1_test.txt \
   third_party/wycheproof_testvectors/ecdh_secp384r1_test.txt \
@@ -1032,7 +1065,7 @@ boringssl_crypto_test_data := \
   third_party/wycheproof_testvectors/ecdsa_secp384r1_sha512_test.txt \
   third_party/wycheproof_testvectors/ecdsa_secp521r1_sha512_p1363_test.txt \
   third_party/wycheproof_testvectors/ecdsa_secp521r1_sha512_test.txt \
-  third_party/wycheproof_testvectors/eddsa_test.txt \
+  third_party/wycheproof_testvectors/ed25519_test.txt \
   third_party/wycheproof_testvectors/hkdf_sha1_test.txt \
   third_party/wycheproof_testvectors/hkdf_sha256_test.txt \
   third_party/wycheproof_testvectors/hkdf_sha384_test.txt \
@@ -1042,14 +1075,15 @@ boringssl_crypto_test_data := \
   third_party/wycheproof_testvectors/hmac_sha256_test.txt \
   third_party/wycheproof_testvectors/hmac_sha384_test.txt \
   third_party/wycheproof_testvectors/hmac_sha512_test.txt \
-  third_party/wycheproof_testvectors/kw_test.txt \
-  third_party/wycheproof_testvectors/kwp_test.txt \
-  third_party/wycheproof_testvectors/mldsa_44_standard_sign_test.txt \
-  third_party/wycheproof_testvectors/mldsa_44_standard_verify_test.txt \
-  third_party/wycheproof_testvectors/mldsa_65_standard_sign_test.txt \
-  third_party/wycheproof_testvectors/mldsa_65_standard_verify_test.txt \
-  third_party/wycheproof_testvectors/mldsa_87_standard_sign_test.txt \
-  third_party/wycheproof_testvectors/mldsa_87_standard_verify_test.txt \
+  third_party/wycheproof_testvectors/mldsa_44_sign_noseed_test.txt \
+  third_party/wycheproof_testvectors/mldsa_44_sign_seed_test.txt \
+  third_party/wycheproof_testvectors/mldsa_44_verify_test.txt \
+  third_party/wycheproof_testvectors/mldsa_65_sign_noseed_test.txt \
+  third_party/wycheproof_testvectors/mldsa_65_sign_seed_test.txt \
+  third_party/wycheproof_testvectors/mldsa_65_verify_test.txt \
+  third_party/wycheproof_testvectors/mldsa_87_sign_noseed_test.txt \
+  third_party/wycheproof_testvectors/mldsa_87_sign_seed_test.txt \
+  third_party/wycheproof_testvectors/mldsa_87_verify_test.txt \
   third_party/wycheproof_testvectors/primality_test.txt \
   third_party/wycheproof_testvectors/rsa_oaep_2048_sha1_mgf1sha1_test.txt \
   third_party/wycheproof_testvectors/rsa_oaep_2048_sha224_mgf1sha1_test.txt \
@@ -1069,8 +1103,13 @@ boringssl_crypto_test_data := \
   third_party/wycheproof_testvectors/rsa_oaep_4096_sha512_mgf1sha1_test.txt \
   third_party/wycheproof_testvectors/rsa_oaep_4096_sha512_mgf1sha512_test.txt \
   third_party/wycheproof_testvectors/rsa_oaep_misc_test.txt \
+  third_party/wycheproof_testvectors/rsa_pkcs1_1024_sig_gen_test.txt \
+  third_party/wycheproof_testvectors/rsa_pkcs1_1536_sig_gen_test.txt \
+  third_party/wycheproof_testvectors/rsa_pkcs1_2048_sig_gen_test.txt \
   third_party/wycheproof_testvectors/rsa_pkcs1_2048_test.txt \
+  third_party/wycheproof_testvectors/rsa_pkcs1_3072_sig_gen_test.txt \
   third_party/wycheproof_testvectors/rsa_pkcs1_3072_test.txt \
+  third_party/wycheproof_testvectors/rsa_pkcs1_4096_sig_gen_test.txt \
   third_party/wycheproof_testvectors/rsa_pkcs1_4096_test.txt \
   third_party/wycheproof_testvectors/rsa_pss_2048_sha1_mgf1_20_test.txt \
   third_party/wycheproof_testvectors/rsa_pss_2048_sha256_mgf1_0_test.txt \
@@ -1079,7 +1118,6 @@ boringssl_crypto_test_data := \
   third_party/wycheproof_testvectors/rsa_pss_4096_sha256_mgf1_32_test.txt \
   third_party/wycheproof_testvectors/rsa_pss_4096_sha512_mgf1_32_test.txt \
   third_party/wycheproof_testvectors/rsa_pss_misc_test.txt \
-  third_party/wycheproof_testvectors/rsa_sig_gen_misc_test.txt \
   third_party/wycheproof_testvectors/rsa_signature_2048_sha224_test.txt \
   third_party/wycheproof_testvectors/rsa_signature_2048_sha256_test.txt \
   third_party/wycheproof_testvectors/rsa_signature_2048_sha384_test.txt \
@@ -1087,9 +1125,12 @@ boringssl_crypto_test_data := \
   third_party/wycheproof_testvectors/rsa_signature_3072_sha256_test.txt \
   third_party/wycheproof_testvectors/rsa_signature_3072_sha384_test.txt \
   third_party/wycheproof_testvectors/rsa_signature_3072_sha512_test.txt \
+  third_party/wycheproof_testvectors/rsa_signature_4096_sha256_test.txt \
   third_party/wycheproof_testvectors/rsa_signature_4096_sha384_test.txt \
   third_party/wycheproof_testvectors/rsa_signature_4096_sha512_test.txt \
-  third_party/wycheproof_testvectors/rsa_signature_test.txt \
+  third_party/wycheproof_testvectors/rsa_signature_8192_sha256_test.txt \
+  third_party/wycheproof_testvectors/rsa_signature_8192_sha384_test.txt \
+  third_party/wycheproof_testvectors/rsa_signature_8192_sha512_test.txt \
   third_party/wycheproof_testvectors/x25519_test.txt \
   third_party/wycheproof_testvectors/xchacha20_poly1305_test.txt
 
@@ -1220,6 +1261,7 @@ boringssl_pki_sources := \
   pki/general_names.cc \
   pki/input.cc \
   pki/ip_util.cc \
+  pki/merkle_tree.cc \
   pki/name_constraints.cc \
   pki/ocsp.cc \
   pki/parse_certificate.cc \
@@ -1264,6 +1306,7 @@ boringssl_pki_internal_headers := \
   pki/general_names.h \
   pki/input.h \
   pki/ip_util.h \
+  pki/merkle_tree.h \
   pki/mock_signature_verify_cache.h \
   pki/name_constraints.h \
   pki/nist_pkits_unittest.h \
@@ -1300,6 +1343,7 @@ boringssl_pki_test_sources := \
   pki/general_names_unittest.cc \
   pki/input_unittest.cc \
   pki/ip_util_unittest.cc \
+  pki/merkle_tree_unittest.cc \
   pki/mock_signature_verify_cache.cc \
   pki/name_constraints_unittest.cc \
   pki/nist_pkits_unittest.cc \
@@ -2249,6 +2293,9 @@ boringssl_pki_test_data := \
   pki/testdata/path_builder_unittest/key_id_prioritization/int_no_ski_c.pem \
   pki/testdata/path_builder_unittest/key_id_prioritization/root.pem \
   pki/testdata/path_builder_unittest/key_id_prioritization/target.pem \
+  pki/testdata/path_builder_unittest/mtc/leaf.pem \
+  pki/testdata/path_builder_unittest/mtc/mtc-ica.pem \
+  pki/testdata/path_builder_unittest/mtc/mtc-leaf.pem \
   pki/testdata/path_builder_unittest/multi-root-A-by-B.pem \
   pki/testdata/path_builder_unittest/multi-root-B-by-C.pem \
   pki/testdata/path_builder_unittest/multi-root-B-by-F.pem \
@@ -2765,6 +2812,10 @@ boringssl_pki_test_data := \
   pki/testdata/verify_unittest/lencr-root-x1-cross-signed.der \
   pki/testdata/verify_unittest/lencr-root-x1.der \
   pki/testdata/verify_unittest/mozilla_roots.der \
+  pki/testdata/verify_unittest/mtc-leaf-b.pem \
+  pki/testdata/verify_unittest/mtc-leaf-bitflip.pem \
+  pki/testdata/verify_unittest/mtc-leaf-c.pem \
+  pki/testdata/verify_unittest/mtc-leaf.pem \
   pki/testdata/verify_unittest/self-issued.pem
 
 boringssl_rust_bssl_crypto_sources := \

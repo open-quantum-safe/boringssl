@@ -15,7 +15,10 @@
 #ifndef OPENSSL_HEADER_CRYPTO_PEM_INTERNAL_H
 #define OPENSSL_HEADER_CRYPTO_PEM_INTERNAL_H
 
+#include <openssl/base.h>
 #include <openssl/pem.h>
+
+#include "../mem_internal.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -33,12 +36,18 @@ int PEM_get_EVP_CIPHER_INFO(const char *header, EVP_CIPHER_INFO *cipher);
 // information in |cipher|. On success, it returns one and sets |*len| to the
 // length of the plaintext. Otherwise, it returns zero. If |cipher| specifies
 // encryption, the key is derived from a password returned from |callback|.
-int PEM_do_header(const EVP_CIPHER_INFO *cipher, uint8_t *data, long *len,
+int PEM_do_header(const EVP_CIPHER_INFO *cipher, uint8_t *data, size_t *len,
                   pem_password_cb *callback, void *u);
 
+// PEM_read_bio_inner differs from |PEM_read_bio| on the out pointer |len|
+// so that it guarantee non-negativeness on this output and it takes in
+// owned types.
+int PEM_read_bio_inner(BIO *bp, bssl::UniquePtr<char> *name,
+                       bssl::UniquePtr<char> *header,
+                       bssl::Array<uint8_t> *data);
 
 #ifdef __cplusplus
-}  // extern "C"
+}  // extern C
 #endif
 
 #endif  // OPENSSL_HEADER_CRYPTO_PEM_INTERNAL_H

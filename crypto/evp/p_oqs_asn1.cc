@@ -297,6 +297,54 @@ static int get_classical_key_len(oqs_key_type_t keytype, int classical_id) {
 }
 
 ///// OQS_TEMPLATE_FRAGMENT_DEF_EVP_PKEY_ALGS_START
+const EVP_PKEY_ALG *EVP_pkey_CROSSrsdp128balanced(void) {
+  static const EVP_PKEY_ALG kAlg = { &CROSSrsdp128balanced_asn1_meth };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_OV_Ip_pkc(void) {
+  static const EVP_PKEY_ALG kAlg = { &OV_Ip_pkc_asn1_meth };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_OV_Ip_pkc_skc(void) {
+  static const EVP_PKEY_ALG kAlg = { &OV_Ip_pkc_skc_asn1_meth };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_falcon1024(void) {
+  static const EVP_PKEY_ALG kAlg = { &falcon1024_asn1_meth };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_falcon512(void) {
+  static const EVP_PKEY_ALG kAlg = { &falcon512_asn1_meth };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_rsa3072_falcon512(void) {
+  static const EVP_PKEY_ALG kAlg = { &rsa3072_falcon512_asn1_meth };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_falconpadded1024(void) {
+  static const EVP_PKEY_ALG kAlg = { &falconpadded1024_asn1_meth };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_falconpadded512(void) {
+  static const EVP_PKEY_ALG kAlg = { &falconpadded512_asn1_meth };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_mayo1(void) {
+  static const EVP_PKEY_ALG kAlg = { &mayo1_asn1_meth };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_mayo2(void) {
+  static const EVP_PKEY_ALG kAlg = { &mayo2_asn1_meth };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_mayo3(void) {
+  static const EVP_PKEY_ALG kAlg = { &mayo3_asn1_meth };
+  return &kAlg;
+}
+const EVP_PKEY_ALG *EVP_pkey_mayo5(void) {
+  static const EVP_PKEY_ALG kAlg = { &mayo5_asn1_meth };
+  return &kAlg;
+}
 const EVP_PKEY_ALG *EVP_pkey_mldsa44(void) {
   static const EVP_PKEY_ALG kAlg = { &mldsa44_asn1_meth };
   return &kAlg;
@@ -319,54 +367,6 @@ const EVP_PKEY_ALG *EVP_pkey_mldsa87(void) {
 }
 const EVP_PKEY_ALG *EVP_pkey_p521_mldsa87(void) {
   static const EVP_PKEY_ALG kAlg = { &p521_mldsa87_asn1_meth };
-  return &kAlg;
-}
-const EVP_PKEY_ALG *EVP_pkey_CROSSrsdp128balanced(void) {
-  static const EVP_PKEY_ALG kAlg = { &CROSSrsdp128balanced_asn1_meth };
-  return &kAlg;
-}
-const EVP_PKEY_ALG *EVP_pkey_OV_Ip_pkc(void) {
-  static const EVP_PKEY_ALG kAlg = { &OV_Ip_pkc_asn1_meth };
-  return &kAlg;
-}
-const EVP_PKEY_ALG *EVP_pkey_OV_Ip_pkc_skc(void) {
-  static const EVP_PKEY_ALG kAlg = { &OV_Ip_pkc_skc_asn1_meth };
-  return &kAlg;
-}
-const EVP_PKEY_ALG *EVP_pkey_falcon512(void) {
-  static const EVP_PKEY_ALG kAlg = { &falcon512_asn1_meth };
-  return &kAlg;
-}
-const EVP_PKEY_ALG *EVP_pkey_rsa3072_falcon512(void) {
-  static const EVP_PKEY_ALG kAlg = { &rsa3072_falcon512_asn1_meth };
-  return &kAlg;
-}
-const EVP_PKEY_ALG *EVP_pkey_falconpadded512(void) {
-  static const EVP_PKEY_ALG kAlg = { &falconpadded512_asn1_meth };
-  return &kAlg;
-}
-const EVP_PKEY_ALG *EVP_pkey_falcon1024(void) {
-  static const EVP_PKEY_ALG kAlg = { &falcon1024_asn1_meth };
-  return &kAlg;
-}
-const EVP_PKEY_ALG *EVP_pkey_falconpadded1024(void) {
-  static const EVP_PKEY_ALG kAlg = { &falconpadded1024_asn1_meth };
-  return &kAlg;
-}
-const EVP_PKEY_ALG *EVP_pkey_mayo1(void) {
-  static const EVP_PKEY_ALG kAlg = { &mayo1_asn1_meth };
-  return &kAlg;
-}
-const EVP_PKEY_ALG *EVP_pkey_mayo2(void) {
-  static const EVP_PKEY_ALG kAlg = { &mayo2_asn1_meth };
-  return &kAlg;
-}
-const EVP_PKEY_ALG *EVP_pkey_mayo3(void) {
-  static const EVP_PKEY_ALG kAlg = { &mayo3_asn1_meth };
-  return &kAlg;
-}
-const EVP_PKEY_ALG *EVP_pkey_mayo5(void) {
-  static const EVP_PKEY_ALG kAlg = { &mayo5_asn1_meth };
   return &kAlg;
 }
 const EVP_PKEY_ALG *EVP_pkey_snova2454(void) {
@@ -442,14 +442,14 @@ const EVP_PKEY_ALG *EVP_pkey_sphincsshake256ssimple(void) {
 int get_classical_nid(int hybrid_id) {
   switch (hybrid_id) {
 ///// OQS_TEMPLATE_FRAGMENT_ASSIGN_CLASSICAL_NIDS_START
+    case NID_rsa3072_falcon512:
+      return NID_rsaEncryption;
     case NID_p256_mldsa44:
       return NID_X9_62_prime256v1;
     case NID_p384_mldsa65:
       return NID_secp384r1;
     case NID_p521_mldsa87:
       return NID_secp521r1;
-    case NID_rsa3072_falcon512:
-      return NID_rsaEncryption;
 ///// OQS_TEMPLATE_FRAGMENT_ASSIGN_CLASSICAL_NIDS_END
     default:
       return 0;
@@ -459,13 +459,13 @@ int get_classical_nid(int hybrid_id) {
 int is_oqs_hybrid_alg(int hybrid_nid) {
   switch (hybrid_nid) {
 ///// OQS_TEMPLATE_FRAGMENT_LIST_HYBRID_NIDS_START
+    case NID_rsa3072_falcon512:
+      return 1;
     case NID_p256_mldsa44:
       return 1;
     case NID_p384_mldsa65:
       return 1;
     case NID_p521_mldsa87:
-      return 1;
-    case NID_rsa3072_falcon512:
       return 1;
 ///// OQS_TEMPLATE_FRAGMENT_LIST_HYBRID_NIDS_END
     default:
@@ -576,8 +576,10 @@ end:
       ALG##_priv_decode,                                \
       NULL /* priv_encode */,                           \
       ALG##_set_priv_raw,                               \
+      NULL /* set_priv_seed */,                         \
       ALG##_set_pub_raw,                                \
       NULL /* get_priv_raw */,                          \
+      NULL /* get_priv_seed */,                         \
       NULL /* get_pub_raw */,                           \
       NULL /* int set1_tls_encodedpoint */,             \
       NULL /* size_t set1_tls_encodedpoint */,          \
@@ -592,6 +594,42 @@ end:
 
 // the OIDs can also be found in the kObjectData array in crypto/obj/obj_dat.h
 ///// OQS_TEMPLATE_FRAGMENT_DEF_ASN1_METHODS_START
+DEFINE_OQS_ASN1_METHODS(CROSSrsdp128balanced, OQS_SIG_alg_cross_rsdp_128_balanced, EVP_PKEY_CROSSRSDP128BALANCED)
+DEFINE_OQS_PKEY_ASN1_METHOD(CROSSrsdp128balanced, EVP_PKEY_CROSSRSDP128BALANCED, OID(0x2B, 0x06, 0x01, 0x04, 0x01, 0x83, 0xE6, 0x25, 0x02, 0x01, 0x01, 0x02, 0x02))
+
+DEFINE_OQS_ASN1_METHODS(OV_Ip_pkc, OQS_SIG_alg_uov_ov_Ip_pkc, EVP_PKEY_OV_IP_PKC)
+DEFINE_OQS_PKEY_ASN1_METHOD(OV_Ip_pkc, EVP_PKEY_OV_IP_PKC, OID(0x2B, 0xCE, 0x0F, 0x09, 0x06, 0x01))
+
+DEFINE_OQS_ASN1_METHODS(OV_Ip_pkc_skc, OQS_SIG_alg_uov_ov_Ip_pkc_skc, EVP_PKEY_OV_IP_PKC_SKC)
+DEFINE_OQS_PKEY_ASN1_METHOD(OV_Ip_pkc_skc, EVP_PKEY_OV_IP_PKC_SKC, OID(0x2B, 0xCE, 0x0F, 0x09, 0x0A, 0x01))
+
+DEFINE_OQS_ASN1_METHODS(falcon1024, OQS_SIG_alg_falcon_1024, EVP_PKEY_FALCON1024)
+DEFINE_OQS_PKEY_ASN1_METHOD(falcon1024, EVP_PKEY_FALCON1024, OID(0x2B, 0xCE, 0x0F, 0x03, 0x0E))
+
+DEFINE_OQS_ASN1_METHODS(falcon512, OQS_SIG_alg_falcon_512, EVP_PKEY_FALCON512)
+DEFINE_OQS_PKEY_ASN1_METHOD(falcon512, EVP_PKEY_FALCON512, OID(0x2B, 0xCE, 0x0F, 0x03, 0x0B))
+
+DEFINE_OQS_ASN1_METHODS(rsa3072_falcon512, OQS_SIG_alg_falcon_512, EVP_PKEY_RSA3072_FALCON512)
+DEFINE_OQS_PKEY_ASN1_METHOD(rsa3072_falcon512, EVP_PKEY_RSA3072_FALCON512, OID(0x2B, 0xCE, 0x0F, 0x03, 0x0D))
+
+DEFINE_OQS_ASN1_METHODS(falconpadded1024, OQS_SIG_alg_falcon_padded_1024, EVP_PKEY_FALCONPADDED1024)
+DEFINE_OQS_PKEY_ASN1_METHOD(falconpadded1024, EVP_PKEY_FALCONPADDED1024, OID(0x2B, 0xCE, 0x0F, 0x03, 0x13))
+
+DEFINE_OQS_ASN1_METHODS(falconpadded512, OQS_SIG_alg_falcon_padded_512, EVP_PKEY_FALCONPADDED512)
+DEFINE_OQS_PKEY_ASN1_METHOD(falconpadded512, EVP_PKEY_FALCONPADDED512, OID(0x2B, 0xCE, 0x0F, 0x03, 0x10))
+
+DEFINE_OQS_ASN1_METHODS(mayo1, OQS_SIG_alg_mayo_1, EVP_PKEY_MAYO1)
+DEFINE_OQS_PKEY_ASN1_METHOD(mayo1, EVP_PKEY_MAYO1, OID(0x2B, 0xCE, 0x0F, 0x08, 0x01, 0x03))
+
+DEFINE_OQS_ASN1_METHODS(mayo2, OQS_SIG_alg_mayo_2, EVP_PKEY_MAYO2)
+DEFINE_OQS_PKEY_ASN1_METHOD(mayo2, EVP_PKEY_MAYO2, OID(0x2B, 0xCE, 0x0F, 0x08, 0x02, 0x03))
+
+DEFINE_OQS_ASN1_METHODS(mayo3, OQS_SIG_alg_mayo_3, EVP_PKEY_MAYO3)
+DEFINE_OQS_PKEY_ASN1_METHOD(mayo3, EVP_PKEY_MAYO3, OID(0x2B, 0xCE, 0x0F, 0x08, 0x03, 0x03))
+
+DEFINE_OQS_ASN1_METHODS(mayo5, OQS_SIG_alg_mayo_5, EVP_PKEY_MAYO5)
+DEFINE_OQS_PKEY_ASN1_METHOD(mayo5, EVP_PKEY_MAYO5, OID(0x2B, 0xCE, 0x0F, 0x08, 0x05, 0x03))
+
 DEFINE_OQS_ASN1_METHODS(mldsa44, OQS_SIG_alg_ml_dsa_44, EVP_PKEY_MLDSA44)
 DEFINE_OQS_PKEY_ASN1_METHOD(mldsa44, EVP_PKEY_MLDSA44, OID(0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x11))
 
@@ -609,42 +647,6 @@ DEFINE_OQS_PKEY_ASN1_METHOD(mldsa87, EVP_PKEY_MLDSA87, OID(0x60, 0x86, 0x48, 0x0
 
 DEFINE_OQS_ASN1_METHODS(p521_mldsa87, OQS_SIG_alg_ml_dsa_87, EVP_PKEY_P521_MLDSA87)
 DEFINE_OQS_PKEY_ASN1_METHOD(p521_mldsa87, EVP_PKEY_P521_MLDSA87, OID(0x2B, 0xCE, 0x0F, 0x07, 0x08))
-
-DEFINE_OQS_ASN1_METHODS(CROSSrsdp128balanced, OQS_SIG_alg_cross_rsdp_128_balanced, EVP_PKEY_CROSSRSDP128BALANCED)
-DEFINE_OQS_PKEY_ASN1_METHOD(CROSSrsdp128balanced, EVP_PKEY_CROSSRSDP128BALANCED, OID(0x2B, 0x06, 0x01, 0x04, 0x01, 0x83, 0xE6, 0x25, 0x02, 0x01, 0x01, 0x02, 0x02))
-
-DEFINE_OQS_ASN1_METHODS(OV_Ip_pkc, OQS_SIG_alg_uov_ov_Ip_pkc, EVP_PKEY_OV_IP_PKC)
-DEFINE_OQS_PKEY_ASN1_METHOD(OV_Ip_pkc, EVP_PKEY_OV_IP_PKC, OID(0x2B, 0xCE, 0x0F, 0x09, 0x06, 0x01))
-
-DEFINE_OQS_ASN1_METHODS(OV_Ip_pkc_skc, OQS_SIG_alg_uov_ov_Ip_pkc_skc, EVP_PKEY_OV_IP_PKC_SKC)
-DEFINE_OQS_PKEY_ASN1_METHOD(OV_Ip_pkc_skc, EVP_PKEY_OV_IP_PKC_SKC, OID(0x2B, 0xCE, 0x0F, 0x09, 0x0A, 0x01))
-
-DEFINE_OQS_ASN1_METHODS(falcon512, OQS_SIG_alg_falcon_512, EVP_PKEY_FALCON512)
-DEFINE_OQS_PKEY_ASN1_METHOD(falcon512, EVP_PKEY_FALCON512, OID(0x2B, 0xCE, 0x0F, 0x03, 0x0B))
-
-DEFINE_OQS_ASN1_METHODS(rsa3072_falcon512, OQS_SIG_alg_falcon_512, EVP_PKEY_RSA3072_FALCON512)
-DEFINE_OQS_PKEY_ASN1_METHOD(rsa3072_falcon512, EVP_PKEY_RSA3072_FALCON512, OID(0x2B, 0xCE, 0x0F, 0x03, 0x0D))
-
-DEFINE_OQS_ASN1_METHODS(falconpadded512, OQS_SIG_alg_falcon_padded_512, EVP_PKEY_FALCONPADDED512)
-DEFINE_OQS_PKEY_ASN1_METHOD(falconpadded512, EVP_PKEY_FALCONPADDED512, OID(0x2B, 0xCE, 0x0F, 0x03, 0x10))
-
-DEFINE_OQS_ASN1_METHODS(falcon1024, OQS_SIG_alg_falcon_1024, EVP_PKEY_FALCON1024)
-DEFINE_OQS_PKEY_ASN1_METHOD(falcon1024, EVP_PKEY_FALCON1024, OID(0x2B, 0xCE, 0x0F, 0x03, 0x0E))
-
-DEFINE_OQS_ASN1_METHODS(falconpadded1024, OQS_SIG_alg_falcon_padded_1024, EVP_PKEY_FALCONPADDED1024)
-DEFINE_OQS_PKEY_ASN1_METHOD(falconpadded1024, EVP_PKEY_FALCONPADDED1024, OID(0x2B, 0xCE, 0x0F, 0x03, 0x13))
-
-DEFINE_OQS_ASN1_METHODS(mayo1, OQS_SIG_alg_mayo_1, EVP_PKEY_MAYO1)
-DEFINE_OQS_PKEY_ASN1_METHOD(mayo1, EVP_PKEY_MAYO1, OID(0x2B, 0xCE, 0x0F, 0x08, 0x01, 0x03))
-
-DEFINE_OQS_ASN1_METHODS(mayo2, OQS_SIG_alg_mayo_2, EVP_PKEY_MAYO2)
-DEFINE_OQS_PKEY_ASN1_METHOD(mayo2, EVP_PKEY_MAYO2, OID(0x2B, 0xCE, 0x0F, 0x08, 0x02, 0x03))
-
-DEFINE_OQS_ASN1_METHODS(mayo3, OQS_SIG_alg_mayo_3, EVP_PKEY_MAYO3)
-DEFINE_OQS_PKEY_ASN1_METHOD(mayo3, EVP_PKEY_MAYO3, OID(0x2B, 0xCE, 0x0F, 0x08, 0x03, 0x03))
-
-DEFINE_OQS_ASN1_METHODS(mayo5, OQS_SIG_alg_mayo_5, EVP_PKEY_MAYO5)
-DEFINE_OQS_PKEY_ASN1_METHOD(mayo5, EVP_PKEY_MAYO5, OID(0x2B, 0xCE, 0x0F, 0x08, 0x05, 0x03))
 
 DEFINE_OQS_ASN1_METHODS(snova2454, OQS_SIG_alg_snova_SNOVA_24_5_4, EVP_PKEY_SNOVA2454)
 DEFINE_OQS_PKEY_ASN1_METHOD(snova2454, EVP_PKEY_SNOVA2454, OID(0x2B, 0xCE, 0x0F, 0x0A, 0x01, 0x01))

@@ -251,11 +251,15 @@ struct OPENSSL_EXPORT ParsedTbsCertificate {
   //
   // Parsing guarantees that notBefore (validity_not_before) and notAfter
   // (validity_not_after) are valid DER-encoded dates, however it DOES NOT
-  // gurantee anything about their values. For instance notAfter could be
+  // guarantee anything about their values. For instance notAfter could be
   // before notBefore, or the dates could indicate an expired certificate.
   // Consumers are responsible for testing expiration.
   der::GeneralizedTime validity_not_before;
   der::GeneralizedTime validity_not_after;
+
+  // Contains the full Tag-Length-Value for a SEQUENCE containing the validity.
+  // No guarantees are made regarding the value of this SEQUENCE.
+  der::Input validity_tlv;
 
   // Corresponds with "subject" from RFC 5280:
   //         subject              Name,
@@ -270,6 +274,10 @@ struct OPENSSL_EXPORT ParsedTbsCertificate {
   // This contains the full (unverified) Tag-Length-Value for a SEQUENCE. No
   // guarantees are made regarding the value of this SEQUENCE.
   der::Input spki_tlv;
+
+  // Contains the remaining bytes in the certificate after the SPKI. No
+  // guarantees are made regarding the contents of these bytes.
+  Span<const uint8_t> bytes_after_spki;
 
   // Corresponds with "issuerUniqueID" from RFC 5280:
   //         issuerUniqueID  [1]  IMPLICIT UniqueIdentifier OPTIONAL,

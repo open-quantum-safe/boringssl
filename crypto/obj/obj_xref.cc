@@ -48,24 +48,24 @@ static const nid_triple kTriples[] = {
     {NID_rsassaPss, NID_undef, NID_rsaEncryption},
     {NID_ED25519, NID_undef, NID_ED25519},
 ///// OQS_TEMPLATE_FRAGMENT_DEFINE_NID_TRIPLES_START
+    {NID_CROSSrsdp128balanced, NID_sha256, NID_CROSSrsdp128balanced},
+    {NID_OV_Ip_pkc, NID_sha256, NID_OV_Ip_pkc},
+    {NID_OV_Ip_pkc_skc, NID_sha256, NID_OV_Ip_pkc_skc},
+    {NID_falcon1024, NID_sha512, NID_falcon1024},
+    {NID_falcon512, NID_sha256, NID_falcon512},
+    {NID_rsa3072_falcon512, NID_sha256, NID_rsa3072_falcon512},
+    {NID_falconpadded1024, NID_sha512, NID_falconpadded1024},
+    {NID_falconpadded512, NID_sha256, NID_falconpadded512},
+    {NID_mayo1, NID_sha256, NID_mayo1},
+    {NID_mayo2, NID_sha256, NID_mayo2},
+    {NID_mayo3, NID_sha384, NID_mayo3},
+    {NID_mayo5, NID_sha512, NID_mayo5},
     {NID_mldsa44, NID_sha256, NID_mldsa44},
     {NID_p256_mldsa44, NID_sha256, NID_p256_mldsa44},
     {NID_mldsa65, NID_sha384, NID_mldsa65},
     {NID_p384_mldsa65, NID_sha384, NID_p384_mldsa65},
     {NID_mldsa87, NID_sha512, NID_mldsa87},
     {NID_p521_mldsa87, NID_sha512, NID_p521_mldsa87},
-    {NID_CROSSrsdp128balanced, NID_sha256, NID_CROSSrsdp128balanced},
-    {NID_OV_Ip_pkc, NID_sha256, NID_OV_Ip_pkc},
-    {NID_OV_Ip_pkc_skc, NID_sha256, NID_OV_Ip_pkc_skc},
-    {NID_falcon512, NID_sha256, NID_falcon512},
-    {NID_rsa3072_falcon512, NID_sha256, NID_rsa3072_falcon512},
-    {NID_falconpadded512, NID_sha256, NID_falconpadded512},
-    {NID_falcon1024, NID_sha512, NID_falcon1024},
-    {NID_falconpadded1024, NID_sha512, NID_falconpadded1024},
-    {NID_mayo1, NID_sha256, NID_mayo1},
-    {NID_mayo2, NID_sha256, NID_mayo2},
-    {NID_mayo3, NID_sha384, NID_mayo3},
-    {NID_mayo5, NID_sha512, NID_mayo5},
     {NID_snova2454, NID_sha256, NID_snova2454},
     {NID_snova2454esk, NID_sha256, NID_snova2454esk},
     {NID_snova37172, NID_sha256, NID_snova37172},
@@ -89,10 +89,10 @@ static const nid_triple kTriples[] = {
 int OBJ_find_sigid_algs(int sign_nid, int *out_digest_nid, int *out_pkey_nid) {
   for (const auto &triple : kTriples) {
     if (triple.sign_nid == sign_nid) {
-      if (out_digest_nid != NULL) {
+      if (out_digest_nid != nullptr) {
         *out_digest_nid = triple.digest_nid;
       }
-      if (out_pkey_nid != NULL) {
+      if (out_pkey_nid != nullptr) {
         *out_pkey_nid = triple.pkey_nid;
       }
       return 1;
@@ -106,7 +106,7 @@ int OBJ_find_sigid_by_algs(int *out_sign_nid, int digest_nid, int pkey_nid) {
   for (const auto &triple : kTriples) {
     if (triple.digest_nid == digest_nid &&
         triple.pkey_nid == pkey_nid) {
-      if (out_sign_nid != NULL) {
+      if (out_sign_nid != nullptr) {
         *out_sign_nid = triple.sign_nid;
       }
       return 1;

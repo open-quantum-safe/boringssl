@@ -68,17 +68,9 @@ int BORINGSSL_check_test(const void *expected, const void *actual,
   return 1;
 }
 
-// MSVC wants to put a NUL byte at the end of non-char arrays and so cannot
-// compile the real logic.
-#if defined(_MSC_VER)
-
-int BORINGSSL_self_test(void) { return 0; }
-
-#else
-
 static int set_bignum(BIGNUM **out, const uint8_t *in, size_t len) {
-  *out = BN_bin2bn(in, len, NULL);
-  return *out != NULL;
+  *out = BN_bin2bn(in, len, nullptr);
+  return *out != nullptr;
 }
 
 static RSA *self_test_rsa_key(void) {
@@ -198,7 +190,7 @@ static RSA *self_test_rsa_key(void) {
   };
 
   RSA *rsa = RSA_new();
-  if (rsa == NULL ||  //
+  if (rsa == nullptr ||  //
       !set_bignum(&rsa->n, kN, sizeof(kN)) ||
       !set_bignum(&rsa->e, kE, sizeof(kE)) ||
       !set_bignum(&rsa->d, kD, sizeof(kD)) ||
@@ -208,7 +200,7 @@ static RSA *self_test_rsa_key(void) {
       !set_bignum(&rsa->dmq1, kDModQMinusOne, sizeof(kDModQMinusOne)) ||
       !set_bignum(&rsa->iqmp, kQInverseModP, sizeof(kQInverseModP))) {
     RSA_free(rsa);
-    return NULL;
+    return nullptr;
   }
 
   return rsa;
@@ -232,15 +224,15 @@ static EC_KEY *self_test_ecdsa_key(void) {
   };
 
   EC_KEY *ec_key = EC_KEY_new();
-  BIGNUM *qx = BN_bin2bn(kQx, sizeof(kQx), NULL);
-  BIGNUM *qy = BN_bin2bn(kQy, sizeof(kQy), NULL);
-  BIGNUM *d = BN_bin2bn(kD, sizeof(kD), NULL);
-  if (ec_key == NULL || qx == NULL || qy == NULL || d == NULL ||
+  BIGNUM *qx = BN_bin2bn(kQx, sizeof(kQx), nullptr);
+  BIGNUM *qy = BN_bin2bn(kQy, sizeof(kQy), nullptr);
+  BIGNUM *d = BN_bin2bn(kD, sizeof(kD), nullptr);
+  if (ec_key == nullptr || qx == nullptr || qy == nullptr || d == nullptr ||
       !EC_KEY_set_group(ec_key, EC_group_p256()) ||
       !EC_KEY_set_public_key_affine_coordinates(ec_key, qx, qy) ||
       !EC_KEY_set_private_key(ec_key, d)) {
     EC_KEY_free(ec_key);
-    ec_key = NULL;
+    ec_key = nullptr;
   }
 
   BN_free(qx);
@@ -252,7 +244,7 @@ static EC_KEY *self_test_ecdsa_key(void) {
 static DH *self_test_dh(void) {
   DH *dh = DH_get_rfc7919_2048();
   if (!dh) {
-    return NULL;
+    return nullptr;
   }
 
   BIGNUM *priv = BN_new();
@@ -273,7 +265,7 @@ static DH *self_test_dh(void) {
   bn_set_static_words(priv, kFFDHE2048PrivateKeyData,
                       std::size(kFFDHE2048PrivateKeyData));
 
-  if (!DH_set0_key(dh, NULL, priv)) {
+  if (!DH_set0_key(dh, nullptr, priv)) {
     goto err;
   }
   return dh;
@@ -281,7 +273,7 @@ static DH *self_test_dh(void) {
 err:
   BN_free(priv);
   DH_free(dh);
-  return NULL;
+  return nullptr;
 }
 
 
@@ -296,13 +288,10 @@ static int boringssl_self_test_rsa(void) {
   uint8_t output[256];
 
   RSA *const rsa_key = self_test_rsa_key();
-  if (rsa_key == NULL) {
+  if (rsa_key == nullptr) {
     fprintf(CRYPTO_get_stderr(), "RSA key construction failed\n");
     goto err;
   }
-  // Disable blinding for the power-on tests because it's not needed and
-  // triggers an entropy draw.
-  rsa_key->flags |= RSA_FLAG_NO_BLINDING;
 
   // RSA Sign KAT
 
@@ -393,18 +382,18 @@ err:
 
 static int boringssl_self_test_ecc(void) {
   int ret = 0;
-  EC_KEY *ec_key = NULL;
-  EC_POINT *ec_point_in = NULL;
-  EC_POINT *ec_point_out = NULL;
-  BIGNUM *ec_scalar = NULL;
-  const EC_GROUP *ec_group = NULL;
+  EC_KEY *ec_key = nullptr;
+  EC_POINT *ec_point_in = nullptr;
+  EC_POINT *ec_point_out = nullptr;
+  BIGNUM *ec_scalar = nullptr;
+  const EC_GROUP *ec_group = nullptr;
 
   // The 'k' value for ECDSA is fixed to avoid an entropy draw.
   uint8_t ecdsa_k[32] = {0};
   ecdsa_k[31] = 42;
 
   ec_key = self_test_ecdsa_key();
-  if (ec_key == NULL) {
+  if (ec_key == nullptr) {
     fprintf(CRYPTO_get_stderr(), "ECDSA KeyGen failed\n");
     goto err;
   }
@@ -491,14 +480,15 @@ static int boringssl_self_test_ecc(void) {
   ec_point_out = EC_POINT_new(ec_group);
   ec_scalar = BN_new();
   uint8_t z_comp_result[65];
-  if (ec_point_in == NULL || ec_point_out == NULL || ec_scalar == NULL ||
+  if (ec_point_in == nullptr || ec_point_out == nullptr ||
+      ec_scalar == nullptr ||
       !EC_POINT_oct2point(ec_group, ec_point_in, kP256Point, sizeof(kP256Point),
-                          NULL) ||
+                          nullptr) ||
       !BN_bin2bn(kP256Scalar, sizeof(kP256Scalar), ec_scalar) ||
-      !ec_point_mul_no_self_test(ec_group, ec_point_out, NULL, ec_point_in,
-                                 ec_scalar, NULL) ||
+      !ec_point_mul_no_self_test(ec_group, ec_point_out, nullptr, ec_point_in,
+                                 ec_scalar, nullptr) ||
       !EC_POINT_point2oct(ec_group, ec_point_out, POINT_CONVERSION_UNCOMPRESSED,
-                          z_comp_result, sizeof(z_comp_result), NULL) ||
+                          z_comp_result, sizeof(z_comp_result), nullptr) ||
       !BORINGSSL_check_test(kP256PointResult, z_comp_result,
                             sizeof(z_comp_result), "Z Computation Result")) {
     fprintf(CRYPTO_get_stderr(), "Z-computation KAT failed.\n");
@@ -518,8 +508,8 @@ err:
 
 static int boringssl_self_test_ffdh(void) {
   int ret = 0;
-  DH *dh = NULL;
-  BIGNUM *ffdhe2048_value = NULL;
+  DH *dh = nullptr;
+  BIGNUM *ffdhe2048_value = nullptr;
 
   // FFC Diffie-Hellman KAT
 
@@ -576,7 +566,8 @@ static int boringssl_self_test_ffdh(void) {
 
   dh = self_test_dh();
   uint8_t dh_out[sizeof(kDHOutput)];
-  if (dh == NULL || ffdhe2048_value == NULL || sizeof(dh_out) != DH_size(dh) ||
+  if (dh == nullptr || ffdhe2048_value == nullptr ||
+      sizeof(dh_out) != DH_size(dh) ||
       dh_compute_key_padded_no_self_test(dh_out, ffdhe2048_value, dh) !=
           sizeof(dh_out) ||
       !BORINGSSL_check_test(kDHOutput, dh_out, sizeof(dh_out), "FFC DH")) {
@@ -696,8 +687,8 @@ int boringssl_self_test_hmac_sha256(void) {
   uint8_t output[EVP_MAX_MD_SIZE];
 
   unsigned output_len;
-  return NULL != HMAC(EVP_sha256(), kInput, sizeof(kInput), kInput,
-                      sizeof(kInput), output, &output_len) &&
+  return nullptr != HMAC(EVP_sha256(), kInput, sizeof(kInput), kInput,
+                         sizeof(kInput), output, &output_len) &&
          output_len == sizeof(kPlaintextHMACSHA256) &&
          BORINGSSL_check_test(kPlaintextHMACSHA256, output,
                               sizeof(kPlaintextHMACSHA256), "HMAC-SHA-256 KAT");
@@ -769,7 +760,7 @@ static int boringssl_self_test_fast(void) {
   OPENSSL_memset(nonce, 0, sizeof(nonce));
   bssl::ScopedEVP_AEAD_CTX aead_ctx;
   if (!EVP_AEAD_CTX_init(aead_ctx.get(), EVP_aead_aes_128_gcm(), kAESKey,
-                         sizeof(kAESKey), 0, NULL)) {
+                         sizeof(kAESKey), 0, nullptr)) {
     fprintf(CRYPTO_get_stderr(), "EVP_AEAD_CTX_init for AES-128-GCM failed.\n");
     return 0;
   }
@@ -788,8 +779,8 @@ static int boringssl_self_test_fast(void) {
   };
   if (!EVP_AEAD_CTX_seal(aead_ctx.get(), output, &out_len, sizeof(output),
                          nonce, EVP_AEAD_nonce_length(EVP_aead_aes_128_gcm()),
-                         kAESGCMEncPlaintext, sizeof(kAESGCMEncPlaintext), NULL,
-                         0) ||
+                         kAESGCMEncPlaintext, sizeof(kAESGCMEncPlaintext),
+                         nullptr, 0) ||
       !BORINGSSL_check_test(kAESGCMCiphertext, output,
                             sizeof(kAESGCMCiphertext), "AES-GCM-encrypt KAT")) {
     fprintf(CRYPTO_get_stderr(), "EVP_AEAD_CTX_seal for AES-128-GCM failed.\n");
@@ -812,7 +803,7 @@ static int boringssl_self_test_fast(void) {
   if (!EVP_AEAD_CTX_open(aead_ctx.get(), output, &out_len, sizeof(output),
                          nonce, EVP_AEAD_nonce_length(EVP_aead_aes_128_gcm()),
                          kAESGCMDecCiphertext, sizeof(kAESGCMDecCiphertext),
-                         NULL, 0) ||
+                         nullptr, 0) ||
       !BORINGSSL_check_test(kAESGCMDecPlaintext, output,
                             sizeof(kAESGCMDecPlaintext),
                             "AES-GCM-decrypt KAT")) {
@@ -1058,5 +1049,3 @@ int BORINGSSL_self_test_all(void) {
 #if defined(BORINGSSL_FIPS)
 int boringssl_self_test_startup(void) { return boringssl_self_test_fast(); }
 #endif
-
-#endif  // !_MSC_VER

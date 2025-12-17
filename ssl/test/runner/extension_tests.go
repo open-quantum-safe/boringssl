@@ -1781,7 +1781,7 @@ func addExtensionTests() {
 			differentSCTList = append(differentSCTList, testSCTList...)
 			differentSCTList[len(differentSCTList)-1] ^= 1
 
-			// The SCT extension did not specify that it must only be sent on the inital handshake as it
+			// The SCT extension did not specify that it must only be sent on the initial handshake as it
 			// should have, so test that we tolerate but ignore it. This is only an issue pre-1.3, since
 			// SCTs are sent in the CertificateEntry message in 1.3, whereas they were previously sent
 			// in an extension in the ServerHello pre-1.3.
@@ -1862,6 +1862,22 @@ func addExtensionTests() {
 					},
 				},
 				shimCertificate: rsaCertificate.WithOCSP(testOCSPResponse).WithSCTList(testSCTList),
+			})
+
+			// The client should reject empty OCSP responses from the server. A server
+			// with no OCSP response should not send the status_request extension.
+			testCases = append(testCases, testCase{
+				protocol: protocol,
+				testType: clientTest,
+				name:     "RejectEmptyOCSPResponse-" + suffix,
+				config: Config{
+					MaxVersion: ver.version,
+					Credential: rsaCertificate.WithOCSP([]byte{}),
+				},
+				flags:              []string{"-enable-ocsp-stapling"},
+				shouldFail:         true,
+				expectedError:      ":DECODE_ERROR:",
+				expectedLocalError: "remote error: error decoding message",
 			})
 
 			// Extension permutation should interact correctly with other extensions,
@@ -1951,7 +1967,7 @@ func addExtensionTests() {
 				// the ClientHello size needs to be recalculated.
 				// The calculation method can be found here:
 				// https://github.com/open-quantum-safe/boringssl/pull/100#issuecomment-1592853839
-				RequireClientHelloSize: 1240,
+				RequireClientHelloSize: 512,
 			},
 		},
 		// This hostname just needs to be long enough to push the

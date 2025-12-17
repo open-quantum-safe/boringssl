@@ -65,7 +65,8 @@ X509 *X509_new(void) {
 }
 
 void X509_free(X509 *x509) {
-  if (x509 == NULL || !CRYPTO_refcount_dec_and_test_zero(&x509->references)) {
+  if (x509 == nullptr ||
+      !CRYPTO_refcount_dec_and_test_zero(&x509->references)) {
     return;
   }
 
@@ -137,9 +138,11 @@ X509 *X509_parse_with_algorithms(CRYPTO_BUFFER *buf,
       OPENSSL_PUT_ERROR(ASN1, ASN1_R_DECODE_ERROR);
       return nullptr;
     }
-    // Versions v1, v2, and v3 are defined. v1 is DEFAULT, so cannot be encoded
-    // explicitly.
-    if (version != X509_VERSION_2 && version != X509_VERSION_3) {
+    // The version must be one of v1(0), v2(1), or v3(2).
+    // TODO(https://crbug.com/42290225): Also reject |X509_VERSION_1|. v1 is
+    // DEFAULT, so DER requires it be omitted.
+    if (version != X509_VERSION_1 && version != X509_VERSION_2 &&
+        version != X509_VERSION_3) {
       OPENSSL_PUT_ERROR(X509, X509_R_INVALID_VERSION);
       return nullptr;
     }
@@ -187,13 +190,14 @@ X509 *X509_parse_with_algorithms(CRYPTO_BUFFER *buf,
       OPENSSL_PUT_ERROR(ASN1, ASN1_R_DECODE_ERROR);
       return nullptr;
     }
+    // TODO(crbug.com/442221114, crbug.com/42290219): Empty extension lists
+    // should be rejected. Extensions is a SEQUENCE SIZE (1..MAX), so it cannot
+    // be empty. An empty extensions list is encoded by omitting the OPTIONAL
+    // field. libpki already rejects this.
     const uint8_t *p = CBS_data(&wrapper);
     ret->extensions = d2i_X509_EXTENSIONS(nullptr, &p, CBS_len(&wrapper));
     if (ret->extensions == nullptr ||
-        p != CBS_data(&wrapper) + CBS_len(&wrapper) ||
-        // Extensions is a SEQUENCE SIZE (1..MAX), so it cannot be empty. An
-        // empty extensions list is encoded by omitting the OPTIONAL field.
-        sk_X509_EXTENSION_num(ret->extensions) == 0) {
+        p != CBS_data(&wrapper) + CBS_len(&wrapper)) {
       OPENSSL_PUT_ERROR(ASN1, ASN1_R_DECODE_ERROR);
       return nullptr;
     }
@@ -293,7 +297,7 @@ X509 *d2i_X509(X509 **out, const uint8_t **inp, long len) {
 }
 
 int i2d_X509(const X509 *x509, uint8_t **outp) {
-  if (x509 == NULL) {
+  if (x509 == nullptr) {
     OPENSSL_PUT_ERROR(ASN1, ASN1_R_MISSING_VALUE);
     return -1;
   }
@@ -305,12 +309,12 @@ int i2d_X509(const X509 *x509, uint8_t **outp) {
 
 static int x509_new_cb(ASN1_VALUE **pval, const ASN1_ITEM *it) {
   *pval = (ASN1_VALUE *)X509_new();
-  return *pval != NULL;
+  return *pval != nullptr;
 }
 
 static void x509_free_cb(ASN1_VALUE **pval, const ASN1_ITEM *it) {
   X509_free((X509 *)*pval);
-  *pval = NULL;
+  *pval = nullptr;
 }
 
 static int x509_parse_cb(ASN1_VALUE **pval, CBS *cbs, const ASN1_ITEM *it,
@@ -339,14 +343,14 @@ static const ASN1_EXTERN_FUNCS x509_extern_funcs = {x509_new_cb, x509_free_cb,
 IMPLEMENT_EXTERN_ASN1(X509, x509_extern_funcs)
 
 X509 *X509_dup(const X509 *x509) {
-  uint8_t *der = NULL;
+  uint8_t *der = nullptr;
   int len = i2d_X509(x509, &der);
   if (len < 0) {
-    return NULL;
+    return nullptr;
   }
 
   const uint8_t *inp = der;
-  X509 *ret = d2i_X509(NULL, &inp, len);
+  X509 *ret = d2i_X509(nullptr, &inp, len);
   OPENSSL_free(der);
   return ret;
 }
@@ -380,13 +384,13 @@ X509 *d2i_X509_AUX(X509 **a, const unsigned char **pp, long length) {
   X509 *ret;
   int freeret = 0;
 
-  if (!a || *a == NULL) {
+  if (!a || *a == nullptr) {
     freeret = 1;
   }
   ret = d2i_X509(a, &q, length);
   // If certificate unreadable then forget it
   if (!ret) {
-    return NULL;
+    return nullptr;
   }
   // update length
   length -= q - *pp;
@@ -400,10 +404,10 @@ err:
   if (freeret) {
     X509_free(ret);
     if (a) {
-      *a = NULL;
+      *a = nullptr;
     }
   }
-  return NULL;
+  return nullptr;
 }
 
 // Serialize trusted certificate to *pp or just return the required buffer
@@ -412,22 +416,22 @@ err:
 // Here we avoid compounding the problem.
 static int i2d_x509_aux_internal(const X509 *a, unsigned char **pp) {
   int length, tmplen;
-  unsigned char *start = pp != NULL ? *pp : NULL;
+  unsigned char *start = pp != nullptr ? *pp : nullptr;
 
-  assert(pp == NULL || *pp != NULL);
+  assert(pp == nullptr || *pp != nullptr);
 
   // This might perturb *pp on error, but fixing that belongs in i2d_X509()
   // not here.  It should be that if a == NULL length is zero, but we check
   // both just in case.
   length = i2d_X509(a, pp);
-  if (length <= 0 || a == NULL) {
+  if (length <= 0 || a == nullptr) {
     return length;
   }
 
-  if (a->aux != NULL) {
+  if (a->aux != nullptr) {
     tmplen = i2d_X509_CERT_AUX(a->aux, pp);
     if (tmplen < 0) {
-      if (start != NULL) {
+      if (start != nullptr) {
         *pp = start;
       }
       return tmplen;
@@ -450,18 +454,18 @@ int i2d_X509_AUX(const X509 *a, unsigned char **pp) {
   unsigned char *tmp;
 
   // Buffer provided by caller
-  if (pp == NULL || *pp != NULL) {
+  if (pp == nullptr || *pp != nullptr) {
     return i2d_x509_aux_internal(a, pp);
   }
 
   // Obtain the combined length
-  if ((length = i2d_x509_aux_internal(a, NULL)) <= 0) {
+  if ((length = i2d_x509_aux_internal(a, nullptr)) <= 0) {
     return length;
   }
 
   // Allocate requisite combined storage
   *pp = tmp = reinterpret_cast<uint8_t *>(OPENSSL_malloc(length));
-  if (tmp == NULL) {
+  if (tmp == nullptr) {
     return -1;  // Push error onto error stack?
   }
 
@@ -469,7 +473,7 @@ int i2d_X509_AUX(const X509 *a, unsigned char **pp) {
   length = i2d_x509_aux_internal(a, &tmp);
   if (length <= 0) {
     OPENSSL_free(*pp);
-    *pp = NULL;
+    *pp = nullptr;
   }
   return length;
 }

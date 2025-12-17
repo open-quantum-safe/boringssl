@@ -88,24 +88,24 @@ bool SimplePathBuilderDelegate::IsSignatureAlgorithmAcceptable(
     case SignatureAlgorithm::kEcdsaSha384:
     case SignatureAlgorithm::kEcdsaSha512:
 ///// OQS_TEMPLATE_FRAGMENT_LIST_SIGS_START
+    case SignatureAlgorithm::kCrossrsdp128balanced:
+    case SignatureAlgorithm::kOv_ip_pkc:
+    case SignatureAlgorithm::kOv_ip_pkc_skc:
+    case SignatureAlgorithm::kFalcon1024:
+    case SignatureAlgorithm::kFalcon512:
+    case SignatureAlgorithm::kRsa3072_falcon512:
+    case SignatureAlgorithm::kFalconpadded1024:
+    case SignatureAlgorithm::kFalconpadded512:
+    case SignatureAlgorithm::kMayo1:
+    case SignatureAlgorithm::kMayo2:
+    case SignatureAlgorithm::kMayo3:
+    case SignatureAlgorithm::kMayo5:
     case SignatureAlgorithm::kMldsa44:
     case SignatureAlgorithm::kP256_mldsa44:
     case SignatureAlgorithm::kMldsa65:
     case SignatureAlgorithm::kP384_mldsa65:
     case SignatureAlgorithm::kMldsa87:
     case SignatureAlgorithm::kP521_mldsa87:
-    case SignatureAlgorithm::kCrossrsdp128balanced:
-    case SignatureAlgorithm::kOv_ip_pkc:
-    case SignatureAlgorithm::kOv_ip_pkc_skc:
-    case SignatureAlgorithm::kFalcon512:
-    case SignatureAlgorithm::kRsa3072_falcon512:
-    case SignatureAlgorithm::kFalconpadded512:
-    case SignatureAlgorithm::kFalcon1024:
-    case SignatureAlgorithm::kFalconpadded1024:
-    case SignatureAlgorithm::kMayo1:
-    case SignatureAlgorithm::kMayo2:
-    case SignatureAlgorithm::kMayo3:
-    case SignatureAlgorithm::kMayo5:
     case SignatureAlgorithm::kSnova2454:
     case SignatureAlgorithm::kSnova2454esk:
     case SignatureAlgorithm::kSnova37172:
@@ -127,6 +127,7 @@ bool SimplePathBuilderDelegate::IsSignatureAlgorithmAcceptable(
     case SignatureAlgorithm::kRsaPssSha256:
     case SignatureAlgorithm::kRsaPssSha384:
     case SignatureAlgorithm::kRsaPssSha512:
+    case SignatureAlgorithm::kMtcProofDraftDavidben08:
       return true;
   }
   return false;

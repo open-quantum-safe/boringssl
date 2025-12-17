@@ -416,7 +416,8 @@ class TLSFuzzer {
     }
 
     const uint8_t *bufp = kCertificateDER;
-    bssl::UniquePtr<X509> cert(d2i_X509(NULL, &bufp, sizeof(kCertificateDER)));
+    bssl::UniquePtr<X509> cert(
+        d2i_X509(nullptr, &bufp, sizeof(kCertificateDER)));
     if (!cert ||
         !SSL_CTX_use_certificate(ctx_.get(), cert.get()) ||
         !SSL_CTX_set_ocsp_response(ctx_.get(), kOCSPResponse,
@@ -455,14 +456,14 @@ class TLSFuzzer {
         SSL_GROUP_MLKEM1024,       SSL_GROUP_X25519,
         SSL_GROUP_SECP256R1,       SSL_GROUP_SECP384R1,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_GROUPS_START
-        SSL_GROUP_MLKEM512,
-        SSL_GROUP_P256_MLKEM512,
-        SSL_GROUP_X25519_MLKEM512,
-        SSL_GROUP_MLKEM768,
-        SSL_GROUP_P256_MLKEM768,
-        SSL_GROUP_P384_MLKEM768,
-        SSL_GROUP_P384_MLKEM1024,
-        SSL_GROUP_P521_MLKEM1024,
+        SSL_GROUP_BIKEL3,
+        SSL_GROUP_P384_BIKEL3,
+        SSL_GROUP_BIKEL5,
+        SSL_GROUP_P521_BIKEL5,
+        SSL_GROUP_FRODO1344AES,
+        SSL_GROUP_P521_FRODO1344AES,
+        SSL_GROUP_FRODO1344SHAKE,
+        SSL_GROUP_P521_FRODO1344SHAKE,
         SSL_GROUP_FRODO640AES,
         SSL_GROUP_P256_FRODO640AES,
         SSL_GROUP_X25519_FRODO640AES,
@@ -473,17 +474,15 @@ class TLSFuzzer {
         SSL_GROUP_P384_FRODO976AES,
         SSL_GROUP_FRODO976SHAKE,
         SSL_GROUP_P384_FRODO976SHAKE,
-        SSL_GROUP_FRODO1344AES,
-        SSL_GROUP_P521_FRODO1344AES,
-        SSL_GROUP_FRODO1344SHAKE,
-        SSL_GROUP_P521_FRODO1344SHAKE,
-        SSL_GROUP_BIKEL1,
-        SSL_GROUP_P256_BIKEL1,
-        SSL_GROUP_X25519_BIKEL1,
-        SSL_GROUP_BIKEL3,
-        SSL_GROUP_P384_BIKEL3,
-        SSL_GROUP_BIKEL5,
-        SSL_GROUP_P521_BIKEL5
+        SSL_GROUP_MLKEM1024,
+        SSL_GROUP_P384_MLKEM1024,
+        SSL_GROUP_P521_MLKEM1024,
+        SSL_GROUP_MLKEM512,
+        SSL_GROUP_P256_MLKEM512,
+        SSL_GROUP_MLKEM768,
+        SSL_GROUP_P256_MLKEM768,
+        SSL_GROUP_P384_MLKEM768,
+        SSL_GROUP_X25519_MLKEM768
 ///// OQS_TEMPLATE_FRAGMENT_LIST_GROUPS_END
         SSL_GROUP_SECP521R1};
     if (!SSL_CTX_set1_group_ids(ctx_.get(), kGroups, std::size(kGroups))) {

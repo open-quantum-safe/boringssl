@@ -44,7 +44,7 @@ int RAND_load_file(const char *path, long num) {
   }
 }
 
-const char *RAND_file_name(char *buf, size_t num) { return NULL; }
+const char *RAND_file_name(char *buf, size_t num) { return nullptr; }
 
 void RAND_add(const void *buf, int num, double entropy) {}
 
@@ -73,5 +73,5 @@ void RAND_get_system_entropy_for_custom_prng(uint8_t *buf, size_t len) {
   if (len > 256) {
     abort();
   }
-  CRYPTO_sysrand_for_seed(buf, len);
+  CRYPTO_sysrand(buf, len);
 }

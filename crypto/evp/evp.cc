@@ -37,8 +37,8 @@ OPENSSL_DECLARE_ERROR_REASON(EVP, EMPTY_PSK)
 EVP_PKEY *EVP_PKEY_new(void) {
   EVP_PKEY *ret =
       reinterpret_cast<EVP_PKEY *>(OPENSSL_zalloc(sizeof(EVP_PKEY)));
-  if (ret == NULL) {
-    return NULL;
+  if (ret == nullptr) {
+    return nullptr;
   }
 
   ret->references = 1;
@@ -46,7 +46,7 @@ EVP_PKEY *EVP_PKEY_new(void) {
 }
 
 void EVP_PKEY_free(EVP_PKEY *pkey) {
-  if (pkey == NULL) {
+  if (pkey == nullptr) {
     return;
   }
 
@@ -203,9 +203,9 @@ int EVP_PKEY_set_type(EVP_PKEY *pkey, int type) {
   // but forgets to put anything in the |pkey|. The one pattern where it does
   // anything is |EVP_PKEY_X25519|, where it's needed to make
   // |EVP_PKEY_set1_tls_encodedpoint| work, so we support only that.
-  const EVP_PKEY_ASN1_METHOD *ameth;
+  const EVP_PKEY_ALG *alg;
   if (type == EVP_PKEY_X25519) {
-    ameth = &x25519_asn1_meth;
+    alg = EVP_pkey_x25519();
   } else {
     OPENSSL_PUT_ERROR(EVP, EVP_R_UNSUPPORTED_ALGORITHM);
     ERR_add_error_dataf("algorithm %d", type);
@@ -213,7 +213,7 @@ int EVP_PKEY_set_type(EVP_PKEY *pkey, int type) {
   }
 
   if (pkey) {
-    evp_pkey_set0(pkey, ameth, nullptr);
+    evp_pkey_set0(pkey, alg->method, nullptr);
   }
 
   return 1;
@@ -227,6 +227,19 @@ EVP_PKEY *EVP_PKEY_from_raw_private_key(const EVP_PKEY_ALG *alg,
   }
   bssl::UniquePtr<EVP_PKEY> ret(EVP_PKEY_new());
   if (ret == nullptr || !alg->method->set_priv_raw(ret.get(), in, len)) {
+    return nullptr;
+  }
+  return ret.release();
+}
+
+EVP_PKEY *EVP_PKEY_from_private_seed(const EVP_PKEY_ALG *alg, const uint8_t *in,
+                                     size_t len) {
+  if (alg->method->set_priv_seed == nullptr) {
+    OPENSSL_PUT_ERROR(EVP, EVP_R_UNSUPPORTED_ALGORITHM);
+    return nullptr;
+  }
+  bssl::UniquePtr<EVP_PKEY> ret(EVP_PKEY_new());
+  if (ret == nullptr || !alg->method->set_priv_seed(ret.get(), in, len)) {
     return nullptr;
   }
   return ret.release();
@@ -277,7 +290,7 @@ EVP_PKEY *EVP_PKEY_new_raw_public_key(int type, ENGINE *unused,
 
 int EVP_PKEY_get_raw_private_key(const EVP_PKEY *pkey, uint8_t *out,
                                  size_t *out_len) {
-  if (pkey->ameth->get_priv_raw == NULL) {
+  if (pkey->ameth->get_priv_raw == nullptr) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_OPERATION_NOT_SUPPORTED_FOR_THIS_KEYTYPE);
     return 0;
   }
@@ -285,9 +298,19 @@ int EVP_PKEY_get_raw_private_key(const EVP_PKEY *pkey, uint8_t *out,
   return pkey->ameth->get_priv_raw(pkey, out, out_len);
 }
 
+int EVP_PKEY_get_private_seed(const EVP_PKEY *pkey, uint8_t *out,
+                              size_t *out_len) {
+  if (pkey->ameth->get_priv_seed == nullptr) {
+    OPENSSL_PUT_ERROR(EVP, EVP_R_OPERATION_NOT_SUPPORTED_FOR_THIS_KEYTYPE);
+    return 0;
+  }
+
+  return pkey->ameth->get_priv_seed(pkey, out, out_len);
+}
+
 int EVP_PKEY_get_raw_public_key(const EVP_PKEY *pkey, uint8_t *out,
                                 size_t *out_len) {
-  if (pkey->ameth->get_pub_raw == NULL) {
+  if (pkey->ameth->get_pub_raw == nullptr) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_OPERATION_NOT_SUPPORTED_FOR_THIS_KEYTYPE);
     return 0;
   }
@@ -323,7 +346,7 @@ void *EVP_PKEY_get0(const EVP_PKEY *pkey) {
   // rather than reading |pkey->pkey| directly. This avoids problems if our
   // internal representation does not match the type the caller expects from
   // OpenSSL.
-  return NULL;
+  return nullptr;
 }
 
 void OpenSSL_add_all_algorithms(void) {}
@@ -338,7 +361,7 @@ void EVP_cleanup(void) {}
 
 int EVP_PKEY_set1_tls_encodedpoint(EVP_PKEY *pkey, const uint8_t *in,
                                    size_t len) {
-  if (pkey->ameth->set1_tls_encodedpoint == NULL) {
+  if (pkey->ameth->set1_tls_encodedpoint == nullptr) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_OPERATION_NOT_SUPPORTED_FOR_THIS_KEYTYPE);
     return 0;
   }
@@ -347,7 +370,7 @@ int EVP_PKEY_set1_tls_encodedpoint(EVP_PKEY *pkey, const uint8_t *in,
 }
 
 size_t EVP_PKEY_get1_tls_encodedpoint(const EVP_PKEY *pkey, uint8_t **out_ptr) {
-  if (pkey->ameth->get1_tls_encodedpoint == NULL) {
+  if (pkey->ameth->get1_tls_encodedpoint == nullptr) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_OPERATION_NOT_SUPPORTED_FOR_THIS_KEYTYPE);
     return 0;
   }

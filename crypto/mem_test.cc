@@ -189,7 +189,8 @@ TEST(InplaceVector, Basic) {
   EXPECT_EQ(vec.begin(), vec.end());
 
   int data3[] = {1, 2, 3};
-  ASSERT_TRUE(vec.TryCopyFrom(data3));
+  ASSERT_TRUE(vec.TryCopyFrom(Span(data3).first(1)));
+  ASSERT_TRUE(vec.TryAppend(Span(data3).subspan(1)));
   EXPECT_FALSE(vec.empty());
   EXPECT_EQ(3u, vec.size());
   auto iter = vec.begin();
@@ -241,7 +242,8 @@ TEST(InplaceVector, Basic) {
 TEST(InplaceVectorTest, ComplexType) {
   InplaceVector<std::vector<int>, 4> vec_of_vecs;
   const std::vector<int> data[] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
-  vec_of_vecs.CopyFrom(data);
+  vec_of_vecs.CopyFrom(Span(data).first(1));
+  vec_of_vecs.Append(Span(data).subspan(1));
   EXPECT_EQ(Span(vec_of_vecs), Span(data));
 
   vec_of_vecs.Resize(2);
@@ -310,6 +312,39 @@ TEST(InplaceVectorTest, ComplexType) {
   EXPECT_TRUE(vec_of_vecs5.TryPushBack(v));
   EXPECT_EQ(v, vec_of_vecs5[3]);
   EXPECT_FALSE(vec_of_vecs5.TryPushBack(v));
+}
+
+TEST(InplaceVectorTest, MoveOnly) {
+  InplaceVector<std::unique_ptr<int>, 4> vec;
+  vec.PushBack(std::make_unique<int>(0));
+  vec.PushBack(std::make_unique<int>(1));
+  vec.PushBack(std::make_unique<int>(2));
+  EXPECT_EQ(vec.size(), 3u);
+  EXPECT_EQ(*vec[0], 0);
+  EXPECT_EQ(*vec[1], 1);
+  EXPECT_EQ(*vec[2], 2);
+
+  // Move-construct
+  InplaceVector<std::unique_ptr<int>, 4> vec2 = std::move(vec);
+  EXPECT_EQ(vec2.size(), 3u);
+  EXPECT_EQ(*vec2[0], 0);
+  EXPECT_EQ(*vec2[1], 1);
+  EXPECT_EQ(*vec2[2], 2);
+  EXPECT_EQ(vec.size(), 3u);
+  EXPECT_EQ(vec[0], nullptr);
+  EXPECT_EQ(vec[1], nullptr);
+  EXPECT_EQ(vec[2], nullptr);
+
+  // Move-assign
+  vec = std::move(vec2);
+  EXPECT_EQ(vec.size(), 3u);
+  EXPECT_EQ(*vec[0], 0);
+  EXPECT_EQ(*vec[1], 1);
+  EXPECT_EQ(*vec[2], 2);
+  EXPECT_EQ(vec2.size(), 3u);
+  EXPECT_EQ(vec2[0], nullptr);
+  EXPECT_EQ(vec2[1], nullptr);
+  EXPECT_EQ(vec2[2], nullptr);
 }
 
 TEST(InplaceVectorTest, EraseIf) {
@@ -405,8 +440,10 @@ TEST(InplaceVectorDeathTest, BoundsChecks) {
   EXPECT_DEATH_IF_SUPPORTED(vec.ResizeForOverwrite(5), "");
   int too_much_data[] = {1, 2, 3, 4, 5};
   EXPECT_DEATH_IF_SUPPORTED(vec.CopyFrom(too_much_data), "");
+  EXPECT_DEATH_IF_SUPPORTED(vec.Append(Span(too_much_data).first(2)), "");
   vec.Resize(4);
   EXPECT_DEATH_IF_SUPPORTED(vec.PushBack(42), "");
+  EXPECT_DEATH_IF_SUPPORTED(vec.Append(Span(too_much_data).first(1)), "");
 }
 
 }  // namespace
