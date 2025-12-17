@@ -143,21 +143,24 @@ const uint8_t kOidAlgMtcProofDraftDavidben08[] = {0x2b, 0x06, 0x01, 0x04, 0x01,
                                                   0x82, 0xda, 0x4b, 0x2f, 0x00};
 
 ///// OQS_TEMPLATE_FRAGMENT_LIST_SIG_OIDS_START
-const uint8_t kOidP256_mldsa44[] = {0x2b, 0xce, 0x0f, 0x07, 0x05};
-const uint8_t kOidP384_mldsa65[] = {0x2b, 0xce, 0x0f, 0x07, 0x07};
-const uint8_t kOidP521_mldsa87[] = {0x2b, 0xce, 0x0f, 0x07, 0x08};
 const uint8_t kOidCrossrsdp128balanced[] = {0x2b, 0x06, 0x01, 0x04, 0x01, 0x83, 0xe6, 0x25, 0x02, 0x01, 0x01, 0x02, 0x02};
 const uint8_t kOidOv_ip_pkc[] = {0x2b, 0xce, 0x0f, 0x09, 0x06, 0x01};
 const uint8_t kOidOv_ip_pkc_skc[] = {0x2b, 0xce, 0x0f, 0x09, 0x0a, 0x01};
+const uint8_t kOidFalcon1024[] = {0x2b, 0xce, 0x0f, 0x03, 0x0e};
 const uint8_t kOidFalcon512[] = {0x2b, 0xce, 0x0f, 0x03, 0x0b};
 const uint8_t kOidRsa3072_falcon512[] = {0x2b, 0xce, 0x0f, 0x03, 0x0d};
-const uint8_t kOidFalconpadded512[] = {0x2b, 0xce, 0x0f, 0x03, 0x10};
-const uint8_t kOidFalcon1024[] = {0x2b, 0xce, 0x0f, 0x03, 0x0e};
 const uint8_t kOidFalconpadded1024[] = {0x2b, 0xce, 0x0f, 0x03, 0x13};
+const uint8_t kOidFalconpadded512[] = {0x2b, 0xce, 0x0f, 0x03, 0x10};
 const uint8_t kOidMayo1[] = {0x2b, 0xce, 0x0f, 0x08, 0x01, 0x03};
 const uint8_t kOidMayo2[] = {0x2b, 0xce, 0x0f, 0x08, 0x02, 0x03};
 const uint8_t kOidMayo3[] = {0x2b, 0xce, 0x0f, 0x08, 0x03, 0x03};
 const uint8_t kOidMayo5[] = {0x2b, 0xce, 0x0f, 0x08, 0x05, 0x03};
+const uint8_t kOidMldsa44[] = {0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x11};
+const uint8_t kOidP256_mldsa44[] = {0x2b, 0xce, 0x0f, 0x07, 0x05};
+const uint8_t kOidMldsa65[] = {0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x12};
+const uint8_t kOidP384_mldsa65[] = {0x2b, 0xce, 0x0f, 0x07, 0x07};
+const uint8_t kOidMldsa87[] = {0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x13};
+const uint8_t kOidP521_mldsa87[] = {0x2b, 0xce, 0x0f, 0x07, 0x08};
 const uint8_t kOidSnova2454[] = {0x2b, 0xce, 0x0f, 0x0a, 0x01, 0x01};
 const uint8_t kOidSnova2454esk[] = {0x2b, 0xce, 0x0f, 0x0a, 0x03, 0x01};
 const uint8_t kOidSnova37172[] = {0x2b, 0xce, 0x0f, 0x0a, 0x05, 0x01};
@@ -431,15 +434,6 @@ std::optional<SignatureAlgorithm> ParseSignatureAlgorithm(
   }
 
 ///// OQS_TEMPLATE_FRAGMENT_PARSE_SIG_OIDS_START
-  if (oid == der::Input(kOidP256_mldsa44)) {
-    return SignatureAlgorithm::kP256_mldsa44;
-  }
-  if (oid == der::Input(kOidP384_mldsa65)) {
-    return SignatureAlgorithm::kP384_mldsa65;
-  }
-  if (oid == der::Input(kOidP521_mldsa87)) {
-    return SignatureAlgorithm::kP521_mldsa87;
-  }
   if (oid == der::Input(kOidCrossrsdp128balanced)) {
     return SignatureAlgorithm::kCrossrsdp128balanced;
   }
@@ -449,20 +443,20 @@ std::optional<SignatureAlgorithm> ParseSignatureAlgorithm(
   if (oid == der::Input(kOidOv_ip_pkc_skc)) {
     return SignatureAlgorithm::kOv_ip_pkc_skc;
   }
+  if (oid == der::Input(kOidFalcon1024)) {
+    return SignatureAlgorithm::kFalcon1024;
+  }
   if (oid == der::Input(kOidFalcon512)) {
     return SignatureAlgorithm::kFalcon512;
   }
   if (oid == der::Input(kOidRsa3072_falcon512)) {
     return SignatureAlgorithm::kRsa3072_falcon512;
   }
-  if (oid == der::Input(kOidFalconpadded512)) {
-    return SignatureAlgorithm::kFalconpadded512;
-  }
-  if (oid == der::Input(kOidFalcon1024)) {
-    return SignatureAlgorithm::kFalcon1024;
-  }
   if (oid == der::Input(kOidFalconpadded1024)) {
     return SignatureAlgorithm::kFalconpadded1024;
+  }
+  if (oid == der::Input(kOidFalconpadded512)) {
+    return SignatureAlgorithm::kFalconpadded512;
   }
   if (oid == der::Input(kOidMayo1)) {
     return SignatureAlgorithm::kMayo1;
@@ -475,6 +469,24 @@ std::optional<SignatureAlgorithm> ParseSignatureAlgorithm(
   }
   if (oid == der::Input(kOidMayo5)) {
     return SignatureAlgorithm::kMayo5;
+  }
+  if (oid == der::Input(kOidMldsa44)) {
+    return SignatureAlgorithm::kMldsa44;
+  }
+  if (oid == der::Input(kOidP256_mldsa44)) {
+    return SignatureAlgorithm::kP256_mldsa44;
+  }
+  if (oid == der::Input(kOidMldsa65)) {
+    return SignatureAlgorithm::kMldsa65;
+  }
+  if (oid == der::Input(kOidP384_mldsa65)) {
+    return SignatureAlgorithm::kP384_mldsa65;
+  }
+  if (oid == der::Input(kOidMldsa87)) {
+    return SignatureAlgorithm::kMldsa87;
+  }
+  if (oid == der::Input(kOidP521_mldsa87)) {
+    return SignatureAlgorithm::kP521_mldsa87;
   }
   if (oid == der::Input(kOidSnova2454)) {
     return SignatureAlgorithm::kSnova2454;
@@ -567,7 +579,6 @@ std::optional<DigestAlgorithm> GetTlsServerEndpointDigestAlgorithm(
       return DigestAlgorithm::Sha512;
 
 ///// OQS_TEMPLATE_FRAGMENT_PAIR_SIGS_WITH_DIGESTS_START
-    case SignatureAlgorithm::kP256_mldsa44:
     case SignatureAlgorithm::kCrossrsdp128balanced:
     case SignatureAlgorithm::kOv_ip_pkc:
     case SignatureAlgorithm::kOv_ip_pkc_skc:
@@ -576,6 +587,8 @@ std::optional<DigestAlgorithm> GetTlsServerEndpointDigestAlgorithm(
     case SignatureAlgorithm::kFalconpadded512:
     case SignatureAlgorithm::kMayo1:
     case SignatureAlgorithm::kMayo2:
+    case SignatureAlgorithm::kMldsa44:
+    case SignatureAlgorithm::kP256_mldsa44:
     case SignatureAlgorithm::kSnova2454:
     case SignatureAlgorithm::kSnova2454esk:
     case SignatureAlgorithm::kSnova37172:
@@ -585,8 +598,9 @@ std::optional<DigestAlgorithm> GetTlsServerEndpointDigestAlgorithm(
     case SignatureAlgorithm::kSphincsshake128ssimple:
       return DigestAlgorithm::Sha256;
 
-    case SignatureAlgorithm::kP384_mldsa65:
     case SignatureAlgorithm::kMayo3:
+    case SignatureAlgorithm::kMldsa65:
+    case SignatureAlgorithm::kP384_mldsa65:
     case SignatureAlgorithm::kSnova2455:
     case SignatureAlgorithm::kSphincssha2192fsimple:
     case SignatureAlgorithm::kSphincssha2192ssimple:
@@ -594,10 +608,11 @@ std::optional<DigestAlgorithm> GetTlsServerEndpointDigestAlgorithm(
     case SignatureAlgorithm::kSphincsshake192ssimple:
       return DigestAlgorithm::Sha384;
 
-    case SignatureAlgorithm::kP521_mldsa87:
     case SignatureAlgorithm::kFalcon1024:
     case SignatureAlgorithm::kFalconpadded1024:
     case SignatureAlgorithm::kMayo5:
+    case SignatureAlgorithm::kMldsa87:
+    case SignatureAlgorithm::kP521_mldsa87:
     case SignatureAlgorithm::kSnova2965:
     case SignatureAlgorithm::kSphincssha2256fsimple:
     case SignatureAlgorithm::kSphincssha2256ssimple:

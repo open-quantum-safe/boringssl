@@ -60,21 +60,24 @@ int x509_digest_sign_algorithm(EVP_MD_CTX *ctx, X509_ALGOR *algor) {
   int pkey_id = EVP_PKEY_id(pkey);
   if (pkey_id == EVP_PKEY_ED25519 ||
 ///// OQS_TEMPLATE_FRAGMENT_CHECK_PKEY_ID_START
-      pkey_id == EVP_PKEY_P256_MLDSA44 ||
-      pkey_id == EVP_PKEY_P384_MLDSA65 ||
-      pkey_id == EVP_PKEY_P521_MLDSA87 ||
       pkey_id == EVP_PKEY_CROSSRSDP128BALANCED ||
       pkey_id == EVP_PKEY_OV_IP_PKC ||
       pkey_id == EVP_PKEY_OV_IP_PKC_SKC ||
+      pkey_id == EVP_PKEY_FALCON1024 ||
       pkey_id == EVP_PKEY_FALCON512 ||
       pkey_id == EVP_PKEY_RSA3072_FALCON512 ||
-      pkey_id == EVP_PKEY_FALCONPADDED512 ||
-      pkey_id == EVP_PKEY_FALCON1024 ||
       pkey_id == EVP_PKEY_FALCONPADDED1024 ||
+      pkey_id == EVP_PKEY_FALCONPADDED512 ||
       pkey_id == EVP_PKEY_MAYO1 ||
       pkey_id == EVP_PKEY_MAYO2 ||
       pkey_id == EVP_PKEY_MAYO3 ||
       pkey_id == EVP_PKEY_MAYO5 ||
+      pkey_id == EVP_PKEY_MLDSA44 ||
+      pkey_id == EVP_PKEY_P256_MLDSA44 ||
+      pkey_id == EVP_PKEY_MLDSA65 ||
+      pkey_id == EVP_PKEY_P384_MLDSA65 ||
+      pkey_id == EVP_PKEY_MLDSA87 ||
+      pkey_id == EVP_PKEY_P521_MLDSA87 ||
       pkey_id == EVP_PKEY_SNOVA2454 ||
       pkey_id == EVP_PKEY_SNOVA2454ESK ||
       pkey_id == EVP_PKEY_SNOVA37172 ||

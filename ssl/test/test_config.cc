@@ -2532,18 +2532,9 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
   if (enable_all_curves) {
     static const int kAllCurves[] = {
         NID_secp224r1, NID_X9_62_prime256v1, NID_secp384r1,
-        NID_secp521r1, NID_ML_KEM_1024, NID_X25519, NID_X25519Kyber768Draft00,
+        NID_secp521r1, NID_ML_KEM_1024, NID_X25519,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_PQ_CURVEIDS_START
-        NID_mlkem512, NID_p256_mlkem512, NID_x25519_mlkem512,
-        NID_frodo640aes, NID_p256_frodo640aes, NID_x25519_frodo640aes,
-        NID_frodo640shake, NID_p256_frodo640shake, NID_x25519_frodo640shake,
-        NID_frodo976aes, NID_p384_frodo976aes,
-        NID_frodo976shake, NID_p384_frodo976shake,
-        NID_frodo1344aes, NID_p521_frodo1344aes,
-        NID_frodo1344shake, NID_p521_frodo1344shake,
-        NID_bikel1, NID_p256_bikel1, NID_x25519_bikel1,
-        NID_bikel3, NID_p384_bikel3,
-        NID_bikel5, NID_p521_bikel5,
+        NID_p384_mlkem1024,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_PQ_CURVEIDS_END
     };
     if (!SSL_set1_curves(ssl.get(), kAllCurves,

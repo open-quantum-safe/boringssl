@@ -292,21 +292,24 @@ int is_EC_nid(int nid);
 int get_classical_sig_len(int classical_id);
 
 ///// OQS_TEMPLATE_FRAGMENT_DECLARE_ASN1_METHS_START
-extern const EVP_PKEY_ASN1_METHOD p256_mldsa44_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD p384_mldsa65_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD p521_mldsa87_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD CROSSrsdp128balanced_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD OV_Ip_pkc_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD OV_Ip_pkc_skc_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD falcon1024_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD falcon512_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD rsa3072_falcon512_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD falconpadded512_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD falcon1024_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD falconpadded1024_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD falconpadded512_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD mayo1_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD mayo2_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD mayo3_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD mayo5_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD mldsa44_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD p256_mldsa44_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD mldsa65_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD p384_mldsa65_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD mldsa87_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD p521_mldsa87_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD snova2454_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD snova2454esk_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD snova37172_asn1_meth;
@@ -334,21 +337,24 @@ extern const EVP_PKEY_CTX_METHOD x25519_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD hkdf_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD dh_pkey_meth;
 ///// OQS_TEMPLATE_FRAGMENT_DECLARE_PKEY_METHS_START
-extern const EVP_PKEY_CTX_METHOD p256_mldsa44_pkey_meth;
-extern const EVP_PKEY_CTX_METHOD p384_mldsa65_pkey_meth;
-extern const EVP_PKEY_CTX_METHOD p521_mldsa87_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD CROSSrsdp128balanced_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD OV_Ip_pkc_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD OV_Ip_pkc_skc_pkey_meth;
+extern const EVP_PKEY_CTX_METHOD falcon1024_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD falcon512_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD rsa3072_falcon512_pkey_meth;
-extern const EVP_PKEY_CTX_METHOD falconpadded512_pkey_meth;
-extern const EVP_PKEY_CTX_METHOD falcon1024_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD falconpadded1024_pkey_meth;
+extern const EVP_PKEY_CTX_METHOD falconpadded512_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD mayo1_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD mayo2_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD mayo3_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD mayo5_pkey_meth;
+extern const EVP_PKEY_CTX_METHOD mldsa44_pkey_meth;
+extern const EVP_PKEY_CTX_METHOD p256_mldsa44_pkey_meth;
+extern const EVP_PKEY_CTX_METHOD mldsa65_pkey_meth;
+extern const EVP_PKEY_CTX_METHOD p384_mldsa65_pkey_meth;
+extern const EVP_PKEY_CTX_METHOD mldsa87_pkey_meth;
+extern const EVP_PKEY_CTX_METHOD p521_mldsa87_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD snova2454_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD snova2454esk_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD snova37172_pkey_meth;
@@ -385,21 +391,24 @@ inline auto GetDefaultEVPAlgorithms() {
   // |EVP_parse_private_key|.
   return std::array{
 ///// OQS_TEMPLATE_FRAGMENT_LIST_PKEY_ASN1_METHS_START
-      EVP_pkey_p256_mldsa44(),
-      EVP_pkey_p384_mldsa65(),
-      EVP_pkey_p521_mldsa87(),
       EVP_pkey_CROSSrsdp128balanced(),
       EVP_pkey_OV_Ip_pkc(),
       EVP_pkey_OV_Ip_pkc_skc(),
+      EVP_pkey_falcon1024(),
       EVP_pkey_falcon512(),
       EVP_pkey_rsa3072_falcon512(),
-      EVP_pkey_falconpadded512(),
-      EVP_pkey_falcon1024(),
       EVP_pkey_falconpadded1024(),
+      EVP_pkey_falconpadded512(),
       EVP_pkey_mayo1(),
       EVP_pkey_mayo2(),
       EVP_pkey_mayo3(),
       EVP_pkey_mayo5(),
+      EVP_pkey_mldsa44(),
+      EVP_pkey_p256_mldsa44(),
+      EVP_pkey_mldsa65(),
+      EVP_pkey_p384_mldsa65(),
+      EVP_pkey_mldsa87(),
+      EVP_pkey_p521_mldsa87(),
       EVP_pkey_snova2454(),
       EVP_pkey_snova2454esk(),
       EVP_pkey_snova37172(),

@@ -5484,38 +5484,11 @@ extern "C" {
 #define OBJ_ML_KEM_1024 2L, 16L, 840L, 1L, 101L, 3L, 4L, 4L, 3L
 #define OBJ_ENC_ML_KEM_1024 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x04, 0x03
 
-#define SN_ML_DSA_44 "id-ml-dsa-44"
-#define LN_ML_DSA_44 "ML-DSA-44"
-#define NID_ML_DSA_44 967
-#define OBJ_ML_DSA_44 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 17L
-#define OBJ_ENC_ML_DSA_44 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x11
-
-#define SN_ML_DSA_65 "id-ml-dsa-65"
-#define LN_ML_DSA_65 "ML-DSA-65"
-#define NID_ML_DSA_65 968
-#define OBJ_ML_DSA_65 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 18L
-#define OBJ_ENC_ML_DSA_65 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x12
-
-#define SN_ML_DSA_87 "id-ml-dsa-87"
-#define LN_ML_DSA_87 "ML-DSA-87"
-#define NID_ML_DSA_87 969
-#define OBJ_ML_DSA_87 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 19L
-#define OBJ_ENC_ML_DSA_87 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x13
-
-#define SN_ML_KEM_768 "id-alg-ml-kem-768"
-#define LN_ML_KEM_768 "ML-KEM-768"
-#define NID_ML_KEM_768 970
-#define OBJ_ML_KEM_768 2L, 16L, 840L, 1L, 101L, 3L, 4L, 4L, 2L
-#define OBJ_ENC_ML_KEM_768 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x04, 0x02
-
 #define SN_mlkem512 "mlkem512"
 #define NID_mlkem512 971
 
 #define SN_p256_mlkem512 "p256_mlkem512"
 #define NID_p256_mlkem512 972
-
-#define SN_x25519_mlkem512 "x25519_mlkem512"
-#define NID_x25519_mlkem512 973
 
 #define SN_frodo640aes "frodo640aes"
 #define NID_frodo640aes 974
@@ -5558,15 +5531,6 @@ extern "C" {
 
 #define SN_p521_frodo1344shake "p521_frodo1344shake"
 #define NID_p521_frodo1344shake 987
-
-#define SN_bikel1 "bikel1"
-#define NID_bikel1 988
-
-#define SN_p256_bikel1 "p256_bikel1"
-#define NID_p256_bikel1 989
-
-#define SN_x25519_bikel1 "x25519_bikel1"
-#define NID_x25519_bikel1 990
 
 #define SN_bikel3 "bikel3"
 #define NID_bikel3 991
@@ -5773,6 +5737,39 @@ extern "C" {
 #define NID_sphincsshake256ssimple 1026
 #define OBJ_sphincsshake256ssimple 1L, 3L, 9999L, 6L, 9L, 12L
 #define OBJ_ENC_sphincsshake256ssimple 0x2b, 0xce, 0x0f, 0x06, 0x09, 0x0c
+
+#define SN_p384_mlkem1024 "p384_mlkem1024"
+#define NID_p384_mlkem1024 1027
+
+#define SN_p521_mlkem1024 "p521_mlkem1024"
+#define NID_p521_mlkem1024 1028
+
+#define SN_mlkem768 "mlkem768"
+#define NID_mlkem768 1029
+
+#define SN_p256_mlkem768 "p256_mlkem768"
+#define NID_p256_mlkem768 1030
+
+#define SN_p384_mlkem768 "p384_mlkem768"
+#define NID_p384_mlkem768 1031
+
+#define SN_mldsa44 "mldsa44"
+#define LN_mldsa44 "mldsa44"
+#define NID_mldsa44 1032
+#define OBJ_mldsa44 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 17L
+#define OBJ_ENC_mldsa44 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x11
+
+#define SN_mldsa65 "mldsa65"
+#define LN_mldsa65 "mldsa65"
+#define NID_mldsa65 1033
+#define OBJ_mldsa65 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 18L
+#define OBJ_ENC_mldsa65 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x12
+
+#define SN_mldsa87 "mldsa87"
+#define LN_mldsa87 "mldsa87"
+#define NID_mldsa87 1034
+#define OBJ_mldsa87 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 19L
+#define OBJ_ENC_mldsa87 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x13
 
 
 #if defined(__cplusplus)

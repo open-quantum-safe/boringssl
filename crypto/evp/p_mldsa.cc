@@ -30,9 +30,9 @@ namespace {
 
 constexpr CBS_ASN1_TAG kSeedTag = CBS_ASN1_CONTEXT_SPECIFIC | 0;
 
-constexpr uint8_t kMLDSA44OID[] = {OBJ_ENC_ML_DSA_44};
-constexpr uint8_t kMLDSA65OID[] = {OBJ_ENC_ML_DSA_65};
-constexpr uint8_t kMLDSA87OID[] = {OBJ_ENC_ML_DSA_87};
+constexpr uint8_t kMLDSA44OID[] = {OBJ_ENC_mldsa44};
+constexpr uint8_t kMLDSA65OID[] = {OBJ_ENC_mldsa65};
+constexpr uint8_t kMLDSA87OID[] = {OBJ_ENC_mldsa87};
 
 // We must generate EVP bindings for three ML-DSA algorithms. Define a traits
 // type that captures the functions and other parameters of an ML-DSA algorithm.

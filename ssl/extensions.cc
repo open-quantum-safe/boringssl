@@ -106,11 +106,21 @@ static bool is_post_quantum_group(uint16_t id) {
     case SSL_GROUP_MLKEM1024:
       return true;
 ///// OQS_TEMPLATE_FRAGMENT_ADD_PQ_GROUPS_START
-    case SSL_GROUP_MLKEM512:
+    case SSL_GROUP_BIKEL3:
       return true;
-    case SSL_GROUP_P256_MLKEM512:
+    case SSL_GROUP_P384_BIKEL3:
       return true;
-    case SSL_GROUP_X25519_MLKEM512:
+    case SSL_GROUP_BIKEL5:
+      return true;
+    case SSL_GROUP_P521_BIKEL5:
+      return true;
+    case SSL_GROUP_FRODO1344AES:
+      return true;
+    case SSL_GROUP_P521_FRODO1344AES:
+      return true;
+    case SSL_GROUP_FRODO1344SHAKE:
+      return true;
+    case SSL_GROUP_P521_FRODO1344SHAKE:
       return true;
     case SSL_GROUP_FRODO640AES:
       return true;
@@ -132,27 +142,19 @@ static bool is_post_quantum_group(uint16_t id) {
       return true;
     case SSL_GROUP_P384_FRODO976SHAKE:
       return true;
-    case SSL_GROUP_FRODO1344AES:
+    case SSL_GROUP_P384_MLKEM1024:
       return true;
-    case SSL_GROUP_P521_FRODO1344AES:
+    case SSL_GROUP_P521_MLKEM1024:
       return true;
-    case SSL_GROUP_FRODO1344SHAKE:
+    case SSL_GROUP_MLKEM512:
       return true;
-    case SSL_GROUP_P521_FRODO1344SHAKE:
+    case SSL_GROUP_P256_MLKEM512:
       return true;
-    case SSL_GROUP_BIKEL1:
+    case SSL_GROUP_MLKEM768:
       return true;
-    case SSL_GROUP_P256_BIKEL1:
+    case SSL_GROUP_P256_MLKEM768:
       return true;
-    case SSL_GROUP_X25519_BIKEL1:
-      return true;
-    case SSL_GROUP_BIKEL3:
-      return true;
-    case SSL_GROUP_P384_BIKEL3:
-      return true;
-    case SSL_GROUP_BIKEL5:
-      return true;
-    case SSL_GROUP_P521_BIKEL5:
+    case SSL_GROUP_P384_MLKEM768:
       return true;
 ///// OQS_TEMPLATE_FRAGMENT_ADD_PQ_GROUPS_END
     default:
@@ -262,30 +264,6 @@ static const uint16_t kAllSupportedGroups[] = {
     SSL_GROUP_SECP256R1,
     SSL_GROUP_SECP384R1,
 ///// OQS_TEMPLATE_FRAGMENT_ADD_ALL_KEMS_START
-    SSL_GROUP_P256_MLKEM512,
-    SSL_GROUP_X25519_MLKEM512,
-    SSL_GROUP_MLKEM512,
-    SSL_GROUP_P256_FRODO640AES,
-    SSL_GROUP_X25519_FRODO640AES,
-    SSL_GROUP_FRODO640AES,
-    SSL_GROUP_P256_FRODO640SHAKE,
-    SSL_GROUP_X25519_FRODO640SHAKE,
-    SSL_GROUP_FRODO640SHAKE,
-    SSL_GROUP_P384_FRODO976AES,
-    SSL_GROUP_FRODO976AES,
-    SSL_GROUP_P384_FRODO976SHAKE,
-    SSL_GROUP_FRODO976SHAKE,
-    SSL_GROUP_P521_FRODO1344AES,
-    SSL_GROUP_FRODO1344AES,
-    SSL_GROUP_P521_FRODO1344SHAKE,
-    SSL_GROUP_FRODO1344SHAKE,
-    SSL_GROUP_P256_BIKEL1,
-    SSL_GROUP_X25519_BIKEL1,
-    SSL_GROUP_BIKEL1,
-    SSL_GROUP_P384_BIKEL3,
-    SSL_GROUP_BIKEL3,
-    SSL_GROUP_P521_BIKEL5,
-    SSL_GROUP_BIKEL5,
 ///// OQS_TEMPLATE_FRAGMENT_ADD_ALL_KEMS_END
 };
 
@@ -361,21 +339,24 @@ bool tls1_check_group_id(const SSL_HANDSHAKE *hs, uint16_t group_id) {
 static const uint16_t kVerifySignatureAlgorithms[] = {
     // List our preferred algorithms first.
 ///// OQS_TEMPLATE_FRAGMENT_LIST_VERIFY_SIG_ALGS_START
-    SSL_SIGN_P256_MLDSA44,
-    SSL_SIGN_P384_MLDSA65,
-    SSL_SIGN_P521_MLDSA87,
     SSL_SIGN_CROSSRSDP128BALANCED,
     SSL_SIGN_OV_IP_PKC,
     SSL_SIGN_OV_IP_PKC_SKC,
+    SSL_SIGN_FALCON1024,
     SSL_SIGN_FALCON512,
     SSL_SIGN_RSA3072_FALCON512,
-    SSL_SIGN_FALCONPADDED512,
-    SSL_SIGN_FALCON1024,
     SSL_SIGN_FALCONPADDED1024,
+    SSL_SIGN_FALCONPADDED512,
     SSL_SIGN_MAYO1,
     SSL_SIGN_MAYO2,
     SSL_SIGN_MAYO3,
     SSL_SIGN_MAYO5,
+    SSL_SIGN_MLDSA44,
+    SSL_SIGN_P256_MLDSA44,
+    SSL_SIGN_MLDSA65,
+    SSL_SIGN_P384_MLDSA65,
+    SSL_SIGN_MLDSA87,
+    SSL_SIGN_P521_MLDSA87,
     SSL_SIGN_SNOVA2454,
     SSL_SIGN_SNOVA2454ESK,
     SSL_SIGN_SNOVA37172,
@@ -416,21 +397,24 @@ static const uint16_t kVerifySignatureAlgorithms[] = {
 static const uint16_t kSignSignatureAlgorithms[] = {
     // List our preferred algorithms first.
 ///// OQS_TEMPLATE_FRAGMENT_LIST_SIGN_SIG_ALGS_START
-    SSL_SIGN_P256_MLDSA44,
-    SSL_SIGN_P384_MLDSA65,
-    SSL_SIGN_P521_MLDSA87,
     SSL_SIGN_CROSSRSDP128BALANCED,
     SSL_SIGN_OV_IP_PKC,
     SSL_SIGN_OV_IP_PKC_SKC,
+    SSL_SIGN_FALCON1024,
     SSL_SIGN_FALCON512,
     SSL_SIGN_RSA3072_FALCON512,
-    SSL_SIGN_FALCONPADDED512,
-    SSL_SIGN_FALCON1024,
     SSL_SIGN_FALCONPADDED1024,
+    SSL_SIGN_FALCONPADDED512,
     SSL_SIGN_MAYO1,
     SSL_SIGN_MAYO2,
     SSL_SIGN_MAYO3,
     SSL_SIGN_MAYO5,
+    SSL_SIGN_MLDSA44,
+    SSL_SIGN_P256_MLDSA44,
+    SSL_SIGN_MLDSA65,
+    SSL_SIGN_P384_MLDSA65,
+    SSL_SIGN_MLDSA87,
+    SSL_SIGN_P521_MLDSA87,
     SSL_SIGN_SNOVA2454,
     SSL_SIGN_SNOVA2454ESK,
     SSL_SIGN_SNOVA37172,
@@ -4743,21 +4727,24 @@ bool tls1_choose_signature_algorithm(SSL_HANDSHAKE *hs,
       static const uint16_t kTLS12Default[] = {SSL_SIGN_RSA_PKCS1_SHA1,
                                                SSL_SIGN_ECDSA_SHA1,
 ///// OQS_TEMPLATE_FRAGMENT_LIST_DEFAULT_SIG_ALGS_START
-                                               SSL_SIGN_P256_MLDSA44,
-                                               SSL_SIGN_P384_MLDSA65,
-                                               SSL_SIGN_P521_MLDSA87,
                                                SSL_SIGN_CROSSRSDP128BALANCED,
                                                SSL_SIGN_OV_IP_PKC,
                                                SSL_SIGN_OV_IP_PKC_SKC,
+                                               SSL_SIGN_FALCON1024,
                                                SSL_SIGN_FALCON512,
                                                SSL_SIGN_RSA3072_FALCON512,
-                                               SSL_SIGN_FALCONPADDED512,
-                                               SSL_SIGN_FALCON1024,
                                                SSL_SIGN_FALCONPADDED1024,
+                                               SSL_SIGN_FALCONPADDED512,
                                                SSL_SIGN_MAYO1,
                                                SSL_SIGN_MAYO2,
                                                SSL_SIGN_MAYO3,
                                                SSL_SIGN_MAYO5,
+                                               SSL_SIGN_MLDSA44,
+                                               SSL_SIGN_P256_MLDSA44,
+                                               SSL_SIGN_MLDSA65,
+                                               SSL_SIGN_P384_MLDSA65,
+                                               SSL_SIGN_MLDSA87,
+                                               SSL_SIGN_P521_MLDSA87,
                                                SSL_SIGN_SNOVA2454,
                                                SSL_SIGN_SNOVA2454ESK,
                                                SSL_SIGN_SNOVA37172,

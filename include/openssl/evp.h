@@ -107,25 +107,28 @@ OPENSSL_EXPORT int EVP_PKEY_bits(const EVP_PKEY *pkey);
 #define EVP_PKEY_X25519 NID_X25519
 #define EVP_PKEY_HKDF NID_hkdf
 #define EVP_PKEY_DH NID_dhKeyAgreement
-#define EVP_PKEY_ML_DSA_44 NID_ML_DSA_44
-#define EVP_PKEY_ML_DSA_65 NID_ML_DSA_65
-#define EVP_PKEY_ML_DSA_87 NID_ML_DSA_87
+#define EVP_PKEY_ML_DSA_44 NID_mldsa44
+#define EVP_PKEY_ML_DSA_65 NID_mldsa65
+#define EVP_PKEY_ML_DSA_87 NID_mldsa87
 ///// OQS_TEMPLATE_FRAGMENT_DEFINE_EVP_PKEYS_START
-#define EVP_PKEY_P256_MLDSA44 NID_p256_mldsa44
-#define EVP_PKEY_P384_MLDSA65 NID_p384_mldsa65
-#define EVP_PKEY_P521_MLDSA87 NID_p521_mldsa87
 #define EVP_PKEY_CROSSRSDP128BALANCED NID_CROSSrsdp128balanced
 #define EVP_PKEY_OV_IP_PKC NID_OV_Ip_pkc
 #define EVP_PKEY_OV_IP_PKC_SKC NID_OV_Ip_pkc_skc
+#define EVP_PKEY_FALCON1024 NID_falcon1024
 #define EVP_PKEY_FALCON512 NID_falcon512
 #define EVP_PKEY_RSA3072_FALCON512 NID_rsa3072_falcon512
-#define EVP_PKEY_FALCONPADDED512 NID_falconpadded512
-#define EVP_PKEY_FALCON1024 NID_falcon1024
 #define EVP_PKEY_FALCONPADDED1024 NID_falconpadded1024
+#define EVP_PKEY_FALCONPADDED512 NID_falconpadded512
 #define EVP_PKEY_MAYO1 NID_mayo1
 #define EVP_PKEY_MAYO2 NID_mayo2
 #define EVP_PKEY_MAYO3 NID_mayo3
 #define EVP_PKEY_MAYO5 NID_mayo5
+#define EVP_PKEY_MLDSA44 NID_mldsa44
+#define EVP_PKEY_P256_MLDSA44 NID_p256_mldsa44
+#define EVP_PKEY_MLDSA65 NID_mldsa65
+#define EVP_PKEY_P384_MLDSA65 NID_p384_mldsa65
+#define EVP_PKEY_MLDSA87 NID_mldsa87
+#define EVP_PKEY_P521_MLDSA87 NID_p521_mldsa87
 #define EVP_PKEY_SNOVA2454 NID_snova2454
 #define EVP_PKEY_SNOVA2454ESK NID_snova2454esk
 #define EVP_PKEY_SNOVA37172 NID_snova37172
@@ -145,21 +148,24 @@ OPENSSL_EXPORT int EVP_PKEY_bits(const EVP_PKEY *pkey);
 #define EVP_PKEY_SPHINCSSHAKE256SSIMPLE NID_sphincsshake256ssimple
 
 #define IS_OQS_PKEY(pkey_id) ( \
-   (pkey_id == NID_p256_mldsa44) || \
-   (pkey_id == NID_p384_mldsa65) || \
-   (pkey_id == NID_p521_mldsa87) || \
    (pkey_id == NID_CROSSrsdp128balanced) || \
    (pkey_id == NID_OV_Ip_pkc) || \
    (pkey_id == NID_OV_Ip_pkc_skc) || \
+   (pkey_id == NID_falcon1024) || \
    (pkey_id == NID_falcon512) || \
    (pkey_id == NID_rsa3072_falcon512) || \
-   (pkey_id == NID_falconpadded512) || \
-   (pkey_id == NID_falcon1024) || \
    (pkey_id == NID_falconpadded1024) || \
+   (pkey_id == NID_falconpadded512) || \
    (pkey_id == NID_mayo1) || \
    (pkey_id == NID_mayo2) || \
    (pkey_id == NID_mayo3) || \
    (pkey_id == NID_mayo5) || \
+   (pkey_id == NID_mldsa44) || \
+   (pkey_id == NID_p256_mldsa44) || \
+   (pkey_id == NID_mldsa65) || \
+   (pkey_id == NID_p384_mldsa65) || \
+   (pkey_id == NID_mldsa87) || \
+   (pkey_id == NID_p521_mldsa87) || \
    (pkey_id == NID_snova2454) || \
    (pkey_id == NID_snova2454esk) || \
    (pkey_id == NID_snova37172) || \
@@ -218,21 +224,24 @@ OPENSSL_EXPORT int EVP_PKEY_id(const EVP_PKEY *pkey);
 OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_rsa(void);
 
 ///// OQS_TEMPLATE_FRAGMENT_DEFINE_EVP_PKEY_ALGS_START
-OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_p256_mldsa44(void);
-OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_p384_mldsa65(void);
-OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_p521_mldsa87(void);
 OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_CROSSrsdp128balanced(void);
 OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_OV_Ip_pkc(void);
 OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_OV_Ip_pkc_skc(void);
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_falcon1024(void);
 OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_falcon512(void);
 OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_rsa3072_falcon512(void);
-OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_falconpadded512(void);
-OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_falcon1024(void);
 OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_falconpadded1024(void);
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_falconpadded512(void);
 OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_mayo1(void);
 OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_mayo2(void);
 OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_mayo3(void);
 OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_mayo5(void);
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_mldsa44(void);
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_p256_mldsa44(void);
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_mldsa65(void);
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_p384_mldsa65(void);
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_mldsa87(void);
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_p521_mldsa87(void);
 OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_snova2454(void);
 OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_snova2454esk(void);
 OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_snova37172(void);
