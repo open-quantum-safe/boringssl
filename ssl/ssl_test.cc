@@ -6509,30 +6509,30 @@ TEST(SSLTest, SignatureAlgorithmProperties) {
             SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHAKE256FSIMPLE));
   EXPECT_EQ(EVP_PKEY_SPHINCSSHAKE256SSIMPLE,
             SSL_get_signature_algorithm_key_type(SSL_SIGN_SPHINCSSHAKE256SSIMPLE));
-  EXPECT_EQ(EVP_PKEY_SLHDSA_SHA2_128S,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SLHDSA_SHA2_128S));
-  EXPECT_EQ(EVP_PKEY_SLHDSA_SHA2_128F,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SLHDSA_SHA2_128F));
-  EXPECT_EQ(EVP_PKEY_SLHDSA_SHA2_192S,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SLHDSA_SHA2_192S));
-  EXPECT_EQ(EVP_PKEY_SLHDSA_SHA2_192F,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SLHDSA_SHA2_192F));
-  EXPECT_EQ(EVP_PKEY_SLHDSA_SHA2_256S,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SLHDSA_SHA2_256S));
-  EXPECT_EQ(EVP_PKEY_SLHDSA_SHA2_256F,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SLHDSA_SHA2_256F));
-  EXPECT_EQ(EVP_PKEY_SLHDSA_SHAKE_128S,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SLHDSA_SHAKE_128S));
-  EXPECT_EQ(EVP_PKEY_SLHDSA_SHAKE_128F,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SLHDSA_SHAKE_128F));
-  EXPECT_EQ(EVP_PKEY_SLHDSA_SHAKE_192S,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SLHDSA_SHAKE_192S));
-  EXPECT_EQ(EVP_PKEY_SLHDSA_SHAKE_192F,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SLHDSA_SHAKE_192F));
-  EXPECT_EQ(EVP_PKEY_SLHDSA_SHAKE_256S,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SLHDSA_SHAKE_256S));
-  EXPECT_EQ(EVP_PKEY_SLHDSA_SHAKE_256F,
-            SSL_get_signature_algorithm_key_type(SSL_SIGN_SLHDSA_SHAKE_256F));
+  EXPECT_EQ(EVP_PKEY_SLHDSASHA2128S,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_SLHDSASHA2128S));
+  EXPECT_EQ(EVP_PKEY_SLHDSASHA2128F,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_SLHDSASHA2128F));
+  EXPECT_EQ(EVP_PKEY_SLHDSASHA2192S,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_SLHDSASHA2192S));
+  EXPECT_EQ(EVP_PKEY_SLHDSASHA2192F,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_SLHDSASHA2192F));
+  EXPECT_EQ(EVP_PKEY_SLHDSASHA2256S,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_SLHDSASHA2256S));
+  EXPECT_EQ(EVP_PKEY_SLHDSASHA2256F,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_SLHDSASHA2256F));
+  EXPECT_EQ(EVP_PKEY_SLHDSASHAKE128S,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_SLHDSASHAKE128S));
+  EXPECT_EQ(EVP_PKEY_SLHDSASHAKE128F,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_SLHDSASHAKE128F));
+  EXPECT_EQ(EVP_PKEY_SLHDSASHAKE192S,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_SLHDSASHAKE192S));
+  EXPECT_EQ(EVP_PKEY_SLHDSASHAKE192F,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_SLHDSASHAKE192F));
+  EXPECT_EQ(EVP_PKEY_SLHDSASHAKE256S,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_SLHDSASHAKE256S));
+  EXPECT_EQ(EVP_PKEY_SLHDSASHAKE256F,
+            SSL_get_signature_algorithm_key_type(SSL_SIGN_SLHDSASHAKE256F));
 ///// OQS_TEMPLATE_FRAGMENT_ADD_SIG_ALG_PROP_TESTS_END
 }
 
@@ -6894,18 +6894,18 @@ TEST(SSLTest, SigAlgs) {
       {{NID_sha384, EVP_PKEY_SPHINCSSHAKE192SSIMPLE}, true, {SSL_SIGN_SPHINCSSHAKE192SSIMPLE}},
       {{NID_sha512, EVP_PKEY_SPHINCSSHAKE256FSIMPLE}, true, {SSL_SIGN_SPHINCSSHAKE256FSIMPLE}},
       {{NID_sha512, EVP_PKEY_SPHINCSSHAKE256SSIMPLE}, true, {SSL_SIGN_SPHINCSSHAKE256SSIMPLE}},
-      {{NID_sha256, EVP_PKEY_SLHDSA_SHA2_128S}, true, {SSL_SIGN_SLHDSA_SHA2_128S}},
-      {{NID_sha256, EVP_PKEY_SLHDSA_SHA2_128F}, true, {SSL_SIGN_SLHDSA_SHA2_128F}},
-      {{NID_sha384, EVP_PKEY_SLHDSA_SHA2_192S}, true, {SSL_SIGN_SLHDSA_SHA2_192S}},
-      {{NID_sha384, EVP_PKEY_SLHDSA_SHA2_192F}, true, {SSL_SIGN_SLHDSA_SHA2_192F}},
-      {{NID_sha512, EVP_PKEY_SLHDSA_SHA2_256S}, true, {SSL_SIGN_SLHDSA_SHA2_256S}},
-      {{NID_sha512, EVP_PKEY_SLHDSA_SHA2_256F}, true, {SSL_SIGN_SLHDSA_SHA2_256F}},
-      {{NID_sha256, EVP_PKEY_SLHDSA_SHAKE_128S}, true, {SSL_SIGN_SLHDSA_SHAKE_128S}},
-      {{NID_sha256, EVP_PKEY_SLHDSA_SHAKE_128F}, true, {SSL_SIGN_SLHDSA_SHAKE_128F}},
-      {{NID_sha384, EVP_PKEY_SLHDSA_SHAKE_192S}, true, {SSL_SIGN_SLHDSA_SHAKE_192S}},
-      {{NID_sha384, EVP_PKEY_SLHDSA_SHAKE_192F}, true, {SSL_SIGN_SLHDSA_SHAKE_192F}},
-      {{NID_sha512, EVP_PKEY_SLHDSA_SHAKE_256S}, true, {SSL_SIGN_SLHDSA_SHAKE_256S}},
-      {{NID_sha512, EVP_PKEY_SLHDSA_SHAKE_256F}, true, {SSL_SIGN_SLHDSA_SHAKE_256F}},
+      {{NID_sha256, EVP_PKEY_SLHDSASHA2128S}, true, {SSL_SIGN_SLHDSASHA2128S}},
+      {{NID_sha256, EVP_PKEY_SLHDSASHA2128F}, true, {SSL_SIGN_SLHDSASHA2128F}},
+      {{NID_sha384, EVP_PKEY_SLHDSASHA2192S}, true, {SSL_SIGN_SLHDSASHA2192S}},
+      {{NID_sha384, EVP_PKEY_SLHDSASHA2192F}, true, {SSL_SIGN_SLHDSASHA2192F}},
+      {{NID_sha512, EVP_PKEY_SLHDSASHA2256S}, true, {SSL_SIGN_SLHDSASHA2256S}},
+      {{NID_sha512, EVP_PKEY_SLHDSASHA2256F}, true, {SSL_SIGN_SLHDSASHA2256F}},
+      {{NID_sha256, EVP_PKEY_SLHDSASHAKE128S}, true, {SSL_SIGN_SLHDSASHAKE128S}},
+      {{NID_sha256, EVP_PKEY_SLHDSASHAKE128F}, true, {SSL_SIGN_SLHDSASHAKE128F}},
+      {{NID_sha384, EVP_PKEY_SLHDSASHAKE192S}, true, {SSL_SIGN_SLHDSASHAKE192S}},
+      {{NID_sha384, EVP_PKEY_SLHDSASHAKE192F}, true, {SSL_SIGN_SLHDSASHAKE192F}},
+      {{NID_sha512, EVP_PKEY_SLHDSASHAKE256S}, true, {SSL_SIGN_SLHDSASHAKE256S}},
+      {{NID_sha512, EVP_PKEY_SLHDSASHAKE256F}, true, {SSL_SIGN_SLHDSASHAKE256F}},
 ///// OQS_TEMPLATE_FRAGMENT_ADD_SIG_ALG_EQ_TESTS_END
   };
 
@@ -6999,18 +6999,18 @@ TEST(SSLTest, SigAlgsList) {
       {"sphincsshake192ssimple", true, {SSL_SIGN_SPHINCSSHAKE192SSIMPLE}},
       {"sphincsshake256fsimple", true, {SSL_SIGN_SPHINCSSHAKE256FSIMPLE}},
       {"sphincsshake256ssimple", true, {SSL_SIGN_SPHINCSSHAKE256SSIMPLE}},
-      {"slhdsa_sha2_128s", true, {SSL_SIGN_SLHDSA_SHA2_128S}},
-      {"slhdsa_sha2_128f", true, {SSL_SIGN_SLHDSA_SHA2_128F}},
-      {"slhdsa_sha2_192s", true, {SSL_SIGN_SLHDSA_SHA2_192S}},
-      {"slhdsa_sha2_192f", true, {SSL_SIGN_SLHDSA_SHA2_192F}},
-      {"slhdsa_sha2_256s", true, {SSL_SIGN_SLHDSA_SHA2_256S}},
-      {"slhdsa_sha2_256f", true, {SSL_SIGN_SLHDSA_SHA2_256F}},
-      {"slhdsa_shake_128s", true, {SSL_SIGN_SLHDSA_SHAKE_128S}},
-      {"slhdsa_shake_128f", true, {SSL_SIGN_SLHDSA_SHAKE_128F}},
-      {"slhdsa_shake_192s", true, {SSL_SIGN_SLHDSA_SHAKE_192S}},
-      {"slhdsa_shake_192f", true, {SSL_SIGN_SLHDSA_SHAKE_192F}},
-      {"slhdsa_shake_256s", true, {SSL_SIGN_SLHDSA_SHAKE_256S}},
-      {"slhdsa_shake_256f", true, {SSL_SIGN_SLHDSA_SHAKE_256F}},
+      {"slhdsasha2128s", true, {SSL_SIGN_SLHDSASHA2128S}},
+      {"slhdsasha2128f", true, {SSL_SIGN_SLHDSASHA2128F}},
+      {"slhdsasha2192s", true, {SSL_SIGN_SLHDSASHA2192S}},
+      {"slhdsasha2192f", true, {SSL_SIGN_SLHDSASHA2192F}},
+      {"slhdsasha2256s", true, {SSL_SIGN_SLHDSASHA2256S}},
+      {"slhdsasha2256f", true, {SSL_SIGN_SLHDSASHA2256F}},
+      {"slhdsashake128s", true, {SSL_SIGN_SLHDSASHAKE128S}},
+      {"slhdsashake128f", true, {SSL_SIGN_SLHDSASHAKE128F}},
+      {"slhdsashake192s", true, {SSL_SIGN_SLHDSASHAKE192S}},
+      {"slhdsashake192f", true, {SSL_SIGN_SLHDSASHAKE192F}},
+      {"slhdsashake256s", true, {SSL_SIGN_SLHDSASHAKE256S}},
+      {"slhdsashake256f", true, {SSL_SIGN_SLHDSASHAKE256F}},
 ///// OQS_TEMPLATE_FRAGMENT_SIGALGS_LIST_TESTS_END
   };
 
@@ -9494,18 +9494,18 @@ INSTANTIATE_TEST_SUITE_P(WithSignatureNIDs, OQSHandshakeTest,
                             NID_sphincsshake192ssimple,
                             NID_sphincsshake256fsimple,
                             NID_sphincsshake256ssimple,
-                            NID_slhdsa_sha2_128s,
-                            NID_slhdsa_sha2_128f,
-                            NID_slhdsa_sha2_192s,
-                            NID_slhdsa_sha2_192f,
-                            NID_slhdsa_sha2_256s,
-                            NID_slhdsa_sha2_256f,
-                            NID_slhdsa_shake_128s,
-                            NID_slhdsa_shake_128f,
-                            NID_slhdsa_shake_192s,
-                            NID_slhdsa_shake_192f,
-                            NID_slhdsa_shake_256s,
-                            NID_slhdsa_shake_256f
+                            NID_slhdsasha2128s,
+                            NID_slhdsasha2128f,
+                            NID_slhdsasha2192s,
+                            NID_slhdsasha2192f,
+                            NID_slhdsasha2256s,
+                            NID_slhdsasha2256f,
+                            NID_slhdsashake128s,
+                            NID_slhdsashake128f,
+                            NID_slhdsashake192s,
+                            NID_slhdsashake192f,
+                            NID_slhdsashake256s,
+                            NID_slhdsashake256f
 ///// OQS_TEMPLATE_FRAGMENT_LIST_ALL_OQS_SIGS_END
                          ));
 

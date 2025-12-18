@@ -123,18 +123,18 @@ bool SimplePathBuilderDelegate::IsSignatureAlgorithmAcceptable(
     case SignatureAlgorithm::kSphincsshake192ssimple:
     case SignatureAlgorithm::kSphincsshake256fsimple:
     case SignatureAlgorithm::kSphincsshake256ssimple:
-    case SignatureAlgorithm::kSlhdsa_sha2_128s:
-    case SignatureAlgorithm::kSlhdsa_sha2_128f:
-    case SignatureAlgorithm::kSlhdsa_sha2_192s:
-    case SignatureAlgorithm::kSlhdsa_sha2_192f:
-    case SignatureAlgorithm::kSlhdsa_sha2_256s:
-    case SignatureAlgorithm::kSlhdsa_sha2_256f:
-    case SignatureAlgorithm::kSlhdsa_shake_128s:
-    case SignatureAlgorithm::kSlhdsa_shake_128f:
-    case SignatureAlgorithm::kSlhdsa_shake_192s:
-    case SignatureAlgorithm::kSlhdsa_shake_192f:
-    case SignatureAlgorithm::kSlhdsa_shake_256s:
-    case SignatureAlgorithm::kSlhdsa_shake_256f:
+    case SignatureAlgorithm::kSlhdsasha2128s:
+    case SignatureAlgorithm::kSlhdsasha2128f:
+    case SignatureAlgorithm::kSlhdsasha2192s:
+    case SignatureAlgorithm::kSlhdsasha2192f:
+    case SignatureAlgorithm::kSlhdsasha2256s:
+    case SignatureAlgorithm::kSlhdsasha2256f:
+    case SignatureAlgorithm::kSlhdsashake128s:
+    case SignatureAlgorithm::kSlhdsashake128f:
+    case SignatureAlgorithm::kSlhdsashake192s:
+    case SignatureAlgorithm::kSlhdsashake192f:
+    case SignatureAlgorithm::kSlhdsashake256s:
+    case SignatureAlgorithm::kSlhdsashake256f:
 ///// OQS_TEMPLATE_FRAGMENT_LIST_SIGS_END
     case SignatureAlgorithm::kRsaPssSha256:
     case SignatureAlgorithm::kRsaPssSha384:

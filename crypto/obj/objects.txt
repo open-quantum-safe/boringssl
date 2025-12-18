@@ -1426,16 +1426,16 @@ secg-scheme 14 3 : dhSinglePass-cofactorDH-sha512kdf-scheme
 1 3 9999 6 8 12 : sphincsshake192ssimple : sphincsshake192ssimple
 1 3 9999 6 9 10 : sphincsshake256fsimple : sphincsshake256fsimple
 1 3 9999 6 9 12 : sphincsshake256ssimple : sphincsshake256ssimple
-2 16 840 1 101 3 4 3 20 : slhdsa_sha2_128s : slhdsa_sha2_128s
-2 16 840 1 101 3 4 3 21 : slhdsa_sha2_128f : slhdsa_sha2_128f
-2 16 840 1 101 3 4 3 22 : slhdsa_sha2_192s : slhdsa_sha2_192s
-2 16 840 1 101 3 4 3 23 : slhdsa_sha2_192f : slhdsa_sha2_192f
-2 16 840 1 101 3 4 3 24 : slhdsa_sha2_256s : slhdsa_sha2_256s
-2 16 840 1 101 3 4 3 25 : slhdsa_sha2_256f : slhdsa_sha2_256f
-2 16 840 1 101 3 4 3 26 : slhdsa_shake_128s : slhdsa_shake_128s
-2 16 840 1 101 3 4 3 27 : slhdsa_shake_128f : slhdsa_shake_128f
-2 16 840 1 101 3 4 3 28 : slhdsa_shake_192s : slhdsa_shake_192s
-2 16 840 1 101 3 4 3 29 : slhdsa_shake_192f : slhdsa_shake_192f
-2 16 840 1 101 3 4 3 30 : slhdsa_shake_256s : slhdsa_shake_256s
-2 16 840 1 101 3 4 3 31 : slhdsa_shake_256f : slhdsa_shake_256f
+2 16 840 1 101 3 4 3 20 : slhdsasha2128s : slhdsasha2128s
+2 16 840 1 101 3 4 3 21 : slhdsasha2128f : slhdsasha2128f
+2 16 840 1 101 3 4 3 22 : slhdsasha2192s : slhdsasha2192s
+2 16 840 1 101 3 4 3 23 : slhdsasha2192f : slhdsasha2192f
+2 16 840 1 101 3 4 3 24 : slhdsasha2256s : slhdsasha2256s
+2 16 840 1 101 3 4 3 25 : slhdsasha2256f : slhdsasha2256f
+2 16 840 1 101 3 4 3 26 : slhdsashake128s : slhdsashake128s
+2 16 840 1 101 3 4 3 27 : slhdsashake128f : slhdsashake128f
+2 16 840 1 101 3 4 3 28 : slhdsashake192s : slhdsashake192s
+2 16 840 1 101 3 4 3 29 : slhdsashake192f : slhdsashake192f
+2 16 840 1 101 3 4 3 30 : slhdsashake256s : slhdsashake256s
+2 16 840 1 101 3 4 3 31 : slhdsashake256f : slhdsashake256f
 ##### OQS_TEMPLATE_FRAGMENT_ASSIGN_OIDS_END

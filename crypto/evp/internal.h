@@ -327,18 +327,18 @@ extern const EVP_PKEY_ASN1_METHOD sphincsshake192fsimple_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD sphincsshake192ssimple_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD sphincsshake256fsimple_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD sphincsshake256ssimple_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD slhdsa_sha2_128s_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD slhdsa_sha2_128f_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD slhdsa_sha2_192s_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD slhdsa_sha2_192f_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD slhdsa_sha2_256s_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD slhdsa_sha2_256f_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD slhdsa_shake_128s_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD slhdsa_shake_128f_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD slhdsa_shake_192s_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD slhdsa_shake_192f_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD slhdsa_shake_256s_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD slhdsa_shake_256f_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD slhdsasha2128s_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD slhdsasha2128f_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD slhdsasha2192s_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD slhdsasha2192f_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD slhdsasha2256s_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD slhdsasha2256f_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD slhdsashake128s_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD slhdsashake128f_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD slhdsashake192s_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD slhdsashake192f_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD slhdsashake256s_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD slhdsashake256f_asn1_meth;
 ///// OQS_TEMPLATE_FRAGMENT_DECLARE_ASN1_METHS_END
 
 extern const EVP_PKEY_CTX_METHOD rsa_pkey_meth;
@@ -384,18 +384,18 @@ extern const EVP_PKEY_CTX_METHOD sphincsshake192fsimple_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD sphincsshake192ssimple_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD sphincsshake256fsimple_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD sphincsshake256ssimple_pkey_meth;
-extern const EVP_PKEY_CTX_METHOD slhdsa_sha2_128s_pkey_meth;
-extern const EVP_PKEY_CTX_METHOD slhdsa_sha2_128f_pkey_meth;
-extern const EVP_PKEY_CTX_METHOD slhdsa_sha2_192s_pkey_meth;
-extern const EVP_PKEY_CTX_METHOD slhdsa_sha2_192f_pkey_meth;
-extern const EVP_PKEY_CTX_METHOD slhdsa_sha2_256s_pkey_meth;
-extern const EVP_PKEY_CTX_METHOD slhdsa_sha2_256f_pkey_meth;
-extern const EVP_PKEY_CTX_METHOD slhdsa_shake_128s_pkey_meth;
-extern const EVP_PKEY_CTX_METHOD slhdsa_shake_128f_pkey_meth;
-extern const EVP_PKEY_CTX_METHOD slhdsa_shake_192s_pkey_meth;
-extern const EVP_PKEY_CTX_METHOD slhdsa_shake_192f_pkey_meth;
-extern const EVP_PKEY_CTX_METHOD slhdsa_shake_256s_pkey_meth;
-extern const EVP_PKEY_CTX_METHOD slhdsa_shake_256f_pkey_meth;
+extern const EVP_PKEY_CTX_METHOD slhdsasha2128s_pkey_meth;
+extern const EVP_PKEY_CTX_METHOD slhdsasha2128f_pkey_meth;
+extern const EVP_PKEY_CTX_METHOD slhdsasha2192s_pkey_meth;
+extern const EVP_PKEY_CTX_METHOD slhdsasha2192f_pkey_meth;
+extern const EVP_PKEY_CTX_METHOD slhdsasha2256s_pkey_meth;
+extern const EVP_PKEY_CTX_METHOD slhdsasha2256f_pkey_meth;
+extern const EVP_PKEY_CTX_METHOD slhdsashake128s_pkey_meth;
+extern const EVP_PKEY_CTX_METHOD slhdsashake128f_pkey_meth;
+extern const EVP_PKEY_CTX_METHOD slhdsashake192s_pkey_meth;
+extern const EVP_PKEY_CTX_METHOD slhdsashake192f_pkey_meth;
+extern const EVP_PKEY_CTX_METHOD slhdsashake256s_pkey_meth;
+extern const EVP_PKEY_CTX_METHOD slhdsashake256f_pkey_meth;
 ///// OQS_TEMPLATE_FRAGMENT_DECLARE_PKEY_METHS_END
 
 // evp_pkey_set0 sets |pkey|'s method to |method| and data to |pkey_data|,
@@ -450,18 +450,18 @@ inline auto GetDefaultEVPAlgorithms() {
       EVP_pkey_sphincsshake192ssimple(),
       EVP_pkey_sphincsshake256fsimple(),
       EVP_pkey_sphincsshake256ssimple(),
-      EVP_pkey_slhdsa_sha2_128s(),
-      EVP_pkey_slhdsa_sha2_128f(),
-      EVP_pkey_slhdsa_sha2_192s(),
-      EVP_pkey_slhdsa_sha2_192f(),
-      EVP_pkey_slhdsa_sha2_256s(),
-      EVP_pkey_slhdsa_sha2_256f(),
-      EVP_pkey_slhdsa_shake_128s(),
-      EVP_pkey_slhdsa_shake_128f(),
-      EVP_pkey_slhdsa_shake_192s(),
-      EVP_pkey_slhdsa_shake_192f(),
-      EVP_pkey_slhdsa_shake_256s(),
-      EVP_pkey_slhdsa_shake_256f(),
+      EVP_pkey_slhdsasha2128s(),
+      EVP_pkey_slhdsasha2128f(),
+      EVP_pkey_slhdsasha2192s(),
+      EVP_pkey_slhdsasha2192f(),
+      EVP_pkey_slhdsasha2256s(),
+      EVP_pkey_slhdsasha2256f(),
+      EVP_pkey_slhdsashake128s(),
+      EVP_pkey_slhdsashake128f(),
+      EVP_pkey_slhdsashake192s(),
+      EVP_pkey_slhdsashake192f(),
+      EVP_pkey_slhdsashake256s(),
+      EVP_pkey_slhdsashake256f(),
 ///// OQS_TEMPLATE_FRAGMENT_LIST_PKEY_ASN1_METHS_END
       EVP_pkey_ec_p224(),
       EVP_pkey_ec_p256(),
