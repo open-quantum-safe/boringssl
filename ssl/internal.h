@@ -956,7 +956,7 @@ Span<const NamedGroup> NamedGroups();
 
 // kNumNamedGroups is the number of supported groups.
 ///// OQS_TEMPLATE_FRAGMENT_COUNT_KEMS_START
-constexpr size_t kNumNamedGroups = 34u;
+constexpr size_t kNumNamedGroups = 32u;
 ///// OQS_TEMPLATE_FRAGMENT_COUNT_KEMS_END
 
 // DefaultSupportedGroupIds returns the list of IDs for the default groups that

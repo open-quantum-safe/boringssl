@@ -5484,87 +5484,84 @@ extern "C" {
 #define OBJ_ML_KEM_1024 2L, 16L, 840L, 1L, 101L, 3L, 4L, 4L, 3L
 #define OBJ_ENC_ML_KEM_1024 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x04, 0x03
 
-#define SN_mlkem512 "mlkem512"
-#define NID_mlkem512 971
-
-#define SN_p256_mlkem512 "p256_mlkem512"
-#define NID_p256_mlkem512 972
-
-#define SN_frodo640aes "frodo640aes"
-#define NID_frodo640aes 974
-
-#define SN_p256_frodo640aes "p256_frodo640aes"
-#define NID_p256_frodo640aes 975
-
-#define SN_x25519_frodo640aes "x25519_frodo640aes"
-#define NID_x25519_frodo640aes 976
-
-#define SN_frodo640shake "frodo640shake"
-#define NID_frodo640shake 977
-
-#define SN_p256_frodo640shake "p256_frodo640shake"
-#define NID_p256_frodo640shake 978
-
-#define SN_x25519_frodo640shake "x25519_frodo640shake"
-#define NID_x25519_frodo640shake 979
-
-#define SN_frodo976aes "frodo976aes"
-#define NID_frodo976aes 980
-
-#define SN_p384_frodo976aes "p384_frodo976aes"
-#define NID_p384_frodo976aes 981
-
-#define SN_frodo976shake "frodo976shake"
-#define NID_frodo976shake 982
-
-#define SN_p384_frodo976shake "p384_frodo976shake"
-#define NID_p384_frodo976shake 983
-
-#define SN_frodo1344aes "frodo1344aes"
-#define NID_frodo1344aes 984
-
-#define SN_p521_frodo1344aes "p521_frodo1344aes"
-#define NID_p521_frodo1344aes 985
-
-#define SN_frodo1344shake "frodo1344shake"
-#define NID_frodo1344shake 986
-
-#define SN_p521_frodo1344shake "p521_frodo1344shake"
-#define NID_p521_frodo1344shake 987
-
 #define SN_bikel3 "bikel3"
-#define NID_bikel3 991
+#define NID_bikel3 971
 
 #define SN_p384_bikel3 "p384_bikel3"
-#define NID_p384_bikel3 992
+#define NID_p384_bikel3 972
 
 #define SN_bikel5 "bikel5"
-#define NID_bikel5 993
+#define NID_bikel5 973
 
 #define SN_p521_bikel5 "p521_bikel5"
-#define NID_p521_bikel5 994
+#define NID_p521_bikel5 974
 
-#define SN_p256_mldsa44 "p256_mldsa44"
-#define LN_p256_mldsa44 "p256_mldsa44"
-#define NID_p256_mldsa44 995
-#define OBJ_p256_mldsa44 1L, 3L, 9999L, 7L, 5L
-#define OBJ_ENC_p256_mldsa44 0x2b, 0xce, 0x0f, 0x07, 0x05
+#define SN_frodo1344aes "frodo1344aes"
+#define NID_frodo1344aes 975
 
-#define SN_p384_mldsa65 "p384_mldsa65"
-#define LN_p384_mldsa65 "p384_mldsa65"
-#define NID_p384_mldsa65 996
-#define OBJ_p384_mldsa65 1L, 3L, 9999L, 7L, 7L
-#define OBJ_ENC_p384_mldsa65 0x2b, 0xce, 0x0f, 0x07, 0x07
+#define SN_p521_frodo1344aes "p521_frodo1344aes"
+#define NID_p521_frodo1344aes 976
 
-#define SN_p521_mldsa87 "p521_mldsa87"
-#define LN_p521_mldsa87 "p521_mldsa87"
-#define NID_p521_mldsa87 997
-#define OBJ_p521_mldsa87 1L, 3L, 9999L, 7L, 8L
-#define OBJ_ENC_p521_mldsa87 0x2b, 0xce, 0x0f, 0x07, 0x08
+#define SN_frodo1344shake "frodo1344shake"
+#define NID_frodo1344shake 977
+
+#define SN_p521_frodo1344shake "p521_frodo1344shake"
+#define NID_p521_frodo1344shake 978
+
+#define SN_frodo640aes "frodo640aes"
+#define NID_frodo640aes 979
+
+#define SN_p256_frodo640aes "p256_frodo640aes"
+#define NID_p256_frodo640aes 980
+
+#define SN_x25519_frodo640aes "x25519_frodo640aes"
+#define NID_x25519_frodo640aes 981
+
+#define SN_frodo640shake "frodo640shake"
+#define NID_frodo640shake 982
+
+#define SN_p256_frodo640shake "p256_frodo640shake"
+#define NID_p256_frodo640shake 983
+
+#define SN_x25519_frodo640shake "x25519_frodo640shake"
+#define NID_x25519_frodo640shake 984
+
+#define SN_frodo976aes "frodo976aes"
+#define NID_frodo976aes 985
+
+#define SN_p384_frodo976aes "p384_frodo976aes"
+#define NID_p384_frodo976aes 986
+
+#define SN_frodo976shake "frodo976shake"
+#define NID_frodo976shake 987
+
+#define SN_p384_frodo976shake "p384_frodo976shake"
+#define NID_p384_frodo976shake 988
+
+#define SN_p384_mlkem1024 "p384_mlkem1024"
+#define NID_p384_mlkem1024 989
+
+#define SN_p521_mlkem1024 "p521_mlkem1024"
+#define NID_p521_mlkem1024 990
+
+#define SN_mlkem512 "mlkem512"
+#define NID_mlkem512 991
+
+#define SN_p256_mlkem512 "p256_mlkem512"
+#define NID_p256_mlkem512 992
+
+#define SN_mlkem768 "mlkem768"
+#define NID_mlkem768 993
+
+#define SN_p256_mlkem768 "p256_mlkem768"
+#define NID_p256_mlkem768 994
+
+#define SN_p384_mlkem768 "p384_mlkem768"
+#define NID_p384_mlkem768 995
 
 #define SN_CROSSrsdp128balanced "CROSSrsdp128balanced"
 #define LN_CROSSrsdp128balanced "CROSSrsdp128balanced"
-#define NID_CROSSrsdp128balanced 998
+#define NID_CROSSrsdp128balanced 996
 #define OBJ_CROSSrsdp128balanced \
   1L, 3L, 6L, 1L, 4L, 1L, 62245L, 2L, 1L, 1L, 2L, 2L
 #define OBJ_ENC_CROSSrsdp128balanced \
@@ -5572,27 +5569,39 @@ extern "C" {
 
 #define SN_OV_Ip_pkc "OV_Ip_pkc"
 #define LN_OV_Ip_pkc "OV_Ip_pkc"
-#define NID_OV_Ip_pkc 999
+#define NID_OV_Ip_pkc 997
 #define OBJ_OV_Ip_pkc 1L, 3L, 9999L, 9L, 6L, 1L
 #define OBJ_ENC_OV_Ip_pkc 0x2b, 0xce, 0x0f, 0x09, 0x06, 0x01
 
 #define SN_OV_Ip_pkc_skc "OV_Ip_pkc_skc"
 #define LN_OV_Ip_pkc_skc "OV_Ip_pkc_skc"
-#define NID_OV_Ip_pkc_skc 1000
+#define NID_OV_Ip_pkc_skc 998
 #define OBJ_OV_Ip_pkc_skc 1L, 3L, 9999L, 9L, 10L, 1L
 #define OBJ_ENC_OV_Ip_pkc_skc 0x2b, 0xce, 0x0f, 0x09, 0x0a, 0x01
 
+#define SN_falcon1024 "falcon1024"
+#define LN_falcon1024 "falcon1024"
+#define NID_falcon1024 999
+#define OBJ_falcon1024 1L, 3L, 9999L, 3L, 14L
+#define OBJ_ENC_falcon1024 0x2b, 0xce, 0x0f, 0x03, 0x0e
+
 #define SN_falcon512 "falcon512"
 #define LN_falcon512 "falcon512"
-#define NID_falcon512 1001
+#define NID_falcon512 1000
 #define OBJ_falcon512 1L, 3L, 9999L, 3L, 11L
 #define OBJ_ENC_falcon512 0x2b, 0xce, 0x0f, 0x03, 0x0b
 
 #define SN_rsa3072_falcon512 "rsa3072_falcon512"
 #define LN_rsa3072_falcon512 "rsa3072_falcon512"
-#define NID_rsa3072_falcon512 1002
+#define NID_rsa3072_falcon512 1001
 #define OBJ_rsa3072_falcon512 1L, 3L, 9999L, 3L, 13L
 #define OBJ_ENC_rsa3072_falcon512 0x2b, 0xce, 0x0f, 0x03, 0x0d
+
+#define SN_falconpadded1024 "falconpadded1024"
+#define LN_falconpadded1024 "falconpadded1024"
+#define NID_falconpadded1024 1002
+#define OBJ_falconpadded1024 1L, 3L, 9999L, 3L, 19L
+#define OBJ_ENC_falconpadded1024 0x2b, 0xce, 0x0f, 0x03, 0x13
 
 #define SN_falconpadded512 "falconpadded512"
 #define LN_falconpadded512 "falconpadded512"
@@ -5600,257 +5609,248 @@ extern "C" {
 #define OBJ_falconpadded512 1L, 3L, 9999L, 3L, 16L
 #define OBJ_ENC_falconpadded512 0x2b, 0xce, 0x0f, 0x03, 0x10
 
-#define SN_falcon1024 "falcon1024"
-#define LN_falcon1024 "falcon1024"
-#define NID_falcon1024 1004
-#define OBJ_falcon1024 1L, 3L, 9999L, 3L, 14L
-#define OBJ_ENC_falcon1024 0x2b, 0xce, 0x0f, 0x03, 0x0e
-
-#define SN_falconpadded1024 "falconpadded1024"
-#define LN_falconpadded1024 "falconpadded1024"
-#define NID_falconpadded1024 1005
-#define OBJ_falconpadded1024 1L, 3L, 9999L, 3L, 19L
-#define OBJ_ENC_falconpadded1024 0x2b, 0xce, 0x0f, 0x03, 0x13
-
 #define SN_mayo1 "mayo1"
 #define LN_mayo1 "mayo1"
-#define NID_mayo1 1006
+#define NID_mayo1 1004
 #define OBJ_mayo1 1L, 3L, 9999L, 8L, 1L, 3L
 #define OBJ_ENC_mayo1 0x2b, 0xce, 0x0f, 0x08, 0x01, 0x03
 
 #define SN_mayo2 "mayo2"
 #define LN_mayo2 "mayo2"
-#define NID_mayo2 1007
+#define NID_mayo2 1005
 #define OBJ_mayo2 1L, 3L, 9999L, 8L, 2L, 3L
 #define OBJ_ENC_mayo2 0x2b, 0xce, 0x0f, 0x08, 0x02, 0x03
 
 #define SN_mayo3 "mayo3"
 #define LN_mayo3 "mayo3"
-#define NID_mayo3 1008
+#define NID_mayo3 1006
 #define OBJ_mayo3 1L, 3L, 9999L, 8L, 3L, 3L
 #define OBJ_ENC_mayo3 0x2b, 0xce, 0x0f, 0x08, 0x03, 0x03
 
 #define SN_mayo5 "mayo5"
 #define LN_mayo5 "mayo5"
-#define NID_mayo5 1009
+#define NID_mayo5 1007
 #define OBJ_mayo5 1L, 3L, 9999L, 8L, 5L, 3L
 #define OBJ_ENC_mayo5 0x2b, 0xce, 0x0f, 0x08, 0x05, 0x03
 
+#define SN_mldsa44 "mldsa44"
+#define LN_mldsa44 "mldsa44"
+#define NID_mldsa44 1008
+#define OBJ_mldsa44 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 17L
+#define OBJ_ENC_mldsa44 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x11
+
+#define SN_p256_mldsa44 "p256_mldsa44"
+#define LN_p256_mldsa44 "p256_mldsa44"
+#define NID_p256_mldsa44 1009
+#define OBJ_p256_mldsa44 1L, 3L, 9999L, 7L, 5L
+#define OBJ_ENC_p256_mldsa44 0x2b, 0xce, 0x0f, 0x07, 0x05
+
+#define SN_mldsa65 "mldsa65"
+#define LN_mldsa65 "mldsa65"
+#define NID_mldsa65 1010
+#define OBJ_mldsa65 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 18L
+#define OBJ_ENC_mldsa65 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x12
+
+#define SN_p384_mldsa65 "p384_mldsa65"
+#define LN_p384_mldsa65 "p384_mldsa65"
+#define NID_p384_mldsa65 1011
+#define OBJ_p384_mldsa65 1L, 3L, 9999L, 7L, 7L
+#define OBJ_ENC_p384_mldsa65 0x2b, 0xce, 0x0f, 0x07, 0x07
+
+#define SN_mldsa87 "mldsa87"
+#define LN_mldsa87 "mldsa87"
+#define NID_mldsa87 1012
+#define OBJ_mldsa87 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 19L
+#define OBJ_ENC_mldsa87 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x13
+
+#define SN_p521_mldsa87 "p521_mldsa87"
+#define LN_p521_mldsa87 "p521_mldsa87"
+#define NID_p521_mldsa87 1013
+#define OBJ_p521_mldsa87 1L, 3L, 9999L, 7L, 8L
+#define OBJ_ENC_p521_mldsa87 0x2b, 0xce, 0x0f, 0x07, 0x08
+
 #define SN_snova2454 "snova2454"
 #define LN_snova2454 "snova2454"
-#define NID_snova2454 1010
+#define NID_snova2454 1014
 #define OBJ_snova2454 1L, 3L, 9999L, 10L, 1L, 1L
 #define OBJ_ENC_snova2454 0x2b, 0xce, 0x0f, 0x0a, 0x01, 0x01
 
 #define SN_snova2454esk "snova2454esk"
 #define LN_snova2454esk "snova2454esk"
-#define NID_snova2454esk 1011
+#define NID_snova2454esk 1015
 #define OBJ_snova2454esk 1L, 3L, 9999L, 10L, 3L, 1L
 #define OBJ_ENC_snova2454esk 0x2b, 0xce, 0x0f, 0x0a, 0x03, 0x01
 
 #define SN_snova37172 "snova37172"
 #define LN_snova37172 "snova37172"
-#define NID_snova37172 1012
+#define NID_snova37172 1016
 #define OBJ_snova37172 1L, 3L, 9999L, 10L, 5L, 1L
 #define OBJ_ENC_snova37172 0x2b, 0xce, 0x0f, 0x0a, 0x05, 0x01
 
 #define SN_snova2455 "snova2455"
 #define LN_snova2455 "snova2455"
-#define NID_snova2455 1013
+#define NID_snova2455 1017
 #define OBJ_snova2455 1L, 3L, 9999L, 10L, 10L, 1L
 #define OBJ_ENC_snova2455 0x2b, 0xce, 0x0f, 0x0a, 0x0a, 0x01
 
 #define SN_snova2965 "snova2965"
 #define LN_snova2965 "snova2965"
-#define NID_snova2965 1014
+#define NID_snova2965 1018
 #define OBJ_snova2965 1L, 3L, 9999L, 10L, 12L, 1L
 #define OBJ_ENC_snova2965 0x2b, 0xce, 0x0f, 0x0a, 0x0c, 0x01
 
 #define SN_sphincssha2128fsimple "sphincssha2128fsimple"
 #define LN_sphincssha2128fsimple "sphincssha2128fsimple"
-#define NID_sphincssha2128fsimple 1015
+#define NID_sphincssha2128fsimple 1019
 #define OBJ_sphincssha2128fsimple 1L, 3L, 9999L, 6L, 4L, 13L
 #define OBJ_ENC_sphincssha2128fsimple 0x2b, 0xce, 0x0f, 0x06, 0x04, 0x0d
 
 #define SN_sphincssha2128ssimple "sphincssha2128ssimple"
 #define LN_sphincssha2128ssimple "sphincssha2128ssimple"
-#define NID_sphincssha2128ssimple 1016
+#define NID_sphincssha2128ssimple 1020
 #define OBJ_sphincssha2128ssimple 1L, 3L, 9999L, 6L, 4L, 16L
 #define OBJ_ENC_sphincssha2128ssimple 0x2b, 0xce, 0x0f, 0x06, 0x04, 0x10
 
 #define SN_sphincssha2192fsimple "sphincssha2192fsimple"
 #define LN_sphincssha2192fsimple "sphincssha2192fsimple"
-#define NID_sphincssha2192fsimple 1017
+#define NID_sphincssha2192fsimple 1021
 #define OBJ_sphincssha2192fsimple 1L, 3L, 9999L, 6L, 5L, 10L
 #define OBJ_ENC_sphincssha2192fsimple 0x2b, 0xce, 0x0f, 0x06, 0x05, 0x0a
 
 #define SN_sphincssha2192ssimple "sphincssha2192ssimple"
 #define LN_sphincssha2192ssimple "sphincssha2192ssimple"
-#define NID_sphincssha2192ssimple 1018
+#define NID_sphincssha2192ssimple 1022
 #define OBJ_sphincssha2192ssimple 1L, 3L, 9999L, 6L, 5L, 12L
 #define OBJ_ENC_sphincssha2192ssimple 0x2b, 0xce, 0x0f, 0x06, 0x05, 0x0c
 
 #define SN_sphincssha2256fsimple "sphincssha2256fsimple"
 #define LN_sphincssha2256fsimple "sphincssha2256fsimple"
-#define NID_sphincssha2256fsimple 1019
+#define NID_sphincssha2256fsimple 1023
 #define OBJ_sphincssha2256fsimple 1L, 3L, 9999L, 6L, 6L, 10L
 #define OBJ_ENC_sphincssha2256fsimple 0x2b, 0xce, 0x0f, 0x06, 0x06, 0x0a
 
 #define SN_sphincssha2256ssimple "sphincssha2256ssimple"
 #define LN_sphincssha2256ssimple "sphincssha2256ssimple"
-#define NID_sphincssha2256ssimple 1020
+#define NID_sphincssha2256ssimple 1024
 #define OBJ_sphincssha2256ssimple 1L, 3L, 9999L, 6L, 6L, 12L
 #define OBJ_ENC_sphincssha2256ssimple 0x2b, 0xce, 0x0f, 0x06, 0x06, 0x0c
 
 #define SN_sphincsshake128fsimple "sphincsshake128fsimple"
 #define LN_sphincsshake128fsimple "sphincsshake128fsimple"
-#define NID_sphincsshake128fsimple 1021
+#define NID_sphincsshake128fsimple 1025
 #define OBJ_sphincsshake128fsimple 1L, 3L, 9999L, 6L, 7L, 13L
 #define OBJ_ENC_sphincsshake128fsimple 0x2b, 0xce, 0x0f, 0x06, 0x07, 0x0d
 
 #define SN_sphincsshake128ssimple "sphincsshake128ssimple"
 #define LN_sphincsshake128ssimple "sphincsshake128ssimple"
-#define NID_sphincsshake128ssimple 1022
+#define NID_sphincsshake128ssimple 1026
 #define OBJ_sphincsshake128ssimple 1L, 3L, 9999L, 6L, 7L, 16L
 #define OBJ_ENC_sphincsshake128ssimple 0x2b, 0xce, 0x0f, 0x06, 0x07, 0x10
 
 #define SN_sphincsshake192fsimple "sphincsshake192fsimple"
 #define LN_sphincsshake192fsimple "sphincsshake192fsimple"
-#define NID_sphincsshake192fsimple 1023
+#define NID_sphincsshake192fsimple 1027
 #define OBJ_sphincsshake192fsimple 1L, 3L, 9999L, 6L, 8L, 10L
 #define OBJ_ENC_sphincsshake192fsimple 0x2b, 0xce, 0x0f, 0x06, 0x08, 0x0a
 
 #define SN_sphincsshake192ssimple "sphincsshake192ssimple"
 #define LN_sphincsshake192ssimple "sphincsshake192ssimple"
-#define NID_sphincsshake192ssimple 1024
+#define NID_sphincsshake192ssimple 1028
 #define OBJ_sphincsshake192ssimple 1L, 3L, 9999L, 6L, 8L, 12L
 #define OBJ_ENC_sphincsshake192ssimple 0x2b, 0xce, 0x0f, 0x06, 0x08, 0x0c
 
 #define SN_sphincsshake256fsimple "sphincsshake256fsimple"
 #define LN_sphincsshake256fsimple "sphincsshake256fsimple"
-#define NID_sphincsshake256fsimple 1025
+#define NID_sphincsshake256fsimple 1029
 #define OBJ_sphincsshake256fsimple 1L, 3L, 9999L, 6L, 9L, 10L
 #define OBJ_ENC_sphincsshake256fsimple 0x2b, 0xce, 0x0f, 0x06, 0x09, 0x0a
 
 #define SN_sphincsshake256ssimple "sphincsshake256ssimple"
 #define LN_sphincsshake256ssimple "sphincsshake256ssimple"
-#define NID_sphincsshake256ssimple 1026
+#define NID_sphincsshake256ssimple 1030
 #define OBJ_sphincsshake256ssimple 1L, 3L, 9999L, 6L, 9L, 12L
 #define OBJ_ENC_sphincsshake256ssimple 0x2b, 0xce, 0x0f, 0x06, 0x09, 0x0c
 
-#define SN_p384_mlkem1024 "p384_mlkem1024"
-#define NID_p384_mlkem1024 1027
-
-#define SN_p521_mlkem1024 "p521_mlkem1024"
-#define NID_p521_mlkem1024 1028
-
-#define SN_mlkem768 "mlkem768"
-#define NID_mlkem768 1029
-
-#define SN_p256_mlkem768 "p256_mlkem768"
-#define NID_p256_mlkem768 1030
-
-#define SN_p384_mlkem768 "p384_mlkem768"
-#define NID_p384_mlkem768 1031
-
-#define SN_mldsa44 "mldsa44"
-#define LN_mldsa44 "mldsa44"
-#define NID_mldsa44 1032
-#define OBJ_mldsa44 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 17L
-#define OBJ_ENC_mldsa44 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x11
-
-#define SN_mldsa65 "mldsa65"
-#define LN_mldsa65 "mldsa65"
-#define NID_mldsa65 1033
-#define OBJ_mldsa65 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 18L
-#define OBJ_ENC_mldsa65 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x12
-
-#define SN_mldsa87 "mldsa87"
-#define LN_mldsa87 "mldsa87"
-#define NID_mldsa87 1034
-#define OBJ_mldsa87 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 19L
-#define OBJ_ENC_mldsa87 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x13
-
 #define SN_slhdsasha2128s "slhdsasha2128s"
 #define LN_slhdsasha2128s "slhdsasha2128s"
-#define NID_slhdsasha2128s 1047
+#define NID_slhdsasha2128s 1031
 #define OBJ_slhdsasha2128s 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 20L
 #define OBJ_ENC_slhdsasha2128s \
   0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x14
 
 #define SN_slhdsasha2128f "slhdsasha2128f"
 #define LN_slhdsasha2128f "slhdsasha2128f"
-#define NID_slhdsasha2128f 1048
+#define NID_slhdsasha2128f 1032
 #define OBJ_slhdsasha2128f 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 21L
 #define OBJ_ENC_slhdsasha2128f \
   0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x15
 
 #define SN_slhdsasha2192s "slhdsasha2192s"
 #define LN_slhdsasha2192s "slhdsasha2192s"
-#define NID_slhdsasha2192s 1049
+#define NID_slhdsasha2192s 1033
 #define OBJ_slhdsasha2192s 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 22L
 #define OBJ_ENC_slhdsasha2192s \
   0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x16
 
 #define SN_slhdsasha2192f "slhdsasha2192f"
 #define LN_slhdsasha2192f "slhdsasha2192f"
-#define NID_slhdsasha2192f 1050
+#define NID_slhdsasha2192f 1034
 #define OBJ_slhdsasha2192f 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 23L
 #define OBJ_ENC_slhdsasha2192f \
   0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x17
 
 #define SN_slhdsasha2256s "slhdsasha2256s"
 #define LN_slhdsasha2256s "slhdsasha2256s"
-#define NID_slhdsasha2256s 1051
+#define NID_slhdsasha2256s 1035
 #define OBJ_slhdsasha2256s 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 24L
 #define OBJ_ENC_slhdsasha2256s \
   0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x18
 
 #define SN_slhdsasha2256f "slhdsasha2256f"
 #define LN_slhdsasha2256f "slhdsasha2256f"
-#define NID_slhdsasha2256f 1052
+#define NID_slhdsasha2256f 1036
 #define OBJ_slhdsasha2256f 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 25L
 #define OBJ_ENC_slhdsasha2256f \
   0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x19
 
 #define SN_slhdsashake128s "slhdsashake128s"
 #define LN_slhdsashake128s "slhdsashake128s"
-#define NID_slhdsashake128s 1053
+#define NID_slhdsashake128s 1037
 #define OBJ_slhdsashake128s 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 26L
 #define OBJ_ENC_slhdsashake128s \
   0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x1a
 
 #define SN_slhdsashake128f "slhdsashake128f"
 #define LN_slhdsashake128f "slhdsashake128f"
-#define NID_slhdsashake128f 1054
+#define NID_slhdsashake128f 1038
 #define OBJ_slhdsashake128f 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 27L
 #define OBJ_ENC_slhdsashake128f \
   0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x1b
 
 #define SN_slhdsashake192s "slhdsashake192s"
 #define LN_slhdsashake192s "slhdsashake192s"
-#define NID_slhdsashake192s 1055
+#define NID_slhdsashake192s 1039
 #define OBJ_slhdsashake192s 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 28L
 #define OBJ_ENC_slhdsashake192s \
   0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x1c
 
 #define SN_slhdsashake192f "slhdsashake192f"
 #define LN_slhdsashake192f "slhdsashake192f"
-#define NID_slhdsashake192f 1056
+#define NID_slhdsashake192f 1040
 #define OBJ_slhdsashake192f 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 29L
 #define OBJ_ENC_slhdsashake192f \
   0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x1d
 
 #define SN_slhdsashake256s "slhdsashake256s"
 #define LN_slhdsashake256s "slhdsashake256s"
-#define NID_slhdsashake256s 1057
+#define NID_slhdsashake256s 1041
 #define OBJ_slhdsashake256s 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 30L
 #define OBJ_ENC_slhdsashake256s \
   0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x1e
 
 #define SN_slhdsashake256f "slhdsashake256f"
 #define LN_slhdsashake256f "slhdsashake256f"
-#define NID_slhdsashake256f 1058
+#define NID_slhdsashake256f 1042
 #define OBJ_slhdsashake256f 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 31L
 #define OBJ_ENC_slhdsashake256f \
   0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x1f
