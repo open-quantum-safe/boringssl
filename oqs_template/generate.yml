@@ -317,84 +317,84 @@ sigs:
   code_point: '0xfece'
   claimed_security_level: '5'
 - family: SLH-DSA
-  name: slhdsasha2128s
+  name: slhdsapuresha2128s
   oid: 2 16 840 1 101 3 4 3 20
   oid_encoded: 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x14
   oqs_meth: OQS_SIG_alg_slh_dsa_pure_sha2_128s
   code_point: '0x0911'
   claimed_security_level: '1'
 - family: SLH-DSA
-  name: slhdsasha2128f
+  name: slhdsapuresha2128f
   oid: 2 16 840 1 101 3 4 3 21
   oid_encoded: 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x15
   oqs_meth: OQS_SIG_alg_slh_dsa_pure_sha2_128f
   code_point: '0x0912'
   claimed_security_level: '1'
 - family: SLH-DSA
-  name: slhdsasha2192s
+  name: slhdsapuresha2192s
   oid: 2 16 840 1 101 3 4 3 22
   oid_encoded: 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x16
   oqs_meth: OQS_SIG_alg_slh_dsa_pure_sha2_192s
   code_point: '0x0913'
   claimed_security_level: '3'
 - family: SLH-DSA
-  name: slhdsasha2192f
+  name: slhdsapuresha2192f
   oid: 2 16 840 1 101 3 4 3 23
   oid_encoded: 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x17
   oqs_meth: OQS_SIG_alg_slh_dsa_pure_sha2_192f
   code_point: '0x0914'
   claimed_security_level: '3'
 - family: SLH-DSA
-  name: slhdsasha2256s
+  name: slhdsapuresha2256s
   oid: 2 16 840 1 101 3 4 3 24
   oid_encoded: 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x18
   oqs_meth: OQS_SIG_alg_slh_dsa_pure_sha2_256s
   code_point: '0x0915'
   claimed_security_level: '5'
 - family: SLH-DSA
-  name: slhdsasha2256f
+  name: slhdsapuresha2256f
   oid: 2 16 840 1 101 3 4 3 25
   oid_encoded: 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x19
   oqs_meth: OQS_SIG_alg_slh_dsa_pure_sha2_256f
   code_point: '0x0916'
   claimed_security_level: '5'
 - family: SLH-DSA
-  name: slhdsashake128s
+  name: slhdsapureshake128s
   oid: 2 16 840 1 101 3 4 3 26
   oid_encoded: 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x1A
   oqs_meth: OQS_SIG_alg_slh_dsa_pure_shake_128s
   code_point: '0x0917'
   claimed_security_level: '1'
 - family: SLH-DSA
-  name: slhdsashake128f
+  name: slhdsapureshake128f
   oid: 2 16 840 1 101 3 4 3 27
   oid_encoded: 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x1B
   oqs_meth: OQS_SIG_alg_slh_dsa_pure_shake_128f
   code_point: '0x0918'
   claimed_security_level: '1'
 - family: SLH-DSA
-  name: slhdsashake192s
+  name: slhdsapureshake192s
   oid: 2 16 840 1 101 3 4 3 28
   oid_encoded: 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x1C
   oqs_meth: OQS_SIG_alg_slh_dsa_pure_shake_192s
   code_point: '0x0919'
   claimed_security_level: '3'
 - family: SLH-DSA
-  name: slhdsashake192f
+  name: slhdsapureshake192f
   oid: 2 16 840 1 101 3 4 3 29
   oid_encoded: 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x1D
   oqs_meth: OQS_SIG_alg_slh_dsa_pure_shake_192f
   code_point: '0x091A'
   claimed_security_level: '3'
 - family: SLH-DSA
-  name: slhdsashake256s
+  name: slhdsapureshake256s
   oid: 2 16 840 1 101 3 4 3 30
   oid_encoded: 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x1E
   oqs_meth: OQS_SIG_alg_slh_dsa_pure_shake_256s
   code_point: '0x091B'
   claimed_security_level: '5'
 - family: SLH-DSA
-  name: slhdsashake256f
+  name: slhdsapureshake256f
   oid: 2 16 840 1 101 3 4 3 31
   oid_encoded: 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x1F
   oqs_meth: OQS_SIG_alg_slh_dsa_pure_shake_256f

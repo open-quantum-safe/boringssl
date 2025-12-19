@@ -5771,88 +5771,88 @@ extern "C" {
 #define OBJ_sphincsshake256ssimple 1L, 3L, 9999L, 6L, 9L, 12L
 #define OBJ_ENC_sphincsshake256ssimple 0x2b, 0xce, 0x0f, 0x06, 0x09, 0x0c
 
-#define SN_slhdsasha2128s "slhdsasha2128s"
-#define LN_slhdsasha2128s "slhdsasha2128s"
-#define NID_slhdsasha2128s 1031
-#define OBJ_slhdsasha2128s 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 20L
-#define OBJ_ENC_slhdsasha2128s \
+#define SN_slhdsapuresha2128s "slhdsapuresha2128s"
+#define LN_slhdsapuresha2128s "slhdsapuresha2128s"
+#define NID_slhdsapuresha2128s 1031
+#define OBJ_slhdsapuresha2128s 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 20L
+#define OBJ_ENC_slhdsapuresha2128s \
   0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x14
 
-#define SN_slhdsasha2128f "slhdsasha2128f"
-#define LN_slhdsasha2128f "slhdsasha2128f"
-#define NID_slhdsasha2128f 1032
-#define OBJ_slhdsasha2128f 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 21L
-#define OBJ_ENC_slhdsasha2128f \
+#define SN_slhdsapuresha2128f "slhdsapuresha2128f"
+#define LN_slhdsapuresha2128f "slhdsapuresha2128f"
+#define NID_slhdsapuresha2128f 1032
+#define OBJ_slhdsapuresha2128f 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 21L
+#define OBJ_ENC_slhdsapuresha2128f \
   0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x15
 
-#define SN_slhdsasha2192s "slhdsasha2192s"
-#define LN_slhdsasha2192s "slhdsasha2192s"
-#define NID_slhdsasha2192s 1033
-#define OBJ_slhdsasha2192s 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 22L
-#define OBJ_ENC_slhdsasha2192s \
+#define SN_slhdsapuresha2192s "slhdsapuresha2192s"
+#define LN_slhdsapuresha2192s "slhdsapuresha2192s"
+#define NID_slhdsapuresha2192s 1033
+#define OBJ_slhdsapuresha2192s 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 22L
+#define OBJ_ENC_slhdsapuresha2192s \
   0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x16
 
-#define SN_slhdsasha2192f "slhdsasha2192f"
-#define LN_slhdsasha2192f "slhdsasha2192f"
-#define NID_slhdsasha2192f 1034
-#define OBJ_slhdsasha2192f 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 23L
-#define OBJ_ENC_slhdsasha2192f \
+#define SN_slhdsapuresha2192f "slhdsapuresha2192f"
+#define LN_slhdsapuresha2192f "slhdsapuresha2192f"
+#define NID_slhdsapuresha2192f 1034
+#define OBJ_slhdsapuresha2192f 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 23L
+#define OBJ_ENC_slhdsapuresha2192f \
   0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x17
 
-#define SN_slhdsasha2256s "slhdsasha2256s"
-#define LN_slhdsasha2256s "slhdsasha2256s"
-#define NID_slhdsasha2256s 1035
-#define OBJ_slhdsasha2256s 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 24L
-#define OBJ_ENC_slhdsasha2256s \
+#define SN_slhdsapuresha2256s "slhdsapuresha2256s"
+#define LN_slhdsapuresha2256s "slhdsapuresha2256s"
+#define NID_slhdsapuresha2256s 1035
+#define OBJ_slhdsapuresha2256s 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 24L
+#define OBJ_ENC_slhdsapuresha2256s \
   0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x18
 
-#define SN_slhdsasha2256f "slhdsasha2256f"
-#define LN_slhdsasha2256f "slhdsasha2256f"
-#define NID_slhdsasha2256f 1036
-#define OBJ_slhdsasha2256f 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 25L
-#define OBJ_ENC_slhdsasha2256f \
+#define SN_slhdsapuresha2256f "slhdsapuresha2256f"
+#define LN_slhdsapuresha2256f "slhdsapuresha2256f"
+#define NID_slhdsapuresha2256f 1036
+#define OBJ_slhdsapuresha2256f 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 25L
+#define OBJ_ENC_slhdsapuresha2256f \
   0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x19
 
-#define SN_slhdsashake128s "slhdsashake128s"
-#define LN_slhdsashake128s "slhdsashake128s"
-#define NID_slhdsashake128s 1037
-#define OBJ_slhdsashake128s 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 26L
-#define OBJ_ENC_slhdsashake128s \
+#define SN_slhdsapureshake128s "slhdsapureshake128s"
+#define LN_slhdsapureshake128s "slhdsapureshake128s"
+#define NID_slhdsapureshake128s 1037
+#define OBJ_slhdsapureshake128s 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 26L
+#define OBJ_ENC_slhdsapureshake128s \
   0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x1a
 
-#define SN_slhdsashake128f "slhdsashake128f"
-#define LN_slhdsashake128f "slhdsashake128f"
-#define NID_slhdsashake128f 1038
-#define OBJ_slhdsashake128f 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 27L
-#define OBJ_ENC_slhdsashake128f \
+#define SN_slhdsapureshake128f "slhdsapureshake128f"
+#define LN_slhdsapureshake128f "slhdsapureshake128f"
+#define NID_slhdsapureshake128f 1038
+#define OBJ_slhdsapureshake128f 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 27L
+#define OBJ_ENC_slhdsapureshake128f \
   0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x1b
 
-#define SN_slhdsashake192s "slhdsashake192s"
-#define LN_slhdsashake192s "slhdsashake192s"
-#define NID_slhdsashake192s 1039
-#define OBJ_slhdsashake192s 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 28L
-#define OBJ_ENC_slhdsashake192s \
+#define SN_slhdsapureshake192s "slhdsapureshake192s"
+#define LN_slhdsapureshake192s "slhdsapureshake192s"
+#define NID_slhdsapureshake192s 1039
+#define OBJ_slhdsapureshake192s 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 28L
+#define OBJ_ENC_slhdsapureshake192s \
   0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x1c
 
-#define SN_slhdsashake192f "slhdsashake192f"
-#define LN_slhdsashake192f "slhdsashake192f"
-#define NID_slhdsashake192f 1040
-#define OBJ_slhdsashake192f 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 29L
-#define OBJ_ENC_slhdsashake192f \
+#define SN_slhdsapureshake192f "slhdsapureshake192f"
+#define LN_slhdsapureshake192f "slhdsapureshake192f"
+#define NID_slhdsapureshake192f 1040
+#define OBJ_slhdsapureshake192f 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 29L
+#define OBJ_ENC_slhdsapureshake192f \
   0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x1d
 
-#define SN_slhdsashake256s "slhdsashake256s"
-#define LN_slhdsashake256s "slhdsashake256s"
-#define NID_slhdsashake256s 1041
-#define OBJ_slhdsashake256s 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 30L
-#define OBJ_ENC_slhdsashake256s \
+#define SN_slhdsapureshake256s "slhdsapureshake256s"
+#define LN_slhdsapureshake256s "slhdsapureshake256s"
+#define NID_slhdsapureshake256s 1041
+#define OBJ_slhdsapureshake256s 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 30L
+#define OBJ_ENC_slhdsapureshake256s \
   0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x1e
 
-#define SN_slhdsashake256f "slhdsashake256f"
-#define LN_slhdsashake256f "slhdsashake256f"
-#define NID_slhdsashake256f 1042
-#define OBJ_slhdsashake256f 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 31L
-#define OBJ_ENC_slhdsashake256f \
+#define SN_slhdsapureshake256f "slhdsapureshake256f"
+#define LN_slhdsapureshake256f "slhdsapureshake256f"
+#define NID_slhdsapureshake256f 1042
+#define OBJ_slhdsapureshake256f 2L, 16L, 840L, 1L, 101L, 3L, 4L, 3L, 31L
+#define OBJ_ENC_slhdsapureshake256f \
   0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x1f
 
 

@@ -87,7 +87,7 @@ The following quantum-safe digital signature algorithms from liboqs are supporte
 - **Falcon**: `falcon1024`, `falcon512`, `rsa3072_falcon512`, `falconpadded1024`, `falconpadded512`
 - **MAYO**: `mayo1`, `mayo2`, `mayo3`, `mayo5`
 - **ML-DSA**: `mldsa44`, `p256_mldsa44`, `mldsa65`, `p384_mldsa65`, `mldsa87`, `p521_mldsa87`
-- **SLH-DSA**: `slhdsasha2128s`, `slhdsasha2128f`, `slhdsasha2192s`, `slhdsasha2192f`, `slhdsasha2256s`, `slhdsasha2256f`, `slhdsashake128s`, `slhdsashake128f`, `slhdsashake192s`, `slhdsashake192f`, `slhdsashake256s`, `slhdsashake256f`
+- **SLH-DSA**: `slhdsapuresha2128s`, `slhdsapuresha2128f`, `slhdsapuresha2192s`, `slhdsapuresha2192f`, `slhdsapuresha2256s`, `slhdsapuresha2256f`, `slhdsapureshake128s`, `slhdsapureshake128f`, `slhdsapureshake192s`, `slhdsapureshake192f`, `slhdsapureshake256s`, `slhdsapureshake256f`
 - **SNOVA**: `snova2454`, `snova2454esk`, `snova37172`, `snova2455`, `snova2965`
 - **SPHINCS-SHA2**: `sphincssha2128fsimple`, `sphincssha2128ssimple`, `sphincssha2192fsimple`, `sphincssha2192ssimple`, `sphincssha2256fsimple`, `sphincssha2256ssimple`
 - **SPHINCS-SHAKE**: `sphincsshake128fsimple`, `sphincsshake128ssimple`, `sphincsshake192fsimple`, `sphincsshake192ssimple`, `sphincsshake256fsimple`, `sphincsshake256ssimple`
