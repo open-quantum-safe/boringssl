@@ -83,6 +83,18 @@ static const nid_triple kTriples[] = {
     {NID_sphincsshake192ssimple, NID_sha384, NID_sphincsshake192ssimple},
     {NID_sphincsshake256fsimple, NID_sha512, NID_sphincsshake256fsimple},
     {NID_sphincsshake256ssimple, NID_sha512, NID_sphincsshake256ssimple},
+    {NID_slhdsasha2128s, NID_sha256, NID_slhdsasha2128s},
+    {NID_slhdsasha2128f, NID_sha256, NID_slhdsasha2128f},
+    {NID_slhdsasha2192s, NID_sha384, NID_slhdsasha2192s},
+    {NID_slhdsasha2192f, NID_sha384, NID_slhdsasha2192f},
+    {NID_slhdsasha2256s, NID_sha512, NID_slhdsasha2256s},
+    {NID_slhdsasha2256f, NID_sha512, NID_slhdsasha2256f},
+    {NID_slhdsashake128s, NID_sha256, NID_slhdsashake128s},
+    {NID_slhdsashake128f, NID_sha256, NID_slhdsashake128f},
+    {NID_slhdsashake192s, NID_sha384, NID_slhdsashake192s},
+    {NID_slhdsashake192f, NID_sha384, NID_slhdsashake192f},
+    {NID_slhdsashake256s, NID_sha512, NID_slhdsashake256s},
+    {NID_slhdsashake256f, NID_sha512, NID_slhdsashake256f},
 ///// OQS_TEMPLATE_FRAGMENT_DEFINE_NID_TRIPLES_END
 };
 

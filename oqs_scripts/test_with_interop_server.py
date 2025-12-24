@@ -74,6 +74,18 @@ sigs = [
         'sphincsshake192ssimple',
         'sphincsshake256fsimple',
         'sphincsshake256ssimple',
+        'slhdsasha2128s',
+        'slhdsasha2128f',
+        'slhdsasha2192s',
+        'slhdsasha2192f',
+        'slhdsasha2256s',
+        'slhdsasha2256f',
+        'slhdsashake128s',
+        'slhdsashake128f',
+        'slhdsashake192s',
+        'slhdsashake192f',
+        'slhdsashake256s',
+        'slhdsashake256f',
 ##### OQS_TEMPLATE_FRAGMENT_LIST_ALL_SIGS_END
 ]
 

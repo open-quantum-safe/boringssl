@@ -191,6 +191,18 @@ bool ParsePublicKey(der::Input public_key_spki,
       EVP_pkey_sphincsshake192ssimple(),
       EVP_pkey_sphincsshake256fsimple(),
       EVP_pkey_sphincsshake256ssimple(),
+      EVP_pkey_slhdsasha2128s(),
+      EVP_pkey_slhdsasha2128f(),
+      EVP_pkey_slhdsasha2192s(),
+      EVP_pkey_slhdsasha2192f(),
+      EVP_pkey_slhdsasha2256s(),
+      EVP_pkey_slhdsasha2256f(),
+      EVP_pkey_slhdsashake128s(),
+      EVP_pkey_slhdsashake128f(),
+      EVP_pkey_slhdsashake192s(),
+      EVP_pkey_slhdsashake192f(),
+      EVP_pkey_slhdsashake256s(),
+      EVP_pkey_slhdsashake256f(),
 ///// OQS_TEMPLATE_FRAGMENT_LIST_PEER_SIG_ALGS_END
       EVP_pkey_ec_p256(),
       EVP_pkey_ec_p384(),
@@ -428,6 +440,66 @@ bool VerifySignedData(SignatureAlgorithm algorithm, der::Input signed_data,
       expected_pkey_id = EVP_PKEY_SPHINCSSHAKE256SSIMPLE;
       digest = EVP_sha512();
       cache_algorithm_name = "Sphincsshake256ssimple";
+      break;
+    case SignatureAlgorithm::kSlhdsasha2128s:
+      expected_pkey_id = EVP_PKEY_SLHDSASHA2128S;
+      digest = EVP_sha256();
+      cache_algorithm_name = "Slhdsasha2128s";
+      break;
+    case SignatureAlgorithm::kSlhdsasha2128f:
+      expected_pkey_id = EVP_PKEY_SLHDSASHA2128F;
+      digest = EVP_sha256();
+      cache_algorithm_name = "Slhdsasha2128f";
+      break;
+    case SignatureAlgorithm::kSlhdsasha2192s:
+      expected_pkey_id = EVP_PKEY_SLHDSASHA2192S;
+      digest = EVP_sha384();
+      cache_algorithm_name = "Slhdsasha2192s";
+      break;
+    case SignatureAlgorithm::kSlhdsasha2192f:
+      expected_pkey_id = EVP_PKEY_SLHDSASHA2192F;
+      digest = EVP_sha384();
+      cache_algorithm_name = "Slhdsasha2192f";
+      break;
+    case SignatureAlgorithm::kSlhdsasha2256s:
+      expected_pkey_id = EVP_PKEY_SLHDSASHA2256S;
+      digest = EVP_sha512();
+      cache_algorithm_name = "Slhdsasha2256s";
+      break;
+    case SignatureAlgorithm::kSlhdsasha2256f:
+      expected_pkey_id = EVP_PKEY_SLHDSASHA2256F;
+      digest = EVP_sha512();
+      cache_algorithm_name = "Slhdsasha2256f";
+      break;
+    case SignatureAlgorithm::kSlhdsashake128s:
+      expected_pkey_id = EVP_PKEY_SLHDSASHAKE128S;
+      digest = EVP_sha256();
+      cache_algorithm_name = "Slhdsashake128s";
+      break;
+    case SignatureAlgorithm::kSlhdsashake128f:
+      expected_pkey_id = EVP_PKEY_SLHDSASHAKE128F;
+      digest = EVP_sha256();
+      cache_algorithm_name = "Slhdsashake128f";
+      break;
+    case SignatureAlgorithm::kSlhdsashake192s:
+      expected_pkey_id = EVP_PKEY_SLHDSASHAKE192S;
+      digest = EVP_sha384();
+      cache_algorithm_name = "Slhdsashake192s";
+      break;
+    case SignatureAlgorithm::kSlhdsashake192f:
+      expected_pkey_id = EVP_PKEY_SLHDSASHAKE192F;
+      digest = EVP_sha384();
+      cache_algorithm_name = "Slhdsashake192f";
+      break;
+    case SignatureAlgorithm::kSlhdsashake256s:
+      expected_pkey_id = EVP_PKEY_SLHDSASHAKE256S;
+      digest = EVP_sha512();
+      cache_algorithm_name = "Slhdsashake256s";
+      break;
+    case SignatureAlgorithm::kSlhdsashake256f:
+      expected_pkey_id = EVP_PKEY_SLHDSASHAKE256F;
+      digest = EVP_sha512();
+      cache_algorithm_name = "Slhdsashake256f";
       break;
 ///// OQS_TEMPLATE_FRAGMENT_LIST_SIGS_END
 

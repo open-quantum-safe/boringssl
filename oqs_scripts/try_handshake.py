@@ -29,7 +29,6 @@ kexs = [
         'p384_frodo976aes',
         'frodo976shake',
         'p384_frodo976shake',
-        'mlkem1024',
         'p384_mlkem1024',
         'p521_mlkem1024',
         'mlkem512',
@@ -37,7 +36,6 @@ kexs = [
         'mlkem768',
         'p256_mlkem768',
         'p384_mlkem768',
-        'x25519_mlkem768',
 ##### OQS_TEMPLATE_FRAGMENT_LIST_ALL_KEMS_END
 ]
 
@@ -79,6 +77,18 @@ sigs = [
         'sphincsshake192ssimple',
         'sphincsshake256fsimple',
         'sphincsshake256ssimple',
+        'slhdsasha2128s',
+        'slhdsasha2128f',
+        'slhdsasha2192s',
+        'slhdsasha2192f',
+        'slhdsasha2256s',
+        'slhdsasha2256f',
+        'slhdsashake128s',
+        'slhdsashake128f',
+        'slhdsashake192s',
+        'slhdsashake192f',
+        'slhdsashake256s',
+        'slhdsashake256f',
 ##### OQS_TEMPLATE_FRAGMENT_LIST_ALL_SIGS_END
 ]
 
